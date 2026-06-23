@@ -857,6 +857,737 @@ players:
 
 ---
 
+# SKILL-002 스킬 범위·대상 선정·최대 개체·다단 판정
+
+## 1. 문서 목적
+
+이 작업은 스킬이 어느 공간을 검사하고, 어떤 대상을 어떤 순서로 선택하며, 한 실행에서 몇 번 적중할 수 있는지를 정의한다.
+
+- 모든 범위와 충돌 판정은 서버 권위로 처리한다.
+- 범위 판정은 바닐라 공격 범위와 분리한다.
+- 효과 블록마다 독립적인 범위, 필터, 최대 대상 수와 다단 규칙을 가질 수 있다.
+- MagicSpells는 사용할 수 있으나 커스텀 HP, 피해, 상태이상, 브레이크의 최종 결과를 직접 확정하지 않는다.
+- 일반 모드와 카오스 모드는 동일한 의미 규칙을 사용하되 처리량 상한과 최소 처리 간격이 다르다.
+
+## 2. 핵심 실행 구조
+
+스킬 한 번의 실행은 다음 계층을 사용한다.
+
+| 계층 | 의미 |
+|---|---|
+| `execution` | 스킬 한 번의 시전 또는 일반 공격 실행 |
+| `effect-block` | 피해, 회복, 상태이상, 이동 등 독립 효과 단위 |
+| `query` | 특정 시점의 공간 및 대상 검색 |
+| `target-selection` | 필터와 정렬을 통과한 최종 대상 목록 |
+| `hit-request` | 특정 대상에게 특정 효과를 적용하려는 한 번의 요청 |
+| `hit-result` | 적중, 회피, 패링, 면역, 사망 등 최종 결과 |
+
+- 실행마다 전역적으로 유일한 `execution-id`를 생성한다.
+- 각 효과 블록은 실행 안에서 유일한 `effect-id`를 가진다.
+- 각 타격 요청은 `execution-id + effect-id + hit-sequence + target-uuid`로 고유 `hit-id`를 만든다.
+- 같은 `hit-id`는 서버 재호출, MS 중복 콜백 또는 이벤트 재귀가 발생해도 한 번만 처리한다.
+
+## 3. 좌표계와 판정 기준
+
+### 기본 좌표계
+
+- 기본 범위는 월드의 `X/Y/Z`를 모두 사용하는 3차원 판정이다.
+- 스킬별로 `horizontal-only: true`를 지정하면 높이 차이를 별도 허용값으로 제한하고 수평 평면을 기준으로 판정한다.
+- 거리 비교는 별도 명시가 없으면 유클리드 거리의 제곱값을 사용한다.
+- 회전은 시전자 시선의 `yaw`와 `pitch`를 모두 사용할 수 있다.
+
+### 경계 포함
+
+- 도형의 경계에 정확히 닿은 히트박스는 범위 안으로 인정한다.
+- 부동소수점 오차용 기본 허용값은 `epsilon: 0.000001`이다.
+- 경계 판정은 `distance <= radius + epsilon` 형태로 처리한다.
+
+### 실제 히트박스
+
+- 엔티티 중심점만 검사하지 않고 Paper/Bukkit에서 얻은 실제 바운딩 박스를 사용한다.
+- 1차로 도형을 감싸는 AABB를 사용해 후보를 찾고, 2차로 도형과 대상 히트박스의 실제 교차를 검사한다.
+- 웅크리기, 수영, 비행, 빈사 등 자세에 따라 바뀐 현재 히트박스를 사용한다.
+- 장식용 엔티티, 무적 연출 엔티티와 투사체 표시용 엔티티는 기본 대상에서 제외한다.
+
+## 4. 범위 원점
+
+효과 블록은 다음 원점을 사용할 수 있다.
+
+| 원점 | 설명 |
+|---|---|
+| `CASTER_FEET` | 시전자 발 위치 |
+| `CASTER_CENTER` | 시전자 히트박스 중심 |
+| `CASTER_EYE` | 시전자 눈 위치 |
+| `WEAPON_MUZZLE` | 무기별 발사 오프셋이 적용된 위치 |
+| `TARGET_FEET` | 지정 대상 발 위치 |
+| `TARGET_CENTER` | 지정 대상 히트박스 중심 |
+| `TARGET_EYE` | 지정 대상 눈 위치 |
+| `TARGET_LOCATION` | 조준 또는 사전 선택된 위치 |
+| `PROJECTILE` | 현재 투사체 위치 |
+| `AREA_CENTER` | 지속 영역의 생성 위치 |
+| `PREVIOUS_HIT` | 연쇄 스킬의 직전 적중 위치 |
+| `FIXED_LOCATION` | 기믹이 제공한 고정 월드 좌표 |
+
+- 원점에는 로컬 또는 월드 좌표 오프셋을 추가할 수 있다.
+- `WEAPON_MUZZLE`은 무기 모델 연출과 실제 판정 시작점이 과도하게 어긋나지 않도록 최대 오프셋을 검증한다.
+- 원점 엔티티가 사라졌을 때의 정책은 `TERMINATE`, `KEEP_LAST_LOCATION`, `FOLLOW_OWNER` 중 스킬별로 지정한다.
+
+## 5. 회전 추적
+
+| 정책 | 처리 |
+|---|---|
+| `SNAPSHOT` | 실행 시점의 방향을 고정 |
+| `TRACK_CASTER` | 처리 시점마다 시전자 방향을 사용 |
+| `TRACK_TARGET` | 처리 시점마다 원점에서 목표를 향함 |
+| `FIXED` | 데이터에 기록된 고정 방향 사용 |
+| `FOLLOW_PROJECTILE` | 투사체의 현재 진행 방향 사용 |
+
+- 회전 추적은 효과 블록 또는 투사체별로 지정한다.
+- 즉발 일반 공격은 기본 `SNAPSHOT`이다.
+- 채널 빔은 기본 `TRACK_CASTER`, 유도 투사체는 `TRACK_TARGET` 또는 자체 유도 규칙을 사용한다.
+- 시전 도중 기절, 빈사, 사망 또는 월드 이탈이 발생하면 기존 중단 정책을 우선한다.
+
+## 6. 지원 범위 도형
+
+모든 도형은 직접 조합할 수 있으며, 하나의 효과 블록에 여러 도형을 `UNION`, `INTERSECTION`, `SUBTRACT` 방식으로 결합할 수 있다.
+
+| 도형 | 주요 데이터 | 판정 의미 |
+|---|---|---|
+| `RAY` | `length` | 두께가 없는 시선 광선과 히트박스 교차 |
+| `LINE` | `length`, `width`, `height` | 폭과 높이를 가진 직선 구간 |
+| `CAPSULE` | `length`, `radius` | 선분과 양 끝 반구를 합친 근접·돌진 범위 |
+| `BOX` | `width`, `height`, `depth` | 원점과 회전을 따르는 직육면체 |
+| `SPHERE` | `radius` 또는 축별 반지름 | 구 또는 타원체 |
+| `CYLINDER` | `radius`, `height`, `axis` | 원기둥 또는 타원기둥 |
+| `CONE` | `length`, `angle`, `vertical-angle` | 원점에서 퍼지는 3차원 원뿔 |
+| `ARC` | `inner-radius`, `outer-radius`, `angle` | 부채꼴 근접 공격 |
+| `RING` | `inner-radius`, `outer-radius`, `height` | 중심이 비어 있는 고리 |
+
+### 도형별 기본 규칙
+
+- `RAY`는 최초 충돌 지점만 필요할 때 사용한다.
+- `LINE`은 검기, 빔, 관통 사격처럼 폭이 있는 직선 공격에 사용한다.
+- `CAPSULE`은 공격 시작점과 끝점 사이를 연속 검사하므로 빠른 돌진 공격에 우선 사용한다.
+- `BOX`는 벽, 직사각 장판과 전방 사각 베기에 사용한다.
+- `SPHERE`는 폭발과 구형 오라에 사용한다.
+- `CYLINDER`는 지면 장판과 수직 기둥에 사용한다.
+- `CONE`과 `ARC`는 방향 기반 공격이며, `horizontal-only`를 별도로 지정할 수 있다.
+- `RING`은 중심 안전지대가 있는 보스 기믹에 사용한다.
+
+## 7. 복합 도형
+
+```yaml
+shape:
+  combine: SUBTRACT
+  base:
+    type: CYLINDER
+    radius: 8
+    height: 3
+  subtract:
+    type: CYLINDER
+    radius: 3
+    height: 3
+```
+
+- 복합 도형은 최대 깊이 `4`, 구성 노드 `16`을 기본 상한으로 둔다.
+- `UNION`은 하나라도 교차하면 포함한다.
+- `INTERSECTION`은 모든 도형과 교차해야 포함한다.
+- `SUBTRACT`는 기본 도형에는 들어오고 제외 도형에는 들어오지 않아야 한다.
+- 성능 상한을 넘는 도형은 로드 시 오류로 처리한다.
+
+## 8. 시야선과 장애물
+
+### 기본 LOS 표본
+
+대상 히트박스의 다음 세 지점을 검사한다.
+
+1. 히트박스 중심
+2. 상단에서 10% 아래 지점
+3. 하단에서 10% 위 지점
+
+- 셋 중 하나라도 원점과 연결되면 기본 LOS를 통과한다.
+- `los-policy: ALL_SAMPLES`를 사용하면 세 지점이 모두 보여야 한다.
+- `los-policy: NONE`은 시야선을 검사하지 않는다.
+- 투명 블록, 통과 가능한 블록과 액체 충돌 정책은 스킬별 설정을 사용할 수 있다.
+- 부분 엄폐에 따른 피해 비율 감소는 기본적으로 사용하지 않는다.
+
+### 장애물 정책
+
+| 정책 | 처리 |
+|---|---|
+| `BLOCK` | 최초 장애물에서 공격 종료 |
+| `IGNORE_PASSABLE` | 충돌부가 없는 통과 가능 블록 무시 |
+| `PIERCE_TERRAIN` | 허용 두께만큼 지형 관통 |
+| `IGNORE_TERRAIN` | 지형 무시 |
+| `EXPLODE_ON_TERRAIN` | 충돌 위치에서 후속 효과 실행 |
+
+- 벽 관통 증강 또는 효과는 `terrain-policy`를 실행 시점에 오버라이드한다.
+- 청크 경계 밖을 검사하기 위해 청크를 강제 로드하지 않는다.
+- 투사체 또는 범위 진행 경로가 미로드 청크에 닿으면 해당 실행을 종료한다.
+
+## 9. 대상 필터
+
+모든 대상 조건은 조합 가능하며 `include`, `exclude`, `required-tags`, `forbidden-tags`를 함께 사용할 수 있다.
+
+### 관계 필터
+
+- `SELF`
+- `ALLY`
+- `ENEMY`
+- `NEUTRAL`
+- `OWNER`
+- `SUMMON_OF_CASTER`
+- `SUMMON_OF_ALLY`
+- `SUMMON_OF_ENEMY`
+
+### 개체 필터
+
+- `PLAYER`
+- `MONSTER`
+- `BOSS`
+- `ELITE`
+- `SUMMON`
+- `NPC`
+- `PROJECTILE`
+- `INTERACTABLE`
+
+### 생존 상태 필터
+
+- `ALIVE`
+- `DOWNED`
+- `DEAD`
+- `SPECTATOR`
+- `TARGETABLE`
+- `INVULNERABLE`
+
+### 태그 및 조건 필터
+
+- 몬스터 등급, 종족, 속성, 보스 페이즈, 상태이상 보유 여부, 기지 안팎, 오염 구간을 조건으로 사용할 수 있다.
+- 시전자 자신은 기본 제외하지만 `include-self: true`로 스킬별 허용한다.
+- 공격 스킬도 아군을 정상적으로 선택할 수 있다. 최종 아군 피해, 브레이크와 강제 이동 배율은 `CORE-001` 규칙을 따른다.
+- MS의 `can-target`, `target-modifiers`는 후보 수를 줄이는 선행 필터로 사용할 수 있으나 WildSurvival 필터를 대체하지 않는다.
+
+## 10. 필터 처리 순서
+
+1. 월드와 청크 유효성 검사
+2. 대상 엔티티 종류와 내부 제외 태그 검사
+3. 생존 및 관전 상태 검사
+4. 관계와 팀 검사
+5. 스킬별 include/exclude 검사
+6. 도형과 실제 히트박스 교차 검사
+7. LOS와 장애물 검사
+8. 상태, 보스 페이즈와 사용자 정의 조건 검사
+9. 정렬
+10. 최대 대상 수만큼 확정
+
+- 최대 대상 확정 후의 회피, 패링, 면역과 무효 결과는 선택 슬롯을 되돌려 주지 않는다.
+- 즉, `max-targets: 3`에서 세 번째 대상이 면역이어도 네 번째 후보를 대신 선택하지 않는다.
+- 이는 적중 결과에 따라 대상 수가 흔들리거나 서버 틱 순서가 개입하는 것을 방지한다.
+
+## 11. 최대 대상 수
+
+- `max-targets`는 스킬 전체가 아니라 효과 블록별 필수 데이터다.
+- `0` 또는 생략을 무제한으로 해석하지 않는다. 명시적 `UNLIMITED`는 기술 상한 안에서만 허용한다.
+- 단일 대상은 `max-targets: 1`이다.
+- 광역 효과는 데이터상 값과 모드별 기술 상한 중 작은 값을 사용한다.
+- 연쇄 공격의 `max-chain-targets`와 투사체의 `entity-pierce-count`는 별도 제한이다.
+
+## 12. 대상 정렬 정책
+
+다음 정책을 스킬별로 선택할 수 있다.
+
+| 정책 | 기준 |
+|---|---|
+| `NEAREST` | 원점과 가장 가까운 대상 |
+| `FARTHEST` | 원점과 가장 먼 대상 |
+| `FRONTMOST` | 시선 중심과 각도 차가 가장 작은 대상 |
+| `FIRST_COLLISION` | 진행 경로에서 먼저 충돌한 대상 |
+| `LOWEST_HP` | 현재 HP가 가장 낮은 대상 |
+| `LOWEST_HP_RATIO` | 현재 HP 비율이 가장 낮은 대상 |
+| `HIGHEST_HP` | 현재 HP가 가장 높은 대상 |
+| `HIGHEST_HP_RATIO` | 현재 HP 비율이 가장 높은 대상 |
+| `HIGHEST_THREAT` | 시전자에 대한 위협도가 높은 대상 |
+| `LOWEST_DEF` | 최종 DEF가 낮은 대상 |
+| `HIGHEST_BREAK_VALUE` | 현재 브레이크 피해 효율이 높은 대상 |
+| `RANDOM` | 실행 시드 기반 무작위 |
+| `CUSTOM_SCORE` | 데이터 수식으로 계산한 점수 |
+
+### 결정론적 동률 처리
+
+일반 정렬의 동률은 다음 순서를 사용한다.
+
+1. 거리
+2. 시선 중심과의 각도
+3. 대상 UUID의 오름차순
+
+- `RANDOM`은 `execution-id + effect-id`를 시드로 사용한다.
+- 같은 입력과 같은 실행 ID에서는 서버 재시작 후에도 같은 순서를 만든다.
+- `CUSTOM_SCORE`의 점수가 같아도 위 동률 규칙을 사용한다.
+
+## 13. 거리 감쇠
+
+| 방식 | 처리 |
+|---|---|
+| `NONE` | 거리와 무관하게 100% |
+| `LINEAR` | 시작 거리부터 종료 거리까지 선형 감소 |
+| `STEP` | 거리 구간별 고정 배율 |
+| `CURVE` | 사전 정의한 곡선 또는 점 목록 보간 |
+
+- 감쇠는 피해뿐 아니라 회복, 보호막, 브레이크, 넉백과 상태이상 지속시간에 독립 적용할 수 있다.
+- 각 효과는 `falloff-enabled`를 별도로 가진다.
+- 히트박스가 큰 대상은 원점에서 대상 히트박스의 가장 가까운 점까지의 거리를 사용한다.
+- 감쇠 적용 후에도 해당 효과의 최종 하드캡과 최소값을 다시 적용한다.
+
+## 14. 연쇄 대상 선정
+
+연쇄 효과는 다음 필드를 필수로 가진다.
+
+```yaml
+chain:
+  max-chain-targets: 5
+  jump-range: 6
+  allow-repeat-target: false
+  selection: NEAREST
+  line-of-sight: true
+  falloff:
+    type: STEP
+    per-jump-multiplier: 0.85
+```
+
+- 첫 대상은 일반 대상 선정 규칙을 사용한다.
+- 다음 원점은 `PREVIOUS_HIT`이다.
+- 이미 선택한 대상은 `allow-repeat-target: true`가 아니면 제외한다.
+- 연쇄 중 대상이 사망하면 해당 타격 이후 다음 후보를 다시 찾을 수 있다.
+- 연쇄 처리 중에도 효과 블록 최대 대상, 실행당 타격 요청과 모드별 상한을 모두 적용한다.
+
+## 15. 투사체 기본 규격
+
+### 단위
+
+- 속도는 초당 블록 수 `blocks-per-second`를 사용한다.
+- 수명은 초 단위 `lifetime-seconds`를 사용한다.
+- 서버 틱에서는 실제 경과 시간으로 이동 거리를 계산하되, 한 틱에 과도한 보정 이동이 발생하지 않도록 최대 시뮬레이션 스텝을 둔다.
+
+### 연속 충돌 검사
+
+- 현재 위치만 점검하지 않고 이전 위치에서 새 위치까지의 이동 구간을 스윕 검사한다.
+- 빠른 투사체는 한 틱에 여러 블록을 이동해도 중간 대상과 벽을 건너뛰지 않는다.
+- 충돌 후보는 경로상의 정규화 거리 `t`가 작은 순서대로 처리한다.
+- 같은 `t`로 간주되는 충돌은 지형, 엔티티 UUID 순서로 고정한다.
+- 최초 충돌 정책에서는 가장 먼저 충돌한 하나만 적용한다.
+
+## 16. 투사체 이동 방식
+
+스킬별로 다음 이동 방식을 단독 또는 조합해 사용할 수 있다.
+
+- `STRAIGHT`
+- `GRAVITY`
+- `BALLISTIC`
+- `ACCELERATE`
+- `DECELERATE`
+- `HOMING`
+- `SPIRAL`
+- `WAVE`
+- `ORBIT`
+- `BOOMERANG`
+- `BOUNCE`
+- `RETURN_TO_OWNER`
+
+- 조합 순서는 기본 속도, 가속, 중력, 유도 회전, 특수 궤도, 충돌 순서다.
+- 조합이 비결정적이거나 수치 폭주를 일으키면 데이터 검증에서 거부한다.
+- 반사된 투사체는 반사 시점의 위치와 속도를 기준으로 새 소유자와 관계 필터를 사용한다.
+
+## 17. 유도 투사체
+
+### HIT 유도 보정
+
+```text
+HITBonus = min(100, max(0, HIT - 100))
+FinalTurnAngle = BaseTurnAngle × (1 + HITBonus / 100)
+```
+
+- `HIT <= 100`에서는 기본 회전각을 사용한다.
+- `HIT >= 200`부터 유도 회전각 보너스는 최대 100%로 고정한다.
+- HIT는 탐지 범위나 은신 적 탐지에는 사용하지 않는다.
+- 유도 대상의 위치는 대상 히트박스 중심 또는 스킬별 조준 지점을 사용한다.
+
+### 대상 상실 정책
+
+| 정책 | 처리 |
+|---|---|
+| `TERMINATE` | 즉시 종료 |
+| `CONTINUE_STRAIGHT` | 마지막 방향으로 비행 |
+| `RETARGET_NEAREST` | 가장 가까운 유효 대상 재탐색 |
+| `RETARGET_POLICY` | 스킬의 대상 정렬 정책으로 재탐색 |
+| `RETURN_TO_OWNER` | 소유자에게 복귀 |
+
+- 대상 상실 정책은 투사체별로 지정한다.
+- 재탐색은 매 틱이 아니라 지정한 `retarget-interval`에 수행한다.
+- 재탐색 역시 LOS, 관계, 최대 거리와 기술 상한을 적용한다.
+
+## 18. 관통, 반사와 지형 통과
+
+### 개체 관통
+
+- `entity-pierce-count`는 최초 대상 이후 추가로 관통할 수 있는 개체 수다.
+- 관통마다 피해, 브레이크와 상태이상 배율을 독립적으로 감쇠할 수 있다.
+- 동일 대상 재적중은 `allow-repeat-hit`와 다단 간격을 모두 만족해야 한다.
+
+### 지형 관통
+
+- `terrain-pierce-thickness`는 경로상 충돌 블록의 누적 두께로 차감한다.
+- 공기층을 사이에 둔 여러 벽은 각각 누적한다.
+- 남은 두께가 0 이하가 되는 최초 블록 내부 또는 표면에서 종료한다.
+- `IGNORE_TERRAIN`과 달리 실제 벽 두께에 따라 결과가 달라진다.
+
+### 반사
+
+- 기본 최대 반사 횟수는 `1`이다.
+- 반사 시 투사체 소유자는 반사자에게 변경된다.
+- 원래 시전자는 이후 관계 판정에서 일반 대상이 될 수 있다.
+- 실행 계보 추적을 위해 원본 `execution-id`와 `parent-execution-id`는 유지하고 새 투사체 실행 ID를 만든다.
+- 무한 반사 방지를 위해 반사 횟수와 실행당 타격 상한을 함께 검사한다.
+
+## 19. 지속 영역
+
+지속 영역은 `ENTER`, `STAY`, `EXIT` 세 이벤트를 지원한다.
+
+| 이벤트 | 발생 시점 |
+|---|---|
+| `ENTER` | 대상이 직전 검사에는 없고 현재 범위에 들어옴 |
+| `STAY` | 대상이 연속해서 범위 안에 있음 |
+| `EXIT` | 대상이 직전 검사에는 있었으나 현재 범위를 벗어남 |
+
+- 장판, 오라와 지속 빔은 검사 시점마다 현재 범위 안의 대상을 다시 찾는다.
+- 영역이 이동하거나 회전하면 갱신된 도형을 사용한다.
+- 장판이 적용한 별도 DOT 상태이상은 대상을 기억하며, 대상이 장판을 벗어나도 상태이상 자체의 지속시간 동안 유지된다.
+- DOT 재적용과 중첩은 `STATUS`의 해당 상태 중첩 정책을 따른다.
+
+## 20. 지속 영역 중복
+
+- 같은 스킬 ID와 같은 소유자가 만든 영역이 겹치면 기본적으로 가장 강한 하나만 적용한다.
+- `STACKABLE_AREA` 태그가 있는 스킬만 같은 소유자의 복수 영역 효과를 중첩한다.
+- 강도 비교에는 효과 블록의 `overlap-priority`를 우선 사용한다.
+- 우선순위가 같으면 주 효과의 계산 전 기준값, 남은 지속시간, 실행 ID 순서로 결정한다.
+- 서로 독립된 개체 속성을 가진 다른 영역 또는 다른 스킬 ID는 각자 적용한다.
+
+## 21. 다단 적중 공통 규칙
+
+모든 반복 적중 효과는 다음 필드를 필수로 가진다.
+
+```yaml
+multi-hit:
+  max-hits-per-target: 4
+  hit-interval-ticks: 3
+  allow-repeat-hit: true
+  cancel-after-target-death: true
+  retarget-after-target-death: false
+```
+
+- `max-hits-per-target`는 한 실행에서 한 대상에게 허용하는 최대 적중 횟수다.
+- `hit-interval-ticks`는 같은 대상의 유효 적중 사이 최소 간격이다.
+- 회피, 패링, 면역으로 결과가 0이 되어도 타격 시도 횟수에는 포함한다.
+- 대상이 사망하면 예약된 후속 타격은 기본 취소한다.
+- `retarget-after-target-death: true`인 스킬만 남은 타격을 새 대상에게 이전한다.
+
+## 22. 치명타와 상태이상 판정 횟수
+
+- 일반 다단 공격은 각 타격마다 치명타를 독립 판정한다.
+- 지속 피해형 스킬은 시전 시 한 번 치명타 여부를 판정하고 해당 실행의 모든 지속 틱이 그 결과를 사용한다.
+- 별도 DOT 상태이상은 상태이상 정의의 치명타 정책을 따른다.
+- `max-status-attempts-per-target`는 필수이며 기본값은 실행당 대상별 `1`회다.
+- 다단 공격이 매 타격 상태이상을 시도하려면 명시적으로 횟수를 늘려야 한다.
+- 상태이상 시도 실패, 저항과 면역도 시도 횟수에 포함한다.
+
+## 23. 1틱 미만 효과와 집계
+
+### 일반 모드
+
+- 지속 피해와 반복 효과의 최소 실제 처리 간격은 `5틱`이다.
+- 더 짧은 논리 간격이 입력되면 데이터 로드 시 거부하거나 일반 모드 전용 값으로 대체해야 한다.
+
+### 카오스 모드
+
+- 최소 실제 실행 간격은 `1틱`이다.
+- 논리 간격이 1틱보다 짧으면 1틱 동안 발생할 수치 결과를 합산해 한 번에 실행한다.
+- 예: `0.5틱마다 5 피해`는 `1틱마다 10 피해`로 실행한다.
+- 공간 검색은 서버 틱당 한 번만 수행한다.
+- 치명타, 상태이상, 흡혈, 온힛과 ICD 판정도 틱당 한 번만 수행한다.
+- 수치 합산 과정은 BigNumber를 사용한다.
+
+## 24. 모드별 기술 상한
+
+| 항목 | 일반 모드 | 카오스 모드 최대 |
+|---|---:|---:|
+| 효과 블록당 최종 대상 | 64 | 128 |
+| 실행당 전체 타격 요청 | 256 | 512 |
+| 투사체 개체 관통 | 32 | 64 |
+| 연쇄 대상 수 | 32 | 64 |
+| 플레이어당 활성 투사체 | 128 | 256 |
+| 플레이어당 활성 지속 영역 | 16 | 32 |
+
+- 카오스는 일반 모드 초기 상한의 최대 2배까지 설정할 수 있다.
+- 서버 설정이 표의 최대치를 넘으면 시작 또는 리로드를 거부한다.
+- 스킬 데이터가 상한을 넘으면 조용히 자르지 않고 해당 스킬을 로드 실패 처리한다.
+- 하나의 잘못된 스킬 때문에 기존 정상 레지스트리를 교체하지 않는다.
+
+## 25. MagicSpells 사용 결론
+
+MagicSpells는 WildSurvival에서 사용한다. 단, 역할은 스킬별로 선택하는 실행 보조 백엔드이며 전투 결과의 최종 권위자는 WildSurvival이다.
+
+### 사용하는 이유
+
+- MagicSpells는 공식 문서 기준 PaperMC 또는 그 포크가 필요하므로 서버 런타임도 해당 계열로 고정한다.
+- YAML 기반 스킬 구성과 서버 중 리로드를 지원한다.
+- `MultiSpell`, 하위 스펠과 지연 실행을 통해 복합 연출을 빠르게 구성할 수 있다.
+- `AreaEffectSpell`은 수평·수직 반경, 원형, 원뿔, 최대 대상과 근접 정렬을 제공한다.
+- `BeamSpell`은 즉시 선형 이동, 충돌 반경, 거리와 중력형 궤적을 제공한다.
+- `ProjectileSpell`과 `ParticleProjectileSpell`은 투사체 이동, 수명, 중간 히트박스, 중력, 가속과 적중 하위 스펠을 제공한다.
+- `HomingMissileSpell`과 `HomingProjectileSpell`은 유도 투사체 기반을 제공한다.
+- `LoopSpell`과 `PulserSpell`은 반복 실행과 지속 오브젝트 연출에 활용할 수 있다.
+- `can-target`, `obey-los`, 대상 수정자와 하위 스펠 cast argument를 전처리와 문맥 전달에 사용할 수 있다.
+
+### 그대로 맡기지 않는 이유
+
+- 모든 커스텀 도형과 실제 히트박스 교차를 동일한 의미로 지원하지 않는다.
+- WildSurvival의 BigNumber 피해, DEF, PEN, 아군 피해 30%, 빈사, 브레이크와 기여도를 알지 못한다.
+- 대상 선택 슬롯 소모, 결정론적 동률, 실행 ID 기반 무작위와 중복 방지 규칙이 별도다.
+- 카오스 모드의 1틱 미만 수치 집계와 모드별 성능 상한을 직접 보장하지 않는다.
+- MS의 바닐라 피해, 포션 효과 또는 자원·쿨타임을 그대로 사용하면 독자 전투 시스템과 이중 적용된다.
+
+## 26. 실행 백엔드
+
+```yaml
+execution-backend: AUTO
+magicspells:
+  spell-id: ws.staff.arc_bolt.projectile
+  role: PROJECTILE_DRIVER
+  callback-policy: WILDSURVIVAL_ONLY
+```
+
+| 백엔드 | 사용 조건 | 역할 |
+|---|---|---|
+| `AUTO` | 기본값 | 로드 시 기능과 비용을 비교해 아래 방식 선택 |
+| `MAGICSPELLS_DRIVER` | MS 기능과 기획 의미가 정확히 일치 | MS가 이동·연출·1차 충돌 후보 생성 |
+| `HYBRID` | MS 연출은 유리하지만 판정 차이가 있음 | MS가 연출 또는 이동, WS가 공간·대상 판정 |
+| `WILDSURVIVAL_NATIVE` | 복합 도형, 특수 유도, 카오스 집계 등 | WS가 전체 실행, MS는 선택적 연출만 담당 |
+
+### AUTO 선택 기준
+
+1. MS가 필요한 도형, 이동, 수명과 콜백 시점을 정확히 표현할 수 있는지 확인한다.
+2. WS 재검증 비용을 포함해도 MS 사용이 더 적은 연산과 개발 복잡도를 가지는지 확인한다.
+3. 동일 실행에서 두 엔진이 중복 공간 검색을 해야 하면 `HYBRID`보다 `WILDSURVIVAL_NATIVE`를 우선한다.
+4. 단순 파티클 투사체, 단순 유도체와 직선 빔은 `MAGICSPELLS_DRIVER`를 우선 검토한다.
+5. 복합 도형, 정밀 근접 히트박스, 특수 연쇄, 카오스 초고속 다단은 `WILDSURVIVAL_NATIVE`를 우선한다.
+6. 선택 결과는 로드 로그에 이유와 함께 남기며 스킬별 수동 오버라이드를 허용한다.
+
+## 27. MS 기능별 채택 범위
+
+| MS 기능 | 채택 방식 |
+|---|---|
+| `AreaEffectSpell` | 단순 원형·원뿔 후보 검색 또는 연출. 최종 필터·정렬·피해는 WS |
+| `AreaScanSpell` | 블록 검색용 환경·건설 스킬에 사용. 엔티티 전투 범위 대체 불가 |
+| `BeamSpell` | 단순 즉발 선형 빔의 이동·연출·최초 충돌 후보에 사용 |
+| `ProjectileSpell` | 실제 엔티티형 투사체가 필요한 경우 사용하되 바닐라 피해 차단 |
+| `ParticleProjectileSpell` | 비엔티티 마법 투사체의 우선 구현 후보 |
+| `HomingMissileSpell` | 단순 파티클 유도체. HIT 보정과 재탐색이 복잡하면 WS 유도 사용 |
+| `HomingProjectileSpell` | 실제 투사체형 유도체. 소유자와 반사 문맥은 WS가 관리 |
+| `MultiSpell` | 연출, 소리, 파티클과 비전투 보조 하위 스펠 조합 |
+| `LoopSpell` | 반복 연출과 콜백 예약. 실제 다단 상한은 WS가 재검증 |
+| `ParticleCloudSpell` | 장판 시각화에만 사용. 바닐라 포션 효과는 전투 효과로 사용하지 않음 |
+| `PulserSpell` | 설치물 연출 후보. 실제 영역 수명·대상 재탐색·상한은 WS가 관리 |
+
+## 28. MS 연동 권한 경계
+
+### MagicSpells가 담당할 수 있는 것
+
+- 파티클, 사운드, 표시 엔티티와 시각 효과
+- 호환되는 투사체의 이동과 수명
+- 호환되는 단순 충돌 후보와 충돌 위치
+- 복합 연출의 하위 스펠 순서와 지연
+- 연동 콜백 발생
+
+### WildSurvival만 담당하는 것
+
+- AP, 탄약, 자원, 쿨타임, 충전과 ICD
+- 실행 ID, 타격 ID와 중복 방지
+- 최종 대상 필터와 최대 대상 슬롯
+- 커스텀 HP, 피해, 회복, 보호막, DEF, PEN과 치명타
+- 회피, 패링, 아군 피해, 강제 이동과 브레이크
+- 상태이상 저항, 보스 변환과 빈사·사망
+- 기여도, 활동 EXP와 전투 로그
+- BigNumber, 카오스 집계와 기술 상한
+
+- MS의 `DamageSpell`, `PainSpell`, `HealSpell`, `DotSpell`, 포션 효과를 핵심 전투 수치에 직접 사용하지 않는다.
+- 필요할 경우 해당 스펠은 연출 또는 콜백 전용 helper spell로만 사용한다.
+
+## 29. MS 콜백 문맥
+
+WildSurvival이 MS 실행을 시작하기 전에 `MsExecutionHandle`을 생성한다.
+
+```yaml
+ms-execution-handle:
+  token: "opaque-execution-token"
+  execution-id: "skill-execution-uuid"
+  skill-id: "player.staff.arc_bolt.v1"
+  effect-id: "projectile_hit"
+  owner-uuid: "player-uuid"
+  revision: 42
+  expires-at-tick: 240300
+```
+
+- 토큰은 MS 하위 스펠의 `args`와 `pass-args`를 통해 전달하는 방식을 우선한다.
+- 실제 엔티티 투사체에는 토큰 또는 내부 추적 키를 메타데이터/PDC에 함께 기록한다.
+- 파티클 투사체는 MS 캐스트 또는 트래커와 토큰을 어댑터 맵에서 연결한다.
+- 콜백은 토큰, 대상 UUID 또는 위치, 충돌 유형과 MS 스펠 ID를 전달한다.
+- 토큰이 없거나 만료되었거나 소유자가 일치하지 않으면 콜백을 거부한다.
+- 같은 토큰과 같은 충돌 시퀀스의 중복 콜백은 한 번만 처리한다.
+
+## 30. MS 스펠 작성 규칙
+
+- WildSurvival 하위 스펠은 `helper-spell: true`를 기본으로 한다.
+- 플레이어가 명령어로 직접 실행하지 못하도록 `can-cast-by-command: false`를 사용한다.
+- MS 자체 mana, reagent, experience와 cooldown은 사용하지 않는다.
+- 대상과 LOS 설정은 후보 수를 줄이는 수준에서 WildSurvival 설정과 동일하게 맞춘다.
+- 투사체 `tick-interval`은 가능한 `1`로 두고, 필요한 경우 중간 히트박스를 활성화한다.
+- 실제 피해를 일으키는 바닐라 폭발, 화살 피해와 포션 효과는 취소하거나 생성하지 않는다.
+
+```yaml
+ws_arc_bolt_projectile:
+  spell-class: ".instant.ParticleProjectileSpell"
+  helper-spell: true
+  can-cast-by-command: false
+  projectile-velocity: 18
+  projectile-gravity: 0
+  tick-interval: 1
+  max-duration: 3
+  hit-radius: 0.35
+  vertical-hit-radius: 0.35
+  spell: ws_arc_bolt_callback(mode=direct; pass-args=true)
+```
+
+- 위 예시는 MS 설정 방향이며 최종 피해값은 넣지 않는다.
+- 실제 옵션명과 공개 API 호출 방식은 채택한 MS 버전을 고정한 뒤 `TECH-001`에서 컴파일 검증한다.
+
+## 31. MS 리로드와 장애 대응
+
+- 공식 `/ms reload`와 WildSurvival 스킬 핫 리로드를 연동한다.
+- `ws skill reload`는 먼저 WildSurvival 데이터를 검증하고 참조하는 MS 스펠 ID 목록을 만든다.
+- MS 리로드 후 모든 스펠 ID와 콜백 스펠을 다시 조회해 존재 여부와 클래스 호환성을 검사한다.
+- 검증이 끝난 뒤에만 새 WildSurvival 스킬 레지스트리를 원자적으로 교체한다.
+- MS 리로드 또는 참조 검증이 실패하면 기존 WildSurvival 레지스트리를 유지한다.
+- 진행 중인 실행은 시작 당시의 스킬 리비전과 백엔드 핸들을 유지한다.
+- MS가 비활성화되면 `WILDSURVIVAL_NATIVE` 대체 구현이 명시된 스킬만 계속 사용할 수 있다.
+- 대체 구현이 없는 스킬은 비활성화하고 관리자 로그에 명확한 원인을 남긴다.
+
+## 32. 데이터 예시
+
+```yaml
+id: player.staff.arc_bolt.v1
+execution-backend: AUTO
+targeting:
+  origin: WEAPON_MUZZLE
+  rotation: SNAPSHOT
+  include: [ENEMY, MONSTER, BOSS]
+  exclude: [DEAD, SPECTATOR]
+  max-targets: 1
+  selection: FIRST_COLLISION
+  line-of-sight:
+    policy: ANY_SAMPLE
+projectile:
+  movement: [STRAIGHT, HOMING]
+  speed-blocks-per-second: 18
+  lifetime-seconds: 3
+  radius: 0.35
+  target-loss-policy: CONTINUE_STRAIGHT
+  entity-pierce-count: 0
+  terrain-policy: BLOCK
+multi-hit:
+  max-hits-per-target: 1
+  hit-interval-ticks: 1
+  max-status-attempts-per-target: 1
+magicspells:
+  spell-id: ws_arc_bolt_projectile
+  role: PROJECTILE_DRIVER
+  callback-policy: WILDSURVIVAL_ONLY
+```
+
+## 33. 예외 처리
+
+| 상황 | 처리 |
+|---|---|
+| 대상이 선택 후 텔레포트 | 적용 시점에 월드·거리·필수 조건 재검증 |
+| 대상이 선택 후 사망 | 후속 타격 취소, 허용 시 재대상 |
+| 시전자가 접속 종료 | 스킬별 소유자 이탈 정책 적용 |
+| 투사체가 미로드 청크 진입 | 청크를 로드하지 않고 종료 |
+| MS 콜백 중복 | `hit-id`로 두 번째 요청 거부 |
+| MS가 바닐라 피해 발생 | 피해 이벤트 취소, 커스텀 콜백만 인정 |
+| MS 스펠 ID 누락 | 해당 스킬 로드 실패, 기존 레지스트리 유지 |
+| 최대 대상 또는 타격 상한 초과 | 런타임 절삭 대신 데이터 로드 실패 |
+| 영역이 겹침 | 같은 스킬·소유자는 가장 강한 하나, 태그 시 중첩 |
+| 1틱 미만 효과 | 카오스에서 수치 합산, 일반 모드에서는 거부 |
+| 반사 후 원래 소유자 적중 | 새 소유자 기준 관계 필터로 정상 처리 |
+| 같은 틱에 벽과 대상 충돌 | 경로 거리 우선, 완전 동률은 지형 우선 |
+
+## 34. 테스트 체크리스트
+
+| 테스트 | 확인 목적 |
+|---|---|
+| 9종 도형 경계와 실제 히트박스 | 중심점 오판정과 경계 포함 검증 |
+| 3D·수평 전용 원뿔 | 높이 차와 각도 검증 |
+| 복합 도형 UNION·INTERSECTION·SUBTRACT | 조합 결과 검증 |
+| LOS 중심·상단·하단 | 부분 엄폐 통과 규칙 검증 |
+| 복합 대상 필터 | 관계·생존·태그 조합 검증 |
+| 최대 대상과 면역 대상 | 선택 슬롯 미복구 검증 |
+| 동률 정렬 | 거리·각도·UUID 결정론 검증 |
+| RANDOM 재현 | 실행 ID 시드 재현성 검증 |
+| 고속 투사체 | 스윕 충돌과 터널링 방지 검증 |
+| 유도 HIT 100·150·200 | 회전각 공식 검증 |
+| 관통·반사·지형 두께 | 소유권과 누적 두께 검증 |
+| 장판 ENTER·STAY·EXIT | 현재 대상 재탐색 검증 |
+| 장판 이탈 후 DOT | 기존 대상 상태 유지 검증 |
+| 같은 소유자 영역 중복 | 최강 하나와 태그 중첩 검증 |
+| 다단 대상 사망 | 후속 취소와 재대상 검증 |
+| 다단 치명타·상태이상 | 타격별 치명타와 시도 상한 검증 |
+| 카오스 0.5틱 효과 | 수치 합산·검색 1회·부가 판정 1회 검증 |
+| 모드별 상한 초과 | 스킬 로드 거부 검증 |
+| MS Projectile·ParticleProjectile | 이동·콜백·바닐라 피해 차단 검증 |
+| MS AreaEffect·Beam | 후보 검색 후 WS 재검증 |
+| MS 중복·만료 토큰 | 콜백 위조와 중복 방지 검증 |
+| MS 리로드 실패 | 기존 레지스트리 유지 검증 |
+
+## 35. SKILL-002 완료 기준
+
+- 9종 기본 도형과 복합 도형 규칙이 확정되었다.
+- 원점, 회전, 실제 히트박스, LOS와 장애물 정책이 확정되었다.
+- 관계·개체·생존·태그 필터를 조합할 수 있다.
+- 최대 대상은 효과 블록별로 처리하고 무효 결과가 슬롯을 돌려주지 않는다.
+- 대상 정렬과 무작위 선정이 결정론적으로 재현된다.
+- 연쇄, 거리 감쇠, 관통, 반사와 유도 규칙이 확정되었다.
+- 지속 영역은 현재 대상을 재탐색하고 별도 DOT는 기존 대상을 유지한다.
+- 다단 적중, 치명타, 상태이상 시도와 사망 후 처리 규칙이 확정되었다.
+- 일반 모드와 카오스의 처리 간격 및 기술 상한이 확정되었다.
+- MagicSpells를 사용하되 WildSurvival이 최종 전투 권위를 유지한다.
+- 스킬별로 MS, 하이브리드, 네이티브 실행 방식을 효율에 따라 선택할 수 있다.
+- MS 리로드 실패와 중복 콜백이 기존 전투 상태를 손상시키지 않는다.
+
+## 36. MagicSpells 공식 문서 참조
+
+- Wiki 홈 및 설정 시작: <https://github.com/TheComputerGeek2/MagicSpells/wiki>
+- 전체 스펠 목록: <https://github.com/TheComputerGeek2/MagicSpells/wiki/Spell-List>
+- 공통 스펠 설정과 타게팅: <https://github.com/TheComputerGeek2/MagicSpells/wiki/Spell-Configuration>
+- 하위 스펠 체인: <https://github.com/TheComputerGeek2/MagicSpells/wiki/Spell-chaining>
+- 하위 스펠 인자와 `args`, `pass-args`: <https://github.com/TheComputerGeek2/MagicSpells/wiki/Cast-arguments>
+- 범위 스펠: <https://github.com/TheComputerGeek2/MagicSpells/wiki/AreaEffectSpell>
+- 빔: <https://github.com/TheComputerGeek2/MagicSpells/wiki/BeamSpell>
+- 일반 투사체: <https://github.com/TheComputerGeek2/MagicSpells/wiki/ProjectileSpell>
+- 파티클 투사체: <https://github.com/TheComputerGeek2/MagicSpells/wiki/ParticleProjectileSpell>
+- 유도 투사체: <https://github.com/TheComputerGeek2/MagicSpells/wiki/HomingMissileSpell>
+- 반복 실행: <https://github.com/TheComputerGeek2/MagicSpells/wiki/LoopSpell>
+- 복합 실행: <https://github.com/TheComputerGeek2/MagicSpells/wiki/MultiSpell>
+
+---
+
 # 다음 기획 작업
 
-다음 단계는 `SKILL-002 스킬 범위·대상 선정·최대 개체·다단 판정`이다.
+다음 단계는 `STATUS-002 개별 상태이상 및 연속 CC 방지`다.
