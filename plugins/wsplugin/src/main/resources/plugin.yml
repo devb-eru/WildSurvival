@@ -1,0 +1,6 @@
+name: wsplugin
+version: '${version}'
+
+main: com.lsc.corp.wsplugin.Main
+api-version: '26.1.2'
+load: POSTWORLD
