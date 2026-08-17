@@ -145,10 +145,10 @@
 
 | 표시 난이도 | 내부 ID | HP 배율 | 투자 전 표시 HP |
 |---|---|---:|---:|
-| Easy | `EASY` | 1.80 | 1,800 |
-| Normal | `NORMAL` | 1.00 | 1,000 |
-| Hard | `HARD` | 0.80 | 800 |
-| Challenge | `CHALLENGE` | 0.50 | 500 |
+| Story | `STORY` | 1.80 | 1,800 |
+| Easy | `EASY` | 1.00 | 1,000 |
+| Normal | `NORMAL` | 0.80 | 800 |
+| Hard | `HARD` | 0.50 | 500 |
 | ??? | `UNKNOWN` | 0.10 | 100 |
 
 - 난이도 HP 배율은 플레이어의 기본 HP, 포인트 투자 HP와 고정 장비·증강 HP 합계 전체에 적용한다.
@@ -173,7 +173,7 @@
 예시:
 
 ```text
-(Normal 기본 HP 1,000 + HP 투자 100포인트 × 10) × Challenge 0.50
+(Easy 기본 HP 1,000 + HP 투자 100포인트 × 10) × Hard 0.50
 = 1,000 HP
 ```
 
@@ -313,10 +313,10 @@ min(
 
 | 난이도 | 오염 피해용 DEF 효율 |
 |---|---:|
+| Story | 100% |
 | Easy | 100% |
 | Normal | 100% |
-| Hard | 100% |
-| Challenge | 80% |
+| Hard | 80% |
 | ??? | 50% |
 
 - 이 효율은 플레이어에게만 적용한다.
@@ -698,8 +698,11 @@ TENACITY / (100 + TENACITY)
 
 - 파티는 회차 생성 시 난이도를 선택한다.
 - 선택된 난이도는 해당 회차가 끝날 때까지 변경할 수 없다.
+- 난이도 ID는 `STORY`, `EASY`, `NORMAL`, `HARD`, `UNKNOWN`만 신규 회차에 허용한다.
+- Story는 Story 콘텐츠, 나머지 난이도는 Challenge 콘텐츠로 분류한다.
 - 난이도 표시명 `???`의 내부 ID는 `UNKNOWN`을 사용한다.
 - 난이도는 저장 데이터, 종료 통계, 추천 스탯 분배안에 기록한다.
+- 구 난이도와의 수치 계승·마이그레이션은 `DIFFICULTY-001`을 따른다.
 
 ### 플레이어 적용
 
@@ -717,8 +720,8 @@ TENACITY / (100 + TENACITY)
 
 추천안은 무기·역할뿐 아니라 현재 난이도를 고려한다.
 
-- Easy에서는 HP보다 공격 및 유틸리티 스탯을 더 권장할 수 있다.
-- Hard와 Challenge에서는 HP·DEF 권장 비중을 높인다.
+- Story에서는 HP보다 공격 및 유틸리티 스탯을 더 권장할 수 있다.
+- Normal과 Hard에서는 HP·DEF 권장 비중을 높인다.
 - ???에서는 낮은 기본 HP를 고려해 생존형 추천안과 위험 경고를 제공한다.
 - 추천안은 투자 상한을 준수한다.
 - 추천안은 임시 배분으로만 불러오며 자동 확정하지 않는다.
@@ -770,7 +773,7 @@ EXP 경험 성장
 DEF 방어력: 250
 기본 50 + 투자 100 + 장비 100
 현재 일반 피해 감소: 71.4%
-오염 피해 감소: Challenge 기준 66.7%
+오염 피해 감소: Hard 기준 66.7%
 ```
 
 ## 26. 플러그인 구현 방향
@@ -822,7 +825,9 @@ stats:
 
 ```yaml
 run:
-  difficulty: CHALLENGE
+  content-category: CHALLENGE_CONTENT
+  difficulty-schema-version: 2
+  difficulty: HARD
   stat-formula-version: 1
 players:
   "player-uuid":
@@ -862,7 +867,7 @@ players:
 
 | 테스트 | 확인 목적 |
 |---|---|
-| 난이도별 레벨 1 플레이어 | 기본 HP 1,800·1,000·800·500·100 검증 |
+| Story·Easy·Normal·Hard·??? 레벨 1 플레이어 | 기본 HP 1,800·1,000·800·500·100 검증 |
 | HP 투자 0·50·150 | 난이도 배율 미적용과 무상한 검증 |
 | AP 투자 0·25 및 장비 보너스 | 투자 상한과 모드별 200·999 하드캡 검증 |
 | ATK·DEF 무제한 투자 | 포인트 총량 내 계산 검증 |

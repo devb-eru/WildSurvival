@@ -576,11 +576,13 @@ NAND, NOR, XNOR, IMPLIES,
 
 ```text
 game-mode: STANDARD | CHAOS
-difficulty: EASY | NORMAL | HARD | CHALLENGE | UNKNOWN
+content-category: STORY_CONTENT | CHALLENGE_CONTENT
+difficulty: STORY | EASY | NORMAL | HARD | UNKNOWN
 ```
 
 - 규칙 모드와 난이도는 독립적으로 선택한다.
 - 회차 생성 시 확정하고 진행 중 변경할 수 없다.
+- `CHALLENGE`는 신규 난이도 ID로 허용하지 않으며 레거시 마이그레이션 입력으로만 처리한다.
 
 | 모드 | 최종 AP 상한 |
 |---|---:|

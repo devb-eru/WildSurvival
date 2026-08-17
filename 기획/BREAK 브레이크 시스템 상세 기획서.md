@@ -116,7 +116,7 @@
 
 ### STANDARD와 CHAOS
 
-난이도별 Easy, Normal, Hard, Challenge, ??? 배율은 브레이크 게이지에 직접 적용하지 않는다. 대신 STANDARD 모드와 CHAOS 모드는 별도의 규칙 모드를 가진다.
+난이도별 Story, Easy, Normal, Hard, ??? 배율은 브레이크 게이지에 직접 적용하지 않는다. 대신 STANDARD 모드와 CHAOS 모드는 별도의 규칙 모드를 가진다. Challenge는 콘텐츠 분류명이며 난이도 배율 원천이 아니다.
 
 | 모드 | 처리 |
 |---|---|

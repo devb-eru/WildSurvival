@@ -20,6 +20,8 @@
 - 고정 기지나 고정 임무 구역 없이 플레이어 주변과 시설망을 동적으로 추적한다.
 - 모드와 리소스 팩 없이 GUI, 보스바, 액션바, 표시 엔티티와 바닐라 아이템으로 모든 핵심 기능을 제공한다.
 - Day 50 이전 최종 진행과 미발견 콘텐츠의 직접 실행을 서버가 차단한다.
+- Day 50 이후에도 최종 목표 완료 전까지 Day 상태와 위협 프로필을 저장·진행한다.
+- 난이도 스키마 이동, Day 스킵 투표와 향후 Story 삽입 상태를 핵심 도메인과 분리해 복구 가능하게 한다.
 
 ## 2. 아키텍처 형태
 
@@ -31,7 +33,9 @@
 com.lsc.corp.wsplugin
 ├─ bootstrap        플러그인 수명주기, 의존성 조립, 마이그레이션
 ├─ api              안정된 내부 API와 외부 연동 API
-├─ session          회차, 파티, Day, 난이도, 일시중단
+├─ session          회차, 파티, Day, 난이도, 스킵, 최종 목표, 일시중단
+├─ classification   콘텐츠 분류, 난이도 스키마, 규칙 모드
+├─ story            빈 Story 상태, 챕터·오브젝트·인물 이벤트 접점
 ├─ player           플레이어 프로필, 생명 상태, 레벨, 스탯
 ├─ combat           피해, AP, 회피, 방어, 패링, 타격 실행
 ├─ status           상태이상, 저항, 3초 CC 체인
@@ -74,7 +78,9 @@ Paper 이벤트·외부 플러그인
 
 | 모듈 | 권위 데이터 | 외부에 제공할 명령·조회 |
 |---|---|---|
-| Session | 회차 상태, 멤버, Day, 단계, 난이도 | 시작·중단·재개·Day 전환 |
+| Session | 회차 상태, 멤버, Day, 단계, 스킵, 최종 목표 | 시작·중단·재개·투표·Day 전환·최종 완료 |
+| Classification | 콘텐츠 분류, 난이도 ID·스키마, 규칙 모드 | 회차 계약 생성·마이그레이션·통계 라우팅 |
+| Story | 챕터·오브젝트·인물·플래그의 선택 상태 | 도메인 이벤트 소비·상태 조회·연출 요청 |
 | Player | 생명 상태, 레벨, EXP, 스탯 투자 | 성장·부활·최종 스탯 조회 |
 | Combat | HP, AP, 전투 상태, 공격 실행 | 피해·회복·보호막·행동 요청 |
 | Equipment | 장비 인스턴스, 장착 원장, 귀속 | 장착·제작·강화·재련 |
@@ -165,6 +171,7 @@ Paper 이벤트·외부 플러그인
 | 결정 순서 | 회차별 증가 `commandSequence` |
 
 - 낮은 TPS에서도 쿨타임과 Day는 실제 경과 시간 기준을 사용한다.
+- Day 스킵은 남은 실제 시간을 생산·재생·쿨타임에 더하지 않고 `DAY_TRANSITION` 명령만 앞당긴다.
 - 다단 공격의 같은 틱 순서는 `commandSequence`, 실행 ID, 타격 순번으로 확정한다.
 - 서버 재시작 중 오프라인 시간을 Day 진행이나 상태 피해에 더하지 않는다.
 
@@ -204,6 +211,9 @@ SQLite를 단일 권위 저장소로 사용하고 YAML을 런타임 플레이어
 schema_version
 runs
 run_participants
+day_skip_votes
+day_transition_ledger
+final_objective_states
 player_states
 player_stats
 items
@@ -221,10 +231,18 @@ encounters
 reward_ledger
 transactions
 outbox_events
+story_runs
+story_chapter_states
+story_object_states
+story_character_states
 admin_audit
 ```
 
 큰 컬렉션은 JSON 한 칸에 전부 넣지 않고 조회·복구 단위에 맞춰 분리한다. 단, 스킬의 정적 효과 블록처럼 서버가 부분 갱신하지 않는 작은 구조는 리비전과 함께 JSON으로 저장할 수 있다.
+
+`runs`는 `content_category`, `difficulty_id`, `difficulty_schema_version`, `game_mode`, `current_day`, `day_era`를 별도 열로 가진다. 난이도 스키마 v1→v2 변환은 `DIFFICULTY-001`의 일대일 매핑을 한 트랜잭션으로 적용하며, 원본 ID를 감사 기록에 남긴다.
+
+Story 콘텐츠가 아직 없으면 `story_runs.content_revision = EMPTY`와 빈 상태만 저장한다. Story 테이블 오류가 회차·전투·보상 원장을 덮어쓰거나 최종 목표를 승인할 수 없다.
 
 ### 8.3 트랜잭션 상태
 
@@ -280,8 +298,14 @@ content/
 ├─ corruption/
 ├─ encounters/
 ├─ enemies/
-└─ days/
+├─ days/
+├─ difficulty/
+└─ story/           현재는 스키마와 EMPTY 리비전만 제공
 ```
+
+- 신규 난이도 데이터에는 `STORY`, `EASY`, `NORMAL`, `HARD`, `UNKNOWN`만 허용한다.
+- `CHALLENGE` 난이도 ID는 레거시 입력 마이그레이션 외에는 로드 오류다.
+- Story 폴더에 실제 챕터·인물 데이터가 없어도 정상 로드해야 한다.
 
 ## 11. Paper 이벤트 권한 경계
 
@@ -403,6 +427,21 @@ ws:signature
 - 개인 숙련 노드는 플레이어별로 유지한다.
 - 힌트 단계는 실패 횟수, 경과 Day와 보유 증거 수로만 열며 정답 아이템 ID를 즉시 공개하지 않는다.
 
+### 16.1 Story 삽입 계약
+
+- Story 모듈은 `RUN_CREATED`, `DAY_STARTED`, `DISCOVERY_COMPLETED`, `FACILITY_BUILT`, `BOSS_SIGNAL_ACQUIRED`, `PLAYER_DOWNED`, `POST_50_ENTERED`, `FINAL_OBJECTIVE_READY`, `RUN_COMPLETED` 이벤트를 선택적으로 소비한다.
+- 현재는 실제 서사·대사·챕터·오브젝트·인물 정의를 로드하지 않고 빈 상태와 no-op 소비자만 설계한다.
+- Story 소비자는 원본 이벤트 결과를 취소하거나 장비·발견·보스·최종 목표 상태를 직접 변경할 수 없다.
+- 향후 Story 리비전을 추가해도 활성 회차는 시작 시 고정한 Story 콘텐츠 리비전을 사용한다.
+
+### 16.2 Day 스킵·최종 목표 계약
+
+- 스킵 투표 결과는 `runId + targetDay + voteSequence`로 중복 방지한다.
+- `SKIP_PREPARED`, `EXPEDITE_PENDING`, `DAY_TRANSITION`, `COMMITTED` 단계를 원장에 저장한다.
+- `difficultyId == UNKNOWN` 또는 `gameMode == CHAOS`이면 도메인 명령 단계에서 거부한다.
+- Day 50은 `FINAL_UNLOCK` 시대 전환일이며 `COMPLETED` 전이가 아니다.
+- `currentDay`는 50을 초과할 수 있고, 최종 목표 완료 트랜잭션만 회차를 `COMPLETED`로 전환한다.
+
 ## 17. 동적 공간과 시설망
 
 - 고정 임무 구역 대신 수명이 있는 `DynamicContext`를 사용한다.
@@ -437,6 +476,9 @@ ws:signature
 | `inspect player` | 생명·장비·증강·발견·트랜잭션 조회 |
 | `inspect item` | PDC, 서명, 소유권, 원장 위치 조회 |
 | `inspect facility` | 시설·네트워크·작업·오염 조회 |
+| `inspect day` | Day 시대·스킵 투표·전환 원장·최종 목표 조건 조회 |
+| `inspect classification` | 콘텐츠 분류·난이도 스키마·원본 마이그레이션 조회 |
+| `inspect story` | Story 리비전과 빈/활성 상태 조회, 내용 생성 기능 없음 |
 | `recover transaction` | 미완료 트랜잭션 검사·안전 복구 |
 | `recover item` | 중복·격리 아이템 판정 후 복구 |
 | `validate content` | 콘텐츠 스키마와 참조 전체 검사 |
@@ -469,6 +511,9 @@ ws:signature
 - 장비 불일치·서명 실패·중복 instance 수
 - 사건별 적 수, 위협 예산과 TPS 열화 조정
 - GUI 거부 사유와 트랜잭션 중복 요청 수
+- 난이도·규칙 모드별 Day 스킵 요청·가결·부결·거부 사유
+- Day 50 도달부터 최종 목표 완료까지의 Day 분포
+- Story + STANDARD 완료·실패·포기와 스킵 사용 여부
 
 개인 식별 로그는 UUID를 사용하고 채팅·IP 등 불필요한 개인정보를 기획 로그에 저장하지 않는다.
 
@@ -488,6 +533,11 @@ ws:signature
 - [ ] 시설 설치·파괴·복구 트랜잭션
 - [ ] 동적 전장과 청크 언로드 복구
 - [ ] Day 50 이전 최종 명령·아이템·GUI 우회 차단
+- [ ] Day 50 종료 후 Day 51+ 진행과 최종 목표 완료 전 종료 차단
+- [ ] Story·Easy·Normal·Hard·??? 난이도 v2와 v1 마이그레이션
+- [ ] 신규 데이터의 `CHALLENGE` 난이도 ID 거부
+- [ ] Day 스킵 과반수·정산·중복 방지와 UNKNOWN·CHAOS 우회 차단
+- [ ] EMPTY Story 리비전으로 회차 시작·저장·완료
 - [ ] SQLite WAL 손상·잠금·비정상 종료 복구
 - [ ] 리소스 팩 없이 전체 조작·경고 이해 가능
 
@@ -508,5 +558,7 @@ ws:signature
 - 공격, 장비, 증강, 보상, 시설 작업의 중복 방지 키가 정의되어 있다.
 - SQLite·스냅샷·PDC 간 복구 순서가 정의되어 있다.
 - 고정 기지·임무 구역 없이 동적 공간을 처리할 수 있다.
+- 난이도 스키마 이동과 Story 빈 상태를 손실 없이 저장·복구할 수 있다.
+- Day 스킵과 Day 51+ 진행이 원자적으로 저장되며 Day 번호만으로 완료되지 않는다.
 - 바닐라 클라이언트와 리소스 팩 없는 GUI로 구현 가능하다.
 - 프로토타입 없이 다음 데이터·콘텐츠 기획 문서가 참조할 기술 기준을 제공한다.
