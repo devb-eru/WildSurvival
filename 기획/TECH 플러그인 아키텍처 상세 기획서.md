@@ -228,7 +228,11 @@ facility_networks
 facility_jobs
 corruption_states
 encounters
+contribution_snapshots
 reward_ledger
+reward_grants
+reward_remainders
+loot_preferences
 transactions
 outbox_events
 story_runs
@@ -239,6 +243,8 @@ admin_audit
 ```
 
 큰 컬렉션은 JSON 한 칸에 전부 넣지 않고 조회·복구 단위에 맞춰 분리한다. 단, 스킬의 정적 효과 블록처럼 서버가 부분 갱신하지 않는 작은 구조는 리비전과 함께 JSON으로 저장할 수 있다.
+
+`contribution_snapshots`는 원천·플레이어·기여 축별 확정 합계와 생명 상태를, `reward_grants`는 공용·개인·고유 하위 지급 키를 저장한다. `reward_remainders`는 소수 공용 재료 배율의 이월값을, `loot_preferences`는 고유 장비 태그별 자동 필요 설정을 저장한다. 상세 원시 기여 사건은 활성 원천 복구에 필요한 범위만 유지하고 정산 후 압축한다.
 
 `runs`는 `content_category`, `difficulty_id`, `difficulty_schema_version`, `game_mode`, `current_day`, `day_era`를 별도 열로 가진다. 난이도 스키마 v1→v2 변환은 `DIFFICULTY-001`의 일대일 매핑을 한 트랜잭션으로 적용하며, 원본 ID를 감사 기록에 남긴다.
 
