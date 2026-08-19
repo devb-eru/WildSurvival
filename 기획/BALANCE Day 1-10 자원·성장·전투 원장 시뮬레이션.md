@@ -5,7 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `BALANCE-D10-001` |
-| 참조 | `CRAFT-001`, `EQUIP-LIST-001`, `WEAPON-002`, `SKILL-LIST-001`, `ENEMY-001`, `BOSS-001`, `PROG-001` |
+| 참조 | `CRAFT-001`, `EQUIP-LIST-001`, `WEAPON-002`, `SKILL-LIST-001`, `ENEMY-001`, `EVENT-DATA-001`, `BOSS-001`, `PROG-001` |
 | 주 기준 | 3인 Easy STANDARD |
 | 스트레스 기준 | 2인 Story STANDARD, 4인 Hard STANDARD |
 | 목적 | Day 1~10 자원·레벨·장비·전투가 한 원장에서 성립하는지 역검증 |
