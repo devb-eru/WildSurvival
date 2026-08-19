@@ -6,7 +6,7 @@
 |---|---|
 | 문서 ID | `CRAFT-001` |
 | 상위 기준 | `RES-001`, `ECONOMY-001`, `DISC-LIST-001`, `FACILITY-LIST-001`, `EQUIP-001` |
-| 적용 범위 | STANDARD 기준 Day 1~10 1차 레시피와 이후 확장 공통 규칙 |
+| 적용 범위 | STANDARD 기준 Day 1~10 1차 레시피, `RESOURCE-DATA-D20-001`의 Day 11~20 확장과 이후 공통 규칙 |
 | 수치 기준 | 3인 Easy, 예상 활동량을 충족한 파티 |
 | 구현 | Paper 플러그인, PDC 커스텀 재료, 인벤토리 GUI, 서버 권위 공용 원장 |
 
