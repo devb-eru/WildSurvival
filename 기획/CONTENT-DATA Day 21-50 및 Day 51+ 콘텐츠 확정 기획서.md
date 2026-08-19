@@ -9,7 +9,7 @@
 | 연계 | `FACILITY-LIST-001`, `CORR-LIST-001`, `EQUIP-LIST-001`, `BOSS-003~004`, `FINAL-001` |
 | 기준 | EXP·자원은 3인 Easy STANDARD, 적 예산은 2인 Easy STANDARD |
 | 적용 범위 | Day 21~50 실제 성장·자원·적·장비·시설 해금, Day 51+ 순환 상한 |
-| Story | 실제 인물·대사·사건 서사 없음 |
+| Story | 본 수치 문서에는 미포함, 실제 장면은 `STORY-001 §8~12` 참조 |
 | 최종 수정일 | 2026-08-20 |
 
 ## 1. 확정 목표
