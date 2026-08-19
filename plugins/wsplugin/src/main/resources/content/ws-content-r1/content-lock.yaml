@@ -1,0 +1,9 @@
+schema-version: 1
+content-revision: "ws-content-r1"
+manifest: "manifest.json"
+activation: "NEW_RUN_ONLY"
+story-revision: "EMPTY"
+minimum-day: 1
+maximum-authored-day: 20
+strict-reference-check: true
+reject-unknown-fields: true

@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "contentRevision": "ws-content-r1",
+  "domain": "bosses",
+  "dataRevision": "boss-d20-neural-amalgam-r1",
+  "metadata": {"baseline":"2P_EASY_STANDARD","targetDurationSeconds":[540,780],"storyRevision":"EMPTY"},
+  "entries": [
+    {
+      "id":"BOSS-D20-NEURAL-AMALGAM",
+      "displayName":"신경 접합체",
+      "entityType":"RAVAGER",
+      "disableVanillaAiAttacks":true,
+      "displayAttachments":["ITEM_DISPLAY","BLOCK_DISPLAY"],
+      "requirements":{
+        "day":20,
+        "discoveries":["C11","C12","C13"],
+        "ledgerExists":["RECONSTRUCTION_PART_A","BOSS_D10_CORE"],
+        "callItem":"WSI-D20-BOSS-CALL",
+        "otherActiveEncounter":false
+      },
+      "stats":{
+        "hp":175000,"def":105,"pen":20,"res":55,"tenacity":30,"staggerRes":30,"break":14000,
+        "moveSpeedSprintRatio":0.86,"activityRadius":52,"recoveryRadius":68
+      },
+      "scaling":{
+        "1":{"hp":0.72,"damage":0.90,"break":0.75,"addCap":1,"targetCap":1},
+        "2":{"hp":1.00,"damage":1.00,"break":1.00,"addCap":2,"targetCap":1},
+        "3":{"hp":1.32,"damage":1.06,"break":1.25,"addCap":2,"targetCap":2},
+        "4":{"hp":1.60,"damage":1.12,"break":1.50,"addCap":2,"targetCap":2}
+      },
+      "arena":{
+        "stakeCount":3,"stakeDistanceBlocks":[24,46],"scanRadius":36,"candidateOffsets":[0,8,16,24],
+        "minimumWalkableGroundRatio":0.65,"maximumLiquidRatio":0.30,"maximumLavaRatio":0.05,
+        "requiredCoverCount":[2,5],"requiredSplitPointCount":4,"splitPointDistance":[10,18],
+        "transactionalCall":true,"consumeAfterManifestCommit":true
+      },
+      "combatMarkers":{
+        "NEURAL_LOAD":{"max":3,"gain":"TAGGED_PATTERN_HIT","decayNoHitTicks":240,"onCleanse":-1,"onBreak":-1,"atMaxNextStatusDamageMultiplier":1.20,"afterProcSet":1},
+        "SYNAPSE_LINK":{"safeDistance":[5,12],"durationTicks":80,"soloFallback":"LINK_CORE"},
+        "RESCUE_TRACE":{"target":"RESCUER_NOT_DOWNED","endOn":["RESCUE_CANCEL","RESCUE_SUCCESS","PATTERN_END"]}
+      },
+      "phases":[
+        {"id":"P1_CLASSIFY","hpRange":[1.00,0.72],"fixedMutations":["MUT_TOXIC_SAC"],"patternIds":["B20-TOXIC_INCISE","B20-THERMAL_GRID","B20-HEMATIC_LASH","B20-TISSUE_SWEEP"]},
+        {"id":"P2_GRAFT","hpRange":[0.72,0.38],"fixedMutations":["MUT_SILENCE_CRY"],"patternIds":["B20-SYNAPSE_LINK","B20-SILENCE_CHORUS","B20-GRAFT_CULTURE","B20-RESCUE_TRACE","B20-NEURAL_FAN"]},
+        {"id":"P3_OVERLOAD","hpRange":[0.38,0.00],"fixedMutations":["MUT_PARRY_SPINE"],"patternIds":["B20-MULTI_REACTION","B20-BIO_RING","B20-CORE_UNSPLICE","B20-FINAL_SUTURE"]}
+      ],
+      "patterns":[
+        {"id":"B20-TOXIC_INCISE","telegraphTicks":16,"damage":125,"tags":["DODGEABLE","GUARDABLE"],"status":{"id":"POISON","stacks":1},"neuralLoad":1,"parryBreak":420},
+        {"id":"B20-THERMAL_GRID","telegraphTicks":24,"repeats":2,"damage":145,"tags":["POSITIONAL"],"status":{"id":"BURN","stacks":1},"safeCellBreakReward":80},
+        {"id":"B20-HEMATIC_LASH","telegraphTicks":15,"damage":135,"tags":["DODGEABLE","PARRY_ONLY"],"status":{"id":"BLEED","stacks":1},"neuralLoad":1,"parryBreak":620},
+        {"id":"B20-TISSUE_SWEEP","telegraphTicks":14,"damage":155,"arcDegrees":150,"range":6,"tags":["DODGEABLE","HEAVY_GUARD"],"parryBreak":500},
+        {"id":"B20-SYNAPSE_LINK","telegraphTicks":20,"durationTicks":80,"pairDistance":[5,12],"success":{"partyApPerTarget":5,"neuralLoad":-1,"bossBreak":300},"failure":{"damage":140,"status":{"id":"SLOW","strength":0.20,"durationTicks":40}},"solo":{"coreHp":1800,"coreBreak":700,"failureDamage":120,"failureStatus":{"id":"SILENCE","durationTicks":16}}},
+        {"id":"B20-SILENCE_CHORUS","telegraphTicks":27,"damage":105,"arcDegrees":120,"status":{"id":"SILENCE","durationTicks":24},"neuralLoad":1,"interruptBreak":1800},
+        {"id":"B20-GRAFT_CULTURE","telegraphTicks":24,"spawnCap":2,"spawnPool":["EN-D20-A01","EN-D20-A02","EN-D20-A03","EN-D20-A04"],"sameStatusConcurrently":false,"interruptBreak":1400,"summonRewardPolicy":"NONE"},
+        {"id":"B20-RESCUE_TRACE","telegraphTicks":22,"damage":165,"target":"RESCUER_NOT_DOWNED","rescueInterruptThresholdMultiplier":1.20,"targetCooldownTicks":240,"parryBreak":700},
+        {"id":"B20-NEURAL_FAN","telegraphTicks":19,"lines":3,"damage":135,"maxHitsPerTarget":1,"tags":["DODGEABLE","GUARDABLE"]},
+        {"id":"B20-MULTI_REACTION","telegraphTicks":30,"activeAreas":2,"areaPool":["TOXIC","THERMAL","HEMATIC"],"damage":165,"overlapDamageMultiplier":0.60,"statusStacks":1,"interruptBreak":2000},
+        {"id":"B20-BIO_RING","telegraphTicks":21,"sequence":["INSIDE","OUTSIDE","INSIDE"],"damage":150,"repeatTargetDamageMultiplier":0.70,"tags":["POSITIONAL"]},
+        {"id":"B20-CORE_UNSPLICE","channelTicks":120,"coreCount":3,"coreTotalHp":5400,"coreTotalBreak":3000,"failure":{"damage":230,"neuralLoad":1},"cooldownTicks":760,"rewardPolicy":"NONE"},
+        {"id":"B20-FINAL_SUTURE","triggerHpRatio":0.12,"combatLimit":1,"telegraphTicks":30,"damage":210,"zones":4,"pauseRemovableWeakStatusesTicks":60,"extraTelegraphAtBreakRatio":{"ratio":0.80,"ticks":10}}
+      ],
+      "patternSelector":{
+        "excludeRecent":2,"disallowSameStatusFamilyConsecutive":true,"disallowSameResponseTagCount":3,"disallowSamePrimaryTargetCount":3,
+        "intervalTicks":{"P1_CLASSIFY":54,"P2_GRAFT":49,"P3_OVERLOAD":44},"hazardCaps":{"P1_CLASSIFY":1,"P2_GRAFT":2,"P3_OVERLOAD":2},"strongTelegraphCap":3
+      },
+      "breakRules":{
+        "naturalDecay":0,"groggyTicks":100,"groggyDamageMultiplier":1.15,"partyApMaxRatio":0.20,"neuralLoadAll":-1,
+        "postSuccessMaxMultiplierStep":0.25,"postSuccessMaxMultiplierCap":2.00,"parryRepeatMultipliers":[1.00,0.70,0.40,0.20],"phaseTransitionResetCurrent":true
+      },
+      "statusRules":{
+        "bossDotStrengthMultiplier":0.50,"bossDotDpsHpRatioCap":0.008,"bossSlowMultiplier":0.50,"bossSlowStrengthCap":0.20,
+        "breakConvert":["ROOT","STUN","AIRBORNE"],"immune":["SILENCE","DISARM"],"playerDotStackCap":3,
+        "doNotMoveEquipmentOn":["SILENCE","DISARM"],"vanillaMilkClearsCustomStatuses":false
+      },
+      "rewards":{
+        "shared":[
+          {"id":"RECONSTRUCTION_PART_B","amount":1,"scales":false},
+          {"id":"BOSS_D20_NEURAL_CORE","amount":1,"scales":false},
+          {"id":"BOSS_RESIDUE","amountByPlayers":{"2":8,"3":10,"4":12}},
+          {"id":"WSR-VITAL_TISSUE","amountByPlayers":{"2":5,"3":6,"4":7}},
+          {"id":"WSI-NEURAL_CIRCUIT","amountByPlayers":{"2":2,"3":3,"4":4}}
+        ],
+        "progressExpPerRegisteredPlayer":900,
+        "legendaryChoice":{"count":3,"select":1,"firstItemCount":1,"additionalCraftDayMin":21,"pool":["EQD20-LG-W01","EQD20-LG-UA01","EQD20-LG-OH01","EQD20-LG-AR01","EQD20-LG-AC01","EQD20-LG-CH01"]},
+        "partyAugmentSelectionIndex":2,
+        "idempotencyKey":"rewardId"
+      },
+      "recovery":{
+        "snapshotPlayersAndBossAtomically":true,"resumeSyncTicks":60,"duplicateBossPolicy":"KEEP_HIGHEST_SAVE_SEQUENCE",
+        "unrecoverableState":"ADMIN_RECOVERY_REQUIRED","automaticRewardOnUnrecoverable":false,"resetOnLogout":false,"resetOnLeashRecovery":false
+      },
+      "story":{"revision":"EMPTY","chapterId":null,"introSequenceId":null,"completionSequenceId":null,"dialogueTableId":null}
+    }
+  ]
+}

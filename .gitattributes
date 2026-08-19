@@ -1,0 +1,2 @@
+plugins/wsplugin/src/main/resources/content/**/*.json text eol=lf
+plugins/wsplugin/src/main/resources/content/**/*.yaml text eol=lf

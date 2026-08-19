@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "contentRevision": "ws-content-r1",
+  "domain": "resources",
+  "dataRevision": "resource-d11-d20-r1",
+  "metadata": {
+    "baseline": "3P_EASY_STANDARD",
+    "guaranteeRate": 0.75,
+    "portableProcessingMultiplier": 1.5,
+    "craftSuccessRate": 1.0
+  },
+  "entries": [
+    {"kind":"RESOURCE","id":"WSR-HERB","displayName":"의약 재료","category":"MEDICAL","primary":"NODE-D20-HERB","fallback":"EVENT-MEDICAL-TRACE"},
+    {"kind":"RESOURCE","id":"WSR-ELASTIC_FIBER","displayName":"탄성 섬유","category":"MEDICAL","primary":"NODE-D20-ELASTIC","fallback":"PROCESS-FIBER-LEATHER"},
+    {"kind":"RESOURCE","id":"WSR-TOXIN_SAMPLE","displayName":"독성 표본","category":"STATUS_SAMPLE","primary":"NODE-D20-TOXIN","fallback":"ANALYZE-CORRUPT-TISSUE"},
+    {"kind":"RESOURCE","id":"WSR-THERMAL_SAMPLE","displayName":"열성 표본","category":"STATUS_SAMPLE","primary":"NODE-D20-THERMAL","fallback":"EXPERIMENT-FUEL-TISSUE"},
+    {"kind":"RESOURCE","id":"WSR-HEMATIC_SAMPLE","displayName":"혈성 표본","category":"STATUS_SAMPLE","primary":"NODE-D20-HEMATIC","fallback":"ANALYZE-LEATHER-TISSUE"},
+    {"kind":"RESOURCE","id":"WSR-NEURAL_SAMPLE","displayName":"신경 표본","category":"STATUS_SAMPLE","primary":"NODE-D20-NEURAL","fallback":"SYNTHESIZE-RESIST-CLEANSE-RECORD"},
+    {"kind":"RESOURCE","id":"WSR-VITAL_TISSUE","displayName":"생체 조직","category":"SPECIALIZED_BIO","primary":"NODE-D20-VITAL","fallback":"SYNTHESIZE-THREE-STATUS-SAMPLES"},
+
+    {"kind":"RECIPE","id":"WSRCP-D20-P01","output":{"id":"WSI-STERILE_GEL","amount":2},"inputs":{"WSR-HERB":3,"WSR-TISSUE":1,"WSR-COAL":1},"facility":"FAC-FIELD-PHARMACY","durationTicks":600,"unlock":"C08"},
+    {"kind":"RECIPE","id":"WSRCP-D20-P02","output":{"id":"WSI-ELASTIC_WEAVE","amount":2},"inputs":{"WSR-ELASTIC_FIBER":3,"WSR-FIBER":2},"facility":"FAC-PORTABLE-CRAFT","durationTicks":500,"unlock":"C09"},
+    {"kind":"RECIPE","id":"WSRCP-D20-P03","output":{"id":"WSI-REINFORCED_ALLOY","amount":2},"inputs":{"WSR-IRON":4,"WSR-COPPER":2,"WSR-GOLD":1,"WSR-COAL":2},"facility":"FAC-ENHANCED-FORGE","portableFacility":"FAC-FIELD-FURNACE","durationTicks":1200,"unlock":"C11"},
+    {"kind":"RECIPE","id":"WSRCP-D20-P04","output":{"id":"WSI-NEURAL_CIRCUIT","amount":1},"inputs":{"WSR-NEURAL_SAMPLE":2,"WSR-REDSTONE":2,"WSR-COPPER":2},"facility":"FAC-RESEARCH-TERMINAL","durationTicks":1500,"unlock":"C11"},
+    {"kind":"RECIPE","id":"WSRCP-D20-P05","output":{"id":"WSI-VITAL_MEDIUM","amount":1},"inputs":{"WSR-VITAL_TISSUE":2,"WSI-STERILE_GEL":2,"WSR-MAGIC_CRYSTAL":1},"facility":"FAC-RESEARCH-TERMINAL","durationTicks":1800,"unlock":"C13"},
+    {"kind":"RECIPE","id":"WSRCP-D20-P06","output":{"id":"WSI-STATUS_CLASSIFIER","amount":1},"inputs":{"WSR-TOXIN_SAMPLE":1,"WSR-THERMAL_SAMPLE":1,"WSR-HEMATIC_SAMPLE":1,"WSR-REDSTONE":1},"facility":"FAC-PORTABLE-ANALYZER","durationTicks":1200,"unlock":"C09"},
+
+    {"kind":"RECIPE","id":"WSRCP-D20-S01","output":{"id":"WSI-ANTIDOTE","amount":2},"inputs":{"WSR-HERB":2,"WSR-TOXIN_SAMPLE":1,"WSI-STERILE_GEL":1},"durationTicks":0,"cooldownTicks":160,"useTarget":"SELF_OR_ALLY","effect":{"remove":"POISON","maxStacks":2}},
+    {"kind":"RECIPE","id":"WSRCP-D20-S02","output":{"id":"WSI-COOLING_OINTMENT","amount":2},"inputs":{"WSR-HERB":1,"WSR-THERMAL_SAMPLE":1,"WSI-STERILE_GEL":1},"durationTicks":0,"cooldownTicks":160,"useTarget":"SELF_OR_ALLY","effect":{"remove":"BURN","maxStacks":2,"durationReduction":0.25}},
+    {"kind":"RECIPE","id":"WSRCP-D20-S03","output":{"id":"WSI-HEMOSTATIC_WRAP","amount":2},"inputs":{"WSR-FIBER":2,"WSR-HERB":1,"WSR-HEMATIC_SAMPLE":1},"durationTicks":0,"cooldownTicks":160,"useTarget":"SELF_OR_ALLY","effect":{"remove":"BLEED","maxStacks":2}},
+    {"kind":"RECIPE","id":"WSRCP-D20-S04","output":{"id":"WSI-NEURAL_STABILIZER","amount":1},"inputs":{"WSR-NEURAL_SAMPLE":1,"WSR-GOLD":1,"WSI-STERILE_GEL":1},"durationTicks":0,"cooldownTicks":300,"useTarget":"SELF_OR_ALLY","effect":{"removeOneOf":["ROOT","SILENCE","DISARM"],"selfUseDuringHardCc":false}},
+    {"kind":"RECIPE","id":"WSRCP-D20-S05","output":{"id":"WSI-RESCUE_BRACE","amount":1},"inputs":{"WSI-ELASTIC_WEAVE":1,"WSI-REINFORCED_ALLOY":1},"durationTicks":0,"effect":{"trigger":"RESCUE_START","durationTicks":40,"interruptThresholdMultiplier":1.25}},
+    {"kind":"RECIPE","id":"WSRCP-D20-S06","output":{"id":"WSI-BIO_SHIELD_AMPOULE","amount":1},"inputs":{"WSI-VITAL_MEDIUM":1,"WSR-HERB":1},"durationTicks":0,"effect":{"shieldMaxHpRatio":0.08,"durationTicks":120,"combatLimit":1}},
+    {"kind":"RECIPE","id":"WSRCP-D20-CALL","output":{"id":"WSI-D20-BOSS-CALL","amount":1},"inputs":{"WSI-VITAL_MEDIUM":2,"WSI-NEURAL_CIRCUIT":2,"WSI-SIGNAL_LENS":2,"WSI-REINFORCED_ALLOY":3,"WSI-STATUS_CLASSIFIER":1},"requirements":{"dayMin":20,"discoveries":["C13"],"ledgerExists":["RECONSTRUCTION_PART_A","BOSS_D10_CORE"]},"consumeRequirements":false,"transactionalSpawnRef":"BOSS-D20-NEURAL-AMALGAM"},
+
+    {"kind":"NODE","id":"NODE-D20-HERB","dayMin":11,"dayMax":20,"outputs":{"WSR-HERB":5,"WSR-FIBER":2},"risk":"WEAK_POISON_CLOUD","fallback":"RUINED-MEDICAL-CACHE"},
+    {"kind":"NODE","id":"NODE-D20-ELASTIC","dayMin":11,"dayMax":20,"outputs":{"WSR-ELASTIC_FIBER":4,"WSR-FIBER":2},"risk":"FLANKER_NOISE","fallback":"LEATHER-COMPRESSION"},
+    {"kind":"NODE","id":"NODE-D20-TOXIN","dayMin":11,"dayMax":20,"outputs":{"WSR-TOXIN_SAMPLE":3,"WSR-HERB":2},"risk":"TOXIC-POCKET","fallback":"GENERIC-RIFT"},
+    {"kind":"NODE","id":"NODE-D20-THERMAL","dayMin":12,"dayMax":20,"outputs":{"WSR-THERMAL_SAMPLE":3,"WSR-COAL":2},"risk":"THERMAL-PULSE","fallback":"UNDERGROUND-HEAT-SEAM"},
+    {"kind":"NODE","id":"NODE-D20-HEMATIC","dayMin":13,"dayMax":20,"outputs":{"WSR-HEMATIC_SAMPLE":3,"WSR-LEATHER":1},"risk":"ANALYSIS-ONLY","fallback":"CORRUPTED-VEGETATION"},
+    {"kind":"NODE","id":"NODE-D20-NEURAL","dayMin":14,"dayMax":20,"outputs":{"WSR-NEURAL_SAMPLE":3,"WSR-REDSTONE":1},"risk":"TELEGRAPHED-SILENCE-PULSE","fallback":"GENERIC-RESONANCE-COLONY"},
+    {"kind":"NODE","id":"NODE-D20-VITAL","dayMin":16,"dayMax":20,"outputs":{"WSR-VITAL_TISSUE":2,"WSR-NEURAL_SAMPLE":1},"risk":"ELITE-TRACE","fallback":"SYNTHESIZE-THREE-STATUS-SAMPLES"}
+  ]
+}

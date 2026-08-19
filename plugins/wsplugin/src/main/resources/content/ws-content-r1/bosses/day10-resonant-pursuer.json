@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "contentRevision": "ws-content-r1",
+  "domain": "bosses",
+  "dataRevision": "boss-d10-resonant-pursuer-r1",
+  "metadata": {"baseline":"2P_EASY_STANDARD","targetDurationSeconds":[480,720],"storyRevision":"EMPTY"},
+  "entries": [
+    {
+      "id":"BOSS-D10-RESONANT-PURSUER","displayName":"공명 추적체","entityType":"RAVAGER","disableVanillaAiAttacks":true,
+      "requirements":{"day":10,"discoveries":["C05","C06","C07"],"callItem":"WSRCP-G03"},
+      "stats":{"hp":105000,"def":70,"pen":12,"res":35,"staggerRes":20,"break":10000,"moveSpeedSprintRatio":0.82,"activityRadius":48,"recoveryRadius":64},
+      "scaling":{"1":{"hp":0.72,"damage":0.90,"break":0.75},"2":{"hp":1.00,"damage":1.00,"break":1.00},"3":{"hp":1.32,"damage":1.06,"break":1.25},"4":{"hp":1.60,"damage":1.12,"break":1.50}},
+      "phases":[
+        {"id":"P1_PURSUIT","hpRange":[1.00,0.70],"patternIds":["B10-SWIPE","B10-CHARGE","B10-PULSE_MARK","B10-SHARD_VOLLEY"]},
+        {"id":"P2_ADAPT","hpRange":[0.70,0.35],"fixedMutations":["MUT_CARAPACE"],"patternIds":["B10-ANCHOR_SIPHON","B10-SPLIT_LANCE","B10-ECHO_CALL","B10-ADAPTIVE_CRASH"]},
+        {"id":"P3_OVERLOAD","hpRange":[0.35,0.00],"patternIds":["B10-TRIPLE_PURSUIT","B10-COLLAPSE_RING","B10-CORE_OVERLOAD","B10-FINAL_PULSE"]}
+      ],
+      "patterns":[
+        {"id":"B10-SWIPE","telegraphTicks":13,"damage":110,"tags":["DODGEABLE","GUARDABLE"],"parryBreak":420},
+        {"id":"B10-CHARGE","telegraphTicks":20,"damage":160,"tags":["DODGEABLE","PARRY_ONLY"],"parryBreak":800},
+        {"id":"B10-PULSE_MARK","telegraphTicks":22,"damage":130,"minimumAllyDistance":5},
+        {"id":"B10-SHARD_VOLLEY","telegraphTicks":17,"projectiles":5,"damage":70,"maxHitsPerTarget":2},
+        {"id":"B10-ANCHOR_SIPHON","channelTicks":120,"interruptBreak":2000,"interactionCountFormula":"MIN_2_SURVIVORS","successBreak":600},
+        {"id":"B10-SPLIT_LANCE","telegraphTicks":20,"lines":[2,3],"damage":145},
+        {"id":"B10-ECHO_CALL","telegraphTicks":24,"summonRewardPolicy":"NONE"},
+        {"id":"B10-ADAPTIVE_CRASH","telegraphTicks":18,"damage":150},
+        {"id":"B10-TRIPLE_PURSUIT","telegraphTicks":13,"repeats":3,"damage":100,"repeatTargetDamageMultiplier":0.60},
+        {"id":"B10-COLLAPSE_RING","telegraphTicks":24,"repeats":2,"damage":155},
+        {"id":"B10-CORE_OVERLOAD","channelTicks":100,"coreTotalHp":3000,"coreTotalBreak":2400,"failureDamage":220,"cooldownTicks":700},
+        {"id":"B10-FINAL_PULSE","triggerHpRatio":0.10,"combatLimit":1,"damage":180,"zones":4}
+      ],
+      "breakRules":{"naturalDecay":0,"groggyTicks":100,"groggyDamageMultiplier":1.15,"partyApMaxRatio":0.20,"postSuccessMaxMultiplierStep":0.25,"postSuccessMaxMultiplierCap":2.00},
+      "rewards":{"shared":[{"id":"RECONSTRUCTION_PART_A","amount":1},{"id":"BOSS_D10_CORE","amount":1}],"progressExpPerRegisteredPlayer":300,"epicChoice":{"count":3,"select":1,"firstItemCount":1},"partyAugmentSelectionIndex":1,"idempotencyKey":"rewardId"},
+      "recovery":{"transactionalCall":true,"resumeSyncTicks":60,"duplicateBossPolicy":"KEEP_HIGHEST_SAVE_SEQUENCE","automaticRewardOnUnrecoverable":false},
+      "story":{"revision":"EMPTY"}
+    }
+  ]
+}

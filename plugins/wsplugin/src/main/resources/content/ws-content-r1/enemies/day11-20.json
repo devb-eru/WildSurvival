@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "contentRevision": "ws-content-r1",
+  "domain": "enemies",
+  "dataRevision": "enemy-d11-d20-r1",
+  "metadata": {
+    "baseline":"2P_EASY_STANDARD",
+    "profiles":{
+      "STATUS_INTRO":{"days":[11,12],"hpMultiplier":1.15,"damageMultiplier":1.10,"statusMultiplier":1.00},
+      "STATUS_CHAIN":{"days":[13,14],"hpMultiplier":1.19,"damageMultiplier":1.12,"statusMultiplier":1.05},
+      "AUGMENT_ADAPT":{"days":[15,17],"hpMultiplier":1.24,"damageMultiplier":1.15,"statusMultiplier":1.08},
+      "ELITE_STATUS":{"days":[18,19],"hpMultiplier":1.30,"damageMultiplier":1.18,"statusMultiplier":1.10},
+      "STATUS_BOSS_DAY":{"days":[20,20],"hpMultiplier":1.30,"damageMultiplier":1.18,"statusMultiplier":1.10}
+    },
+    "playerScaling":{
+      "1":{"hp":0.72,"damage":0.90,"break":0.75,"budget":0.70},
+      "2":{"hp":1.00,"damage":1.00,"break":1.00,"budget":1.00},
+      "3":{"hp":1.32,"damage":1.06,"break":1.25,"budget":1.30},
+      "4":{"hp":1.60,"damage":1.12,"break":1.50,"budget":1.60}
+    },
+    "strongTelegraphCaps":{"ordinary":2,"withElite":3},
+    "augmentTierLockSourceLevel":15
+  },
+  "entries": [
+    {"id":"EN-D11-01","displayName":"쇠약 배회자","entityType":"ZOMBIE","role":"CHASER","cost":1,"firstDay":11,"stats":{"hp":380,"def":30,"break":0},"patterns":[{"id":"WEAK_CLAW","telegraphTicks":11,"damage":92,"tags":["DODGEABLE","GUARDABLE"],"status":{"id":"WEAKNESS","strength":0.08,"durationTicks":80}}]},
+    {"id":"EN-D11-02","displayName":"독침 사수","entityType":"BOGGED","role":"RANGED","cost":2,"firstDay":11,"stats":{"hp":320,"def":20,"break":0},"patterns":[{"id":"TOXIC_SHOT","telegraphTicks":14,"damage":78,"tags":["DODGEABLE","GUARDABLE","PROJECTILE"],"status":{"id":"POISON","stacks":1},"sameTargetCooldownTicks":80}]},
+    {"id":"EN-D12-01","displayName":"잔불 포자체","entityType":"BLAZE","role":"ARTILLERY","cost":4,"firstDay":12,"stats":{"hp":420,"def":30,"break":700},"patterns":[{"id":"THERMAL_CORE","telegraphTicks":20,"damage":125,"tags":["POSITIONAL"],"area":{"durationTicks":80,"status":{"id":"BURN","stacks":1}}}]},
+    {"id":"EN-D12-02","displayName":"충격 갑피병","entityType":"HUSK","role":"DEFENDER","cost":4,"firstDay":12,"stats":{"hp":820,"def":75,"break":1100},"patterns":[{"id":"CARAPACE_STANCE","telegraphTicks":10,"frontBreakMultiplier":0.80,"rearBreakMultiplier":1.25},{"id":"CARAPACE_SLAM","telegraphTicks":18,"damage":135,"tags":["HEAVY_GUARD"]}]},
+    {"id":"EN-D13-01","displayName":"혈흔 추적자","entityType":"CAVE_SPIDER","role":"FLANKER","cost":2,"firstDay":13,"stats":{"hp":430,"def":25,"break":0},"patterns":[{"id":"LACERATION_LEAP","telegraphTicks":15,"damage":105,"tags":["DODGEABLE","PARRY_ONLY"],"status":{"id":"BLEED","stacks":1}}]},
+    {"id":"EN-D13-02","displayName":"반응 조율자","entityType":"WITCH","role":"SUPPORT","cost":4,"firstDay":13,"stats":{"hp":500,"def":35,"break":750},"patterns":[{"id":"STATUS_AMPLIFY","telegraphTicks":22,"damage":60,"extendLongestWeakStatusTicks":40,"targetCooldownTicks":160}]},
+    {"id":"EN-D14-01","displayName":"붉은 처형자","entityType":"VINDICATOR","role":"BRUISER","cost":4,"firstDay":14,"stats":{"hp":1050,"def":70,"break":1400},"patterns":[{"id":"CROSS_CUT","telegraphTicks":14,"damage":135,"tags":["DODGEABLE","GUARDABLE"]},{"id":"EXECUTION_SLAM","telegraphTicks":25,"damage":190,"tags":["DODGEABLE","PARRY_ONLY"],"rescueInterruptThresholdMultiplier":1.20,"instantKill":false}]},
+    {"id":"EN-D14-02","displayName":"구조 결박자","entityType":"STRAY","role":"CONTROLLER","cost":4,"firstDay":14,"stats":{"hp":520,"def":35,"break":800},"patterns":[{"id":"BIND_LINE","telegraphTicks":18,"damage":80,"tags":["DODGEABLE","PARRY_ONLY"],"status":{"id":"ROOT","durationTicks":20},"rescueTargetWeight":1.25}]},
+    {"id":"EN-D15-01","displayName":"공명 방벽체","entityType":"PIGLIN_BRUTE","role":"DEFENDER","cost":4,"firstDay":15,"stats":{"hp":980,"def":90,"break":1300},"patterns":[{"id":"SWITCHING_BARRIER","telegraphTicks":12,"alternatingAxis":["PHYSICAL","STATUS"],"damageTakenMultiplier":0.85,"durationTicks":100},{"id":"BARRIER_SHOVE","telegraphTicks":14,"damage":125,"tags":["GUARDABLE"]}]},
+    {"id":"EN-D15-02","displayName":"과부하 전령","entityType":"PILLAGER","role":"SUPPORT","cost":4,"firstDay":15,"stats":{"hp":560,"def":40,"break":850},"patterns":[{"id":"AUGMENT_SIGNAL","telegraphTicks":24,"target":"ALLY_WITH_AUGMENT","augmentCooldownMultiplier":0.90,"durationTicks":160,"stacking":"NONE"},{"id":"RESONANCE_BOLT","telegraphTicks":14,"damage":85,"tags":["PROJECTILE","DODGEABLE"]}]},
+    {"id":"EN-D16-01","displayName":"잠복 안개체","entityType":"SNIFFER","role":"CONTROLLER","cost":6,"firstDay":16,"stats":{"hp":900,"def":55,"break":1250},"fixedMutations":["MUT_BURROW"],"patterns":[{"id":"BURROW_ERUPTION","telegraphTicks":20,"burrowMaxTicks":50,"damageReductionWhileBurrowed":0.70,"damage":145,"breakCanForceEmerge":true},{"id":"STATUS_FOG","durationTicks":100,"targetInternalCooldownTicks":20}]},
+    {"id":"EN-D16-02","displayName":"열성 운반체","entityType":"MAGMA_CUBE","role":"CHASER","cost":2,"firstDay":16,"stats":{"hp":460,"def":45,"break":0},"patterns":[{"id":"THERMAL_COLLISION","telegraphTicks":13,"damage":105,"status":{"id":"BURN","stacks":1}},{"id":"THREE_WAY_HEAT","telegraphTicks":13,"damage":105,"maxHitsPerTarget":1}]},
+    {"id":"EN-D17-01","displayName":"침묵 울음체","entityType":"RAVAGER","role":"CONTROLLER","cost":4,"firstDay":17,"stats":{"hp":1150,"def":75,"break":1450},"patterns":[{"id":"SILENCE_WAVE","telegraphTicks":24,"damage":95,"status":{"id":"SILENCE","durationTicks":24},"doesNotBlock":["MOVE","DODGE","BASIC_ATTACK","CONSUMABLE"]}]},
+    {"id":"EN-D17-02","displayName":"무장 절단자","entityType":"WITHER_SKELETON","role":"BRUISER","cost":4,"firstDay":17,"stats":{"hp":1080,"def":80,"break":1400},"patterns":[{"id":"DISARM_CUT","telegraphTicks":20,"damage":145,"status":{"id":"DISARM","durationTicks":20},"moveEquippedItem":false,"forceUnarmed":false}]},
+
+    {"id":"EN-D18-E01","displayName":"상태 봉합 정예","entityType":"ENDERMAN","role":"ELITE","cost":10,"firstDay":18,"stats":{"hp":4200,"def":95,"break":1800},"fixedMutations":["MUT_CLING"],"maxAugments":1,"patterns":[{"id":"SUTURE_LINK","telegraphTicks":20,"durationTicks":100,"safeDistanceMin":5,"safeDistanceMax":12},{"id":"STATUS_TRANSFER","telegraphTicks":22,"copyStrongestWeakStatusToNextAttack":true},{"id":"CLING_TRACE","areaDurationTicks":80}]},
+    {"id":"EN-D18-E02","displayName":"침묵 군락 정예","entityType":"EVOKER","role":"ELITE","cost":10,"firstDay":18,"stats":{"hp":3900,"def":80,"break":1650},"fixedMutations":["MUT_SILENCE_CRY"],"maxAugments":1,"patterns":[{"id":"BLOCKING_CHORUS","telegraphTicks":28,"radius":6,"status":{"id":"SILENCE","durationTicks":28}},{"id":"SILENT_FOLLOWERS","summonCount":2,"summonRewards":false},{"id":"COLONY_BURST","triggerBreakRatio":0.70,"damage":0,"status":{"id":"SLOW"},"combatLimit":1}]},
+    {"id":"EN-D19-E01","displayName":"신경 호위 정예","entityType":"RAVAGER","role":"ELITE","cost":9,"firstDay":19,"stats":{"hp":4700,"def":110,"break":2050},"fixedMutations":["MUT_BREAK_SHELL"],"maxAugments":2,"patterns":[{"id":"ESCORT_LINK","maxAllies":2,"allyDefDelta":15},{"id":"FRONTAL_SHELL","frontBreakMaxMultiplier":1.20,"rearBreakMultiplier":1.25},{"id":"RESCUE_CHARGE","telegraphTicks":22,"damage":165,"target":"RESCUER_NOT_DOWNED","parryBreak":700}]},
+
+    {"id":"EN-D20-A01","displayName":"독성 접합편","entityType":"SLIME","role":"BOSS_ADD","cost":0,"firstDay":20,"stats":{"hp":1100,"def":40,"break":0},"rewardPolicy":"NONE","patterns":[{"id":"TOXIC_SPRAY","telegraphTicks":16,"damage":80,"status":{"id":"POISON","stacks":1}}]},
+    {"id":"EN-D20-A02","displayName":"열성 접합편","entityType":"MAGMA_CUBE","role":"BOSS_ADD","cost":0,"firstDay":20,"stats":{"hp":1100,"def":40,"break":0},"rewardPolicy":"NONE","patterns":[{"id":"THERMAL_WAVE","telegraphTicks":18,"damage":90,"status":{"id":"BURN","stacks":1}}]},
+    {"id":"EN-D20-A03","displayName":"신경 접합편","entityType":"ENDERMITE","role":"BOSS_ADD","cost":0,"firstDay":20,"stats":{"hp":950,"def":35,"break":0},"rewardPolicy":"NONE","patterns":[{"id":"NEURAL_BLOCK","telegraphTicks":20,"damage":65,"status":{"id":"SILENCE","durationTicks":16}}]},
+    {"id":"EN-D20-A04","displayName":"혈성 접합편","entityType":"CAVE_SPIDER","role":"BOSS_ADD","cost":0,"firstDay":20,"stats":{"hp":1000,"def":35,"break":0},"rewardPolicy":"NONE","patterns":[{"id":"HEMATIC_LEAP","telegraphTicks":14,"damage":85,"status":{"id":"BLEED","stacks":1}}]}
+  ]
+}

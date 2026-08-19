@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "contentRevision": "ws-content-r1",
+  "activation": "NEW_RUN_ONLY",
+  "storyRevision": "EMPTY",
+  "createdAt": "2026-08-20",
+  "files": [
+    {"path":"schemas/domain-bundle.schema.json","domain":"schema","schemaVersion":1,"sha256":"21f49ceec77d77700b14be2dd6cfd8da4131a47f4be94ab9480a4a93db985b05"},
+    {"path":"schemas/manifest.schema.json","domain":"schema","schemaVersion":1,"sha256":"36752d515db47e8062f1dcbb0b0a42a617466caa9f1ee1bca8820eaecbc46e85"},
+    {"path":"days/day01-20.json","domain":"days","schemaVersion":1,"sha256":"d19b0f3d1361e9874d63445c79c7c6a84d6207991bebe1952ec6c6285bb24cc8"},
+    {"path":"encounters/day01-10.json","domain":"encounters","schemaVersion":1,"sha256":"00cc9c93363d3321117cead93c928628d57579de0f63136bdbe11f51263a63ba"},
+    {"path":"enemies/day01-10.json","domain":"enemies","schemaVersion":1,"sha256":"f692a4fee0428f61bf6549ccbc251dd046b8f0de264406fbc0e87ad71b43efa9"},
+    {"path":"resources/day11-20.json","domain":"resources","schemaVersion":1,"sha256":"445d70befae053bcfcb2be4ab0ba1fbf8a9884b6b49dbe10206951ffe6a48a93"},
+    {"path":"equipment/day11-20.json","domain":"equipment","schemaVersion":1,"sha256":"87426084b94d40d6257156a472303408a7a68fcdd54d0883316664cf58dd2789"},
+    {"path":"enemies/day11-20.json","domain":"enemies","schemaVersion":1,"sha256":"1b61fab8a61a2b305e948819dc244377e3caa4c4e7432bc62dae2bb28de2efe6"},
+    {"path":"bosses/day10-resonant-pursuer.json","domain":"bosses","schemaVersion":1,"sha256":"49685583a048a6cf94750cd8b7ed19c4890a27d063c2e8cd5beee06c9b9eda01"},
+    {"path":"bosses/day20-neural-amalgam.json","domain":"bosses","schemaVersion":1,"sha256":"a1933445100379d1a0ae70b80df8e51dd4597dd0cc1a1ef83b21f36ba2cce491"},
+    {"path":"ops/admin-commands.json","domain":"admin-commands","schemaVersion":1,"sha256":"96718d38dad01dd889c0f5827f79af8cf2b1f3a0f12a5f739fa41dae16ef10aa"}
+  ]
+}

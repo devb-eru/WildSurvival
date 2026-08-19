@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "contentRevision": "ws-content-r1",
+  "domain": "admin-commands",
+  "dataRevision": "admin-command-r1",
+  "metadata": {
+    "rootCommand":"wildsurvival",
+    "aliases":["ws"],
+    "consoleAllowed":true,
+    "mutationsRequireReason":true,
+    "mutationsRequireDryRunToken":true,
+    "auditTable":"admin_audit",
+    "activeRunRevisionImmutable":true
+  },
+  "entries": [
+    {"id":"CMD-CONTENT-VALIDATE","path":"admin content validate","permission":"wildsurvival.admin.validate","mutation":false,"args":["revision?"],"result":"SCHEMA_REFERENCE_RANGE_HASH_REPORT"},
+    {"id":"CMD-CONTENT-RELOAD","path":"admin content reload","permission":"wildsurvival.admin.content.reload","mutation":true,"args":["revision","reason"],"dryRun":true,"confirmationToken":true,"activeRunEffect":"NONE_NEW_RUN_ONLY"},
+    {"id":"CMD-INSPECT-RUN","path":"admin inspect run","permission":"wildsurvival.admin.inspect","mutation":false,"args":["runId?"],"result":"RUN_DAY_MEMBERS_REVISION_STATE"},
+    {"id":"CMD-INSPECT-PLAYER","path":"admin inspect player","permission":"wildsurvival.admin.inspect","mutation":false,"args":["player","runId?"],"result":"LIFE_EQUIPMENT_AUGMENT_DISCOVERY_TX"},
+    {"id":"CMD-INSPECT-ITEM","path":"admin inspect item","permission":"wildsurvival.admin.inspect","mutation":false,"args":["itemInstanceId"],"result":"PDC_SIGNATURE_OWNER_LEDGER_LOCATIONS"},
+    {"id":"CMD-INSPECT-FACILITY","path":"admin inspect facility","permission":"wildsurvival.admin.inspect","mutation":false,"args":["facilityInstanceId"],"result":"FACILITY_NETWORK_JOB_CORRUPTION"},
+    {"id":"CMD-INSPECT-DAY","path":"admin inspect day","permission":"wildsurvival.admin.inspect","mutation":false,"args":["runId?"],"result":"DAY_TRANSITION_SKIP_FINAL_GATE"},
+    {"id":"CMD-INSPECT-ENCOUNTER","path":"admin inspect encounter","permission":"wildsurvival.admin.inspect","mutation":false,"args":["encounterId"],"result":"SNAPSHOT_SPAWNS_REWARD_TX"},
+    {"id":"CMD-INSPECT-REWARD","path":"admin inspect reward","permission":"wildsurvival.admin.inspect","mutation":false,"args":["rewardId"],"result":"GRANT_STAGES_REMAINDERS_RECIPIENTS"},
+    {"id":"CMD-INSPECT-AUGMENT-LOCK","path":"admin inspect augment-lock","permission":"wildsurvival.admin.inspect","mutation":false,"args":["runId","level"],"result":"TIER_FIRST_PLAYER_SEED_SAVE_SEQUENCE"},
+    {"id":"CMD-INSPECT-STORY","path":"admin inspect story","permission":"wildsurvival.admin.inspect","mutation":false,"args":["runId?"],"result":"REVISION_EMPTY_OR_ACTIVE_STATE"},
+    {"id":"CMD-SNAPSHOT-CREATE","path":"admin snapshot create","permission":"wildsurvival.admin.snapshot","mutation":true,"args":["runId","reason"],"dryRun":false,"confirmationToken":false,"result":"SNAPSHOT_ID_SAVE_SEQUENCE_HASH"},
+    {"id":"CMD-SNAPSHOT-LIST","path":"admin snapshot list","permission":"wildsurvival.admin.inspect","mutation":false,"args":["runId"],"result":"SNAPSHOT_HEADERS_ONLY"},
+    {"id":"CMD-RECOVER-TX","path":"admin recover transaction","permission":"wildsurvival.admin.recover.transaction","mutation":true,"args":["transactionId","mode=AUTO|COMMIT|CANCEL","reason"],"dryRun":true,"confirmationToken":true,"precondition":"PREPARED_OR_INCONSISTENT"},
+    {"id":"CMD-RECOVER-ITEM","path":"admin recover item","permission":"wildsurvival.admin.recover.item","mutation":true,"args":["itemInstanceId","mode=QUARANTINE|RESTORE_LEDGER_COPY","reason"],"dryRun":true,"confirmationToken":true,"precondition":"SIGNATURE_AND_LEDGER_AUDIT"},
+    {"id":"CMD-RECOVER-ENCOUNTER","path":"admin recover encounter","permission":"wildsurvival.admin.recover.encounter","mutation":true,"args":["encounterId","mode=RESUME|SAFE_CANCEL|ROLLBACK_CALL","reason"],"dryRun":true,"confirmationToken":true,"precondition":"NO_COMMITTED_REWARD_FOR_CANCEL"},
+    {"id":"CMD-RECOVER-REWARD","path":"admin recover reward","permission":"wildsurvival.admin.recover.reward","mutation":true,"args":["rewardId","mode=RESUME_MISSING_STAGES","reason"],"dryRun":true,"confirmationToken":true,"precondition":"SOURCE_RESULT_COMMITTED"},
+    {"id":"CMD-RECOVER-RUN","path":"admin recover run","permission":"wildsurvival.admin.recover.run","mutation":true,"args":["runId","snapshotId","reason"],"dryRun":true,"confirmationToken":true,"precondition":"CORRUPTED_OR_ADMIN_RECOVERY_REQUIRED"},
+    {"id":"CMD-OVERRIDE-DAY","path":"admin override day","permission":"wildsurvival.admin.root.day","mutation":true,"args":["runId","targetDay","reason"],"dryRun":true,"confirmationToken":true,"precondition":"RECOVERY_STATE_ONLY","cannotBypass":["DAY50_MINIMUM","FINAL_OBJECTIVE_REQUIREMENTS","BOSS_REWARD"]},
+    {"id":"CMD-MIGRATE-PLAN","path":"admin migrate plan","permission":"wildsurvival.admin.migrate","mutation":false,"args":["fromRevision","toRevision"],"result":"COMPATIBILITY_AND_BACKUP_PLAN"},
+    {"id":"CMD-MIGRATE-APPLY","path":"admin migrate apply","permission":"wildsurvival.admin.migrate","mutation":true,"args":["planId","reason"],"dryRun":true,"confirmationToken":true,"precondition":"NO_ACTIVE_COMBAT_AND_BACKUP_EXISTS"},
+    {"id":"CMD-AUDIT-QUERY","path":"admin audit query","permission":"wildsurvival.admin.audit","mutation":false,"args":["runId?","actor?","since?","limit?"],"result":"REDACTED_AUDIT_ROWS"}
+  ]
+}

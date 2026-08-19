@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "contentRevision": "ws-content-r1",
+  "domain": "enemies",
+  "dataRevision": "enemy-d01-d10-r1",
+  "metadata": {"baseline":"2P_EASY_STANDARD","sourceDocument":"ENEMY-001"},
+  "entries": [
+    {"id":"EN-D1-01","displayName":"굶주린 배회자","entityType":"ZOMBIE","role":"CHASER","cost":1,"firstDay":1,"stats":{"hp":300,"def":25,"break":0},"patterns":[{"id":"CLAW","telegraphTicks":9,"damage":80,"tags":["DODGEABLE","GUARDABLE"]}]},
+    {"id":"EN-D1-02","displayName":"측면 거미","entityType":"SPIDER","role":"FLANKER","cost":1,"firstDay":1,"stats":{"hp":240,"def":15,"break":0},"patterns":[{"id":"LEAP","telegraphTicks":13,"damage":90,"tags":["DODGEABLE","PARRY_ONLY"]}]},
+    {"id":"EN-D2-01","displayName":"뼈 사수","entityType":"SKELETON","role":"RANGED","cost":2,"firstDay":2,"stats":{"hp":220,"def":15,"break":0},"patterns":[{"id":"ARROW","telegraphTicks":12,"damage":75,"tags":["DODGEABLE","GUARDABLE","PROJECTILE"]}]},
+    {"id":"EN-D4-01","displayName":"부패한 강타자","entityType":"HUSK","role":"BRUISER","cost":3,"firstDay":4,"stats":{"hp":650,"def":45,"break":800},"patterns":[{"id":"SHOVE","telegraphTicks":13,"damage":115,"tags":["GUARDABLE"]},{"id":"GROUND_SLAM","telegraphTicks":19,"damage":150,"tags":["HEAVY_GUARD"]}]},
+    {"id":"EN-D4-02","displayName":"불안정 폭발체","entityType":"CREEPER","role":"ARTILLERY","cost":3,"firstDay":4,"disableVanillaExplosion":true,"stats":{"hp":300,"def":20,"break":0},"patterns":[{"id":"RESONANCE_BLAST","telegraphTicks":24,"damage":180,"tags":["POSITIONAL"],"worldDamage":false}]},
+    {"id":"EN-D5-01","displayName":"오염 송곳니","entityType":"CAVE_SPIDER","role":"CONTROLLER","cost":3,"firstDay":5,"stats":{"hp":280,"def":20,"break":0},"patterns":[{"id":"TOXIC_BITE","telegraphTicks":11,"damage":55,"tags":["DODGEABLE","GUARDABLE"],"status":{"id":"POISON","stacks":1}}]},
+    {"id":"EN-D6-01","displayName":"침수 견인자","entityType":"DROWNED","role":"CONTROLLER","cost":3,"firstDay":6,"stats":{"hp":380,"def":35,"break":650},"patterns":[{"id":"PULL_LINE","telegraphTicks":16,"damage":85,"tags":["DODGEABLE","PARRY_ONLY"]}]},
+    {"id":"EN-D6-02","displayName":"공중 포착자","entityType":"PHANTOM","role":"FLANKER","cost":2,"firstDay":6,"stats":{"hp":260,"def":20,"break":0},"patterns":[{"id":"DIVE","telegraphTicks":15,"damage":95,"tags":["DODGEABLE"]}]},
+    {"id":"EN-D7-01","displayName":"철편 방어자","entityType":"VINDICATOR","role":"DEFENDER","cost":3,"firstDay":7,"stats":{"hp":700,"def":70,"break":950},"patterns":[{"id":"FRONTAL_GUARD","telegraphTicks":6,"tags":["POSITIONAL"]},{"id":"SHIELD_CUT","telegraphTicks":14,"damage":120,"tags":["GUARDABLE"]}]},
+    {"id":"EN-D7-02","displayName":"포자 조율자","entityType":"WITCH","role":"SUPPORT","cost":3,"firstDay":7,"stats":{"hp":360,"def":30,"break":0},"patterns":[{"id":"WEAKEN_ORB","telegraphTicks":18,"damage":50,"tags":["DODGEABLE","PROJECTILE"]}]},
+    {"id":"EN-D8-E01","displayName":"공명 추적 정예","entityType":"ENDERMAN","role":"ELITE","cost":8,"firstDay":8,"stats":{"hp":2600,"def":80,"break":1200},"patterns":[{"id":"AFTERIMAGE_COMBO","hits":3,"damage":120,"followupDamageMultiplier":0.70},{"id":"TRACKING_CHARGE","telegraphTicks":20,"damage":160,"parryBreak":240},{"id":"RESONANCE_MARK","durationTicks":80,"clearOnOtherPlayerHit":true}]},
+    {"id":"EN-D9-E01","displayName":"균열 호위 정예","entityType":"STRAY","role":"ELITE","cost":8,"firstDay":9,"stats":{"hp":2300,"def":65,"break":1100},"patterns":[{"id":"COOLING_SHOT","damage":105,"status":{"id":"SLOW","strength":0.25,"durationTicks":60}},{"id":"LINE_BARRAGE","telegraphTicks":22,"lines":3,"damage":140},{"id":"ESCORT_SIGNAL","summonCount":2,"summonRewardPolicy":"NONE"}]}
+  ]
+}

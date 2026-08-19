@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "contentRevision": "ws-content-r1",
+  "domain": "equipment",
+  "dataRevision": "equip-d11-d20-r1",
+  "metadata": {
+    "equipGuiOnly": true,
+    "mirrorSlots": {"MAIN_WEAPON":0,"OFF_WEAPON":-106},
+    "unarmedActivation":"MAIN_WEAPON_LEDGER_AND_SLOT_0_EMPTY",
+    "caps":[
+      {"days":[11,14],"rarity":"RARE","itemLevel":14,"enhancement":4},
+      {"days":[15,17],"rarity":"RARE","itemLevel":17,"enhancement":5},
+      {"days":[18,19],"rarity":"EPIC","itemLevel":19,"enhancement":5,"partyCraftLimit":2},
+      {"days":[20,20],"rarity":"LEGENDARY_REWARD_ONLY","itemLevel":20,"enhancement":5,"firstItemLimit":1}
+    ]
+  },
+  "entries": [
+    {"id":"EQD20-SW-R01","displayName":"중재자 검","weaponClass":"SWORD","material":"IRON_SWORD","customModelData":21101,"slot":"MAIN_WEAPON","rarity":"RARE","itemLevel":14,"tags":["GUARD","STATUS_EXTEND"],"effect":{"trigger":"PARRY_SUCCESS","windowTicks":100,"nextHits":3,"statusDurationMultiplier":1.08,"targetCooldownTicks":160}},
+    {"id":"EQD20-AX-R01","displayName":"절제 도끼","weaponClass":"AXE","material":"IRON_AXE","customModelData":21102,"slot":"MAIN_WEAPON","rarity":"RARE","itemLevel":14,"tags":["HEAVY","REACTION"],"effect":{"trigger":"HEAVY_HIT","requiredDistinctStatuses":2,"damageMultiplier":1.10,"executionLimit":1}},
+    {"id":"EQD20-BO-R01","displayName":"냉각선 활","weaponClass":"BOW","material":"BOW","customModelData":21103,"slot":"MAIN_WEAPON","rarity":"RARE","itemLevel":14,"tags":["RANGED","COOLING"],"effect":{"trigger":"HIT_AT_DISTANCE","minimumBlocks":12,"removeTargetStatus":{"id":"BURN","stacks":1},"breakMultiplier":1.12}},
+    {"id":"EQD20-CB-R01","displayName":"격리 볼트 석궁","weaponClass":"CROSSBOW","material":"CROSSBOW","customModelData":21104,"slot":"MAIN_WEAPON","rarity":"RARE","itemLevel":14,"tags":["MAGAZINE","SUPPRESS"],"effect":{"trigger":"FIRST_BOLT","targetSourceTags":["POISON","BLEED"],"statusHitDelta":-8,"durationTicks":100}},
+    {"id":"EQD20-DG-R01","displayName":"봉합 단검","weaponClass":"DAGGER","material":"IRON_SWORD","customModelData":21105,"resourcePackRequiredForIdentity":false,"slot":"MAIN_WEAPON","rarity":"RARE","itemLevel":14,"tags":["AGILE","BLEED"],"effect":{"trigger":"PERFECT_DODGE","windowTicks":80,"targetStatus":"BLEED","hitDelta":8,"comboFourthBreakMultiplier":1.10}},
+    {"id":"EQD20-BL-R01","displayName":"신경 차단 철퇴","weaponClass":"BLUNT","material":"MACE","customModelData":21106,"resourcePackRequiredForIdentity":false,"slot":"MAIN_WEAPON","rarity":"RARE","itemLevel":14,"tags":["IMPACT","CONTROL"],"effect":{"trigger":"HEAVY_HIT","targetNextWeakControlDurationMultiplier":0.80,"cooldownTicks":160}},
+    {"id":"EQD20-ST-R01","displayName":"분류 지팡이","weaponClass":"STAFF","material":"BLAZE_ROD","customModelData":21107,"slot":"MAIN_WEAPON","rarity":"RARE","itemLevel":14,"tags":["MAGIC","REACTION"],"effect":{"trigger":"AREA_HIT","requiredDistinctStatuses":3,"damageMultiplier":1.08,"executionLimit":1}},
+    {"id":"EQD20-PK-R01","displayName":"조직 천공 곡괭이","weaponClass":"PICKAXE","material":"IRON_PICKAXE","customModelData":21108,"slot":"MAIN_WEAPON","rarity":"RARE","itemLevel":14,"executionProfile":"COMBAT_TARGET_FIRST_THEN_MINING","tags":["PENETRATE","BREAK"],"effect":{"targetTags":["BIO","ARMORED"],"penDelta":10,"breakThresholdRatio":0.80,"additionalPen":4}},
+    {"id":"EQD20-TR-R01","displayName":"회수선 삼지창","weaponClass":"TRIDENT","material":"TRIDENT","customModelData":21109,"slot":"MAIN_WEAPON","rarity":"RARE","itemLevel":14,"executionProfile":"CUSTOM_THROW_RECALL","disableVanilla":["THROW","LOYALTY","RIPTIDE"],"tags":["THROW","RECALL"],"effect":{"trigger":"RECALL_PATH_ALLY_PASS","statusResistance":6,"durationTicks":80,"targetCooldownTicks":200}},
+    {"id":"EQD20-UA-R01","displayName":"반격 붕대","weaponClass":"UNARMED","material":"RABBIT_HIDE","customModelData":21110,"slot":"ACCESSORY","rarity":"RARE","itemLevel":14,"requiresEmptyMainWeapon":true,"tags":["UNARMED","COUNTER"],"effect":{"trigger":"PERFECT_DODGE_COUNTER","removeOneOf":["SLOW","WEAKNESS"],"cooldownTicks":240}},
+
+    {"id":"EQD20-AUG-R01","displayName":"개인 공명 개조","kind":"MODIFICATION","rarity":"RARE","itemLevel":17,"compatible":"EQD20-*-R01","effect":{"requiredPersonalAugmentTagMatches":2,"coreActiveApDelta":-3,"cooldownTicks":160,"respectGlobalApFloor":true}},
+    {"id":"EQD20-AUG-R02","displayName":"파티 공명 개조","kind":"MODIFICATION","rarity":"RARE","itemLevel":17,"compatible":"EQD20-*-R01","effect":{"requiredPartyAugmentTagMatches":1,"cooperativeBreakMultiplier":1.06,"stacking":"HIGHEST_ONLY"}},
+
+    {"id":"EQD20-EP-W01","displayName":"상태 전환 코어","kind":"WEAPON_MODIFICATION","slot":"MAIN_WEAPON","rarity":"EPIC","itemLevel":19,"tags":["REACTION","BREAK"],"effect":{"trigger":"CROSS_PLAYER_STATUS_REACTION","windowTicks":120,"nextCoreActiveBreakMultiplier":1.14,"cooldownTicks":200}},
+    {"id":"EQD20-EP-OH01","displayName":"구조 중계 방패","material":"SHIELD","slot":"OFF_WEAPON","mirrorSlot":-106,"rarity":"EPIC","itemLevel":19,"tags":["GUARD","RESCUE"],"effect":{"whileGuardingRearRadius":4,"rescueInterruptThresholdMultiplier":1.20,"onParryDurationTicks":60}},
+    {"id":"EQD20-EP-AR01","displayName":"격리 가슴보호구","material":"IRON_CHESTPLATE","slot":"ARMOR_CHEST","rarity":"EPIC","itemLevel":19,"tags":["STATUS_GUARD"],"effect":{"trigger":"FIRST_STRONG_STATUS_PER_FAMILY","damageTakenMultiplier":0.88,"durationTicks":40,"combatFamilyLimit":1}},
+    {"id":"EQD20-EP-AC01","displayName":"신경 분배환","material":"RECOVERY_COMPASS","slot":"ACCESSORY","rarity":"EPIC","itemLevel":19,"tags":["CLEANSE","SUPPORT"],"effect":{"trigger":"ALLY_STATUS_CLEANSE","selfAp":4,"allyAp":4,"targetCooldownTicks":240}},
+    {"id":"EQD20-EP-CH01","displayName":"연쇄 억제핵","material":"HEART_OF_THE_SEA","slot":"CHARM","rarity":"EPIC","itemLevel":19,"tags":["STATUS_CHAIN"],"effect":{"requiredDistinctStatuses":3,"windowTicks":60,"bossStatusResistanceDelta":-6,"durationTicks":100,"cooldownTicks":240}},
+    {"id":"EQD20-EP-UA01","displayName":"구조 격투 고리","material":"RABBIT_HIDE","slot":"ACCESSORY","rarity":"EPIC","itemLevel":19,"requiresEmptyMainWeapon":true,"tags":["UNARMED","RESCUE"],"effect":{"trigger":"PERFECT_DODGE_COUNTER_THEN_RESCUE","windowTicks":80,"rescueMovePenaltyMultiplier":0.50,"cooldownTicks":240}},
+
+    {"id":"EQD20-LG-W01","displayName":"신경 절합 무기","kind":"WEAPON_MODIFICATION","slot":"MAIN_WEAPON","rarity":"LEGENDARY","itemLevel":20,"rewardOnlyDay":20,"tags":["REACTION","BREAK"],"effect":{"trigger":"COOPERATIVE_STATUS_REACTION","windowTicks":160,"coreActiveBreakMultiplier":1.20,"consumeReaction":false,"cooldownTicks":240}},
+    {"id":"EQD20-LG-UA01","displayName":"무구의 생체 고리","material":"RABBIT_HIDE","slot":"ACCESSORY","rarity":"LEGENDARY","itemLevel":20,"rewardOnlyDay":20,"requiresEmptyMainWeapon":true,"tags":["UNARMED","COUNTER","PARTY_AP"],"effect":{"trigger":"PERFECT_DODGE_COUNTER_BREAKS_ALLY_TRACKING","partyAp":5,"patternCooldownTicks":300}},
+    {"id":"EQD20-LG-OH01","displayName":"접합 차단막","material":"SHIELD","slot":"OFF_WEAPON","mirrorSlot":-106,"rarity":"LEGENDARY","itemLevel":20,"rewardOnlyDay":20,"tags":["PARRY","STATUS_RES"],"effect":{"trigger":"PARRY_STRONG_STATUS_PATTERN","radius":4,"statusResistance":12,"durationTicks":60,"cooldownTicks":300,"immunity":false}},
+    {"id":"EQD20-LG-AR01","displayName":"재건 생체 외피","material":"NETHERITE_CHESTPLATE","slot":"ARMOR_CHEST","rarity":"LEGENDARY","itemLevel":20,"rewardOnlyDay":20,"tags":["DOWNED","RESCUE"],"effect":{"trigger":"FIRST_DOWNED_PER_COMBAT","rescueWindowBonusTicks":80,"pauseWeakStatuses":true,"preventDowned":false}},
+    {"id":"EQD20-LG-AC01","displayName":"다중 상태 해석환","material":"RECOVERY_COMPASS","slot":"ACCESSORY","rarity":"LEGENDARY","itemLevel":20,"rewardOnlyDay":20,"tags":["STATUS_CHAIN","REACTION"],"effect":{"requiredPartyDistinctStatuses":4,"statusReactionMultiplier":1.10,"breakMultiplier":1.10,"durationTicks":160,"cooldownTicks":400}},
+    {"id":"EQD20-LG-CH01","displayName":"구조 공명핵","material":"HEART_OF_THE_SEA","slot":"CHARM","rarity":"LEGENDARY","itemLevel":20,"rewardOnlyDay":20,"tags":["RESCUE","DAMAGE_SHARE"],"effect":{"trigger":"RESCUE_SUCCESS","damageShareRatio":0.10,"durationTicks":120,"minimumHp":1,"cooldownTicks":600}}
+  ]
+}

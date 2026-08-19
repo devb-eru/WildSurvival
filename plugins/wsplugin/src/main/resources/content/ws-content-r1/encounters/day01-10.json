@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "contentRevision": "ws-content-r1",
+  "domain": "encounters",
+  "dataRevision": "event-d01-d10-r1",
+  "metadata": {
+    "baseline": "2P_EASY_STANDARD",
+    "tickRate": 20,
+    "modes": ["PURSUIT", "SETTLEMENT_ASSAULT", "RIFT_PRESSURE"],
+    "aliases": {
+      "C":{"templateId":"EN-D1-01","cost":1},
+      "F":{"templateId":"EN-D1-02","cost":1},
+      "R":{"templateId":"EN-D2-01","cost":2},
+      "B":{"templateId":"EN-D4-01","cost":3},
+      "B_PLUS":{"templateId":"EN-D4-01","cost":4,"augmentSourceLevel":3},
+      "A":{"templateId":"EN-D4-02","cost":3},
+      "T":{"templateId":"EN-D5-01","cost":3},
+      "D":{"templateId":"EN-D6-01","cost":3},
+      "P":{"templateId":"EN-D6-02","cost":2},
+      "G":{"templateId":"EN-D7-01","cost":3},
+      "S":{"templateId":"EN-D7-02","cost":3},
+      "E8":{"templateId":"EN-D8-E01","cost":8},
+      "E9":{"templateId":"EN-D9-E01","cost":8}
+    },
+    "budgetByPlayers": {
+      "2":[6,8,10,11,13,14,16,18,20],
+      "3":[8,11,13,15,17,19,21,24,26],
+      "4":[10,13,16,18,21,23,26,29,32]
+    },
+    "activeCaps":{"2":8,"3":10,"4":12},
+    "remainderPolicy":"CARRY_TO_NEXT_WAVE_SAME_DAY_ONLY"
+  },
+  "entries": [
+    {
+      "id":"ENC-D01","day":1,"baseBudget":6,
+      "modes":{
+        "PURSUIT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"F":1}}]},{"atTicks":900,"groups":[{"distribution":"GLOBAL","spawns":{"C":1,"F":2}}]}],
+        "SETTLEMENT_ASSAULT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":3}}]},{"atTicks":900,"groups":[{"distribution":"GLOBAL","spawns":{"C":1,"F":2}}]}],
+        "RIFT_PRESSURE":[{"atTicks":0,"groups":[{"distribution":"PER_RIFT","spawns":{"C":1,"F":1}}]},{"atTicks":1000,"groups":[{"distribution":"GLOBAL","spawns":{"C":2}}]}]
+      }
+    },
+    {
+      "id":"ENC-D02","day":2,"baseBudget":8,
+      "modes":{
+        "PURSUIT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"F":1,"R":1}}]},{"atTicks":900,"groups":[{"distribution":"GLOBAL","spawns":{"C":1,"R":1}}]}],
+        "SETTLEMENT_ASSAULT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"R":1}}]},{"atTicks":900,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"R":1}}]}],
+        "RIFT_PRESSURE":[{"atTicks":0,"groups":[{"distribution":"PER_RIFT","spawns":{"C":1}}]},{"atTicks":840,"groups":[{"distribution":"PER_RIFT","spawns":{"F":1,"R":1}}]}]
+      }
+    },
+    {
+      "id":"ENC-D03","day":3,"baseBudget":10,
+      "modes":{
+        "PURSUIT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"F":2}}]},{"atTicks":640,"groups":[{"distribution":"GLOBAL","spawns":{"C":1,"R":1}}]},{"atTicks":1320,"groups":[{"distribution":"GLOBAL","spawns":{"C":1,"R":1}}]}],
+        "SETTLEMENT_ASSAULT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"R":1}}]},{"atTicks":680,"groups":[{"distribution":"GLOBAL","spawns":{"F":2,"R":1}}]},{"atTicks":1360,"groups":[{"distribution":"GLOBAL","spawns":{"C":2}}]}],
+        "RIFT_PRESSURE":[{"atTicks":0,"groups":[{"distribution":"PER_RIFT","spawns":{"C":1,"F":1}}]},{"atTicks":800,"groups":[{"distribution":"PER_RIFT","spawns":{"R":1}}]},{"atTicks":1440,"groups":[{"distribution":"GLOBAL","spawns":{"C":2}}]}]
+      }
+    },
+    {
+      "id":"ENC-D04","day":4,"baseBudget":11,
+      "modes":{
+        "PURSUIT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":1,"R":1}}]},{"atTicks":640,"groups":[{"distribution":"GLOBAL","spawns":{"B":1,"F":2}}]},{"atTicks":1360,"groups":[{"distribution":"GLOBAL","spawns":{"A":1}}]}],
+        "SETTLEMENT_ASSAULT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"R":1}}]},{"atTicks":760,"groups":[{"distribution":"GLOBAL","spawns":{"B":1,"C":1}}]},{"atTicks":1400,"groups":[{"distribution":"GLOBAL","spawns":{"A":1}}]}],
+        "RIFT_PRESSURE":[{"atTicks":0,"groups":[{"distribution":"PER_RIFT","spawns":{"C":1,"F":1}}]},{"atTicks":760,"groups":[{"distribution":"GLOBAL","spawns":{"B":1}}]},{"atTicks":1400,"groups":[{"distribution":"GLOBAL","spawns":{"A":1,"C":1}}]}]
+      }
+    },
+    {
+      "id":"ENC-D05","day":5,"baseBudget":13,
+      "modes":{
+        "PURSUIT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":1,"R":1}}]},{"atTicks":600,"groups":[{"distribution":"GLOBAL","spawns":{"T":1,"F":2}}]},{"atTicks":1320,"groups":[{"distribution":"GLOBAL","spawns":{"B_PLUS":1,"C":1}}]}],
+        "SETTLEMENT_ASSAULT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"R":1}}]},{"atTicks":680,"groups":[{"distribution":"GLOBAL","spawns":{"T":1,"C":1}}]},{"atTicks":1360,"groups":[{"distribution":"GLOBAL","spawns":{"B_PLUS":1,"C":1}}]}],
+        "RIFT_PRESSURE":[{"atTicks":0,"groups":[{"distribution":"PER_RIFT","spawns":{"C":1,"F":1}}]},{"atTicks":760,"groups":[{"distribution":"GLOBAL","spawns":{"T":1}}]},{"atTicks":1360,"groups":[{"distribution":"GLOBAL","spawns":{"B_PLUS":1,"C":2}}]}]
+      }
+    },
+    {
+      "id":"ENC-D06","day":6,"baseBudget":14,
+      "modes":{
+        "PURSUIT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":1,"R":1}}]},{"atTicks":600,"groups":[{"distribution":"GLOBAL","spawns":{"D":1,"P":2}}]},{"atTicks":1400,"groups":[{"distribution":"GLOBAL","spawns":{"R":1,"C":2}}]}],
+        "SETTLEMENT_ASSAULT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"R":2}}]},{"atTicks":700,"groups":[{"distribution":"GLOBAL","spawns":{"D":1,"P":1,"C":1}}]},{"atTicks":1440,"groups":[{"distribution":"GLOBAL","spawns":{"P":1}}]}],
+        "RIFT_PRESSURE":[{"atTicks":0,"groups":[{"distribution":"PER_RIFT","spawns":{"C":1,"R":1}}]},{"atTicks":800,"groups":[{"distribution":"GLOBAL","spawns":{"D":1}}]},{"atTicks":1400,"groups":[{"distribution":"GLOBAL","spawns":{"P":2,"C":1}}]}]
+      }
+    },
+    {
+      "id":"ENC-D07","day":7,"baseBudget":16,
+      "modes":{
+        "PURSUIT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"R":2}}]},{"atTicks":680,"groups":[{"distribution":"GLOBAL","spawns":{"G":1,"S":1}}]},{"atTicks":1440,"groups":[{"distribution":"GLOBAL","spawns":{"P":2}}]}],
+        "SETTLEMENT_ASSAULT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"R":1}}]},{"atTicks":680,"groups":[{"distribution":"GLOBAL","spawns":{"G":1,"C":2}}]},{"atTicks":1400,"groups":[{"distribution":"GLOBAL","spawns":{"S":1,"R":1,"C":2}}]}],
+        "RIFT_PRESSURE":[{"atTicks":0,"groups":[{"distribution":"PER_RIFT","spawns":{"R":1}}]},{"atTicks":720,"groups":[{"distribution":"PER_RIFT","spawns":{"G":1}}]},{"atTicks":1440,"groups":[{"distribution":"GLOBAL","spawns":{"S":1,"F":3}}]}]
+      }
+    },
+    {
+      "id":"ENC-D08","day":8,"baseBudget":18,
+      "modes":{
+        "PURSUIT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"R":1}}]},{"atTicks":640,"groups":[{"distribution":"GLOBAL","spawns":{"E8":1,"F":2}}]},{"atTicks":1440,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"R":1}}]}],
+        "SETTLEMENT_ASSAULT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":3,"R":1}}]},{"atTicks":720,"groups":[{"distribution":"GLOBAL","spawns":{"E8":1}}]},{"atTicks":1440,"groups":[{"distribution":"GLOBAL","spawns":{"G":1,"C":2}}]}],
+        "RIFT_PRESSURE":[{"atTicks":0,"groups":[{"distribution":"PER_RIFT","spawns":{"C":1,"F":1}}]},{"atTicks":760,"groups":[{"distribution":"GLOBAL","spawns":{"E8":1}}]},{"atTicks":1440,"groups":[{"distribution":"PER_RIFT","spawns":{"R":1}},{"distribution":"GLOBAL","spawns":{"C":2}}]}]
+      }
+    },
+    {
+      "id":"ENC-D09","day":9,"baseBudget":20,
+      "modes":{
+        "PURSUIT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"P":2}}]},{"atTicks":640,"groups":[{"distribution":"GLOBAL","spawns":{"E9":1,"R":1}}]},{"atTicks":1440,"groups":[{"distribution":"GLOBAL","spawns":{"G":1,"F":1}}]}],
+        "SETTLEMENT_ASSAULT":[{"atTicks":0,"groups":[{"distribution":"GLOBAL","spawns":{"C":2,"R":1,"F":1}}]},{"atTicks":720,"groups":[{"distribution":"GLOBAL","spawns":{"E9":1}}]},{"atTicks":1440,"groups":[{"distribution":"GLOBAL","spawns":{"G":1,"S":1,"C":1}}]}],
+        "RIFT_PRESSURE":[{"atTicks":0,"groups":[{"distribution":"PER_RIFT","spawns":{"C":1,"R":1}}]},{"atTicks":760,"groups":[{"distribution":"GLOBAL","spawns":{"E9":1}}]},{"atTicks":1440,"groups":[{"distribution":"GLOBAL","spawns":{"G":1,"F":3}}]}]
+      }
+    },
+    {
+      "id":"ENC-D10","day":10,"baseBudget":0,"modes":{},"bossRef":"BOSS-D10-RESONANT-PURSUER","ordinaryPressureDisabled":true
+    }
+  ]
+}
