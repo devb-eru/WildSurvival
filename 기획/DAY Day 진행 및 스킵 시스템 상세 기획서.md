@@ -39,19 +39,21 @@ Day 51 이후는 새로운 핵심 성장 계층을 무한 추가하지 않는다
 
 ### 5-Day 순환 프로필
 
-| 순환 위치 | 프로필 | 주요 변화 |
-|---:|---|---|
-| `day % 5 = 1` | 자원 불안정 | 채집 위험, 이동 경로와 가공 선택 압박 |
-| `day % 5 = 2` | 변이 이동 | 오염 변이 조합과 지역 위험 변경 |
-| `day % 5 = 3` | 시설 분산 압박 | 시설망·파티 중 동적 목표 선택 |
-| `day % 5 = 4` | 정예 공명 | 적 역할·증강·브레이크 조합 강화 |
-| `day % 5 = 0` | 붕괴 파동 | 복합 공세와 최종 장치 교정 압박 |
+| 순환 위치 | 프로필 | 기본/상한 예산 | 주요 변화 |
+|---:|---|---:|---|
+| `day % 5 = 1` | 자원 불안정 | 90/110 | 채집 위험, 이동 경로와 가공 선택 압박 |
+| `day % 5 = 2` | 변이 이동 | 94/112 | 오염 변이 조합과 지역 위험 변경 |
+| `day % 5 = 3` | 시설 분산 압박 | 98/114 | 시설망·파티 중 동적 목표 선택 |
+| `day % 5 = 4` | 정예 공명 | 102/116 | 적 역할·증강·브레이크 조합 강화 |
+| `day % 5 = 0` | 붕괴 파동 | 108/120 | 복합 공세와 최종 장치 교정 압박 |
+
+`cycle = floor((currentDay - 51) / 5)`, `finalBudget = min(baseBudget + 2 × cycle, budgetCap)`을 사용하며 Day 추가 HP·직접 피해 배율은 1.00이다.
 
 - 실제 사건은 동적 후보 영역과 현재 시설·파티 위치에서 생성한다.
 - Day가 증가한다는 이유만으로 HP·ATK를 무한 곱하지 않는다.
 - 오염 강도, 변이 예산, 적 역할 조합, 동시 목표 수를 콘텐츠 상한 안에서 조정한다.
 - Day 51+ 보상은 최종 준비 복구와 소모 보충을 제공하되 새 필수 부품을 무한 추가하지 않는다.
-- 10일 단위로 장기 저장 체크포인트를 만들 수 있지만 회차 완료로 처리하지 않는다.
+- 매 5-Day 순환 종료에 장기 저장 체크포인트를 만들지만 회차 완료로 처리하지 않는다.
 
 ## 4. 최종 목표와 회차 종료
 
@@ -59,38 +61,48 @@ Day 51 이후는 새로운 핵심 성장 계층을 무한 추가하지 않는다
 
 ```text
 currentDay >= 50
-AND requiredBossesCleared
-AND reconstructionPartsComplete
-AND reconstructionDiscoveryComplete
-AND reconstructionFacilityReady
-AND calibrationComplete
+AND boss.day10/20/30/40.state == CLEARED
+AND reconstruction.parts[A,B,C,D] == BOUND
+AND discovery.C27 == DISCOVERED
+AND discovery.C28A/C28B/C28C/C28D/C29 == COMPLETE
+AND facility.R01/R02/R03/R04 == READY
+AND facility.R05.count == 3
+AND facility.R06 == READY_LOCKED
+AND inventoryOrLedger.finalSignalKey >= 1
+AND activeBoss == NONE
+AND activeSiege == NONE
+AND blockingTransaction == NONE
 ```
 
-조건이 충족되면 `finalObjectiveState`를 `AVAILABLE`로 전환한다. 시작은 파티의 명시적 상호작용으로만 승인한다.
+조건이 충족되면 `finalObjectiveState`를 `AVAILABLE`로 전환한다. C30은 선행 조건이 아니라 완료 결과이며 시작은 FAC-R06 GUI의 명시적 상호작용과 생존·빈사 등록 인원의 과반수 찬성으로만 승인한다. 세부 전장·전투·정화는 `FINAL-001`이 담당한다.
 
 ### 상태 전이
 
 ```text
 LOCKED
 → AVAILABLE
-→ ACTIVE
+→ ACTIVATING
+→ ACTIVE_STAGE_1
+→ ACTIVE_STAGE_2
+→ ACTIVE_STAGE_3
 → RESOLVING
 → COMPLETED
 ```
 
 - `LOCKED`: 조건 미충족, 누락 범주만 표시
 - `AVAILABLE`: 시작 가능, Day는 계속 흐름
-- `ACTIVE`: 최종 보스·정화·협동 상호작용 진행, Day 타이머 정지
+- `ACTIVATING`: 투표·전장 검사·키 예약, 실패 시 자원 반환
+- `ACTIVE_STAGE_1~3`: 장치 전개·붕괴 핵 제압·180초 정화와 생존자 최종 확인, Day 타이머 정지
 - `RESOLVING`: 보상·세계 상태·종료 통계 원자 확정
 - `COMPLETED`: 회차 성공, 재개 불가 읽기 전용 기록
 
-최종 목표 실패가 회차 전체 실패를 뜻하지 않는 데이터라면 `AVAILABLE`로 복귀하고 손실·재시도 정책을 적용한다. 전원 완전 사망이 확정되면 Day와 무관하게 `FAILED`가 된다.
+최종 목표 실패가 전원 완전 사망이 아니면 저장 체크포인트에 따라 `AVAILABLE`로 복귀하고 키·임시 오브젝트·장치 출력을 복구한다. 전원 완전 사망이 확정되면 Day와 무관하게 `FAILED`가 된다.
 
 ### 금지 규칙
 
 - Day 50 타이머 종료만으로 `COMPLETED` 또는 `FAILED`로 바꾸지 않는다.
 - Day 50 이후 일반 Day 전환을 막지 않는다.
-- 최종 목표가 `ACTIVE`인 동안 Day 스킵과 일반 Day 전환을 허용하지 않는다.
+- 최종 목표가 `ACTIVATING`, `ACTIVE_STAGE_1~3`, `RESOLVING`인 동안 Day 스킵과 일반 Day 전환을 허용하지 않는다.
 - 엔딩·결과 화면은 `finalObjectiveState == COMPLETED` 저장 성공 뒤에만 실행한다.
 
 ## 5. Day 스킵 목적
@@ -149,7 +161,7 @@ requiredYes = floor(eligibleVoters / 2) + 1
 1. `runState == ACTIVE`
 2. 스킵 허용 난이도·규칙 모드 조합
 3. 현재 Day 전환 또는 다른 스킵 투표가 진행 중이지 않음
-4. 최종 목표 상태가 `ACTIVE` 또는 `RESOLVING`이 아님
+4. 최종 목표 상태가 `ACTIVATING`, `ACTIVE_STAGE_1~3`, `RESOLVING` 중 하나가 아님
 5. 보스·공세·엘리트 추적·동적 사건이 전투 상태가 아님
 6. 빈사자, 구조 채널링과 예약된 치명 피해가 없음
 7. 보상·증강·고유 장비·발견 선택 트랜잭션이 열려 있지 않음
@@ -315,7 +327,7 @@ day-state:
 - Day 50 도달만으로 엔딩·완료 상태가 발생하지 않는가
 - 어느 Day 50+에서도 준비 조건 충족 후 최종 목표를 시작할 수 있는가
 - 최종 목표 완료 저장 후에만 회차가 `COMPLETED`로 잠기는가
-- 최종 목표 `ACTIVE` 중 Day 스킵과 일반 전환이 차단되는가
+- 최종 목표 `ACTIVATING`·`ACTIVE_STAGE_1~3`·`RESOLVING` 중 Day 스킵과 일반 전환이 차단되는가
 
 ## 16. 완료 기준
 

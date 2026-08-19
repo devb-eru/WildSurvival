@@ -7,7 +7,7 @@
   "files": [
     {"path":"schemas/domain-bundle.schema.json","domain":"schema","schemaVersion":1,"sha256":"21f49ceec77d77700b14be2dd6cfd8da4131a47f4be94ab9480a4a93db985b05"},
     {"path":"schemas/manifest.schema.json","domain":"schema","schemaVersion":1,"sha256":"36752d515db47e8062f1dcbb0b0a42a617466caa9f1ee1bca8820eaecbc46e85"},
-    {"path":"days/day01-20.json","domain":"days","schemaVersion":1,"sha256":"d19b0f3d1361e9874d63445c79c7c6a84d6207991bebe1952ec6c6285bb24cc8"},
+    {"path":"days/day01-20.json","domain":"days","schemaVersion":1,"sha256":"bb38af334825464dce82715fa53e28e3c23cc8bedd3e4dd7e536c17a3620cf43"},
     {"path":"encounters/day01-10.json","domain":"encounters","schemaVersion":1,"sha256":"00cc9c93363d3321117cead93c928628d57579de0f63136bdbe11f51263a63ba"},
     {"path":"enemies/day01-10.json","domain":"enemies","schemaVersion":1,"sha256":"f692a4fee0428f61bf6549ccbc251dd046b8f0de264406fbc0e87ad71b43efa9"},
     {"path":"resources/day11-20.json","domain":"resources","schemaVersion":1,"sha256":"445d70befae053bcfcb2be4ab0ba1fbf8a9884b6b49dbe10206951ffe6a48a93"},
