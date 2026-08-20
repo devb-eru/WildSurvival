@@ -7,7 +7,7 @@
 | 문서 ID | `DIFFICULTY-001` |
 | 역할 | 콘텐츠 분류, 표시 난이도, 내부 ID, 마이그레이션과 통계 기준의 단일 권위 문서 |
 | 상위 기준 | `VISION` |
-| 연계 문서 | `GAME`, `STAT`, `CORE`, `ACT`, `SKILL`, `DAY`, `TECH` |
+| 연계 문서 | `GAME`, `STAT`, `CORE`, `ACT`, `SKILL`, `DAY`, `BUDGET-001`, `TECH` |
 | 구현 환경 | 바닐라 Minecraft Java Edition + Paper 서버 플러그인 |
 | 문서 상태 | 도입 확정안 |
 
@@ -155,14 +155,32 @@ Challenge 콘텐츠에는 `Easy`, `Normal`, `Hard`, `???`가 포함된다.
 - Challenge 콘텐츠라는 분류 자체는 추가 배율을 적용하지 않는다. 실제 난이도 ID만 수치 원천이 된다.
 - 콘텐츠 분류는 통계, UI, 향후 도전 과제와 시즌 규칙의 라우팅에 사용한다.
 
+### 5.1 야생 활동 EXP 예산 범위
+
+Challenge STANDARD는 Easy 기준 야생 활동 EXP 공급 예산을 다음 범위에서 확정할 수 있다.
+
+| 난이도 | 변동 허용 | 예산 배율 범위 |
+|---|---:|---:|
+| Easy | 고정 | `1.00` |
+| Normal | `±50%` | `0.50~1.50` |
+| Hard | `±100%` | `0.00~2.00` |
+| ??? | `±200%` | `0.00~3.00` |
+
+- 음수 예산은 허용하지 않으므로 Hard·???의 하한은 0이다.
+- `???`의 선택 배율은 서버 원장에 저장하지만 일반 UI에는 공개하지 않는다.
+- 범위는 개인 EXP 보너스가 아니라 회차·Day에 잠기는 야생 활동 EXP 공급 예산이다.
+- CHAOS에서는 모든 수치형 예산 도메인의 상한을 기준 1000%, 즉 `×10.00`까지 확장한다.
+- 계산 순서, CHAOS 적용 도메인, 안전 상한과 고유 보상 제외 규칙은 `BUDGET-001`이 단일 기준이다.
+
 ## 6. 회차 생성 UI
 
 1. 콘텐츠 분류를 선택한다.
 2. Story를 선택하면 난이도를 `STORY`로 고정하고 실패율 목표 안내를 표시한다.
 3. Challenge를 선택하면 Easy, Normal, Hard, ??? 중 하나를 선택한다.
 4. 규칙 모드 STANDARD 또는 CHAOS를 별도로 선택한다.
-5. Day 스킵 허용 여부를 계산해 요약 화면에 표시한다.
-6. 파티 전원이 요약 계약에 동의하면 회차를 생성한다.
+5. 난이도·규칙 모드에 따른 예산 허용 범위와 공개 가능한 선택 프로필을 표시한다.
+6. Day 스킵 허용 여부를 계산해 요약 화면에 표시한다.
+7. 파티 전원이 요약 계약에 동의하면 회차를 생성한다.
 
 표시 예시:
 
@@ -183,6 +201,8 @@ run-classification:
   content-category: CHALLENGE_CONTENT
   difficulty-id: NORMAL
   game-mode: STANDARD
+  budget-policy-revision: budget-r1
+  budget-profile-id: challenge-normal-seeded
   story:
     schema-version: 1
     content-revision: EMPTY
@@ -257,6 +277,8 @@ if difficultySchemaVersion == 1:
 - `UNKNOWN` 수치와 제한이 변경되지 않는가
 - Easy/Normal/Hard/???가 모두 `CHALLENGE_CONTENT`로 분류되는가
 - 규칙 모드가 콘텐츠 분류·난이도와 독립적으로 저장되는가
+- Challenge STANDARD 야생 활동 EXP가 Easy 1.00, Normal 0.50~1.50, Hard 0.00~2.00, UNKNOWN 0.00~3.00 범위를 지키는가
+- CHAOS의 등록 예산 도메인이 최대 10.00이고 안전 상한·고유 결과가 배율 대상에서 제외되는가
 
 ### 마이그레이션
 
@@ -279,5 +301,6 @@ if difficultySchemaVersion == 1:
 - Story, Easy, Normal, Hard, ???의 새 의미와 구 규칙 계승 관계가 정의되어 있다.
 - Challenge 난이도가 삭제되고 `CHALLENGE` 신규 저장이 금지된다.
 - Story + STANDARD 클리어 실패율 10%의 집계식과 표본 기준이 있다.
+- Challenge 야생 활동 EXP 변동 범위와 CHAOS 전 예산 1000% 상한이 `BUDGET-001`로 고정된다.
 - `STORY-001` 실제 Story와 `EMPTY` 무내용 폴백이 같은 시스템 계약에서 독립적으로 동작한다.
 - 난이도 스키마 v1 데이터를 손실 없이 v2로 변환할 수 있다.

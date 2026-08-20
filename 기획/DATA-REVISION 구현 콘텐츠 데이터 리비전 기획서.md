@@ -5,12 +5,12 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `DATA-REVISION-001` |
-| 상위 기준 | `TECH-001`, `CONTENT-MASTER-001`, `EVENT-DATA-001`, `BALANCE-D20-001` |
+| 상위 기준 | `TECH-001`, `CONTENT-MASTER-001`, `EVENT-DATA-001`, `BALANCE-D20-001`, `BUDGET-001` |
 | 리비전 | `ws-content-r1` |
 | 위치 | `plugins/wsplugin/src/main/resources/content/ws-content-r1/` |
 | 활성 정책 | 새 회차만 `NEW_RUN_ONLY`, 활성 회차 핫스왑 금지 |
 | Story | `EMPTY`, 시스템·보상·완료 조건과 분리 |
-| 최종 수정일 | 2026-08-20 |
+| 최종 수정일 | 2026-08-21 |
 
 ## 1. 목적
 
@@ -161,6 +161,18 @@ content/ws-content-r1/
 6. `content validate`와 `content reload` 조회·교체 서비스
 7. 감사·복구 명령 실행기
 8. 서버 시작·종료·실패·활성 회차 리비전 통합 테스트
+
+### 9.1 다음 콘텐츠 리비전 요구사항
+
+현재 `ws-content-r1`은 이미 고정된 Day 1~20 기준 번들이며 Challenge 활동 EXP 변동, CHAOS 수치 예산, 실제 Story와 Season 1→2 이관 스냅샷을 포함하지 않는다. 이 문서 변경만으로 기존 번들의 의미나 해시를 바꾸지 않는다.
+
+다음 리비전은 새 `contentRevision`으로 발급하고 다음 도메인을 추가한다.
+
+- `budget-policy`: `BUDGET-001`의 프로필별 도메인 하한·상한, 잠금 결과, 반올림 규칙
+- `story-season1`: `STORY-001` 장면·기록·완료 연출과 `gorePresentation`
+- `season-bridge`: `STORY-S2-001`의 읽기 전용 이관 스냅샷 스키마
+- 새 회차 생성 시 `contentRevision`, `storyRevision`, `budgetPolicyRevision`을 함께 잠그고 활성 회차 핫스왑을 금지한다.
+- `ws-content-r1` 활성 회차에 소급 적용하지 않으며, 이관이 필요하면 별도 마이그레이션 계획과 백업을 요구한다.
 
 ## 10. 검증 항목
 

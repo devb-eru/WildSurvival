@@ -5,12 +5,12 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `OPS-001` |
-| 상위 기준 | `TECH-001`, `GAME`, `DAY-001`, `REWARD-001` |
+| 상위 기준 | `TECH-001`, `GAME`, `DAY-001`, `BUDGET-001`, `REWARD-001` |
 | 구현 데이터 | `content/ws-content-r1/ops/admin-commands.json` |
 | 기본 명령 | `/wildsurvival`, 별칭 `/ws` |
 | 적용 범위 | 검사, 콘텐츠 검증, 스냅샷, 트랜잭션·아이템·사건·보상·회차 복구, 감사 |
 | 금지 | 정상 손실 환불, 임의 아이템·레벨 지급, 최종 조건 우회, 활성 회차 리비전 교체 |
-| 최종 수정일 | 2026-08-20 |
+| 최종 수정일 | 2026-08-21 |
 
 ## 1. 운영 원칙
 
@@ -48,7 +48,7 @@
 | 명령 | 권한 | 주요 출력 | 상태 변경 |
 |---|---|---|---|
 | `/ws admin content validate [revision]` | `.validate` | JSON 문법, 스키마, 해시, ID·참조, Material·EntityType, 수치 상한 | 없음 |
-| `/ws admin inspect run [runId]` | `.inspect` | 회차 상태, Day, 멤버, 난이도, 고정 리비전 | 없음 |
+| `/ws admin inspect run [runId]` | `.inspect` | 회차 상태, Day, 멤버, 난이도, 고정 콘텐츠·예산 정책·프로필 리비전 | 없음 |
 | `/ws admin inspect player <player> [runId]` | `.inspect` | 생명, EXP, 장비, 증강, 발견, 미완료 TX | 없음 |
 | `/ws admin inspect item <itemInstanceId>` | `.inspect` | PDC, 서명, 소유권, 원장·인벤토리 위치 | 없음 |
 | `/ws admin inspect facility <facilityInstanceId>` | `.inspect` | 시설망, 작업, 블록 스냅샷, 오염 | 없음 |
@@ -131,7 +131,8 @@
 | 5 | Day·희귀도·강화·적 예산 상한 위반 | 리비전 거부 |
 | 6 | Material·EntityType·상태·태그 미등록 | 리비전 거부 |
 | 7 | EXP·자원·웨이브 합계 불일치 | 리비전 거부 |
-| 8 | 전체 성공 | 새 불변 레지스트리 후보 생성 |
+| 8 | 예산 배율 범위·잠금 합계·등록 도메인·CHAOS 10.00 상한 검사 | 리비전 거부 |
+| 9 | 전체 성공 | 새 불변 레지스트리 후보 생성 |
 
 - 활성 회차는 시작 시 고정한 `contentRevision`을 계속 사용한다.
 - 리로드는 새 회차 기본값만 바꾸며 활성 회차 수치를 핫스왑하지 않는다.
