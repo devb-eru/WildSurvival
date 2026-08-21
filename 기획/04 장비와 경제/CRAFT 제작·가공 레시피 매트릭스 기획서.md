@@ -5,6 +5,8 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `CRAFT-001` |
+| 상태 | `DATA_LOCKED` |
+| 최종 수정일 | 2026-08-21 |
 | 상위 기준 | `RES-001`, `ECONOMY-001`, `DISC-LIST-001`, `FACILITY-LIST-001`, `EQUIP-001` |
 | 적용 범위 | STANDARD 기준 Day 1~10 1차 레시피, `RESOURCE-DATA-D20-001`의 Day 11~20 확장과 이후 공통 규칙 |
 | 수치 기준 | 3인 Easy, 예상 활동량을 충족한 파티 |

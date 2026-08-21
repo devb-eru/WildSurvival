@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `BOSS-002` |
+| 상태 | `BASELINE_LOCKED` |
 | 콘텐츠 | Day 20 상태·구조 협동 보스 |
 | 상위 기준 | `CONTENT-MASTER-001`, `DISC-LIST-001 C11~C13`, `GAME-003`, `BREAK`, `STATUS`, `ENEMY-DATA-D20-001`, `EQUIP-DATA-D20-001`, `REWARD-001` |
 | 기준 수치 | 2인 Easy STANDARD, 적정 Day 20 장비 |

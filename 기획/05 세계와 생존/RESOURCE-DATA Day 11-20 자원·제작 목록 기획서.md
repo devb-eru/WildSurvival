@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `RESOURCE-DATA-D20-001` |
+| 상태 | `PARTIAL_R1` |
 | 상위 기준 | `RES-001`, `CRAFT-001`, `ECONOMY-001`, `DISC-LIST-001 C08~C13`, `CONTENT-MASTER-001` |
 | 연계 | `STATUS`, `DEATH`, `FACILITY-LIST-001`, `REWARD-001` |
 | 적용 범위 | Day 11~20 신규 자원, 동적 노드, 상태 대응 소모품, 시설·호출 레시피, 원천 예산 |

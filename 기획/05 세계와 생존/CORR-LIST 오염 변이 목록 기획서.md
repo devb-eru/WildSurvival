@@ -3,7 +3,8 @@
 ## 문서 정보
 
 - 문서 ID: `CORR-LIST-001`
-- 상태: 1차 목록 확정안
+- 상태: `DATA_LOCKED`
+- 최종 수정일: 2026-08-21
 - 선행 문서: `CORR`, `STATUS`, `BREAK`, `CONTENT`, `EVENT`, `AUG`
 - 구현 전제: Minecraft Java Edition 바닐라 클라이언트 + Paper 플러그인, 모드 미사용
 

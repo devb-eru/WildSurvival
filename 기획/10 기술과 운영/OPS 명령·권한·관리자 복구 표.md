@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `OPS-001` |
+| 상태 | `IMPLEMENTATION_CONTRACT` |
 | 상위 기준 | `TECH-001`, `GAME`, `DAY-001`, `BUDGET-001`, `REWARD-001` |
 | 구현 데이터 | `content/ws-content-r1/ops/admin-commands.json` |
 | 기본 명령 | `/wildsurvival`, 별칭 `/ws` |

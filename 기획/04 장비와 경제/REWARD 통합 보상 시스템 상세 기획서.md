@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `REWARD-001` |
+| 상태 | `BASELINE_LOCKED` |
 | 상위 기준 | `VISION-001`, `RULES-001`, `GAME-003`, `PROG-001`, `BUDGET-001`, `ECONOMY-001`, `EQUIP-001`, `DEATH-003` |
 | 연계 데이터 | `ACT-001`, `RES-001`, `DISC-001`, `ENEMY-001`, `EVENT-LIST-001`, `BOSS-001`, `EQUIP-LIST-001`, `BALANCE-D10-001`, `TECH-001` |
 | 적용 범위 | 전투·탐험·지원 기여, EXP 자격, 공용·개인 보상, 고유 장비 투표·귀속, 제작식 해금 |

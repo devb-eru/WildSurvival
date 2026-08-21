@@ -5,6 +5,8 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `ENEMY-001` |
+| 상태 | `BASELINE_LOCKED` |
+| 최종 수정일 | 2026-08-21 |
 | 상위 기준 | `CONTENT-MASTER-001`, `GAME-003`, `AUG-001`, `CORR-LIST-001`, `STATUS`, `BREAK` |
 | 적용 범위 | 적 역할, Day 1~20 실제 템플릿, 변이·적 증강 허용, 조합 예산 (`ENEMY-DATA-D20-001` 연계) |
 | 기준 수치 | 2인 Easy STANDARD, 인원·난이도 보정 전 |

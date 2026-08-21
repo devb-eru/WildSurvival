@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `BALANCE-D20-001` |
+| 상태 | `VALIDATED_STATIC` |
 | 참조 | `RESOURCE-DATA-D20-001`, `EQUIP-DATA-D20-001`, `ENEMY-DATA-D20-001`, `BOSS-002`, `PROG-001`, `REWARD-001` |
 | 주 기준 | 3인 Easy STANDARD |
 | 스트레스 기준 | 2인 Story STANDARD, 4인 Hard STANDARD |

@@ -4,6 +4,8 @@
 
 | 항목 | 내용 |
 |---|---|
+| 문서 ID | `VISION-001` |
+| 상태 | `BASELINE_LOCKED` |
 | 프로젝트 | WildSurvival |
 | 문서 역할 | 모든 세부 시스템보다 우선하는 콘텐츠 방향과 설계 원칙 |
 | 구현 환경 | Minecraft Java Edition, Paper 계열 서버, 서버 플러그인 |

@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `BOSS-004` |
+| 상태 | `BASELINE_LOCKED` |
 | 템플릿 ID | `BOSS-D40-RESONANT-DEMOLISHER` |
 | 상위 기준 | `CONTENT-DATA-D50-001`, `DISC-LIST-001 C21~C26`, `BREAK`, `STATUS`, `CORR-LIST-001` |
 | 기준 | 2인 Easy STANDARD, 적정 Day 40 장비 |

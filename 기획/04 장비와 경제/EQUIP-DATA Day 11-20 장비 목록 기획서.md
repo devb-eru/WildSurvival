@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `EQUIP-DATA-D20-001` |
+| 상태 | `PARTIAL_R1` |
 | 상위 기준 | `EQUIP-001`, `EQUIP-LIST-001`, `WEAPON-002`, `CRAFT-001`, `RESOURCE-DATA-D20-001` |
 | 연계 | `STATUS`, `BREAK`, `AUG-001`, `REWARD-001` |
 | 적용 범위 | Day 11~20 제작·개조 장비, 상태 대응 방어구, Day 20 전설 후보 |

@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `BOSS-003` |
+| 상태 | `BASELINE_LOCKED` |
 | 템플릿 ID | `BOSS-D30-CORRUPTION-HEART` |
 | 상위 기준 | `CONTENT-DATA-D50-001`, `DISC-LIST-001 C14~C20`, `CORR-LIST-001`, `STATUS`, `BREAK` |
 | 기준 | 2인 Easy STANDARD, 적정 Day 30 장비 |

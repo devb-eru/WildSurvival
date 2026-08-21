@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `ENEMY-DATA-D20-001` |
+| 상태 | `PARTIAL_R1` |
 | 상위 기준 | `ENEMY-001`, `CONTENT-MASTER-001`, `STATUS`, `BREAK`, `CORR-LIST-001`, `AUG-001` |
 | 연계 | `RESOURCE-DATA-D20-001`, `EVENT-001`, `REWARD-001` |
 | 적용 범위 | Day 11~19 일반·강화·정예 적, 상태 조합, 실제 무리 예산, Day 20 보스 소환체 |

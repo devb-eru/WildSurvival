@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `EVENT-DATA-001` |
+| 상태 | `PARTIAL_R1` |
 | 상위 기준 | `CONTENT-MASTER-001`, `GAME-001~003`, `EVENT-LIST-001`, `ENEMY-001`, `RES-001`, `REWARD-001` |
 | 수치 기준 | 3인 Easy STANDARD 자원 원장, 2인 Easy 적 편성 원형 |
 | 적용 범위 | Day 1~10 자연 활동, 동적 자원 노드, 야간 압박 실제 웨이브, 원천별 보상 예산 |

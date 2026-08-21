@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `CONTENT-DATA-D50-001` |
+| 상태 | `BASELINE_LOCKED` |
 | 상위 기준 | `CONTENT-MASTER-001`, `DAY-001`, `PROG-001`, `DISC-LIST-001 C14~C30` |
 | 연계 | `FACILITY-LIST-001`, `CORR-LIST-001`, `EQUIP-LIST-001`, `BOSS-003~004`, `FINAL-001` |
 | 기준 | EXP·자원은 3인 Easy STANDARD, 적 예산은 2인 Easy STANDARD |

@@ -5,6 +5,8 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `BOSS-001` |
+| 상태 | `BASELINE_LOCKED` |
+| 최종 수정일 | 2026-08-21 |
 | 콘텐츠 | Day 10 첫 협동 보스 |
 | 상위 기준 | `CONTENT-MASTER-001`, `DISC-LIST-001 C05~C07`, `GAME-003`, `BREAK`, `STATUS`, `ENEMY-001`, `EQUIP-LIST-001`, `REWARD-001` |
 | 기준 수치 | 2인 Easy STANDARD, 적정 Day 10 장비 |

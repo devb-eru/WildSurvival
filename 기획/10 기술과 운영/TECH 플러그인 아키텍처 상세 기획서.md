@@ -5,6 +5,8 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | TECH-001 |
+| 상태 | `IMPLEMENTATION_CONTRACT` |
+| 최종 수정일 | 2026-08-21 |
 | 목적 | WildSurvival 전체 시스템을 하나의 서버 권위 플러그인 구조로 구현하기 위한 기술 계약 |
 | 현재 프로젝트 기준 | Java 25, Gradle Kotlin DSL, Paper API/Minecraft 26.1.2, `wsplugin` |
 | 클라이언트 | 바닐라 Minecraft Java Edition |

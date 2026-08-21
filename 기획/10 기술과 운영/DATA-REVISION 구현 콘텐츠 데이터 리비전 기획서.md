@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `DATA-REVISION-001` |
+| 상태 | `PARTIAL_R1` |
 | 상위 기준 | `TECH-001`, `CONTENT-MASTER-001`, `EVENT-DATA-001`, `BALANCE-D20-001`, `BUDGET-001` |
 | 리비전 | `ws-content-r1` |
 | 위치 | `plugins/wsplugin/src/main/resources/content/ws-content-r1/` |

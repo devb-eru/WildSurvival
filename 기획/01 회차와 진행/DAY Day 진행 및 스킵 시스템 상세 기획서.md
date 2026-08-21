@@ -9,7 +9,8 @@
 | 상위 기준 | `VISION`, `DIFFICULTY` |
 | 연계 문서 | `GAME`, `CONTENT`, `ACT`, `CORR`, `TECH` |
 | 구현 | 바닐라 클라이언트 + Paper 서버 플러그인 |
-| 문서 상태 | 도입 확정안 |
+| 상태 | `BASELINE_LOCKED` |
+| 최종 수정일 | 2026-08-21 |
 
 ## 1. 핵심 결정
 

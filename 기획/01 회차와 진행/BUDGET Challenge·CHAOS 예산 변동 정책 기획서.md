@@ -5,6 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `BUDGET-001` |
+| 상태 | `BASELINE_LOCKED` |
 | 역할 | Challenge 야생 활동 EXP 변동 범위와 CHAOS 전 예산 1000% 상한의 단일 계산 계약 |
 | 상위 기준 | `DIFFICULTY-001`, `PROG-001`, `GAME-003` |
 | 연계 | `REWARD-001`, `EVENT-DATA-001`, `CONTENT-DATA-D50-001`, `TECH-001` |
