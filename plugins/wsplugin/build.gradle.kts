@@ -1,3 +1,7 @@
+import java.net.ConnectException
+import java.net.InetSocketAddress
+import java.net.Socket
+
 plugins {
     id("java-library")
     id("com.gradleup.shadow") version "9.4.2"
@@ -22,9 +26,39 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
+val checkDevelopmentServerStopped = tasks.register("checkDevelopmentServerStopped") {
+    group = "verification"
+    description = "Prevents rebuilding the plugin jar while the development Paper server is running."
+    inputs.property("port", providers.gradleProperty("runServerPort").orElse("25565"))
+
+    doLast {
+        val port = inputs.properties.getValue("port").toString().toInt()
+        val serverRunning = try {
+            Socket().use { socket ->
+                socket.connect(InetSocketAddress("127.0.0.1", port), 300)
+            }
+            true
+        } catch (_: ConnectException) {
+            false
+        }
+
+        if (serverRunning) {
+            throw GradleException(
+                "Paper development server is already using port $port. " +
+                    "Stop it with /stop before building or running another server."
+            )
+        }
+    }
+}
+
 tasks {
     test {
         useJUnitPlatform()
+    }
+
+    jar {
+        archiveClassifier.set("plain")
+        dependsOn(checkDevelopmentServerStopped)
     }
 
     build {
@@ -33,10 +67,12 @@ tasks {
 
     shadowJar {
         archiveClassifier.set("")
+        dependsOn(checkDevelopmentServerStopped)
         relocate("com.google.gson", "com.lsc.corp.wsplugin.lib.gson")
     }
 
     runServer {
+        dependsOn(checkDevelopmentServerStopped)
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
