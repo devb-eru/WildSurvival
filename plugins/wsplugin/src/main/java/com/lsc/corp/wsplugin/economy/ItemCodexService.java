@@ -1,0 +1,372 @@
+package com.lsc.corp.wsplugin.economy;
+
+import com.lsc.corp.wsplugin.content.PrototypeContent;
+import com.lsc.corp.wsplugin.ops.TelemetryService;
+import com.lsc.corp.wsplugin.run.RunService;
+import com.lsc.corp.wsplugin.run.RunSnapshot;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public final class ItemCodexService implements Listener {
+    private static final int[] ENTRY_SLOTS = {
+            10, 11, 12, 13, 14, 15, 16,
+            19, 20, 21, 22, 23, 24, 25,
+            28, 29, 30, 31, 32, 33, 34,
+            37, 38, 39, 40, 41, 42, 43
+    };
+    private final JavaPlugin plugin;
+    private final RunService runs;
+    private final PrototypeContent content;
+    private final TelemetryService telemetry;
+    private final NamespacedKey itemIdKey;
+    private final List<CodexEntry> entries;
+
+    public ItemCodexService(JavaPlugin plugin, RunService runs, PrototypeContent content, TelemetryService telemetry) {
+        this.plugin = plugin;
+        this.runs = runs;
+        this.content = content;
+        this.telemetry = telemetry;
+        this.itemIdKey = new NamespacedKey(plugin, "item_id");
+        this.entries = buildEntries(content);
+    }
+
+    public ItemStack resourceItem(String rawId, int amount) {
+        PrototypeContent.ResourceDefinition resource = content.resource(rawId.toUpperCase(java.util.Locale.ROOT));
+        ItemStack item = new ItemStack(resourceMaterial(resource.id()), Math.max(1, Math.min(64, amount)));
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.GOLD + "[WS] " + resource.name());
+        meta.setLore(List.of(
+                ChatColor.GRAY + "개인 소지 자원",
+                ChatColor.WHITE + "공용 보급 저장소에서 원장으로 전환 가능",
+                ChatColor.DARK_GRAY + "ID: " + resource.id()
+        ));
+        meta.getPersistentDataContainer().set(itemIdKey, PersistentDataType.STRING, resource.id());
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public int grantResource(Player player, String resourceId, int amount) {
+        if (amount <= 0) {
+            return 0;
+        }
+        String normalized = content.resource(resourceId.toUpperCase(java.util.Locale.ROOT)).id();
+        int remaining = amount;
+        while (remaining > 0) {
+            int stackAmount = Math.min(64, remaining);
+            addWithoutReservedSlot(player, resourceItem(normalized, stackAmount));
+            remaining -= stackAmount;
+        }
+        discover(player, normalized, "ACQUIRE_RESOURCE");
+        return countResource(player, normalized);
+    }
+
+    public int countResource(Player player, String resourceId) {
+        String normalized = resourceId.toUpperCase(java.util.Locale.ROOT);
+        int count = 0;
+        for (ItemStack item : player.getInventory().getStorageContents()) {
+            if (normalized.equals(itemId(item))) {
+                count += item.getAmount();
+            }
+        }
+        return count;
+    }
+
+    public boolean takeResource(Player player, String resourceId, int amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Resource amount cannot be negative");
+        }
+        String normalized = content.resource(resourceId.toUpperCase(java.util.Locale.ROOT)).id();
+        if (countResource(player, normalized) < amount) {
+            return false;
+        }
+        int remaining = amount;
+        ItemStack[] contents = player.getInventory().getStorageContents();
+        for (int slot = 0; slot < contents.length && remaining > 0; slot++) {
+            ItemStack item = contents[slot];
+            if (!normalized.equals(itemId(item))) {
+                continue;
+            }
+            int removed = Math.min(remaining, item.getAmount());
+            item.setAmount(item.getAmount() - removed);
+            if (item.getAmount() <= 0) {
+                contents[slot] = null;
+            }
+            remaining -= removed;
+        }
+        player.getInventory().setStorageContents(contents);
+        return true;
+    }
+
+    public boolean isResourceItem(ItemStack item) {
+        String id = itemId(item);
+        return id != null && content.resources().stream().anyMatch(resource -> resource.id().equals(id));
+    }
+
+    public String itemId(ItemStack item) {
+        if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
+            return null;
+        }
+        return item.getItemMeta().getPersistentDataContainer().get(itemIdKey, PersistentDataType.STRING);
+    }
+
+    public void discover(Player player, String rawId, String source) {
+        if (!runs.isMember(player)) {
+            return;
+        }
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        if (entries.stream().noneMatch(entry -> entry.id.equals(id))) {
+            throw new IllegalArgumentException("Unknown codex item " + rawId);
+        }
+        boolean added = runs.commitOnce("codex:" + player.getUniqueId() + ":" + id, "ITEM_CODEX_UNLOCKED",
+                "{\"player\":\"" + player.getUniqueId() + "\",\"itemId\":\"" + id + "\",\"source\":\"" + source + "\"}",
+                run -> run.players.get(player.getUniqueId().toString()).discoveredItemIds.add(id));
+        if (added) {
+            player.sendMessage(ChatColor.DARK_AQUA + "[아이템 도감] " + ChatColor.WHITE + entry(id).name + " 해금");
+        }
+    }
+
+    public void reconcile(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) {
+            return;
+        }
+        for (ItemStack item : player.getInventory().getStorageContents()) {
+            String id = itemId(item);
+            if (id != null && entries.stream().anyMatch(entry -> entry.id.equals(id))) {
+                discover(player, id, "INVENTORY_RECONCILE");
+            }
+        }
+        for (String equipment : state.ownedEquipment) {
+            if (entries.stream().anyMatch(entry -> entry.id.equals(equipment))) {
+                discover(player, equipment, "OWNED_EQUIPMENT_RECONCILE");
+            }
+        }
+        state.quickItems.forEach((id, amount) -> {
+            if (amount > 0 && entries.stream().anyMatch(entry -> entry.id.equals(id))) {
+                discover(player, id, "QUICK_ITEM_RECONCILE");
+            }
+        });
+    }
+
+    public void open(Player player) {
+        if (!runs.isMember(player)) {
+            player.sendMessage(ChatColor.RED + "현재 회차 멤버가 아닙니다.");
+            return;
+        }
+        reconcile(player);
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        CodexHolder holder = new CodexHolder(player.getUniqueId());
+        Inventory inventory = Bukkit.createInventory(holder, 54, ChatColor.DARK_AQUA + "아이템 도감");
+        int unlocked = 0;
+        for (int index = 0; index < entries.size() && index < ENTRY_SLOTS.length; index++) {
+            CodexEntry entry = entries.get(index);
+            boolean known = state.discoveredItemIds.contains(entry.id);
+            inventory.setItem(ENTRY_SLOTS[index], known ? knownItem(entry, state.detailedTooltips) : unknownItem(entry.id));
+            if (known) {
+                unlocked++;
+            }
+        }
+        inventory.setItem(4, named(Material.KNOWLEDGE_BOOK, ChatColor.AQUA + "아이템 도감 " + unlocked + "/" + entries.size(),
+                List.of(ChatColor.GRAY + "항목 위치와 ID는 고정됩니다.")));
+        inventory.setItem(49, named(Material.OAK_DOOR, ChatColor.RED + "닫기", List.of()));
+        player.openInventory(inventory);
+    }
+
+    public List<String> entryIds() {
+        return entries.stream().map(entry -> entry.id).toList();
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPickup(EntityPickupItemEvent event) {
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        Item item = event.getItem();
+        String id = itemId(item.getItemStack());
+        if (id != null && entries.stream().anyMatch(entry -> entry.id.equals(id))) {
+            discover(player, id, "PICKUP");
+        }
+    }
+
+    @EventHandler
+    public void onPrepareVanillaCraft(PrepareItemCraftEvent event) {
+        for (ItemStack item : event.getInventory().getMatrix()) {
+            if (isResourceItem(item)) {
+                event.getInventory().setResult(null);
+                return;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onCodexClick(InventoryClickEvent event) {
+        if (!(event.getInventory().getHolder() instanceof CodexHolder holder)) {
+            return;
+        }
+        event.setCancelled(true);
+        if (event.getWhoClicked() instanceof Player player && player.getUniqueId().equals(holder.owner)
+                && event.getRawSlot() == 49) {
+            player.closeInventory();
+        }
+    }
+
+    @EventHandler
+    public void onCodexDrag(InventoryDragEvent event) {
+        if (event.getInventory().getHolder() instanceof CodexHolder) {
+            event.setCancelled(true);
+        }
+    }
+
+    private ItemStack knownItem(CodexEntry entry, boolean detailed) {
+        ItemStack item = new ItemStack(entry.material);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.GOLD + entry.name);
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.DARK_GRAY + "ID: " + entry.id);
+        lore.add(ChatColor.WHITE + "분류: " + entry.category);
+        lore.addAll(entry.details.stream().map(line -> ChatColor.GRAY + line).toList());
+        if (detailed) {
+            recipeForOutput(entry.id).ifPresent(recipe -> {
+                lore.add(ChatColor.YELLOW + "조합법: " + recipe.name());
+                recipe.costs().forEach((id, amount) -> lore.add(ChatColor.WHITE + "- " + content.resource(id).name() + " " + amount));
+                lore.add(ChatColor.YELLOW + "3×3 배치:");
+                for (int row = 0; row < 3; row++) {
+                    List<String> cells = new ArrayList<>();
+                    for (int column = 0; column < 3; column++) {
+                        String resourceId = recipe.shape().get(row * 3 + column);
+                        cells.add(resourceId == null ? "빈칸" : content.resource(resourceId).name());
+                    }
+                    lore.add(ChatColor.WHITE + "[" + String.join("][", cells) + "]");
+                }
+            });
+            List<PrototypeContent.RecipeDefinition> uses = content.recipes().stream()
+                    .filter(recipe -> recipe.costs().containsKey(entry.id)).toList();
+            if (!uses.isEmpty()) {
+                lore.add(ChatColor.YELLOW + "사용처:");
+                uses.forEach(recipe -> lore.add(ChatColor.WHITE + "- " + recipe.name()));
+            }
+        }
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private ItemStack unknownItem(String id) {
+        return named(Material.BLACK_DYE, ChatColor.BLACK + "???", List.of(
+                ChatColor.DARK_GRAY + "ID: " + id,
+                ChatColor.GRAY + "처음 획득하면 정보가 해금됩니다."
+        ));
+    }
+
+    private java.util.Optional<PrototypeContent.RecipeDefinition> recipeForOutput(String id) {
+        return content.recipes().stream().filter(recipe -> recipe.rewardId().equals(id)).findFirst();
+    }
+
+    private CodexEntry entry(String id) {
+        return entries.stream().filter(entry -> entry.id.equals(id)).findFirst().orElseThrow();
+    }
+
+    private static List<CodexEntry> buildEntries(PrototypeContent content) {
+        Map<String, CodexEntry> result = new LinkedHashMap<>();
+        for (PrototypeContent.ResourceDefinition resource : content.resources()) {
+            List<String> details = resource.sourceMaterials().isEmpty()
+                    ? List.of("전투·오염 개체에서 획득")
+                    : List.of("채집: " + String.join(", ", resource.sourceMaterials()));
+            result.put(resource.id(), new CodexEntry(resource.id(), resource.name(), "RESOURCE",
+                    resourceMaterial(resource.id()), details));
+        }
+        for (PrototypeContent.RecipeDefinition recipe : content.recipes()) {
+            Material material = switch (recipe.rewardType()) {
+                case "EQUIPMENT" -> Material.matchMaterial(content.weapon(recipe.rewardId()).material());
+                case "QUICK_ITEM" -> Material.COOKED_BEEF;
+                case "FACILITY" -> Material.BARREL;
+                default -> Material.PAPER;
+            };
+            result.putIfAbsent(recipe.rewardId(), new CodexEntry(recipe.rewardId(), recipe.name(), recipe.rewardType(),
+                    material == null || material.isAir() ? Material.PAPER : material,
+                    List.of("WildSurvival Craft GUI 전용 제작")));
+        }
+        return List.copyOf(result.values());
+    }
+
+    private static Material resourceMaterial(String id) {
+        return switch (id) {
+            case "WSR-WOOD" -> Material.OAK_LOG;
+            case "WSR-STONE" -> Material.COBBLESTONE;
+            case "WSR-FIBER" -> Material.STRING;
+            case "WSR-IRON" -> Material.RAW_IRON;
+            case "WSR-TISSUE" -> Material.FERMENTED_SPIDER_EYE;
+            default -> Material.PAPER;
+        };
+    }
+
+    private void addWithoutReservedSlot(Player player, ItemStack offered) {
+        ItemStack remaining = offered.clone();
+        for (int slot = 1; slot <= 35 && remaining.getAmount() > 0; slot++) {
+            ItemStack existing = player.getInventory().getItem(slot);
+            if (existing == null || existing.getType().isAir() || !existing.isSimilar(remaining)) continue;
+            int moved = Math.min(existing.getMaxStackSize() - existing.getAmount(), remaining.getAmount());
+            if (moved <= 0) continue;
+            existing.setAmount(existing.getAmount() + moved);
+            remaining.setAmount(remaining.getAmount() - moved);
+        }
+        for (int slot = 1; slot <= 35 && remaining.getAmount() > 0; slot++) {
+            ItemStack existing = player.getInventory().getItem(slot);
+            if (existing != null && !existing.getType().isAir()) continue;
+            int moved = Math.min(remaining.getMaxStackSize(), remaining.getAmount());
+            ItemStack placed = remaining.clone(); placed.setAmount(moved);
+            player.getInventory().setItem(slot, placed);
+            remaining.setAmount(remaining.getAmount() - moved);
+        }
+        if (remaining.getAmount() > 0) player.getWorld().dropItemNaturally(player.getLocation(), remaining);
+    }
+
+    private static ItemStack named(Material material, String name, List<String> lore) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private record CodexEntry(String id, String name, String category, Material material, List<String> details) {
+    }
+
+    private static final class CodexHolder implements InventoryHolder {
+        private final UUID owner;
+
+        private CodexHolder(UUID owner) {
+            this.owner = owner;
+        }
+
+        @Override
+        public Inventory getInventory() {
+            return null;
+        }
+    }
+}

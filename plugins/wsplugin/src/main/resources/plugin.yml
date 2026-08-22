@@ -8,7 +8,7 @@ load: POSTWORLD
 commands:
   wildsurvival:
     description: WildSurvival prototype command
-    usage: /<command> <prototype|content|equipment|craft|status|test>
+    usage: /<command> <menu|prototype|content|equipment|craft|codex|stats|settings|ledger|status|test>
     aliases: [ws]
     permission: wildsurvival.use
 

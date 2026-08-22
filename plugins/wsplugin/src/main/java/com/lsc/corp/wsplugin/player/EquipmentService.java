@@ -36,12 +36,12 @@ public final class EquipmentService implements Listener {
     private static final int GUI_MAIN_WEAPON = 20;
     private static final int GUI_OFFHAND = 24;
     private static final int[] GUI_CATALOGUE = {29, 31, 33, 35};
+    private static final int[] GUI_QUICK = {36, 37, 38, 39};
     private final JavaPlugin plugin;
     private final RunService runs;
     private final PrototypeContent content;
     private final TelemetryService telemetry;
     private final NamespacedKey weaponIdKey;
-    private final NamespacedKey proxyKey;
     private int tickCounter;
 
     public EquipmentService(JavaPlugin plugin, RunService runs, PrototypeContent content, TelemetryService telemetry) {
@@ -50,7 +50,6 @@ public final class EquipmentService implements Listener {
         this.content = content;
         this.telemetry = telemetry;
         this.weaponIdKey = new NamespacedKey(plugin, "weapon_id");
-        this.proxyKey = new NamespacedKey(plugin, "input_proxy");
     }
 
     public void open(Player player) {
@@ -78,6 +77,14 @@ public final class EquipmentService implements Listener {
             inventory.setItem(GUI_CATALOGUE[i], item);
         }
         inventory.setItem(40, named(Material.BARRIER, ChatColor.RED + "권투로 전환", List.of("주무기와 보조무기를 비웁니다.")));
+        for (int i = 0; i < GUI_QUICK.length; i++) {
+            String bound = state.quickBindings.get(i + 1);
+            int amount = bound == null ? 0 : state.quickItems.getOrDefault(bound, 0);
+            inventory.setItem(GUI_QUICK[i], named(bound == null ? Material.GRAY_DYE : Material.COOKED_BEEF,
+                    ChatColor.AQUA + "Q" + (i + 1) + ": " + (bound == null ? "비어 있음" : bound),
+                    List.of(ChatColor.WHITE + "보유 " + amount,
+                            ChatColor.GRAY + "좌클릭: 응급 배급 바인딩", ChatColor.GRAY + "우클릭: 해제")));
+        }
         player.openInventory(inventory);
     }
 
@@ -130,13 +137,30 @@ public final class EquipmentService implements Listener {
             state.offhandId = null;
             state.ownedEquipment.clear();
             state.quickItems.clear();
+            state.quickBindings.clear();
         });
         syncAuthoritativeEquipment(player);
     }
 
     public void grantQuickItem(Player player, String id, int amount) {
-        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).quickItems.merge(id, amount, Integer::sum));
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            state.quickItems.merge(id, amount, Integer::sum);
+            if (!state.quickBindings.containsValue(id)) {
+                for (int slot = 1; slot <= 4; slot++) {
+                    if (!state.quickBindings.containsKey(slot)) {
+                        state.quickBindings.put(slot, id);
+                        break;
+                    }
+                }
+            }
+        });
         syncAuthoritativeEquipment(player);
+    }
+
+    public String quickBinding(Player player, int slot) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        return state == null ? null : state.quickBindings.get(slot);
     }
 
     public void setQuickItem(Player player, String id, int amount) {
@@ -188,29 +212,6 @@ public final class EquipmentService implements Listener {
             inventory.setItemInOffHand(expectedOff);
             auditSlotRepair(player, "-106");
         }
-        for (int slot = 1; slot <= 4; slot++) {
-            ItemStack displaced = inventory.getItem(slot);
-            if (!isWildSurvivalItem(displaced)) {
-                inventory.setItem(slot, null);
-                preserveUnexpected(player, displaced);
-            }
-            inventory.setItem(slot, proxy(Material.ECHO_SHARD, "C" + slot + " 공용 액티브", "Shift+숫자 " + (slot + 1)));
-        }
-        int rationCount = state.quickItems.getOrDefault("RATION", 0);
-        ItemStack displacedQ1 = inventory.getItem(5);
-        if (!isWildSurvivalItem(displacedQ1)) {
-            inventory.setItem(5, null);
-            preserveUnexpected(player, displacedQ1);
-        }
-        inventory.setItem(5, quickItem("Q1 응급 배급", rationCount));
-        for (int slot = 6; slot <= 8; slot++) {
-            ItemStack displaced = inventory.getItem(slot);
-            if (!isWildSurvivalItem(displaced)) {
-                inventory.setItem(slot, null);
-                preserveUnexpected(player, displaced);
-            }
-            inventory.setItem(slot, proxy(Material.GRAY_DYE, "Q" + (slot - 4) + " 비어 있음", "숫자 " + (slot + 1)));
-        }
     }
 
     public void tick() {
@@ -219,9 +220,6 @@ public final class EquipmentService implements Listener {
         }
         for (Player player : runs.onlineMembers()) {
             syncAuthoritativeEquipment(player);
-            if (player.getInventory().getHeldItemSlot() != 0) {
-                player.getInventory().setHeldItemSlot(0);
-            }
         }
     }
 
@@ -258,6 +256,18 @@ public final class EquipmentService implements Listener {
                 player.closeInventory();
                 return;
             }
+            for (int i = 0; i < GUI_QUICK.length; i++) {
+                if (event.getRawSlot() == GUI_QUICK[i]) {
+                    int quickSlot = i + 1;
+                    runs.mutate(run -> {
+                        RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                        if (event.isRightClick()) state.quickBindings.remove(quickSlot);
+                        else state.quickBindings.put(quickSlot, "RATION");
+                    });
+                    open(player);
+                    return;
+                }
+            }
             if (java.util.Arrays.stream(GUI_CATALOGUE).anyMatch(slot -> slot == event.getRawSlot())) {
                 ItemStack clicked = event.getCurrentItem();
                 String weaponId = weaponId(clicked);
@@ -269,7 +279,7 @@ public final class EquipmentService implements Listener {
             return;
         }
         if (event.getWhoClicked() instanceof Player player && runs.isMember(player) && event.getClickedInventory() instanceof PlayerInventory
-                && (event.getSlot() == 0 || event.getSlot() == 40 || (event.getSlot() >= 1 && event.getSlot() <= 8))) {
+                && (event.getSlot() == 0 || event.getSlot() == 40)) {
             event.setCancelled(true);
             Bukkit.getScheduler().runTask(plugin, () -> syncAuthoritativeEquipment(player));
         }
@@ -345,7 +355,7 @@ public final class EquipmentService implements Listener {
             return false;
         }
         return item.getItemMeta().getPersistentDataContainer().has(weaponIdKey, PersistentDataType.STRING)
-                || item.getItemMeta().getPersistentDataContainer().has(proxyKey, PersistentDataType.STRING);
+                ;
     }
 
     private boolean sameAuthoritativeItem(ItemStack actual, ItemStack expected) {
@@ -369,7 +379,7 @@ public final class EquipmentService implements Listener {
         }
         ItemStack remaining = item.clone();
         PlayerInventory inventory = player.getInventory();
-        for (int slot = 9; slot <= 35 && remaining.getAmount() > 0; slot++) {
+        for (int slot = 1; slot <= 35 && remaining.getAmount() > 0; slot++) {
             ItemStack existing = inventory.getItem(slot);
             if (existing == null || existing.getType().isAir() || !existing.isSimilar(remaining)) {
                 continue;
@@ -382,7 +392,7 @@ public final class EquipmentService implements Listener {
             existing.setAmount(existing.getAmount() + moved);
             remaining.setAmount(remaining.getAmount() - moved);
         }
-        for (int slot = 9; slot <= 35 && remaining.getAmount() > 0; slot++) {
+        for (int slot = 1; slot <= 35 && remaining.getAmount() > 0; slot++) {
             ItemStack existing = inventory.getItem(slot);
             if (existing != null && !existing.getType().isAir()) {
                 continue;
@@ -403,21 +413,6 @@ public final class EquipmentService implements Listener {
         if (snapshot != null) {
             telemetry.audit(snapshot.runId, player.getUniqueId().toString(), "equipment.slot_repair", "slot=" + slot);
         }
-    }
-
-    private ItemStack proxy(Material material, String name, String hint) {
-        ItemStack item = named(material, ChatColor.AQUA + name, List.of(ChatColor.GRAY + hint, ChatColor.DARK_GRAY + "입력 프록시 — 이동/드롭 불가"));
-        ItemMeta meta = item.getItemMeta();
-        meta.getPersistentDataContainer().set(proxyKey, PersistentDataType.STRING, name);
-        item.setItemMeta(meta);
-        return item;
-    }
-
-    private ItemStack quickItem(String name, int count) {
-        Material material = count > 0 ? Material.COOKED_BEEF : Material.GRAY_DYE;
-        ItemStack item = proxy(material, name, "숫자 6 / 보유 " + count);
-        item.setAmount(Math.max(1, Math.min(64, count)));
-        return item;
     }
 
     private static ItemStack named(Material material, String name, List<String> lore) {

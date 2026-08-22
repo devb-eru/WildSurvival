@@ -4,6 +4,7 @@ import com.lsc.corp.wsplugin.content.PrototypeContent;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
+import com.lsc.corp.wsplugin.player.PlayerStatPolicy;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import java.time.Instant;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -93,6 +95,9 @@ public final class CombatService implements Listener {
     private final Set<UUID> activeCombatEntities = new HashSet<>();
     private final Map<UUID, Long> tridentHitCooldown = new HashMap<>();
     private BossDamageHandler bossDamageHandler;
+    private Consumer<Player> menuOpener = player -> { };
+    private ItemRewardHandler itemRewardHandler = (player, resourceId, amount) -> { };
+    private DamageNumberService damageNumbers;
     private boolean scannedPersistedEntities;
     private int hudTick;
 
@@ -119,6 +124,18 @@ public final class CombatService implements Listener {
 
     public void setBossDamageHandler(BossDamageHandler bossDamageHandler) {
         this.bossDamageHandler = bossDamageHandler;
+    }
+
+    public void setMenuOpener(Consumer<Player> menuOpener) {
+        this.menuOpener = menuOpener;
+    }
+
+    public void setItemRewardHandler(ItemRewardHandler itemRewardHandler) {
+        this.itemRewardHandler = itemRewardHandler;
+    }
+
+    public void setDamageNumbers(DamageNumberService damageNumbers) {
+        this.damageNumbers = damageNumbers;
     }
 
     public LivingEntity spawnEnemy(PrototypeContent.EnemyDefinition definition, Location location) {
@@ -227,6 +244,7 @@ public final class CombatService implements Listener {
         }
         if (id.startsWith("BOSS-") && bossDamageHandler != null) {
             bossDamageHandler.damage(attacker, target, finalDamage, finalBreak, executionId);
+            if (damageNumbers != null) damageNumbers.show(attacker, target, finalDamage);
             return finalDamage;
         }
         double hp = pdc.getOrDefault(customHpKey, PersistentDataType.DOUBLE, 1.0) - finalDamage;
@@ -234,6 +252,7 @@ public final class CombatService implements Listener {
         applyBreak(target, finalBreak);
         target.getWorld().spawnParticle(Particle.DAMAGE_INDICATOR, target.getLocation().add(0, 1, 0), 2, 0.3, 0.3, 0.3, 0.0);
         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 0.35f, 1.2f);
+        if (damageNumbers != null) damageNumbers.show(attacker, target, finalDamage);
         if (hp <= 0.0) {
             defeatEnemy(attacker, target, id);
         }
@@ -460,6 +479,9 @@ public final class CombatService implements Listener {
             double reduction = clamp(playerState.testDamageReductionRate, 0.0, 0.95);
             event.setDamage(CombatMath.incomingDamage(event.getDamage(), multiplier, reduction));
         }
+        if (playerState != null) {
+            event.setDamage(event.getDamage() * PlayerStatPolicy.incomingDamageMultiplier(playerState.investedStats));
+        }
         long now = Instant.now().toEpochMilli();
         if (invulnerableUntilEpochMs.getOrDefault(player.getUniqueId(), 0L) >= now) {
             event.setCancelled(true);
@@ -488,7 +510,8 @@ public final class CombatService implements Listener {
 
     @EventHandler
     public void onAnimation(PlayerAnimationEvent event) {
-        if (event.getAnimationType() != PlayerAnimationType.ARM_SWING || !runs.isRunningMember(event.getPlayer())) {
+        if (event.getAnimationType() != PlayerAnimationType.ARM_SWING || !runs.isRunningMember(event.getPlayer())
+                || !inCombatStance(event.getPlayer())) {
             return;
         }
         routeLeft(event.getPlayer());
@@ -500,20 +523,22 @@ public final class CombatService implements Listener {
         if (!runs.isRunningMember(player)) {
             return;
         }
+        if (!inCombatStance(player)) {
+            return;
+        }
         Action action = event.getAction();
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
             boolean hit = routeLeft(player);
-            if (action == Action.LEFT_CLICK_BLOCK && "PICKAXE".equals(equipment.resolveWeaponId(player)) && hit) {
-                event.setCancelled(true);
+            if (action == Action.LEFT_CLICK_BLOCK) {
+                boolean combatPickaxe = "PICKAXE".equals(equipment.resolveWeaponId(player));
+                if (!combatPickaxe || hit) event.setCancelled(true);
             }
             return;
         }
-        if (action == Action.RIGHT_CLICK_BLOCK) {
-            return;
-        }
-        if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && player.isSneaking()) {
+        if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
             event.setCancelled(true);
-            executeWeaponActive(player, 2);
+            executeWeaponActive(player, player.isSneaking() ? 3 : 1);
+            returnToCombatStance(player);
         }
     }
 
@@ -523,8 +548,15 @@ public final class CombatService implements Listener {
             return;
         }
         event.setCancelled(true);
-        executeWeaponActive(event.getPlayer(), 3);
-        Bukkit.getScheduler().runTask(plugin, () -> equipment.syncAuthoritativeEquipment(event.getPlayer()));
+        Player player = event.getPlayer();
+        if (inCombatStance(player)) {
+            if (player.isSneaking()) menuOpener.accept(player);
+            else executeWeaponActive(player, 3);
+        }
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            equipment.syncAuthoritativeEquipment(player);
+            if (inCombatStance(player)) player.getInventory().setHeldItemSlot(0);
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -534,7 +566,10 @@ public final class CombatService implements Listener {
             return;
         }
         int slot = event.getNewSlot();
-        if (slot >= 1 && slot <= 4 && player.isSneaking()) {
+        if (event.getPreviousSlot() != 0 || !player.isSneaking()) {
+            return;
+        }
+        if (slot >= 1 && slot <= 4) {
             event.setCancelled(true);
             executeCommonActive(player, slot);
             Bukkit.getScheduler().runTask(plugin, () -> player.getInventory().setHeldItemSlot(0));
@@ -548,7 +583,7 @@ public final class CombatService implements Listener {
     @EventHandler
     public void onToggleSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        if (!event.isSneaking() || !runs.isRunningMember(player)) {
+        if (!event.isSneaking() || !runs.isRunningMember(player) || !inCombatStance(player)) {
             return;
         }
         long now = Instant.now().toEpochMilli();
@@ -616,6 +651,7 @@ public final class CombatService implements Listener {
     }
 
     private boolean routeLeft(Player player) {
+        if (!inCombatStance(player)) return false;
         long tick = Bukkit.getCurrentTick();
         if (lastLeftInputTick.getOrDefault(player.getUniqueId(), Long.MIN_VALUE) == tick) {
             return lastLeftHit.getOrDefault(player.getUniqueId(), false);
@@ -623,7 +659,7 @@ public final class CombatService implements Listener {
         lastLeftInputTick.put(player.getUniqueId(), tick);
         boolean result;
         if (player.isSneaking()) {
-            result = executeWeaponActive(player, 1);
+            result = executeWeaponActive(player, 2);
         } else {
             if ("PICKAXE".equals(equipment.resolveWeaponId(player)) && player.getTargetBlockExact(4) != null
                     && nearestTarget(player, content.weapon("PICKAXE").range()).isEmpty()) {
@@ -633,6 +669,7 @@ public final class CombatService implements Listener {
             result = executeBasicAttack(player);
         }
         lastLeftHit.put(player.getUniqueId(), result);
+        returnToCombatStance(player);
         return result;
     }
 
@@ -762,7 +799,8 @@ public final class CombatService implements Listener {
     }
 
     private void executeQuickItem(Player player, int slot) {
-        if (slot != 1 || !equipment.consumeQuickItem(player, "RATION")) {
+        String bound = equipment.quickBinding(player, slot);
+        if (bound == null || !"RATION".equals(bound) || !equipment.consumeQuickItem(player, bound)) {
             player.sendActionBar(Component.text("Q" + slot + " 소모품 없음", NamedTextColor.RED));
             return;
         }
@@ -778,18 +816,20 @@ public final class CombatService implements Listener {
     }
 
     private void executeDodge(Player player) {
-        if (!runs.consumeAp(player, 20.0)) {
-            apFailure(player, 20.0);
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        double cost = PlayerStatPolicy.dodgeCost(state.investedStats);
+        if (!runs.consumeAp(player, cost)) {
+            apFailure(player, cost);
             return;
         }
         Vector direction = player.getLocation().getDirection().setY(0).normalize();
         if (player.isSneaking()) {
             direction.multiply(-1.0);
         }
-        player.setVelocity(direction.multiply(0.9).setY(0.12));
+        player.setVelocity(direction.multiply(0.9 * PlayerStatPolicy.dodgeDistanceMultiplier(state.investedStats)).setY(0.12));
         invulnerableUntilEpochMs.put(player.getUniqueId(), Instant.now().plusMillis(450).toEpochMilli());
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.35f, 1.6f);
-        player.sendActionBar(Component.text("◇ 회피 / AP -20", NamedTextColor.AQUA));
+        player.sendActionBar(Component.text("◇ 회피 / AP -" + Math.round(cost), NamedTextColor.AQUA));
     }
 
     private boolean throwTrident(Player player) {
@@ -983,12 +1023,12 @@ public final class CombatService implements Listener {
             bar.removeAll();
         }
         PrototypeContent.EnemyDefinition definition = contentEnemy(enemyId);
-        runs.commitOnce("enemy-defeat:" + entityId, "ENEMY_DEFEATED", "{\"enemyId\":\"" + enemyId + "\"}", run -> {
-            for (var drop : definition.drops().entrySet()) {
-                int amount = Math.max(1, (int) Math.floor(drop.getValue() * growth.resourceMultiplier(attacker)));
-                run.resources.merge(drop.getKey(), amount, Integer::sum);
-            }
-        });
+        boolean rewarded = runs.commitOnce("enemy-defeat:" + entityId, "ENEMY_DEFEATED",
+                "{\"enemyId\":\"" + enemyId + "\"}", run -> { });
+        if (rewarded) for (var drop : definition.drops().entrySet()) {
+            int amount = Math.max(1, (int) Math.floor(drop.getValue() * growth.resourceMultiplier(attacker)));
+            itemRewardHandler.reward(attacker, drop.getKey(), amount);
+        }
         for (Player member : runs.onlineMembers()) {
             growth.awardExp(member, definition.activityExp(), "enemy-exp:" + entityId + ":" + member.getUniqueId());
         }
@@ -997,7 +1037,9 @@ public final class CombatService implements Listener {
     private void applyWeaponStatus(Player attacker, LivingEntity target, PrototypeContent.WeaponDefinition weapon, int stage,
                                    String executionId) {
         double roll = Math.floorMod((executionId + ":" + target.getUniqueId()).hashCode(), 10_000) / 10_000.0;
-        if (stage != weapon.attackCoefficients().size() - 1 || roll > weapon.statusChance()) {
+        RunSnapshot.PlayerState state = runs.playerState(attacker.getUniqueId()).orElse(null);
+        double chance = weapon.statusChance() + (state == null ? 0.0 : PlayerStatPolicy.statusChanceBonus(state.investedStats));
+        if (stage != weapon.attackCoefficients().size() - 1 || roll > chance) {
             return;
         }
         long expiry = Instant.now().plusSeconds(4).toEpochMilli();
@@ -1140,6 +1182,16 @@ public final class CombatService implements Listener {
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.5f, 0.7f);
     }
 
+    private boolean inCombatStance(Player player) {
+        return player.getInventory().getHeldItemSlot() == 0;
+    }
+
+    private void returnToCombatStance(Player player) {
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (runs.isRunningMember(player)) player.getInventory().setHeldItemSlot(0);
+        });
+    }
+
     private static double round(double value) {
         return Math.round(value * 100.0) / 100.0;
     }
@@ -1168,5 +1220,10 @@ public final class CombatService implements Listener {
 
     public interface BossDamageHandler {
         void damage(Player attacker, LivingEntity boss, double damage, double breakDamage, String executionId);
+    }
+
+    @FunctionalInterface
+    public interface ItemRewardHandler {
+        void reward(Player player, String resourceId, int amount);
     }
 }

@@ -18,7 +18,29 @@
     "dayCheckpoints": {"const": [1, 3, 6, 10]},
     "progressExpByDay": {"type": "object"},
     "resources": {"type": "array", "minItems": 4},
-    "recipes": {"type": "array", "minItems": 6},
+    "recipes": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "costs", "shape", "rewardType", "rewardId", "rewardAmount"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "name": {"type": "string", "minLength": 1},
+          "costs": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "integer", "minimum": 1}},
+          "shape": {
+            "type": "array",
+            "minItems": 9,
+            "maxItems": 9,
+            "items": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}]}
+          },
+          "rewardType": {"enum": ["EQUIPMENT", "QUICK_ITEM", "FACILITY"]},
+          "rewardId": {"type": "string", "minLength": 1},
+          "rewardAmount": {"type": "integer", "minimum": 1}
+        }
+      }
+    },
     "weapons": {"type": "array", "minItems": 5},
     "enemies": {"type": "array", "minItems": 4},
     "personalAugments": {"type": "array", "minItems": 9},

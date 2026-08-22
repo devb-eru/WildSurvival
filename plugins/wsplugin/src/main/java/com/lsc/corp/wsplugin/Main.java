@@ -2,12 +2,15 @@ package com.lsc.corp.wsplugin;
 
 import com.lsc.corp.wsplugin.boss.PrototypeBossService;
 import com.lsc.corp.wsplugin.combat.CombatService;
+import com.lsc.corp.wsplugin.combat.DamageNumberService;
 import com.lsc.corp.wsplugin.content.ContentBundleService;
 import com.lsc.corp.wsplugin.economy.EconomyService;
+import com.lsc.corp.wsplugin.economy.ItemCodexService;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.PrototypeCommand;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
+import com.lsc.corp.wsplugin.player.PlayerStatService;
 import com.lsc.corp.wsplugin.run.RunRepository;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.testlab.TestLabCommand;
@@ -17,12 +20,14 @@ import com.lsc.corp.wsplugin.testlab.TestLabService;
 import com.lsc.corp.wsplugin.testlab.TestScenarioService;
 import com.lsc.corp.wsplugin.testlab.VirtualPartyService;
 import com.lsc.corp.wsplugin.world.PrototypeLoopService;
+import com.lsc.corp.wsplugin.ui.PlayerMenuService;
 import java.util.Objects;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
     private RunService runService;
     private TelemetryService telemetry;
+    private DamageNumberService damageNumbers;
 
     @Override
     public void onEnable() {
@@ -38,7 +43,14 @@ public final class Main extends JavaPlugin {
             GrowthService growth = new GrowthService(this, runService, content.content(), telemetry);
             EquipmentService equipment = new EquipmentService(this, runService, content.content(), telemetry);
             CombatService combat = new CombatService(this, runService, content.content(), equipment, growth, telemetry);
-            EconomyService economy = new EconomyService(this, runService, content.content(), equipment, growth, telemetry);
+            ItemCodexService codex = new ItemCodexService(this, runService, content.content(), telemetry);
+            EconomyService economy = new EconomyService(this, runService, content.content(), equipment, growth, telemetry, codex);
+            PlayerStatService stats = new PlayerStatService(this, runService, growth);
+            PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, growth);
+            damageNumbers = new DamageNumberService(this, runService);
+            combat.setMenuOpener(menu::open);
+            combat.setItemRewardHandler((player, resourceId, amount) -> codex.grantResource(player, resourceId, amount));
+            combat.setDamageNumbers(damageNumbers);
             PrototypeBossService boss = new PrototypeBossService(this, runService, content.content(), combat, growth, telemetry);
             combat.setBossDamageHandler(boss);
             PrototypeLoopService loop = new PrototypeLoopService(this, runService, content.content(), economy, combat, boss, growth, telemetry);
@@ -47,18 +59,22 @@ public final class Main extends JavaPlugin {
             TestLabService testLab = new TestLabService(this, runService, testLabRepository, content.content(),
                     equipment, growth, combat, boss, loop, telemetry);
             VirtualPartyService virtualParty = new VirtualPartyService(this, runService);
-            TestScenarioService scenarios = new TestScenarioService(testLab, runService, growth, combat, boss, virtualParty);
+            TestScenarioService scenarios = new TestScenarioService(testLab, runService, growth, combat, boss, virtualParty, economy);
             TestLabGui testLabGui = new TestLabGui(this, testLab, scenarios, virtualParty, runService);
             TestLabCommand testLabCommand = new TestLabCommand(testLab, testLabGui, scenarios, virtualParty, combat, runService);
 
             runService.attach(loop, equipment, growth);
-            registerListeners(equipment, combat, economy, growth, boss, loop, testLab, virtualParty, testLabGui);
+            registerListeners(equipment, combat, economy, codex, stats, menu, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
 
-            PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand);
+            PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand, menu);
             Objects.requireNonNull(getCommand("wildsurvival"), "wildsurvival command").setExecutor(command);
             Objects.requireNonNull(getCommand("wildsurvival"), "wildsurvival command").setTabCompleter(command);
 
             runService.restore();
+            for (org.bukkit.entity.Player player : runService.onlineMembers()) {
+                codex.reconcile(player);
+                stats.apply(player);
+            }
             virtualParty.cleanupOrphans();
             testLab.recoverActiveSession();
             runService.startHeartbeat();
@@ -71,6 +87,9 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (damageNumbers != null) {
+            damageNumbers.cleanup();
+        }
         if (runService != null) {
             runService.shutdown();
         }

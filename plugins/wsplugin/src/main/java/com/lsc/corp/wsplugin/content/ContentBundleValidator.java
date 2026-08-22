@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Set;
@@ -98,6 +99,22 @@ public final class ContentBundleValidator {
             if (recipe.costs().values().stream().anyMatch(value -> value <= 0)) {
                 throw new ContentValidationException("Recipe costs must be positive: " + recipe.id());
             }
+            if (recipe.shape() == null || recipe.shape().size() != 9) {
+                throw new ContentValidationException("Recipe shape must contain exactly nine cells: " + recipe.id());
+            }
+            java.util.Map<String, Integer> shapeCosts = new HashMap<>();
+            for (String resourceId : recipe.shape()) {
+                if (resourceId != null) {
+                    content.resource(resourceId);
+                    shapeCosts.merge(resourceId, 1, Integer::sum);
+                }
+            }
+            if (!shapeCosts.equals(recipe.costs())) {
+                throw new ContentValidationException("Recipe shape and costs disagree: " + recipe.id());
+            }
+        }
+        if (content.recipes().stream().noneMatch(recipe -> "COMMON_RESOURCE_DEPOT".equals(recipe.rewardId()))) {
+            throw new ContentValidationException("Shared-resource depot recipe is required");
         }
         ids(content.personalAugments().stream().map(PrototypeContent.AugmentDefinition::id).toList());
         ids(content.partyAugments().stream().map(PrototypeContent.AugmentDefinition::id).toList());

@@ -3,6 +3,7 @@ package com.lsc.corp.wsplugin.testlab;
 import com.lsc.corp.wsplugin.boss.PrototypeBossService;
 import com.lsc.corp.wsplugin.combat.CombatService;
 import com.lsc.corp.wsplugin.growth.GrowthService;
+import com.lsc.corp.wsplugin.economy.EconomyService;
 import com.lsc.corp.wsplugin.run.RunService;
 import java.io.IOException;
 import java.util.List;
@@ -21,16 +22,18 @@ public final class TestScenarioService {
     private final CombatService combat;
     private final PrototypeBossService boss;
     private final VirtualPartyService virtualParty;
+    private final EconomyService economy;
 
     public TestScenarioService(TestLabService lab, RunService runs, GrowthService growth,
                                CombatService combat, PrototypeBossService boss,
-                               VirtualPartyService virtualParty) {
+                               VirtualPartyService virtualParty, EconomyService economy) {
         this.lab = lab;
         this.runs = runs;
         this.growth = growth;
         this.combat = combat;
         this.boss = boss;
         this.virtualParty = virtualParty;
+        this.economy = economy;
     }
 
     public String run(Player player, String rawId) throws IOException {
@@ -46,11 +49,11 @@ public final class TestScenarioService {
             case "GATHER" -> {
                 lab.setEquipment(player, "PICKAXE", true);
                 lab.setDay(player, 1);
-                player.sendMessage(ChatColor.YELLOW + "자연 목재·석재·철 블록을 채집해 원장 증가와 곡괭이 전투 우선 판정을 확인하세요.");
+                player.sendMessage(ChatColor.YELLOW + "자연 자원을 채집해 개인 아이템 획득과 곡괭이 전투 우선 판정을 확인하세요.");
             }
             case "CRAFT" -> {
-                lab.fillResources(player, 50);
-                player.sendMessage(ChatColor.YELLOW + "재료가 각 50개 지급됐습니다. /ws craft로 비용·제작·장착을 확인하세요.");
+                economy.prepareCraftTest(player, 50);
+                player.sendMessage(ChatColor.YELLOW + "개인 재료 각 50개와 Craft 해금 상태가 지급됐습니다. 3×3 조합을 확인하세요.");
             }
             case "COMBAT" -> {
                 lab.setEquipment(player, "SWORD", true);

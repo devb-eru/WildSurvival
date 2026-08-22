@@ -204,11 +204,13 @@ public final class PrototypeLoopService implements Listener {
     }
 
     private void grantRecoverySupply() {
-        runs.addResource("event-supply:day1:wood", "WSR-WOOD", 8);
-        runs.addResource("event-supply:day1:stone", "WSR-STONE", 8);
-        runs.addResource("event-supply:day1:fiber", "WSR-FIBER", 6);
-        runs.addResource("event-supply:day1:iron", "WSR-IRON", 6);
-        runs.broadcast(ChatColor.GREEN + "잔해 회수 상자 입고: 목재 8, 석재 8, 섬유 6, 철 6 (공용 원장)");
+        for (Player player : runs.onlineMembers()) {
+            economy.grantPersonalResource(player, "WSR-WOOD", 8);
+            economy.grantPersonalResource(player, "WSR-STONE", 8);
+            economy.grantPersonalResource(player, "WSR-FIBER", 6);
+            economy.grantPersonalResource(player, "WSR-IRON", 6);
+        }
+        runs.broadcast(ChatColor.GREEN + "개인 잔해 보급: 목재 8, 석재 8, 섬유 6, 철 6");
     }
 
     private void scheduleNextCheckpoint(int targetDay) {

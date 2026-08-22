@@ -15,12 +15,12 @@
     {"id": "WSR-TISSUE", "name": "오염 조직", "sourceMaterials": [], "amountPerNode": 1, "activityExp": 10}
   ],
   "recipes": [
-    {"id": "PROTO-RECIPE-SWORD", "name": "생존 검", "costs": {"WSR-WOOD": 2, "WSR-IRON": 3}, "rewardType": "EQUIPMENT", "rewardId": "SWORD", "rewardAmount": 1},
-    {"id": "PROTO-RECIPE-BOW", "name": "생존 활", "costs": {"WSR-WOOD": 3, "WSR-FIBER": 3}, "rewardType": "EQUIPMENT", "rewardId": "BOW", "rewardAmount": 1},
-    {"id": "PROTO-RECIPE-PICKAXE", "name": "전투 곡괭이", "costs": {"WSR-WOOD": 2, "WSR-IRON": 3}, "rewardType": "EQUIPMENT", "rewardId": "PICKAXE", "rewardAmount": 1},
-    {"id": "PROTO-RECIPE-TRIDENT", "name": "회수 삼지창", "costs": {"WSR-IRON": 6, "WSR-TISSUE": 2}, "rewardType": "EQUIPMENT", "rewardId": "TRIDENT", "rewardAmount": 1},
-    {"id": "PROTO-RECIPE-RATION", "name": "응급 배급", "costs": {"WSR-FIBER": 1, "WSR-TISSUE": 1}, "rewardType": "QUICK_ITEM", "rewardId": "RATION", "rewardAmount": 2},
-    {"id": "PROTO-RECIPE-KIT", "name": "휴대 공작 도구", "costs": {"WSR-WOOD": 4, "WSR-STONE": 3, "WSR-IRON": 2}, "rewardType": "FACILITY", "rewardId": "FIELD_WORKBENCH", "rewardAmount": 1}
+    {"id": "PROTO-RECIPE-SWORD", "name": "생존 검", "costs": {"WSR-WOOD": 2, "WSR-IRON": 3}, "shape": [null, "WSR-IRON", null, "WSR-IRON", "WSR-IRON", null, "WSR-WOOD", "WSR-WOOD", null], "rewardType": "EQUIPMENT", "rewardId": "SWORD", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-BOW", "name": "생존 활", "costs": {"WSR-WOOD": 3, "WSR-FIBER": 3}, "shape": ["WSR-FIBER", "WSR-WOOD", null, "WSR-FIBER", null, "WSR-WOOD", "WSR-FIBER", "WSR-WOOD", null], "rewardType": "EQUIPMENT", "rewardId": "BOW", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-PICKAXE", "name": "전투 곡괭이", "costs": {"WSR-WOOD": 2, "WSR-IRON": 3}, "shape": ["WSR-IRON", "WSR-IRON", "WSR-IRON", null, "WSR-WOOD", null, null, "WSR-WOOD", null], "rewardType": "EQUIPMENT", "rewardId": "PICKAXE", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-TRIDENT", "name": "회수 삼지창", "costs": {"WSR-IRON": 6, "WSR-TISSUE": 2}, "shape": ["WSR-IRON", "WSR-TISSUE", "WSR-IRON", "WSR-IRON", "WSR-TISSUE", "WSR-IRON", null, "WSR-IRON", "WSR-IRON"], "rewardType": "EQUIPMENT", "rewardId": "TRIDENT", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-RATION", "name": "응급 배급", "costs": {"WSR-FIBER": 1, "WSR-TISSUE": 1}, "shape": [null, null, null, null, "WSR-FIBER", "WSR-TISSUE", null, null, null], "rewardType": "QUICK_ITEM", "rewardId": "RATION", "rewardAmount": 2},
+    {"id": "PROTO-RECIPE-COMMON-DEPOT", "name": "공용 보급 저장소", "costs": {"WSR-WOOD": 4, "WSR-STONE": 3, "WSR-IRON": 2}, "shape": ["WSR-WOOD", "WSR-WOOD", "WSR-WOOD", "WSR-WOOD", "WSR-STONE", "WSR-STONE", "WSR-STONE", "WSR-IRON", "WSR-IRON"], "rewardType": "FACILITY", "rewardId": "COMMON_RESOURCE_DEPOT", "rewardAmount": 1}
   ],
   "weapons": [
     {"id": "SWORD", "name": "검", "material": "IRON_SWORD", "intervalTicks": 13, "range": 3.2, "arcDegrees": 90.0, "attackCoefficients": [0.70, 0.75, 1.00], "breakDamage": [18.0, 20.0, 30.0], "statusId": "MARK", "statusChance": 0.40},

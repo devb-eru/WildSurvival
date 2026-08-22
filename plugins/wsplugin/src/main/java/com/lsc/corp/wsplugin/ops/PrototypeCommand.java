@@ -8,6 +8,7 @@ import com.lsc.corp.wsplugin.player.EquipmentService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import com.lsc.corp.wsplugin.testlab.TestLabCommand;
+import com.lsc.corp.wsplugin.ui.PlayerMenuService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -31,10 +32,11 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
     private final PrototypeBossService boss;
     private final TelemetryService telemetry;
     private final TestLabCommand testLab;
+    private final PlayerMenuService menu;
 
     public PrototypeCommand(ContentBundleService content, RunService runs, EquipmentService equipment,
                             EconomyService economy, GrowthService growth, PrototypeBossService boss,
-                            TelemetryService telemetry, TestLabCommand testLab) {
+                            TelemetryService telemetry, TestLabCommand testLab, PlayerMenuService menu) {
         this.content = content;
         this.runs = runs;
         this.equipment = equipment;
@@ -43,6 +45,7 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
         this.boss = boss;
         this.telemetry = telemetry;
         this.testLab = testLab;
+        this.menu = menu;
     }
 
     @Override
@@ -57,7 +60,12 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
                 case "content" -> content(sender, args);
                 case "prototype" -> prototype(sender, args);
                 case "equipment" -> equipment.open(requirePlayer(sender));
+                case "menu" -> menu.open(requirePlayer(sender));
                 case "craft" -> economy.openCraft(requirePlayer(sender));
+                case "codex" -> menu.openCodex(requirePlayer(sender));
+                case "stats" -> menu.openStats(requirePlayer(sender));
+                case "settings" -> menu.openSettings(requirePlayer(sender));
+                case "ledger" -> economy.openLedger(requirePlayer(sender));
                 case "status" -> status(sender);
                 case "augment" -> growth.openPendingPersonalDraw(requirePlayer(sender));
                 case "test" -> testLab.execute(sender, args);
@@ -168,7 +176,7 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
 
     private static void help(CommandSender sender, String label) {
         sender.sendMessage(ChatColor.GOLD + "WildSurvival prototype");
-        sender.sendMessage(ChatColor.WHITE + "/" + label + " equipment | craft | status | augment | test");
+        sender.sendMessage(ChatColor.WHITE + "/" + label + " menu | equipment | craft | ledger | status | augment | test");
         if (sender.hasPermission("wildsurvival.prototype.admin")) {
             sender.sendMessage(ChatColor.GRAY + "/" + label + " prototype create [players...] | start | inspect | advance | boss");
             sender.sendMessage(ChatColor.GRAY + "/" + label + " prototype stop <reason> --dry-run|--confirm");
@@ -178,7 +186,7 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return filter(args[0], List.of("prototype", "content", "equipment", "craft", "status", "augment", "test"));
+            return filter(args[0], List.of("prototype", "content", "menu", "equipment", "craft", "codex", "stats", "settings", "ledger", "status", "augment", "test"));
         }
         if (args.length >= 2 && "test".equalsIgnoreCase(args[0])) {
             return testLab.complete(sender, args);

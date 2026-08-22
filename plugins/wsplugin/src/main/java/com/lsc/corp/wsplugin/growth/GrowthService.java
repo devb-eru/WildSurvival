@@ -2,6 +2,7 @@ package com.lsc.corp.wsplugin.growth;
 
 import com.lsc.corp.wsplugin.content.PrototypeContent;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
+import com.lsc.corp.wsplugin.player.PlayerStatPolicy;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import java.util.ArrayList;
@@ -46,11 +47,17 @@ public final class GrowthService implements Listener {
         if (amount <= 0 || !runs.isRunningMember(player)) {
             return;
         }
-        int beforeLevel = runs.playerState(player.getUniqueId()).map(value -> value.level).orElse(1);
+        RunSnapshot.PlayerState before = runs.playerState(player.getUniqueId()).orElse(null);
+        if (before == null) return;
+        if (!idempotencyKey.startsWith("checkpoint-exp:") && !idempotencyKey.startsWith("target-exp:")) {
+            amount = Math.max(1, (int) Math.floor(amount * PlayerStatPolicy.activityExpMultiplier(before.investedStats)));
+        }
+        int committedAmount = amount;
+        int beforeLevel = before.level;
         boolean committed = runs.commitOnce(idempotencyKey, "EXP_COMMITTED",
-                "{\"amount\":" + amount + "}", snapshot -> {
+                "{\"amount\":" + committedAmount + "}", snapshot -> {
                     RunSnapshot.PlayerState state = snapshot.players.get(player.getUniqueId().toString());
-                    state.exp = Math.min(cumulativeExpForLevel(50), state.exp + amount);
+                    state.exp = Math.min(cumulativeExpForLevel(50), state.exp + committedAmount);
                     state.level = levelForExp(state.exp);
                 });
         if (!committed) {
@@ -139,7 +146,9 @@ public final class GrowthService implements Listener {
     }
 
     public double attackMultiplier(Player player) {
-        return aggregate(player, PrototypeContent.AugmentDefinition::attackMultiplier);
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        return aggregate(player, PrototypeContent.AugmentDefinition::attackMultiplier)
+                * (state == null ? 1.0 : PlayerStatPolicy.attackMultiplier(state.investedStats));
     }
 
     public double breakMultiplier(Player player) {
@@ -203,7 +212,7 @@ public final class GrowthService implements Listener {
             } else if (!present) {
                 state.personalAugments.remove(augment.id());
             }
-            recalculateTestMaxAp(run, state);
+            recalculateMaxAp(run, state);
         });
     }
 
@@ -212,7 +221,7 @@ public final class GrowthService implements Listener {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
             state.personalAugments.clear();
             state.resolvedPersonalMilestones.clear();
-            recalculateTestMaxAp(run, state);
+            recalculateMaxAp(run, state);
         });
         openMilestones.remove(player.getUniqueId());
     }
@@ -224,7 +233,7 @@ public final class GrowthService implements Listener {
         runs.mutate(run -> {
             run.partyAugmentId = augment.id();
             run.partyAugmentVotes.clear();
-            run.players.values().forEach(state -> recalculateTestMaxAp(run, state));
+            run.players.values().forEach(state -> recalculateMaxAp(run, state));
         });
     }
 
@@ -232,7 +241,7 @@ public final class GrowthService implements Listener {
         runs.mutate(run -> {
             run.partyAugmentId = null;
             run.partyAugmentVotes.clear();
-            run.players.values().forEach(state -> recalculateTestMaxAp(run, state));
+            run.players.values().forEach(state -> recalculateMaxAp(run, state));
         });
         partyVoteOpened = false;
     }
@@ -279,8 +288,7 @@ public final class GrowthService implements Listener {
                     RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
                     state.personalAugments.add(augment.id());
                     state.resolvedPersonalMilestones.add(milestone);
-                    state.maxAp = Math.min(200, state.maxAp + augment.maxApBonus());
-                    state.ap = Math.min(state.maxAp, state.ap);
+                    recalculateMaxAp(run, state);
                 });
         openMilestones.remove(player.getUniqueId());
         if (committed) {
@@ -309,8 +317,7 @@ public final class GrowthService implements Listener {
                 "{\"augmentId\":\"" + selected.id() + "\"}", run -> {
                     run.partyAugmentId = selected.id();
                     for (RunSnapshot.PlayerState state : run.players.values()) {
-                        state.maxAp = Math.min(200, state.maxAp + selected.maxApBonus());
-                        state.ap = Math.min(state.maxAp, state.ap);
+                        recalculateMaxAp(run, state);
                     }
                 });
         runs.broadcast(ChatColor.GOLD + "파티 증강 확정: " + selected.name());
@@ -367,16 +374,20 @@ public final class GrowthService implements Listener {
         return result;
     }
 
-    private void recalculateTestMaxAp(RunSnapshot run, RunSnapshot.PlayerState state) {
-        if (!"TEST".equals(run.runType)) {
-            return;
-        }
+    private void recalculateMaxAp(RunSnapshot run, RunSnapshot.PlayerState state) {
         int bonus = state.personalAugments.stream().map(this::findAugment).mapToInt(PrototypeContent.AugmentDefinition::maxApBonus).sum();
         if (run.partyAugmentId != null) {
             bonus += findAugment(run.partyAugmentId).maxApBonus();
         }
-        state.maxAp = Math.min(10_000, Math.max(1, state.testBaseMaxAp + bonus));
+        int base = "TEST".equals(run.runType)
+                ? state.testBaseMaxAp + Math.min(25, PlayerStatPolicy.points(state.investedStats, "AP"))
+                : PlayerStatPolicy.baseMaxAp(state.investedStats);
+        state.maxAp = Math.min("TEST".equals(run.runType) ? 10_000 : 200, Math.max(1, base + bonus));
         state.ap = Math.min(state.maxAp, state.ap);
+    }
+
+    public void recalculateMaxAp(Player player) {
+        runs.mutate(run -> recalculateMaxAp(run, run.players.get(player.getUniqueId().toString())));
     }
 
     private PrototypeContent.AugmentDefinition findAugment(String id) {

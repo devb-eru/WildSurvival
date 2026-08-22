@@ -280,6 +280,30 @@ public final class RunService {
         }
     }
 
+    public boolean withdrawResource(String key, String resourceId, int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive");
+        }
+        synchronized (serialQueue) {
+            requireRunning();
+            if (!current.sharedLedgerUnlocked || current.facility == null || !current.facility.active) {
+                return false;
+            }
+            if (current.committedKeys.contains(key)) {
+                return true;
+            }
+            int balance = current.resources.getOrDefault(resourceId, 0);
+            if (balance < amount) {
+                return false;
+            }
+            current.resources.put(resourceId, balance - amount);
+            commitEventLocked(key, "LEDGER_COMMITTED", "{\"resource\":\"" + resourceId
+                    + "\",\"delta\":" + (-amount) + ",\"balance\":" + (balance - amount) + "}");
+            saveUnchecked();
+            return true;
+        }
+    }
+
     public boolean consumeAp(Player player, double amount) {
         synchronized (serialQueue) {
             RunSnapshot.PlayerState state = playerState(player.getUniqueId()).orElse(null);

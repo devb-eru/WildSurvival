@@ -814,6 +814,7 @@ public final class TestLabService implements Listener {
         replacement.players.put(state.uuid, state);
         content.resources().forEach(resource -> replacement.resources.put(resource.id(), 0));
         runs.replaceCurrentTest(replacement);
+        actor.getInventory().clear();
         actor.getActivePotionEffects().forEach(effect -> actor.removePotionEffect(effect.getType()));
         actor.setGameMode(GameMode.SURVIVAL);
         applyRuntimePlayerState(actor);

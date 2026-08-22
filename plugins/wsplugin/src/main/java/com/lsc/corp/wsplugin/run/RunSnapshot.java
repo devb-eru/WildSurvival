@@ -27,6 +27,8 @@ public final class RunSnapshot {
     public Map<String, MilestoneLock> milestoneLocks = new LinkedHashMap<>();
     public String partyAugmentId;
     public Map<String, Integer> partyAugmentVotes = new LinkedHashMap<>();
+    public boolean craftUnlocked;
+    public boolean sharedLedgerUnlocked;
     public BossState boss;
     public FacilityState facility;
     public TestState test;
@@ -45,6 +47,11 @@ public final class RunSnapshot {
         public String offhandId;
         public Set<String> ownedEquipment = new LinkedHashSet<>();
         public Map<String, Integer> quickItems = new LinkedHashMap<>();
+        public Map<Integer, String> quickBindings = new LinkedHashMap<>();
+        public Set<String> discoveredItemIds = new LinkedHashSet<>();
+        public Map<String, Integer> investedStats = new LinkedHashMap<>();
+        public boolean damageNumbersEnabled = true;
+        public boolean detailedTooltips = true;
         public List<String> personalAugments = new ArrayList<>();
         public Set<Integer> resolvedPersonalMilestones = new LinkedHashSet<>();
         public String tridentState = "HELD";
