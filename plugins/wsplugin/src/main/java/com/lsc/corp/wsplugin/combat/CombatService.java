@@ -1,0 +1,974 @@
+package com.lsc.corp.wsplugin.combat;
+
+import com.lsc.corp.wsplugin.content.PrototypeContent;
+import com.lsc.corp.wsplugin.growth.GrowthService;
+import com.lsc.corp.wsplugin.ops.TelemetryService;
+import com.lsc.corp.wsplugin.player.EquipmentService;
+import com.lsc.corp.wsplugin.run.RunService;
+import com.lsc.corp.wsplugin.run.RunSnapshot;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Predicate;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
+import org.bukkit.entity.AbstractArrow;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Trident;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerAnimationType;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
+
+public final class CombatService implements Listener {
+    private static final double PLAYER_HP_SCALE = 5.0;
+    private final JavaPlugin plugin;
+    private final RunService runs;
+    private final PrototypeContent content;
+    private final EquipmentService equipment;
+    private final GrowthService growth;
+    private final TelemetryService telemetry;
+    private final NamespacedKey enemyIdKey;
+    private final NamespacedKey enemyRunIdKey;
+    private final NamespacedKey customHpKey;
+    private final NamespacedKey customMaxHpKey;
+    private final NamespacedKey defenceKey;
+    private final NamespacedKey breakKey;
+    private final NamespacedKey breakMaxKey;
+    private final NamespacedKey groggyUntilKey;
+    private final NamespacedKey projectileOwnerKey;
+    private final NamespacedKey projectileWeaponKey;
+    private final Map<UUID, ComboState> combos = new HashMap<>();
+    private final Map<UUID, Long> attackReadyAtNanos = new HashMap<>();
+    private final Map<UUID, Long> lastLeftInputTick = new HashMap<>();
+    private final Map<UUID, Boolean> lastLeftHit = new HashMap<>();
+    private final Map<UUID, Long> invulnerableUntilEpochMs = new HashMap<>();
+    private final Map<UUID, Long> lastSneakAtEpochMs = new HashMap<>();
+    private final Map<UUID, ReviveChannel> reviveChannels = new HashMap<>();
+    private final Map<UUID, BossBar> breakBars = new HashMap<>();
+    private final Set<UUID> activeCombatEntities = new HashSet<>();
+    private final Map<UUID, Long> tridentHitCooldown = new HashMap<>();
+    private BossDamageHandler bossDamageHandler;
+    private boolean scannedPersistedEntities;
+    private int hudTick;
+
+    public CombatService(JavaPlugin plugin, RunService runs, PrototypeContent content, EquipmentService equipment, GrowthService growth, TelemetryService telemetry) {
+        this.plugin = plugin;
+        this.runs = runs;
+        this.content = content;
+        this.equipment = equipment;
+        this.growth = growth;
+        this.telemetry = telemetry;
+        this.enemyIdKey = new NamespacedKey(plugin, "enemy_id");
+        this.enemyRunIdKey = new NamespacedKey(plugin, "enemy_run_id");
+        this.customHpKey = new NamespacedKey(plugin, "custom_hp");
+        this.customMaxHpKey = new NamespacedKey(plugin, "custom_max_hp");
+        this.defenceKey = new NamespacedKey(plugin, "defence");
+        this.breakKey = new NamespacedKey(plugin, "break_current");
+        this.breakMaxKey = new NamespacedKey(plugin, "break_max");
+        this.groggyUntilKey = new NamespacedKey(plugin, "groggy_until");
+        this.projectileOwnerKey = new NamespacedKey(plugin, "projectile_owner");
+        this.projectileWeaponKey = new NamespacedKey(plugin, "projectile_weapon");
+    }
+
+    public void setBossDamageHandler(BossDamageHandler bossDamageHandler) {
+        this.bossDamageHandler = bossDamageHandler;
+    }
+
+    public LivingEntity spawnEnemy(PrototypeContent.EnemyDefinition definition, Location location) {
+        EntityType type;
+        try {
+            type = EntityType.valueOf(definition.entityType());
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("Invalid living entity type " + definition.entityType());
+        }
+        if (!type.isAlive()) {
+            throw new IllegalArgumentException("Entity type is not living " + definition.entityType());
+        }
+        LivingEntity entity = (LivingEntity) location.getWorld().spawnEntity(location, type);
+        tagCombatEntity(entity, definition.id(), definition.hp(), definition.defence(), definition.breakMax());
+        entity.setCustomName(ChatColor.RED + definition.name() + ChatColor.GRAY + " [" + definition.role() + "]");
+        entity.setCustomNameVisible(true);
+        var maxHealth = entity.getAttribute(Attribute.MAX_HEALTH);
+        if (maxHealth != null) {
+            maxHealth.setBaseValue(Math.max(1.0, Math.min(maxHealth.getBaseValue(), 40.0)));
+            entity.setHealth(maxHealth.getBaseValue());
+        }
+        return entity;
+    }
+
+    public void tagCombatEntity(LivingEntity entity, String id, double hp, double defence, double breakMax) {
+        PersistentDataContainer pdc = entity.getPersistentDataContainer();
+        pdc.set(enemyIdKey, PersistentDataType.STRING, id);
+        pdc.set(enemyRunIdKey, PersistentDataType.STRING, runs.current().orElseThrow().runId);
+        pdc.set(customHpKey, PersistentDataType.DOUBLE, hp);
+        pdc.set(customMaxHpKey, PersistentDataType.DOUBLE, hp);
+        pdc.set(defenceKey, PersistentDataType.DOUBLE, defence);
+        pdc.set(breakKey, PersistentDataType.DOUBLE, 0.0);
+        pdc.set(breakMaxKey, PersistentDataType.DOUBLE, breakMax);
+        activeCombatEntities.add(entity.getUniqueId());
+    }
+
+    public void tick() {
+        long now = Instant.now().toEpochMilli();
+        processRevives(now);
+        processDownedTimeouts(now);
+        processTridents(now);
+        if (++hudTick % 2 == 0) {
+            updateHud();
+        }
+        if (hudTick % 10 == 0) {
+            refreshBreakBars();
+        }
+    }
+
+    public boolean hasActiveEnemies() {
+        if (!scannedPersistedEntities) {
+            for (org.bukkit.World world : Bukkit.getWorlds()) {
+                world.getLivingEntities().stream().filter(this::isCombatEntity).map(Entity::getUniqueId).forEach(activeCombatEntities::add);
+            }
+            scannedPersistedEntities = true;
+        }
+        activeCombatEntities.removeIf(uuid -> findEntity(uuid.toString()) == null);
+        return !activeCombatEntities.isEmpty();
+    }
+
+    public void cleanupForeignCombatEntities() {
+        String currentRunId = runs.current().map(run -> run.runId).orElse("");
+        for (org.bukkit.World world : Bukkit.getWorlds()) {
+            for (LivingEntity entity : world.getLivingEntities()) {
+                PersistentDataContainer pdc = entity.getPersistentDataContainer();
+                String taggedRun = pdc.get(enemyRunIdKey, PersistentDataType.STRING);
+                if (pdc.has(enemyIdKey, PersistentDataType.STRING) && taggedRun != null && !taggedRun.equals(currentRunId)) {
+                    entity.remove();
+                }
+            }
+        }
+    }
+
+    public void cleanupCombatEntities() {
+        for (UUID uuid : new HashSet<>(activeCombatEntities)) {
+            Entity entity = findEntity(uuid.toString());
+            if (entity != null) {
+                entity.remove();
+            }
+        }
+        activeCombatEntities.clear();
+        breakBars.values().forEach(BossBar::removeAll);
+        breakBars.clear();
+    }
+
+    public double damageCombatEntity(Player attacker, LivingEntity target, double rawAttack, double breakDamage, String executionId) {
+        if (!isCombatEntity(target)) {
+            return 0.0;
+        }
+        String id = enemyId(target);
+        PersistentDataContainer pdc = target.getPersistentDataContainer();
+        double defence = pdc.getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
+        long groggyUntil = pdc.getOrDefault(groggyUntilKey, PersistentDataType.LONG, 0L);
+        double groggyMultiplier = groggyUntil > Instant.now().toEpochMilli() ? 1.15 : 1.0;
+        double finalDamage = Math.max(0.0, rawAttack * (100.0 / (100.0 + Math.max(0.0, defence)))
+                * growth.attackMultiplier(attacker) * groggyMultiplier);
+        double finalBreak = Math.max(0.0, breakDamage * growth.breakMultiplier(attacker));
+        if (id.startsWith("BOSS-") && bossDamageHandler != null) {
+            bossDamageHandler.damage(attacker, target, finalDamage, finalBreak, executionId);
+            return finalDamage;
+        }
+        double hp = pdc.getOrDefault(customHpKey, PersistentDataType.DOUBLE, 1.0) - finalDamage;
+        pdc.set(customHpKey, PersistentDataType.DOUBLE, Math.max(0.0, hp));
+        applyBreak(target, finalBreak);
+        target.getWorld().spawnParticle(Particle.DAMAGE_INDICATOR, target.getLocation().add(0, 1, 0), 2, 0.3, 0.3, 0.3, 0.0);
+        target.getWorld().playSound(target.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 0.35f, 1.2f);
+        if (hp <= 0.0) {
+            defeatEnemy(attacker, target, id);
+        }
+        telemetry.event(runs.current().orElseThrow().runId, "COMBAT_RESULT",
+                "{\"executionId\":\"" + executionId + "\",\"targetId\":\"" + id + "\",\"damage\":" + round(finalDamage) + ",\"break\":" + round(finalBreak) + "}");
+        return finalDamage;
+    }
+
+    public void applyBreak(LivingEntity target, double amount) {
+        PersistentDataContainer pdc = target.getPersistentDataContainer();
+        double max = pdc.getOrDefault(breakMaxKey, PersistentDataType.DOUBLE, 0.0);
+        if (max <= 0.0 || amount <= 0.0) {
+            return;
+        }
+        double current = Math.min(max, pdc.getOrDefault(breakKey, PersistentDataType.DOUBLE, 0.0) + amount);
+        pdc.set(breakKey, PersistentDataType.DOUBLE, current);
+        updateBreakBar(target, current, max);
+        if (current >= max) {
+            pdc.set(breakKey, PersistentDataType.DOUBLE, 0.0);
+            pdc.set(groggyUntilKey, PersistentDataType.LONG, Instant.now().plusMillis(5000).toEpochMilli());
+            target.setAI(false);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (target.isValid() && !target.isDead()) {
+                    target.setAI(true);
+                }
+            }, 100L);
+            runs.broadcast(ChatColor.GOLD + "[BREAK] " + (target.getCustomName() == null ? "대상" : target.getCustomName()) + " 그로기 5초");
+            runs.mutate(run -> run.players.values().forEach(state -> state.ap = Math.min(state.maxAp, state.ap + state.maxAp * 0.20)));
+        }
+    }
+
+    public double currentBreak(LivingEntity target) {
+        return target.getPersistentDataContainer().getOrDefault(breakKey, PersistentDataType.DOUBLE, 0.0);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onVanillaPlayerDamage(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player player && runs.isRunningMember(player)) {
+            event.setCancelled(true);
+        }
+        if (event.getDamager() instanceof Arrow arrow && arrow.getPersistentDataContainer().has(projectileOwnerKey, PersistentDataType.STRING)) {
+            event.setCancelled(true);
+        }
+        if (event.getDamager() instanceof Trident trident && trident.getPersistentDataContainer().has(projectileOwnerKey, PersistentDataType.STRING)) {
+            event.setCancelled(true);
+        }
+        if (event.getEntity() instanceof Player victim && event.getDamager() instanceof LivingEntity attacker
+                && runs.isRunningMember(victim) && isCombatEntity(attacker)) {
+            event.setDamage(enemyAttackDamage(attacker) / PLAYER_HP_SCALE);
+            runs.mutate(run -> run.players.get(victim.getUniqueId().toString()).apRegenBlockedUntilEpochMs = Instant.now().plusMillis(1500).toEpochMilli());
+        }
+        if (event.getEntity() instanceof Player victim && event.getDamager() instanceof Player attacker
+                && runs.isMember(victim) && runs.isMember(attacker)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player) || !runs.isRunningMember(player)) {
+            return;
+        }
+        long now = Instant.now().toEpochMilli();
+        if (invulnerableUntilEpochMs.getOrDefault(player.getUniqueId(), 0L) >= now) {
+            event.setCancelled(true);
+            player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 8, 0.4, 0.2, 0.4, 0.02);
+            runs.mutate(run -> {
+                RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                state.ap = Math.min(state.maxAp, state.ap + 10.0);
+            });
+            telemetry.event(runs.current().orElseThrow().runId, "DODGE_SUCCESS", "{\"refund\":10}");
+            return;
+        }
+        if (event.getFinalDamage() >= player.getHealth()) {
+            event.setCancelled(true);
+            enterDowned(player);
+        } else if (event.getFinalDamage() > 0.0) {
+            runs.mutate(run -> run.players.get(player.getUniqueId().toString()).apRegenBlockedUntilEpochMs = now + 1500L);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBowShoot(EntityShootBowEvent event) {
+        if (event.getEntity() instanceof Player player && runs.isRunningMember(player)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onAnimation(PlayerAnimationEvent event) {
+        if (event.getAnimationType() != PlayerAnimationType.ARM_SWING || !runs.isRunningMember(event.getPlayer())) {
+            return;
+        }
+        routeLeft(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        if (!runs.isRunningMember(player)) {
+            return;
+        }
+        Action action = event.getAction();
+        if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+            boolean hit = routeLeft(player);
+            if (action == Action.LEFT_CLICK_BLOCK && "PICKAXE".equals(equipment.resolveWeaponId(player)) && hit) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (action == Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+        if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && player.isSneaking()) {
+            event.setCancelled(true);
+            executeWeaponActive(player, 2);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onSwapHand(PlayerSwapHandItemsEvent event) {
+        if (!runs.isRunningMember(event.getPlayer())) {
+            return;
+        }
+        event.setCancelled(true);
+        executeWeaponActive(event.getPlayer(), 3);
+        Bukkit.getScheduler().runTask(plugin, () -> equipment.syncAuthoritativeEquipment(event.getPlayer()));
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onHeldSlot(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+        if (!runs.isRunningMember(player)) {
+            return;
+        }
+        int slot = event.getNewSlot();
+        if (slot >= 1 && slot <= 4 && player.isSneaking()) {
+            event.setCancelled(true);
+            executeCommonActive(player, slot);
+            Bukkit.getScheduler().runTask(plugin, () -> player.getInventory().setHeldItemSlot(0));
+        } else if (slot >= 5 && slot <= 8) {
+            event.setCancelled(true);
+            executeQuickItem(player, slot - 4);
+            Bukkit.getScheduler().runTask(plugin, () -> player.getInventory().setHeldItemSlot(0));
+        }
+    }
+
+    @EventHandler
+    public void onToggleSneak(PlayerToggleSneakEvent event) {
+        Player player = event.getPlayer();
+        if (!event.isSneaking() || !runs.isRunningMember(player)) {
+            return;
+        }
+        long now = Instant.now().toEpochMilli();
+        long previous = lastSneakAtEpochMs.getOrDefault(player.getUniqueId(), 0L);
+        lastSneakAtEpochMs.put(player.getUniqueId(), now);
+        if (now - previous <= 300L) {
+            executeDodge(player);
+            lastSneakAtEpochMs.put(player.getUniqueId(), 0L);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onProjectileHit(ProjectileHitEvent event) {
+        Entity projectile = event.getEntity();
+        PersistentDataContainer pdc = projectile.getPersistentDataContainer();
+        String ownerId = pdc.get(projectileOwnerKey, PersistentDataType.STRING);
+        String weaponId = pdc.get(projectileWeaponKey, PersistentDataType.STRING);
+        if (ownerId == null || weaponId == null) {
+            return;
+        }
+        Player player = Bukkit.getPlayer(UUID.fromString(ownerId));
+        if (player == null) {
+            return;
+        }
+        if (event.getHitEntity() instanceof LivingEntity target && isCombatEntity(target)) {
+            PrototypeContent.WeaponDefinition weapon = contentWeapon(player, weaponId);
+            damageCombatEntity(player, target, 100.0 * weapon.attackCoefficients().get(0), weapon.breakDamage().get(0),
+                    "projectile:" + projectile.getUniqueId());
+        }
+        if (projectile instanceof Trident) {
+            storeThrownTrident(player, projectile.getLocation(), projectile.getUniqueId());
+            projectile.setVelocity(new Vector());
+            projectile.setGravity(false);
+        } else {
+            projectile.remove();
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onVanillaDeath(EntityDeathEvent event) {
+        if (isCombatEntity(event.getEntity())) {
+            event.getDrops().clear();
+            event.setDroppedExp(0);
+        }
+    }
+
+    @EventHandler
+    public void onReviveInteract(PlayerInteractEntityEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND || !(event.getRightClicked() instanceof Player target)) {
+            return;
+        }
+        Player reviver = event.getPlayer();
+        if (!runs.isRunningMember(reviver) || !runs.isRunningMember(target)) {
+            return;
+        }
+        RunSnapshot.PlayerState targetState = runs.playerState(target.getUniqueId()).orElseThrow();
+        if (!"DOWNED".equals(targetState.lifeState)) {
+            return;
+        }
+        event.setCancelled(true);
+        double multiplier = growth.reviveSpeedMultiplier(reviver);
+        long duration = Math.max(1000L, Math.round(plugin.getConfig().getInt("prototype.revive-channel-seconds", 3) * 1000L / multiplier));
+        reviveChannels.put(target.getUniqueId(), new ReviveChannel(reviver.getUniqueId(), target.getUniqueId(), Instant.now().toEpochMilli() + duration));
+        reviver.sendMessage(ChatColor.YELLOW + target.getName() + " 구조 시작 — " + (duration / 1000.0) + "초");
+    }
+
+    private boolean routeLeft(Player player) {
+        long tick = Bukkit.getCurrentTick();
+        if (lastLeftInputTick.getOrDefault(player.getUniqueId(), Long.MIN_VALUE) == tick) {
+            return lastLeftHit.getOrDefault(player.getUniqueId(), false);
+        }
+        lastLeftInputTick.put(player.getUniqueId(), tick);
+        boolean result;
+        if (player.isSneaking()) {
+            result = executeWeaponActive(player, 1);
+        } else {
+            if ("PICKAXE".equals(equipment.resolveWeaponId(player)) && player.getTargetBlockExact(4) != null
+                    && nearestTarget(player, content.weapon("PICKAXE").range()).isEmpty()) {
+                lastLeftHit.put(player.getUniqueId(), false);
+                return false;
+            }
+            result = executeBasicAttack(player);
+        }
+        lastLeftHit.put(player.getUniqueId(), result);
+        return result;
+    }
+
+    private boolean executeBasicAttack(Player player) {
+        String weaponId = equipment.resolveWeaponId(player);
+        PrototypeContent.WeaponDefinition weapon = contentWeapon(player, weaponId);
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        if ("TRIDENT".equals(weaponId) && !"HELD".equals(state.tridentState)) {
+            player.sendActionBar(Component.text("삼지창을 먼저 회수하세요 (Shift+R)", NamedTextColor.RED));
+            return false;
+        }
+        long now = System.nanoTime();
+        if (attackReadyAtNanos.getOrDefault(player.getUniqueId(), 0L) > now) {
+            return false;
+        }
+        attackReadyAtNanos.put(player.getUniqueId(), now + weapon.intervalTicks() * 50_000_000L);
+        ComboState combo = combos.computeIfAbsent(player.getUniqueId(), ignored -> new ComboState());
+        if (!weaponId.equals(combo.weaponId) || Instant.now().toEpochMilli() - combo.lastAttackAtEpochMs > 1250L) {
+            combo.weaponId = weaponId;
+            combo.stage = 0;
+        }
+        int stage = combo.stage % weapon.attackCoefficients().size();
+        combo.stage = (stage + 1) % weapon.attackCoefficients().size();
+        combo.lastAttackAtEpochMs = Instant.now().toEpochMilli();
+        String executionId = UUID.randomUUID().toString();
+        if ("BOW".equals(weaponId)) {
+            if (!player.getInventory().contains(Material.ARROW)) {
+                attackReadyAtNanos.remove(player.getUniqueId());
+                player.sendActionBar(Component.text("화살이 필요합니다", NamedTextColor.RED));
+                return false;
+            }
+            player.getInventory().removeItem(new org.bukkit.inventory.ItemStack(Material.ARROW, 1));
+            Arrow arrow = player.getWorld().spawnArrow(player.getEyeLocation(), player.getEyeLocation().getDirection(), 2.8f, 0.0f);
+            arrow.setShooter(player);
+            arrow.setDamage(0.0);
+            arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
+            arrow.getPersistentDataContainer().set(projectileOwnerKey, PersistentDataType.STRING, player.getUniqueId().toString());
+            arrow.getPersistentDataContainer().set(projectileWeaponKey, PersistentDataType.STRING, weaponId);
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 0.7f, 1.1f);
+            return true;
+        }
+        List<LivingEntity> targets = coneTargets(player, weapon.range(), weapon.arcDegrees(), "UNARMED".equals(weaponId) ? 2 : 3);
+        for (LivingEntity target : targets) {
+            double raw = 100.0 * weapon.attackCoefficients().get(stage);
+            double breakDamage = weapon.breakDamage().get(Math.min(stage, weapon.breakDamage().size() - 1));
+            damageCombatEntity(player, target, raw, breakDamage, executionId + ":" + target.getUniqueId());
+            applyWeaponStatus(player, target, weapon, stage, executionId);
+        }
+        player.getWorld().playSound(player.getLocation(), targets.isEmpty() ? Sound.ENTITY_PLAYER_ATTACK_SWEEP : Sound.ENTITY_PLAYER_ATTACK_STRONG,
+                0.6f, targets.isEmpty() ? 0.8f : 1.15f);
+        return !targets.isEmpty();
+    }
+
+    private boolean executeWeaponActive(Player player, int slot) {
+        String weaponId = equipment.resolveWeaponId(player);
+        if ("TRIDENT".equals(weaponId)) {
+            if (slot == 1) {
+                return throwTrident(player);
+            }
+            if (slot == 2) {
+                return recallTrident(player);
+            }
+        }
+        double cost = switch (weaponId) {
+            case "SWORD", "BOW" -> 22.0;
+            case "PICKAXE" -> 28.0;
+            case "UNARMED" -> 20.0;
+            default -> 24.0;
+        };
+        if (slot == 3) {
+            cost += 8.0;
+        }
+        if (!runs.consumeAp(player, cost)) {
+            apFailure(player, cost);
+            return false;
+        }
+        PrototypeContent.WeaponDefinition weapon = contentWeapon(player, weaponId);
+        List<LivingEntity> targets = coneTargets(player, Math.max(weapon.range(), 5.0), Math.min(120.0, weapon.arcDegrees() + 25.0), 4);
+        String executionId = "active:" + slot + ":" + UUID.randomUUID();
+        for (LivingEntity target : targets) {
+            damageCombatEntity(player, target, 100.0 * (1.15 + 0.20 * slot), 60.0 + 40.0 * slot,
+                    executionId + ":" + target.getUniqueId());
+            if (slot == 2) {
+                target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0, true, true));
+            }
+        }
+        player.sendActionBar(Component.text("W" + slot + " 실행 / AP -" + (int) cost, NamedTextColor.AQUA));
+        return !targets.isEmpty();
+    }
+
+    private void executeCommonActive(Player player, int slot) {
+        switch (slot) {
+            case 1 -> executeDodge(player);
+            case 2 -> {
+                if (!runs.consumeAp(player, 24.0)) {
+                    apFailure(player, 24.0);
+                    return;
+                }
+                for (Player member : runs.onlineMembers()) {
+                    if (member.getLocation().distanceSquared(player.getLocation()) <= 64.0) {
+                        runs.mutate(run -> {
+                            RunSnapshot.PlayerState state = run.players.get(member.getUniqueId().toString());
+                            state.ap = Math.min(state.maxAp, state.ap + 10.0);
+                        });
+                    }
+                }
+                runs.broadcast(ChatColor.AQUA + player.getName() + "의 집결 신호: 근처 파티 AP +10");
+            }
+            case 3 -> nearestTarget(player, 16.0).ifPresent(target -> {
+                target.setGlowing(true);
+                target.getPersistentDataContainer().set(new NamespacedKey(plugin, "mark_until"), PersistentDataType.LONG,
+                        Instant.now().plusSeconds(5).toEpochMilli());
+                player.sendActionBar(Component.text("C3 전술 표식", NamedTextColor.YELLOW));
+            });
+            case 4 -> {
+                player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 0.8f, 1.3f);
+                for (Player member : runs.onlineMembers()) {
+                    member.sendMessage(ChatColor.YELLOW + "[C4 위치 신호] " + player.getName() + " @ "
+                            + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ());
+                }
+            }
+            default -> { }
+        }
+    }
+
+    private void executeQuickItem(Player player, int slot) {
+        if (slot != 1 || !equipment.consumeQuickItem(player, "RATION")) {
+            player.sendActionBar(Component.text("Q" + slot + " 소모품 없음", NamedTextColor.RED));
+            return;
+        }
+        double maxHealth = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
+                : player.getAttribute(Attribute.MAX_HEALTH).getValue();
+        player.setHealth(Math.min(maxHealth, player.getHealth() + 8.0));
+        runs.mutateTransient(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            state.ap = Math.min(state.maxAp, state.ap + 20.0);
+        });
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EAT, 0.8f, 1.0f);
+        player.sendActionBar(Component.text("Q1 응급 배급: 체력 +8 / AP +20", NamedTextColor.GREEN));
+    }
+
+    private void executeDodge(Player player) {
+        if (!runs.consumeAp(player, 20.0)) {
+            apFailure(player, 20.0);
+            return;
+        }
+        Vector direction = player.getLocation().getDirection().setY(0).normalize();
+        if (player.isSneaking()) {
+            direction.multiply(-1.0);
+        }
+        player.setVelocity(direction.multiply(0.9).setY(0.12));
+        invulnerableUntilEpochMs.put(player.getUniqueId(), Instant.now().plusMillis(450).toEpochMilli());
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.35f, 1.6f);
+        player.sendActionBar(Component.text("◇ 회피 / AP -20", NamedTextColor.AQUA));
+    }
+
+    private boolean throwTrident(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        if (!"HELD".equals(state.tridentState)) {
+            player.sendActionBar(Component.text("이미 투척 상태입니다", NamedTextColor.RED));
+            return false;
+        }
+        if (!runs.consumeAp(player, 34.0)) {
+            apFailure(player, 34.0);
+            return false;
+        }
+        Trident trident = player.getWorld().spawn(player.getEyeLocation(), Trident.class, entity -> {
+            entity.setShooter(player);
+            entity.setDamage(0.0);
+            entity.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
+            entity.setVelocity(player.getEyeLocation().getDirection().multiply(2.2));
+            entity.getPersistentDataContainer().set(projectileOwnerKey, PersistentDataType.STRING, player.getUniqueId().toString());
+            entity.getPersistentDataContainer().set(projectileWeaponKey, PersistentDataType.STRING, "TRIDENT");
+        });
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState value = run.players.get(player.getUniqueId().toString());
+            value.tridentState = "THROWN";
+            value.tridentEntityUuid = trident.getUniqueId().toString();
+            value.tridentThrownAtEpochMs = Instant.now().toEpochMilli();
+        });
+        player.sendActionBar(Component.text("W1 공명 투창 / AP -34", NamedTextColor.AQUA));
+        return true;
+    }
+
+    private boolean recallTrident(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        if ("HELD".equals(state.tridentState)) {
+            player.sendActionBar(Component.text("삼지창이 손에 있습니다", NamedTextColor.GRAY));
+            return false;
+        }
+        if (!"RETURNING".equals(state.tridentState) && !runs.consumeAp(player, 20.0)) {
+            apFailure(player, 20.0);
+            return false;
+        }
+        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tridentState = "RETURNING");
+        player.sendActionBar(Component.text("W2 회수 전류 / AP -20", NamedTextColor.AQUA));
+        return true;
+    }
+
+    private void processTridents(long now) {
+        for (Player player : runs.onlineMembers()) {
+            RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+            if ("HELD".equals(state.tridentState)) {
+                continue;
+            }
+            Entity entity = findEntity(state.tridentEntityUuid);
+            if (entity == null) {
+                if ("RETURNING".equals(state.tridentState)) {
+                    recoverTrident(player);
+                } else if (!"RECOVERABLE".equals(state.tridentState)) {
+                    runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tridentState = "RECOVERABLE");
+                }
+                continue;
+            }
+            storeThrownTrident(player, entity.getLocation(), entity.getUniqueId());
+            if (now - state.tridentThrownAtEpochMs >= 45_000L && !"RETURNING".equals(state.tridentState)) {
+                runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tridentState = "RETURNING");
+            }
+            if (!"RETURNING".equals(state.tridentState)) {
+                continue;
+            }
+            Vector delta = player.getEyeLocation().toVector().subtract(entity.getLocation().toVector());
+            if (delta.lengthSquared() <= 2.25) {
+                entity.remove();
+                recoverTrident(player);
+                continue;
+            }
+            entity.setGravity(false);
+            entity.setVelocity(delta.normalize().multiply(1.2));
+            for (Entity nearby : entity.getNearbyEntities(1.2, 1.2, 1.2)) {
+                if (nearby instanceof LivingEntity target && isCombatEntity(target)
+                        && tridentHitCooldown.getOrDefault(target.getUniqueId(), 0L) < now) {
+                    tridentHitCooldown.put(target.getUniqueId(), now + 3000L);
+                    damageCombatEntity(player, target, 75.0, 60.0,
+                            "trident-return:" + state.tridentEntityUuid + ":" + target.getUniqueId());
+                    target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0, true, true));
+                }
+            }
+        }
+    }
+
+    private void recoverTrident(Player player) {
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            state.tridentState = "HELD";
+            state.tridentEntityUuid = null;
+            state.tridentWorld = null;
+        });
+        equipment.syncAuthoritativeEquipment(player);
+        player.getWorld().playSound(player.getLocation(), Sound.ITEM_TRIDENT_RETURN, 0.8f, 1.0f);
+    }
+
+    private void storeThrownTrident(Player player, Location location, UUID entityId) {
+        runs.mutateTransient(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            if (!"RETURNING".equals(state.tridentState)) {
+                state.tridentState = "THROWN";
+            }
+            state.tridentEntityUuid = entityId.toString();
+            state.tridentWorld = location.getWorld().getName();
+            state.tridentX = location.getX();
+            state.tridentY = location.getY();
+            state.tridentZ = location.getZ();
+        });
+    }
+
+    private void enterDowned(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        if (!"ACTIVE".equals(state.lifeState)) {
+            return;
+        }
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState value = run.players.get(player.getUniqueId().toString());
+            value.lifeState = "DOWNED";
+            value.downedAtEpochMs = Instant.now().toEpochMilli();
+            value.ap = 0.0;
+        });
+        player.setHealth(1.0);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 9, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false));
+        runs.broadcast(ChatColor.RED + "[빈사] " + player.getName() + " — 우클릭 유지로 구조하세요.");
+        telemetry.event(runs.current().orElseThrow().runId, "PLAYER_STATE_CHANGED", "{\"state\":\"DOWNED\"}");
+    }
+
+    private void processRevives(long now) {
+        List<UUID> complete = new ArrayList<>();
+        for (ReviveChannel channel : reviveChannels.values()) {
+            Player reviver = Bukkit.getPlayer(channel.reviver);
+            Player target = Bukkit.getPlayer(channel.target);
+            if (reviver == null || target == null || reviver.getLocation().distanceSquared(target.getLocation()) > 9.0
+                    || !reviver.isSneaking()) {
+                complete.add(channel.target);
+                continue;
+            }
+            if (now >= channel.completeAtEpochMs) {
+                revive(target, reviver);
+                complete.add(channel.target);
+            }
+        }
+        complete.forEach(reviveChannels::remove);
+    }
+
+    private void revive(Player target, Player reviver) {
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(target.getUniqueId().toString());
+            state.lifeState = "ACTIVE";
+            state.downedAtEpochMs = 0L;
+            state.ap = state.maxAp * 0.20;
+        });
+        target.removePotionEffect(PotionEffectType.SLOWNESS);
+        target.removePotionEffect(PotionEffectType.GLOWING);
+        target.setHealth(Math.max(1.0, target.getAttribute(Attribute.MAX_HEALTH).getValue() * 0.25));
+        runs.broadcast(ChatColor.GREEN + reviver.getName() + "이(가) " + target.getName() + "을 구조했습니다.");
+        telemetry.event(runs.current().orElseThrow().runId, "PLAYER_STATE_CHANGED", "{\"state\":\"ACTIVE\",\"reason\":\"REVIVED\"}");
+    }
+
+    private void processDownedTimeouts(long now) {
+        long timeout = plugin.getConfig().getInt("prototype.downed-timeout-seconds", 30) * 1000L;
+        for (Player player : runs.onlineMembers()) {
+            RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+            if ("DOWNED".equals(state.lifeState) && now - state.downedAtEpochMs >= timeout) {
+                runs.mutate(run -> run.players.get(player.getUniqueId().toString()).lifeState = "DEAD");
+                player.setGameMode(GameMode.SPECTATOR);
+                player.removePotionEffect(PotionEffectType.SLOWNESS);
+                player.removePotionEffect(PotionEffectType.GLOWING);
+                runs.broadcast(ChatColor.DARK_RED + "[완전 사망] " + player.getName());
+                telemetry.event(runs.current().orElseThrow().runId, "PLAYER_STATE_CHANGED", "{\"state\":\"DEAD\"}");
+            }
+        }
+        if (runs.current().map(run -> "RUNNING".equals(run.state)).orElse(false) && runs.survivableCount() == 0) {
+            try {
+                runs.stop("PARTY_WIPED", "system");
+            } catch (java.io.IOException exception) {
+                throw new IllegalStateException(exception);
+            }
+        }
+    }
+
+    private void defeatEnemy(Player attacker, LivingEntity target, String enemyId) {
+        UUID entityId = target.getUniqueId();
+        target.remove();
+        activeCombatEntities.remove(entityId);
+        BossBar bar = breakBars.remove(entityId);
+        if (bar != null) {
+            bar.removeAll();
+        }
+        PrototypeContent.EnemyDefinition definition = contentEnemy(enemyId);
+        runs.commitOnce("enemy-defeat:" + entityId, "ENEMY_DEFEATED", "{\"enemyId\":\"" + enemyId + "\"}", run -> {
+            for (var drop : definition.drops().entrySet()) {
+                int amount = Math.max(1, (int) Math.floor(drop.getValue() * growth.resourceMultiplier(attacker)));
+                run.resources.merge(drop.getKey(), amount, Integer::sum);
+            }
+        });
+        for (Player member : runs.onlineMembers()) {
+            growth.awardExp(member, definition.activityExp(), "enemy-exp:" + entityId + ":" + member.getUniqueId());
+        }
+    }
+
+    private void applyWeaponStatus(Player attacker, LivingEntity target, PrototypeContent.WeaponDefinition weapon, int stage,
+                                   String executionId) {
+        double roll = Math.floorMod((executionId + ":" + target.getUniqueId()).hashCode(), 10_000) / 10_000.0;
+        if (stage != weapon.attackCoefficients().size() - 1 || roll > weapon.statusChance()) {
+            return;
+        }
+        long expiry = Instant.now().plusSeconds(4).toEpochMilli();
+        NamespacedKey key = new NamespacedKey(plugin, "status_" + weapon.statusId().toLowerCase(java.util.Locale.ROOT));
+        target.getPersistentDataContainer().set(key, PersistentDataType.LONG, expiry);
+        switch (weapon.statusId()) {
+            case "MARK" -> target.setGlowing(true);
+            case "SLOW" -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0, true, true));
+            case "ARMOR_SHRED" -> {
+                double defence = target.getPersistentDataContainer().getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
+                target.getPersistentDataContainer().set(defenceKey, PersistentDataType.DOUBLE, Math.max(0.0, defence - 10.0));
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    if (target.isValid()) {
+                        double current = target.getPersistentDataContainer().getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
+                        target.getPersistentDataContainer().set(defenceKey, PersistentDataType.DOUBLE, current + 10.0);
+                    }
+                }, 80L);
+            }
+            default -> { }
+        }
+        telemetry.event(runs.current().orElseThrow().runId, "STATUS_APPLIED",
+                "{\"statusId\":\"" + weapon.statusId() + "\",\"source\":\"" + attacker.getUniqueId() + "\"}");
+    }
+
+    private List<LivingEntity> coneTargets(Player player, double range, double arcDegrees, int maximum) {
+        Location origin = player.getEyeLocation();
+        Vector facing = origin.getDirection().normalize();
+        double minimumDot = Math.cos(Math.toRadians(arcDegrees / 2.0));
+        Predicate<Entity> eligible = entity -> entity instanceof LivingEntity living && living != player && isCombatEntity(living);
+        return player.getWorld().getNearbyEntities(origin, range, range, range, eligible).stream()
+                .map(entity -> (LivingEntity) entity)
+                .filter(entity -> {
+                    Vector direction = entity.getEyeLocation().toVector().subtract(origin.toVector());
+                    return direction.lengthSquared() <= range * range && facing.dot(direction.normalize()) >= minimumDot
+                            && player.hasLineOfSight(entity);
+                })
+                .sorted(Comparator.comparingDouble(entity -> entity.getLocation().distanceSquared(player.getLocation())))
+                .limit(maximum)
+                .toList();
+    }
+
+    private java.util.Optional<LivingEntity> nearestTarget(Player player, double range) {
+        RayTraceResult result = player.getWorld().rayTraceEntities(player.getEyeLocation(), player.getEyeLocation().getDirection(),
+                range, 0.8, entity -> entity instanceof LivingEntity living && isCombatEntity(living));
+        return result != null && result.getHitEntity() instanceof LivingEntity living
+                ? java.util.Optional.of(living) : java.util.Optional.empty();
+    }
+
+    private void updateHud() {
+        RunSnapshot snapshot = runs.current().orElse(null);
+        if (snapshot == null || !"RUNNING".equals(snapshot.state)) {
+            return;
+        }
+        for (Player player : runs.onlineMembers()) {
+            RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+            NamedTextColor color = state.ap <= 20.0 ? NamedTextColor.RED : NamedTextColor.AQUA;
+            player.sendActionBar(Component.text("Day " + snapshot.day + " | AP " + Math.round(state.ap) + "/" + state.maxAp
+                    + " | Lv." + state.level + " | " + equipment.resolveWeaponId(player), color));
+        }
+    }
+
+    private void updateBreakBar(LivingEntity target, double current, double maximum) {
+        BossBar bar = breakBars.computeIfAbsent(target.getUniqueId(), ignored -> {
+            BossBar created = Bukkit.createBossBar("BREAK — " + (target.getCustomName() == null ? enemyId(target) : target.getCustomName()),
+                    BarColor.WHITE, BarStyle.SEGMENTED_10);
+            runs.onlineMembers().forEach(created::addPlayer);
+            return created;
+        });
+        bar.setProgress(Math.max(0.0, Math.min(1.0, current / maximum)));
+        bar.setVisible(true);
+    }
+
+    private void refreshBreakBars() {
+        breakBars.entrySet().removeIf(entry -> {
+            Entity entity = findEntity(entry.getKey().toString());
+            if (!(entity instanceof LivingEntity living) || !living.isValid()) {
+                entry.getValue().removeAll();
+                return true;
+            }
+            PersistentDataContainer pdc = living.getPersistentDataContainer();
+            double current = pdc.getOrDefault(breakKey, PersistentDataType.DOUBLE, 0.0);
+            double max = pdc.getOrDefault(breakMaxKey, PersistentDataType.DOUBLE, 0.0);
+            entry.getValue().setProgress(max <= 0.0 ? 0.0 : Math.max(0.0, Math.min(1.0, current / max)));
+            return false;
+        });
+    }
+
+    private boolean isCombatEntity(Entity entity) {
+        PersistentDataContainer pdc = entity.getPersistentDataContainer();
+        String runId = pdc.get(enemyRunIdKey, PersistentDataType.STRING);
+        return pdc.has(enemyIdKey, PersistentDataType.STRING)
+                && runs.current().map(run -> run.runId.equals(runId)).orElse(false);
+    }
+
+    private String enemyId(Entity entity) {
+        return entity.getPersistentDataContainer().getOrDefault(enemyIdKey, PersistentDataType.STRING, "UNKNOWN");
+    }
+
+    private double enemyAttackDamage(LivingEntity attacker) {
+        String id = enemyId(attacker);
+        if (id.startsWith("BOSS-")) {
+            return 110.0;
+        }
+        return contentEnemy(id).attackDamage();
+    }
+
+    private PrototypeContent.EnemyDefinition contentEnemy(String id) {
+        return content.enemy(id);
+    }
+
+    private PrototypeContent.WeaponDefinition contentWeapon(Player ignored, String id) {
+        return content.weapon(id);
+    }
+
+    private Entity findEntity(String uuid) {
+        if (uuid == null) {
+            return null;
+        }
+        try {
+            UUID id = UUID.fromString(uuid);
+            for (org.bukkit.World world : Bukkit.getWorlds()) {
+                Entity entity = world.getEntity(id);
+                if (entity != null) {
+                    return entity;
+                }
+            }
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+        return null;
+    }
+
+    private void apFailure(Player player, double required) {
+        double current = runs.playerState(player.getUniqueId()).map(state -> state.ap).orElse(0.0);
+        player.sendActionBar(Component.text("AP 부족: 필요 " + Math.round(required) + " / 현재 " + Math.round(current), NamedTextColor.RED));
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.5f, 0.7f);
+    }
+
+    private static double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
+    private static final class ComboState {
+        private String weaponId;
+        private int stage;
+        private long lastAttackAtEpochMs;
+    }
+
+    private record ReviveChannel(UUID reviver, UUID target, long completeAtEpochMs) {}
+
+    public interface BossDamageHandler {
+        void damage(Player attacker, LivingEntity boss, double damage, double breakDamage, String executionId);
+    }
+}

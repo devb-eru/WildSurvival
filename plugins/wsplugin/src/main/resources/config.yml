@@ -1,0 +1,9 @@
+prototype:
+  checkpoint-seconds:
+    day-3: 600
+    day-6: 1500
+    day-10: 2700
+  downed-timeout-seconds: 30
+  revive-channel-seconds: 3
+  spawn-radius: 10
+  autosave-ticks: 100

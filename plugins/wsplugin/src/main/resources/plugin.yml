@@ -4,3 +4,21 @@ version: '${version}'
 main: com.lsc.corp.wsplugin.Main
 api-version: '26.1.2'
 load: POSTWORLD
+
+commands:
+  wildsurvival:
+    description: WildSurvival prototype command
+    usage: /<command> <prototype|content|equipment|craft|status>
+    aliases: [ws]
+    permission: wildsurvival.use
+
+permissions:
+  wildsurvival.use:
+    description: Use the WildSurvival player interface
+    default: true
+  wildsurvival.prototype.admin:
+    description: Create, control, and inspect prototype runs
+    default: op
+  wildsurvival.content.validate:
+    description: Validate embedded content bundles
+    default: op
