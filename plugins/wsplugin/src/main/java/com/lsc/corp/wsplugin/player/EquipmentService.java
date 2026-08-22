@@ -87,8 +87,63 @@ public final class EquipmentService implements Listener {
         player.sendMessage(ChatColor.GREEN + content.weapon(weaponId).name() + " 제작 완료. /ws equipment에서 장착하세요.");
     }
 
+    public void setEquipmentOwned(Player player, String weaponId, boolean owned) {
+        content.weapon(weaponId);
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            if (owned) {
+                state.ownedEquipment.add(weaponId);
+            } else {
+                state.ownedEquipment.remove(weaponId);
+                if (weaponId.equals(state.mainWeaponId)) {
+                    state.mainWeaponId = null;
+                }
+            }
+        });
+        syncAuthoritativeEquipment(player);
+    }
+
+    public void equipForTest(Player player, String weaponId) {
+        if (weaponId != null && !"UNARMED".equalsIgnoreCase(weaponId)) {
+            String normalized = weaponId.toUpperCase(java.util.Locale.ROOT);
+            content.weapon(normalized);
+            runs.mutate(run -> {
+                RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                state.ownedEquipment.add(normalized);
+                state.mainWeaponId = normalized;
+                state.offhandId = null;
+            });
+        } else {
+            runs.mutate(run -> {
+                RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                state.mainWeaponId = null;
+                state.offhandId = null;
+            });
+        }
+        syncAuthoritativeEquipment(player);
+    }
+
+    public void clearTestLoadout(Player player) {
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            state.mainWeaponId = null;
+            state.offhandId = null;
+            state.ownedEquipment.clear();
+            state.quickItems.clear();
+        });
+        syncAuthoritativeEquipment(player);
+    }
+
     public void grantQuickItem(Player player, String id, int amount) {
         runs.mutate(run -> run.players.get(player.getUniqueId().toString()).quickItems.merge(id, amount, Integer::sum));
+        syncAuthoritativeEquipment(player);
+    }
+
+    public void setQuickItem(Player player, String id, int amount) {
+        if (amount < 0 || amount > 1_000_000) {
+            throw new IllegalArgumentException("Quick item amount must be 0 to 1000000");
+        }
+        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).quickItems.put(id, amount));
         syncAuthoritativeEquipment(player);
     }
 

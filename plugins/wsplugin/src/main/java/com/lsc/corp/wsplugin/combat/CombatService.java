@@ -78,6 +78,8 @@ public final class CombatService implements Listener {
     private final NamespacedKey breakKey;
     private final NamespacedKey breakMaxKey;
     private final NamespacedKey groggyUntilKey;
+    private final NamespacedKey attackDamageOverrideKey;
+    private final NamespacedKey testInvulnerableKey;
     private final NamespacedKey projectileOwnerKey;
     private final NamespacedKey projectileWeaponKey;
     private final Map<UUID, ComboState> combos = new HashMap<>();
@@ -109,6 +111,8 @@ public final class CombatService implements Listener {
         this.breakKey = new NamespacedKey(plugin, "break_current");
         this.breakMaxKey = new NamespacedKey(plugin, "break_max");
         this.groggyUntilKey = new NamespacedKey(plugin, "groggy_until");
+        this.attackDamageOverrideKey = new NamespacedKey(plugin, "test_attack_damage");
+        this.testInvulnerableKey = new NamespacedKey(plugin, "test_invulnerable");
         this.projectileOwnerKey = new NamespacedKey(plugin, "projectile_owner");
         this.projectileWeaponKey = new NamespacedKey(plugin, "projectile_weapon");
     }
@@ -209,9 +213,18 @@ public final class CombatService implements Listener {
         double defence = pdc.getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
         long groggyUntil = pdc.getOrDefault(groggyUntilKey, PersistentDataType.LONG, 0L);
         double groggyMultiplier = groggyUntil > Instant.now().toEpochMilli() ? 1.15 : 1.0;
-        double finalDamage = Math.max(0.0, rawAttack * (100.0 / (100.0 + Math.max(0.0, defence)))
-                * growth.attackMultiplier(attacker) * groggyMultiplier);
-        double finalBreak = Math.max(0.0, breakDamage * growth.breakMultiplier(attacker));
+        RunSnapshot.PlayerState attackerState = runs.playerState(attacker.getUniqueId()).orElse(null);
+        double testDamageMultiplier = runs.isTestRun() && attackerState != null
+                ? clamp(attackerState.testDamageDealtMultiplier, 0.0, 100.0) : 1.0;
+        double testBreakMultiplier = runs.isTestRun() && attackerState != null
+                ? clamp(attackerState.testBreakMultiplier, 0.0, 100.0) : 1.0;
+        double finalDamage = CombatMath.outgoingDamage(rawAttack, Math.max(0.0, defence),
+                growth.attackMultiplier(attacker), groggyMultiplier, testDamageMultiplier);
+        double finalBreak = Math.max(0.0, breakDamage * growth.breakMultiplier(attacker) * testBreakMultiplier);
+        if (pdc.getOrDefault(testInvulnerableKey, PersistentDataType.BYTE, (byte) 0) == (byte) 1) {
+            finalDamage = 0.0;
+            finalBreak = 0.0;
+        }
         if (id.startsWith("BOSS-") && bossDamageHandler != null) {
             bossDamageHandler.damage(attacker, target, finalDamage, finalBreak, executionId);
             return finalDamage;
@@ -256,6 +269,160 @@ public final class CombatService implements Listener {
         return target.getPersistentDataContainer().getOrDefault(breakKey, PersistentDataType.DOUBLE, 0.0);
     }
 
+    public java.util.Optional<LivingEntity> targetedCombatEntity(Player player, double range) {
+        RayTraceResult result = player.getWorld().rayTraceEntities(player.getEyeLocation(),
+                player.getEyeLocation().getDirection(), range, 0.5,
+                entity -> entity instanceof LivingEntity living && isCombatEntity(living));
+        return result != null && result.getHitEntity() instanceof LivingEntity living
+                ? java.util.Optional.of(living) : java.util.Optional.empty();
+    }
+
+    public boolean isManagedCombatEntity(Entity entity) {
+        return isCombatEntity(entity);
+    }
+
+    public CombatEntityView inspectCombatEntity(LivingEntity target) {
+        if (!isCombatEntity(target)) {
+            throw new IllegalArgumentException("Target is not a WildSurvival combat entity");
+        }
+        PersistentDataContainer pdc = target.getPersistentDataContainer();
+        List<String> statuses = pdc.getKeys().stream()
+                .filter(key -> key.getKey().startsWith("status_") || key.getKey().startsWith("test_status_"))
+                .map(NamespacedKey::asString).sorted().toList();
+        return new CombatEntityView(target.getUniqueId().toString(), enemyId(target), target.getType().name(),
+                pdc.getOrDefault(customHpKey, PersistentDataType.DOUBLE, 0.0),
+                pdc.getOrDefault(customMaxHpKey, PersistentDataType.DOUBLE, 0.0),
+                pdc.getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0),
+                pdc.getOrDefault(breakKey, PersistentDataType.DOUBLE, 0.0),
+                pdc.getOrDefault(breakMaxKey, PersistentDataType.DOUBLE, 0.0),
+                enemyAttackDamage(target), target.hasAI(),
+                pdc.getOrDefault(testInvulnerableKey, PersistentDataType.BYTE, (byte) 0) == (byte) 1,
+                statuses);
+    }
+
+    public void setCombatEntityNumber(LivingEntity target, String stat, double value) {
+        if (!isCombatEntity(target) || !Double.isFinite(value)) {
+            throw new IllegalArgumentException("A managed target and finite value are required");
+        }
+        PersistentDataContainer pdc = target.getPersistentDataContainer();
+        switch (stat.toLowerCase(java.util.Locale.ROOT).replace('_', '-')) {
+            case "health", "hp" -> {
+                double maximum = pdc.getOrDefault(customMaxHpKey, PersistentDataType.DOUBLE, 1.0);
+                pdc.set(customHpKey, PersistentDataType.DOUBLE, clamp(value, 0.0, maximum));
+                syncBossNumber(target, "health", clamp(value, 0.0, maximum));
+            }
+            case "max-health", "max-hp" -> {
+                double maximum = clamp(value, 1.0, 100_000_000.0);
+                pdc.set(customMaxHpKey, PersistentDataType.DOUBLE, maximum);
+                pdc.set(customHpKey, PersistentDataType.DOUBLE,
+                        Math.min(maximum, pdc.getOrDefault(customHpKey, PersistentDataType.DOUBLE, maximum)));
+                syncBossNumber(target, "max-health", maximum);
+            }
+            case "defence", "defense" -> pdc.set(defenceKey, PersistentDataType.DOUBLE, clamp(value, 0.0, 100_000.0));
+            case "break" -> pdc.set(breakKey, PersistentDataType.DOUBLE,
+                    clamp(value, 0.0, pdc.getOrDefault(breakMaxKey, PersistentDataType.DOUBLE, 0.0)));
+            case "break-max" -> {
+                double maximum = clamp(value, 0.0, 100_000_000.0);
+                pdc.set(breakMaxKey, PersistentDataType.DOUBLE, maximum);
+                pdc.set(breakKey, PersistentDataType.DOUBLE,
+                        Math.min(maximum, pdc.getOrDefault(breakKey, PersistentDataType.DOUBLE, 0.0)));
+            }
+            case "attack", "attack-damage" -> pdc.set(attackDamageOverrideKey, PersistentDataType.DOUBLE,
+                    clamp(value, 0.0, 100_000.0));
+            default -> throw new IllegalArgumentException("Unknown entity stat " + stat);
+        }
+    }
+
+    public void setCombatEntityFlag(LivingEntity target, String flag, boolean value) {
+        if (!isCombatEntity(target)) {
+            throw new IllegalArgumentException("Target is not a WildSurvival combat entity");
+        }
+        switch (flag.toLowerCase(java.util.Locale.ROOT).replace('_', '-')) {
+            case "ai" -> target.setAI(value);
+            case "invulnerable" -> target.getPersistentDataContainer().set(testInvulnerableKey,
+                    PersistentDataType.BYTE, value ? (byte) 1 : (byte) 0);
+            case "glowing" -> target.setGlowing(value);
+            default -> throw new IllegalArgumentException("Unknown entity flag " + flag);
+        }
+    }
+
+    public void applyTestStatus(LivingEntity target, String statusId, int durationTicks, int amplifier) {
+        if (!isCombatEntity(target)) {
+            throw new IllegalArgumentException("Target is not a WildSurvival combat entity");
+        }
+        if (durationTicks < 1 || durationTicks > 1_728_000 || amplifier < 0 || amplifier > 255) {
+            throw new IllegalArgumentException("Status duration or amplifier is outside the test boundary");
+        }
+        String id = statusId.toUpperCase(java.util.Locale.ROOT).replace('-', '_');
+        NamespacedKey key = new NamespacedKey(plugin, "test_status_" + id.toLowerCase(java.util.Locale.ROOT));
+        target.getPersistentDataContainer().set(key, PersistentDataType.LONG,
+                Instant.now().plusMillis(durationTicks * 50L).toEpochMilli());
+        switch (id) {
+            case "MARK" -> target.setGlowing(true);
+            case "SLOW", "SLOWNESS" -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS,
+                    durationTicks, amplifier, true, true));
+            case "WEAKNESS" -> target.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS,
+                    durationTicks, amplifier, true, true));
+            case "POISON" -> target.addPotionEffect(new PotionEffect(PotionEffectType.POISON,
+                    durationTicks, amplifier, true, true));
+            case "GLOWING" -> target.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING,
+                    durationTicks, amplifier, true, true));
+            case "GROGGY" -> {
+                target.getPersistentDataContainer().set(groggyUntilKey, PersistentDataType.LONG,
+                        Instant.now().plusMillis(durationTicks * 50L).toEpochMilli());
+                target.setAI(false);
+            }
+            default -> {
+                PotionEffectType type = PotionEffectType.getByKey(NamespacedKey.minecraft(id.toLowerCase(java.util.Locale.ROOT)));
+                if (type != null) {
+                    target.addPotionEffect(new PotionEffect(type, durationTicks, amplifier, true, true));
+                }
+            }
+        }
+    }
+
+    public void clearTestStatuses(LivingEntity target) {
+        if (!isCombatEntity(target)) {
+            throw new IllegalArgumentException("Target is not a WildSurvival combat entity");
+        }
+        List<NamespacedKey> keys = new ArrayList<>(target.getPersistentDataContainer().getKeys());
+        keys.stream().filter(key -> key.getKey().startsWith("status_") || key.getKey().startsWith("test_status_"))
+                .forEach(target.getPersistentDataContainer()::remove);
+        target.getPersistentDataContainer().remove(groggyUntilKey);
+        target.getActivePotionEffects().forEach(effect -> target.removePotionEffect(effect.getType()));
+        target.setGlowing(false);
+        target.setAI(true);
+    }
+
+    public DamagePreview previewDamage(Player attacker, LivingEntity target, double rawDamage, double rawBreak) {
+        CombatEntityView view = inspectCombatEntity(target);
+        RunSnapshot.PlayerState state = runs.playerState(attacker.getUniqueId()).orElseThrow();
+        double defenceFactor = 100.0 / (100.0 + Math.max(0.0, view.defence()));
+        double augmentDamage = growth.attackMultiplier(attacker);
+        double augmentBreak = growth.breakMultiplier(attacker);
+        double testDamage = runs.isTestRun() ? clamp(state.testDamageDealtMultiplier, 0.0, 100.0) : 1.0;
+        double testBreak = runs.isTestRun() ? clamp(state.testBreakMultiplier, 0.0, 100.0) : 1.0;
+        return new DamagePreview(rawDamage, defenceFactor, augmentDamage, testDamage,
+                Math.max(0.0, rawDamage * defenceFactor * augmentDamage * testDamage), rawBreak,
+                augmentBreak, testBreak, Math.max(0.0, rawBreak * augmentBreak * testBreak));
+    }
+
+    private void syncBossNumber(LivingEntity target, String stat, double value) {
+        RunSnapshot snapshot = runs.current().orElse(null);
+        if (snapshot == null || snapshot.boss == null
+                || !target.getUniqueId().toString().equals(snapshot.boss.entityUuid)) {
+            return;
+        }
+        runs.mutate(run -> {
+            if ("health".equals(stat)) {
+                run.boss.hp = value;
+            } else if ("max-health".equals(stat)) {
+                run.boss.maxHp = value;
+                run.boss.hp = Math.min(run.boss.hp, value);
+            }
+        });
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onVanillaPlayerDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player && runs.isRunningMember(player)) {
@@ -282,6 +449,16 @@ public final class CombatService implements Listener {
     public void onPlayerDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player player) || !runs.isRunningMember(player)) {
             return;
+        }
+        RunSnapshot.PlayerState playerState = runs.playerState(player.getUniqueId()).orElse(null);
+        if (runs.isTestRun() && playerState != null) {
+            if (playerState.testInvulnerable) {
+                event.setCancelled(true);
+                return;
+            }
+            double multiplier = clamp(playerState.testDamageTakenMultiplier, 0.0, 100.0);
+            double reduction = clamp(playerState.testDamageReductionRate, 0.0, 0.95);
+            event.setDamage(CombatMath.incomingDamage(event.getDamage(), multiplier, reduction));
         }
         long now = Instant.now().toEpochMilli();
         if (invulnerableUntilEpochMs.getOrDefault(player.getUniqueId(), 0L) >= now) {
@@ -471,7 +648,10 @@ public final class CombatService implements Listener {
         if (attackReadyAtNanos.getOrDefault(player.getUniqueId(), 0L) > now) {
             return false;
         }
-        attackReadyAtNanos.put(player.getUniqueId(), now + weapon.intervalTicks() * 50_000_000L);
+        double cooldownMultiplier = runs.isTestRun()
+                ? clamp(state.testCooldownMultiplier, 0.05, 10.0) : 1.0;
+        attackReadyAtNanos.put(player.getUniqueId(), now
+                + CombatMath.cooldownTicks(weapon.intervalTicks(), cooldownMultiplier) * 50_000_000L);
         ComboState combo = combos.computeIfAbsent(player.getUniqueId(), ignored -> new ComboState());
         if (!weaponId.equals(combo.weaponId) || Instant.now().toEpochMilli() - combo.lastAttackAtEpochMs > 1250L) {
             combo.weaponId = weaponId;
@@ -917,6 +1097,10 @@ public final class CombatService implements Listener {
     }
 
     private double enemyAttackDamage(LivingEntity attacker) {
+        Double override = attacker.getPersistentDataContainer().get(attackDamageOverrideKey, PersistentDataType.DOUBLE);
+        if (override != null) {
+            return override;
+        }
         String id = enemyId(attacker);
         if (id.startsWith("BOSS-")) {
             return 110.0;
@@ -958,6 +1142,20 @@ public final class CombatService implements Listener {
 
     private static double round(double value) {
         return Math.round(value * 100.0) / 100.0;
+    }
+
+    private static double clamp(double value, double minimum, double maximum) {
+        return Math.max(minimum, Math.min(maximum, value));
+    }
+
+    public record CombatEntityView(String uuid, String enemyId, String entityType, double health,
+                                   double maxHealth, double defence, double currentBreak, double maxBreak,
+                                   double attackDamage, boolean ai, boolean invulnerable, List<String> statuses) {
+    }
+
+    public record DamagePreview(double rawDamage, double defenceFactor, double augmentDamageMultiplier,
+                                double testDamageMultiplier, double finalDamage, double rawBreak,
+                                double augmentBreakMultiplier, double testBreakMultiplier, double finalBreak) {
     }
 
     private static final class ComboState {

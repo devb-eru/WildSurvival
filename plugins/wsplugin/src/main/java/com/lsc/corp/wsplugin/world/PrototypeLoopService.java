@@ -8,7 +8,6 @@ import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -84,7 +83,7 @@ public final class PrototypeLoopService implements Listener {
         if (snapshot == null || !"RUNNING".equals(snapshot.state)) {
             return;
         }
-        long now = Instant.now().toEpochMilli();
+        long now = runs.clockNowMillis();
         if (snapshot.day < 10 && nextCheckpointAtEpochMs > 0 && now >= nextCheckpointAtEpochMs) {
             advanceCheckpoint();
             snapshot = runs.current().orElseThrow();
@@ -146,7 +145,7 @@ public final class PrototypeLoopService implements Listener {
         };
         runs.commitOnce("day-start:" + nextDay, "DAY_STARTED", "{\"day\":" + nextDay + "}", run -> {
             run.day = nextDay;
-            run.checkpointStartedAtEpochMs = Instant.now().toEpochMilli();
+            run.checkpointStartedAtEpochMs = runs.clockNowMillis();
         });
         if (nextDay == 10) {
             int preBossTarget = content.progressExpByDay().get(10) - content.boss().rewardExp();
@@ -159,7 +158,7 @@ public final class PrototypeLoopService implements Listener {
             scheduleNextCheckpoint(nextDay == 3 ? 6 : 10);
         } else {
             nextCheckpointAtEpochMs = 0L;
-            dayTenBossAtEpochMs = Instant.now().plusSeconds(60).toEpochMilli();
+            dayTenBossAtEpochMs = runs.clockNowMillis() + 60_000L;
             runs.broadcast(ChatColor.GOLD + "Day 10 보스 게이트 개방. 60초 뒤 자동 호출됩니다. /ws craft로 최종 준비하세요.");
         }
     }
@@ -168,16 +167,16 @@ public final class PrototypeLoopService implements Listener {
         switch (day) {
             case 1 -> {
                 runs.broadcast(ChatColor.YELLOW + "[사건: 잔해 수색] 자연 자원을 채집하고 첫 장비를 제작하세요.");
-                spawnGroup("EN-D1-01", Math.max(2, runs.activeSurvivorCount()));
+                spawnGroup("EN-D1-01", Math.max(2, runs.effectivePartySize()));
             }
             case 3 -> {
                 runs.broadcast(ChatColor.YELLOW + "[사건: 원거리 압박] 엄폐와 회피로 뼈 사수를 제거하세요.");
-                spawnGroup("EN-D2-01", Math.max(2, runs.activeSurvivorCount()));
+                spawnGroup("EN-D2-01", Math.max(2, runs.effectivePartySize()));
                 spawnGroup("EN-D1-01", 1);
             }
             case 6 -> {
                 runs.broadcast(ChatColor.LIGHT_PURPLE + "[사건: 오염 파열] 장갑 적 브레이크와 오염 지대를 함께 관리하세요.");
-                spawnGroup("EN-D4-01", Math.max(1, runs.activeSurvivorCount() - 1));
+                spawnGroup("EN-D4-01", Math.max(1, runs.effectivePartySize() - 1));
                 spawnGroup("EN-D8-E01", 1);
                 corruptionCenter = facilityOrAnchor();
             }
@@ -233,7 +232,7 @@ public final class PrototypeLoopService implements Listener {
         } else if (currentDay == 10) {
             RunSnapshot snapshot = runs.current().orElseThrow();
             if (snapshot.boss == null) {
-                dayTenBossAtEpochMs = Instant.now().plusSeconds(15).toEpochMilli();
+                dayTenBossAtEpochMs = runs.clockNowMillis() + 15_000L;
             }
         }
     }

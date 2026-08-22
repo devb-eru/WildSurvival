@@ -192,6 +192,66 @@ public final class GrowthService implements Listener {
         player.closeInventory();
     }
 
+    public void setPersonalAugmentForTest(Player player, String augmentId, boolean present) {
+        PrototypeContent.AugmentDefinition augment = content.personalAugments().stream()
+                .filter(value -> value.id().equalsIgnoreCase(augmentId)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown personal augment " + augmentId));
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            if (present && !state.personalAugments.contains(augment.id())) {
+                state.personalAugments.add(augment.id());
+            } else if (!present) {
+                state.personalAugments.remove(augment.id());
+            }
+            recalculateTestMaxAp(run, state);
+        });
+    }
+
+    public void clearPersonalAugmentsForTest(Player player) {
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            state.personalAugments.clear();
+            state.resolvedPersonalMilestones.clear();
+            recalculateTestMaxAp(run, state);
+        });
+        openMilestones.remove(player.getUniqueId());
+    }
+
+    public void setPartyAugmentForTest(String augmentId) {
+        PrototypeContent.AugmentDefinition augment = content.partyAugments().stream()
+                .filter(value -> value.id().equalsIgnoreCase(augmentId)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown party augment " + augmentId));
+        runs.mutate(run -> {
+            run.partyAugmentId = augment.id();
+            run.partyAugmentVotes.clear();
+            run.players.values().forEach(state -> recalculateTestMaxAp(run, state));
+        });
+    }
+
+    public void clearPartyAugmentForTest() {
+        runs.mutate(run -> {
+            run.partyAugmentId = null;
+            run.partyAugmentVotes.clear();
+            run.players.values().forEach(state -> recalculateTestMaxAp(run, state));
+        });
+        partyVoteOpened = false;
+    }
+
+    public void resetPersonalDrawForTest(Player player, int milestone) {
+        if (!FIXED_TIERS.containsKey(milestone)) {
+            throw new IllegalArgumentException("Prototype personal milestones are 3, 6, and 10");
+        }
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            state.resolvedPersonalMilestones.remove(milestone);
+            run.milestoneLocks.remove("LEVEL_" + milestone);
+            run.committedKeys.remove("milestone-lock:" + milestone);
+            run.committedKeys.remove("personal-augment:" + milestone + ":" + player.getUniqueId());
+        });
+        openMilestones.remove(player.getUniqueId());
+        lockAndOpenPersonalDraw(player, milestone);
+    }
+
     private void lockAndOpenPersonalDraw(Player player, int milestone) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         if (state.resolvedPersonalMilestones.contains(milestone) || openMilestones.getOrDefault(player.getUniqueId(), -1) == milestone) {
@@ -305,6 +365,18 @@ public final class GrowthService implements Listener {
             result *= getter.applyAsDouble(findAugment(snapshot.partyAugmentId));
         }
         return result;
+    }
+
+    private void recalculateTestMaxAp(RunSnapshot run, RunSnapshot.PlayerState state) {
+        if (!"TEST".equals(run.runType)) {
+            return;
+        }
+        int bonus = state.personalAugments.stream().map(this::findAugment).mapToInt(PrototypeContent.AugmentDefinition::maxApBonus).sum();
+        if (run.partyAugmentId != null) {
+            bonus += findAugment(run.partyAugmentId).maxApBonus();
+        }
+        state.maxAp = Math.min(10_000, Math.max(1, state.testBaseMaxAp + bonus));
+        state.ap = Math.min(state.maxAp, state.ap);
     }
 
     private PrototypeContent.AugmentDefinition findAugment(String id) {

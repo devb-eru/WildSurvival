@@ -62,7 +62,7 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
         Player anchor = runs.onlineMembers().stream().findFirst().orElseThrow(() -> new IllegalStateException("No online member"));
         Location location = safeSpawn(anchor.getLocation().add(anchor.getLocation().getDirection().setY(0).normalize().multiply(10)));
         PrototypeContent.BossDefinition definition = content.boss();
-        int players = Math.max(1, runs.activeSurvivorCount());
+        int players = Math.max(1, runs.effectivePartySize());
         double hpMultiplier = switch (players) { case 1 -> 0.72; case 3 -> 1.32; case 4 -> 1.60; default -> 1.0; };
         double breakMultiplier = switch (players) { case 1 -> 0.75; case 3 -> 1.25; case 4 -> 1.50; default -> 1.0; };
         double maxHp = definition.hp() * hpMultiplier;
@@ -89,7 +89,7 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
             run.boss = state;
         });
         createHealthBar(boss);
-        nextPatternAtTick = Bukkit.getCurrentTick() + 80L;
+        nextPatternAtTick = runs.clockTick() + 80L;
         runs.broadcast(ChatColor.DARK_RED + "[Day 10] 공명 추적체가 출현했습니다. 2페이즈 협동 중단에 대비하세요.");
         return boss;
     }
@@ -131,7 +131,7 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
             resolveCooperationChannel(boss);
             return;
         }
-        long tick = Bukkit.getCurrentTick();
+        long tick = runs.clockTick();
         if (tick >= nextPatternAtTick) {
             telegraphPulse(boss, snapshot.boss.phase);
             nextPatternAtTick = tick + (snapshot.boss.phase == 1 ? 180L : 140L);
@@ -179,6 +179,47 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
         event.getPlayer().sendActionBar(Component.text("공명 고정 참여 완료", NamedTextColor.GREEN));
     }
 
+    public void forcePhaseTwoForTest() {
+        RunSnapshot snapshot = runs.current().orElseThrow();
+        if (!runs.isTestRun() || snapshot.boss == null || !"ACTIVE".equals(snapshot.boss.state)) {
+            throw new IllegalStateException("An active Test Lab boss is required");
+        }
+        Entity found = findEntity(snapshot.boss.entityUuid);
+        if (!(found instanceof LivingEntity boss)) {
+            throw new IllegalStateException("Test boss entity is not loaded");
+        }
+        if (snapshot.boss.phase < 2) {
+            enterPhaseTwo(boss);
+        }
+    }
+
+    public void simulateCooperationForTest(int contributors) {
+        if (!runs.isTestRun() || contributors < 0 || contributors > 4) {
+            throw new IllegalArgumentException("Test contributors must be 0 to 4");
+        }
+        runs.mutate(run -> {
+            if (run.boss == null || !"ACTIVE".equals(run.boss.state)) {
+                throw new IllegalStateException("An active Test Lab boss is required");
+            }
+            run.boss.channelParticipants.removeIf(value -> value.startsWith("virtual-test-"));
+            for (int index = 1; index <= contributors; index++) {
+                run.boss.channelParticipants.add("virtual-test-" + index);
+            }
+        });
+    }
+
+    public void forcePatternForTest() {
+        RunSnapshot snapshot = runs.current().orElseThrow();
+        if (!runs.isTestRun() || snapshot.boss == null || !"ACTIVE".equals(snapshot.boss.state)) {
+            throw new IllegalStateException("An active Test Lab boss is required");
+        }
+        Entity found = findEntity(snapshot.boss.entityUuid);
+        if (!(found instanceof LivingEntity boss)) {
+            throw new IllegalStateException("Test boss entity is not loaded");
+        }
+        telegraphPulse(boss, snapshot.boss.phase);
+    }
+
     private void enterPhaseTwo(LivingEntity boss) {
         runs.mutate(run -> {
             run.boss.phase = 2;
@@ -187,8 +228,8 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
         boss.setCustomName(ChatColor.DARK_PURPLE + "공명 추적체" + ChatColor.GRAY + " [P2 적응]");
         boss.setAI(false);
         cooperationChannelActive = true;
-        channelEndsAtTick = Bukkit.getCurrentTick() + content.boss().cooperationChannelTicks();
-        int required = Math.min(2, Math.max(1, runs.activeSurvivorCount()));
+        channelEndsAtTick = runs.clockTick() + content.boss().cooperationChannelTicks();
+        int required = Math.min(2, Math.max(1, runs.effectivePartySize()));
         runs.broadcast(ChatColor.LIGHT_PURPLE + "[협동 중단] " + required + "명이 보스를 우클릭해 공명을 고정하세요. 6초");
         for (Player player : runs.onlineMembers()) {
             player.sendTitle(ChatColor.LIGHT_PURPLE + "공명 고정", ChatColor.WHITE + "보스 우클릭 — " + required + "명 필요", 5, 80, 10);
@@ -198,7 +239,7 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
 
     private void resolveCooperationChannel(LivingEntity boss) {
         RunSnapshot.BossState state = runs.current().orElseThrow().boss;
-        int required = Math.min(2, Math.max(1, runs.activeSurvivorCount()));
+        int required = Math.min(2, Math.max(1, runs.effectivePartySize()));
         if (state.channelParticipants.size() >= required) {
             cooperationChannelActive = false;
             boss.setAI(true);
@@ -208,10 +249,10 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
                 run.boss.breakCurrent = combat.currentBreak(boss);
             });
             runs.broadcast(ChatColor.GREEN + "협동 중단 성공 — 고정 브레이크 +" + (int) content.boss().cooperationBreak());
-            nextPatternAtTick = Bukkit.getCurrentTick() + 80L;
+            nextPatternAtTick = runs.clockTick() + 80L;
             return;
         }
-        if (Bukkit.getCurrentTick() < channelEndsAtTick) {
+        if (runs.clockTick() < channelEndsAtTick) {
             return;
         }
         cooperationChannelActive = false;
@@ -224,7 +265,7 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
                 player.playSound(player.getLocation(), Sound.ENTITY_WARDEN_SONIC_BOOM, 0.8f, 0.8f);
             }
         }
-        nextPatternAtTick = Bukkit.getCurrentTick() + 80L;
+        nextPatternAtTick = runs.clockTick() + 80L;
     }
 
     private void telegraphPulse(LivingEntity boss, int phase) {
