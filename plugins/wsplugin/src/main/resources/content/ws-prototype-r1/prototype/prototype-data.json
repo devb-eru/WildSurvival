@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "contentRevision": "ws-prototype-r1",
+  "runType": "PROTOTYPE",
+  "promotionForbidden": true,
+  "minimumPlayers": 2,
+  "maximumPlayers": 4,
+  "dayCheckpoints": [1, 3, 6, 10],
+  "progressExpByDay": {"1": 110, "3": 420, "6": 1230, "10": 2820},
+  "resources": [
+    {"id": "WSR-WOOD", "name": "목재", "sourceMaterials": ["OAK_LOG", "BIRCH_LOG", "SPRUCE_LOG", "JUNGLE_LOG", "ACACIA_LOG", "DARK_OAK_LOG", "MANGROVE_LOG", "CHERRY_LOG"], "amountPerNode": 1, "activityExp": 4},
+    {"id": "WSR-STONE", "name": "석재", "sourceMaterials": ["STONE", "COBBLESTONE", "DEEPSLATE", "COBBLED_DEEPSLATE"], "amountPerNode": 1, "activityExp": 4},
+    {"id": "WSR-FIBER", "name": "섬유", "sourceMaterials": ["SHORT_GRASS", "TALL_GRASS", "COBWEB"], "amountPerNode": 1, "activityExp": 5},
+    {"id": "WSR-IRON", "name": "철", "sourceMaterials": ["IRON_ORE", "DEEPSLATE_IRON_ORE", "RAW_IRON_BLOCK"], "amountPerNode": 1, "activityExp": 8},
+    {"id": "WSR-TISSUE", "name": "오염 조직", "sourceMaterials": [], "amountPerNode": 1, "activityExp": 10}
+  ],
+  "recipes": [
+    {"id": "PROTO-RECIPE-SWORD", "name": "생존 검", "costs": {"WSR-WOOD": 2, "WSR-IRON": 3}, "rewardType": "EQUIPMENT", "rewardId": "SWORD", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-BOW", "name": "생존 활", "costs": {"WSR-WOOD": 3, "WSR-FIBER": 3}, "rewardType": "EQUIPMENT", "rewardId": "BOW", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-PICKAXE", "name": "전투 곡괭이", "costs": {"WSR-WOOD": 2, "WSR-IRON": 3}, "rewardType": "EQUIPMENT", "rewardId": "PICKAXE", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-TRIDENT", "name": "회수 삼지창", "costs": {"WSR-IRON": 6, "WSR-TISSUE": 2}, "rewardType": "EQUIPMENT", "rewardId": "TRIDENT", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-RATION", "name": "응급 배급", "costs": {"WSR-FIBER": 1, "WSR-TISSUE": 1}, "rewardType": "QUICK_ITEM", "rewardId": "RATION", "rewardAmount": 2},
+    {"id": "PROTO-RECIPE-KIT", "name": "휴대 공작 도구", "costs": {"WSR-WOOD": 4, "WSR-STONE": 3, "WSR-IRON": 2}, "rewardType": "FACILITY", "rewardId": "FIELD_WORKBENCH", "rewardAmount": 1}
+  ],
+  "weapons": [
+    {"id": "SWORD", "name": "검", "material": "IRON_SWORD", "intervalTicks": 13, "range": 3.2, "arcDegrees": 90.0, "attackCoefficients": [0.70, 0.75, 1.00], "breakDamage": [18.0, 20.0, 30.0], "statusId": "MARK", "statusChance": 0.40},
+    {"id": "BOW", "name": "활", "material": "BOW", "intervalTicks": 15, "range": 24.0, "arcDegrees": 5.0, "attackCoefficients": [1.00], "breakDamage": [16.0], "statusId": "SLOW", "statusChance": 0.35},
+    {"id": "PICKAXE", "name": "곡괭이", "material": "IRON_PICKAXE", "intervalTicks": 17, "range": 3.0, "arcDegrees": 75.0, "attackCoefficients": [0.88, 1.18], "breakDamage": [34.0, 50.0], "statusId": "ARMOR_SHRED", "statusChance": 0.50},
+    {"id": "TRIDENT", "name": "삼지창", "material": "TRIDENT", "intervalTicks": 14, "range": 3.7, "arcDegrees": 80.0, "attackCoefficients": [0.72, 0.78, 1.05], "breakDamage": [18.0, 20.0, 32.0], "statusId": "MARK", "statusChance": 0.50},
+    {"id": "UNARMED", "name": "권투", "material": "AIR", "intervalTicks": 8, "range": 2.4, "arcDegrees": 65.0, "attackCoefficients": [0.34, 0.34, 0.42, 0.66], "breakDamage": [6.0, 6.0, 8.0, 15.0], "statusId": "VULNERABLE", "statusChance": 0.40}
+  ],
+  "enemies": [
+    {"id": "EN-D1-01", "name": "굶주린 배회자", "entityType": "ZOMBIE", "role": "MELEE", "firstDay": 1, "hp": 300.0, "defence": 25.0, "breakMax": 0.0, "attackDamage": 80.0, "activityExp": 30, "drops": {"WSR-TISSUE": 1}},
+    {"id": "EN-D2-01", "name": "뼈 사수", "entityType": "SKELETON", "role": "RANGED", "firstDay": 3, "hp": 220.0, "defence": 15.0, "breakMax": 0.0, "attackDamage": 75.0, "activityExp": 35, "drops": {"WSR-FIBER": 1}},
+    {"id": "EN-D4-01", "name": "부패한 강타자", "entityType": "HUSK", "role": "ARMORED", "firstDay": 6, "hp": 650.0, "defence": 45.0, "breakMax": 800.0, "attackDamage": 115.0, "activityExp": 60, "drops": {"WSR-IRON": 1, "WSR-TISSUE": 1}},
+    {"id": "EN-D8-E01", "name": "공명 추적 정예", "entityType": "ENDERMAN", "role": "ELITE", "firstDay": 6, "hp": 2600.0, "defence": 80.0, "breakMax": 1200.0, "attackDamage": 120.0, "activityExp": 150, "drops": {"WSR-IRON": 2, "WSR-TISSUE": 2}}
+  ],
+  "personalAugments": [
+    {"id": "AUG-S-006", "name": "약점 기록", "tier": "SILVER", "scope": "PERSONAL", "attackMultiplier": 1.00, "breakMultiplier": 1.12, "resourceMultiplier": 1.00, "maxApBonus": 0, "reviveSpeedMultiplier": 1.00},
+    {"id": "AUG-S-014", "name": "구조 본능", "tier": "SILVER", "scope": "PERSONAL", "attackMultiplier": 1.00, "breakMultiplier": 1.00, "resourceMultiplier": 1.00, "maxApBonus": 5, "reviveSpeedMultiplier": 1.10},
+    {"id": "AUG-S-018", "name": "절약 가공", "tier": "SILVER", "scope": "PERSONAL", "attackMultiplier": 1.00, "breakMultiplier": 1.00, "resourceMultiplier": 1.08, "maxApBonus": 0, "reviveSpeedMultiplier": 1.00},
+    {"id": "AUG-G-004", "name": "파열 계산", "tier": "GOLD", "scope": "PERSONAL", "attackMultiplier": 1.08, "breakMultiplier": 1.00, "resourceMultiplier": 1.00, "maxApBonus": 0, "reviveSpeedMultiplier": 1.00},
+    {"id": "AUG-G-012", "name": "충격 연쇄", "tier": "GOLD", "scope": "PERSONAL", "attackMultiplier": 1.00, "breakMultiplier": 1.25, "resourceMultiplier": 1.00, "maxApBonus": 0, "reviveSpeedMultiplier": 1.00},
+    {"id": "AUG-G-015", "name": "구조 파동", "tier": "GOLD", "scope": "PERSONAL", "attackMultiplier": 1.00, "breakMultiplier": 1.00, "resourceMultiplier": 1.00, "maxApBonus": 10, "reviveSpeedMultiplier": 1.20},
+    {"id": "AUG-P-001", "name": "한계 돌파", "tier": "PRISM", "scope": "PERSONAL", "attackMultiplier": 1.22, "breakMultiplier": 1.15, "resourceMultiplier": 1.00, "maxApBonus": 0, "reviveSpeedMultiplier": 1.00},
+    {"id": "AUG-P-004", "name": "붕괴 설계", "tier": "PRISM", "scope": "PERSONAL", "attackMultiplier": 1.16, "breakMultiplier": 1.20, "resourceMultiplier": 1.00, "maxApBonus": 0, "reviveSpeedMultiplier": 1.00},
+    {"id": "AUG-P-014", "name": "마지막 구조선", "tier": "PRISM", "scope": "PERSONAL", "attackMultiplier": 1.00, "breakMultiplier": 1.00, "resourceMultiplier": 1.00, "maxApBonus": 20, "reviveSpeedMultiplier": 1.50}
+  ],
+  "partyAugments": [
+    {"id": "PAUG-003", "name": "공동 약점 분석", "tier": "GOLD", "scope": "PARTY", "attackMultiplier": 1.00, "breakMultiplier": 1.12, "resourceMultiplier": 1.00, "maxApBonus": 0, "reviveSpeedMultiplier": 1.00},
+    {"id": "PAUG-004", "name": "구조 연쇄", "tier": "GOLD", "scope": "PARTY", "attackMultiplier": 1.00, "breakMultiplier": 1.00, "resourceMultiplier": 1.00, "maxApBonus": 10, "reviveSpeedMultiplier": 1.25},
+    {"id": "PAUG-005", "name": "분산 보급", "tier": "GOLD", "scope": "PARTY", "attackMultiplier": 1.00, "breakMultiplier": 1.00, "resourceMultiplier": 1.10, "maxApBonus": 0, "reviveSpeedMultiplier": 1.00}
+  ],
+  "boss": {
+    "id": "BOSS-D10-RESONANT-PURSUER-PROTO",
+    "name": "공명 추적체",
+    "entityType": "RAVAGER",
+    "day": 10,
+    "hp": 105000.0,
+    "breakMax": 10000.0,
+    "groggyTicks": 100,
+    "groggyDamageMultiplier": 1.15,
+    "phaseTwoHpPercent": 70,
+    "cooperationChannelTicks": 120,
+    "cooperationBreak": 600.0,
+    "rewardExp": 300
+  }
+}

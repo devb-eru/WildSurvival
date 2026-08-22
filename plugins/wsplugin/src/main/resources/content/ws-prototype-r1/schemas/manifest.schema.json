@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wildsurvival.local/schema/prototype-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "contentRevision", "activationPolicy", "runType", "promotionForbidden", "files"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "contentRevision": {"const": "ws-prototype-r1"},
+    "activationPolicy": {"const": "DEVELOPMENT_ONLY"},
+    "runType": {"const": "PROTOTYPE"},
+    "promotionForbidden": {"const": true},
+    "files": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "domain", "schema", "sha256"],
+        "properties": {
+          "path": {"type": "string", "pattern": "^[a-z0-9._/-]+$"},
+          "domain": {"type": "string", "minLength": 1},
+          "schema": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    }
+  }
+}

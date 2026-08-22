@@ -1,2 +1,6 @@
 /.agents
 /chat-share.html
+/plugins/wsplugin/.gradle/
+/plugins/wsplugin/.idea/
+/plugins/wsplugin/build/
+/plugins/wsplugin/run/

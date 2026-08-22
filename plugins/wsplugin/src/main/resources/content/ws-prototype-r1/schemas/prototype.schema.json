@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wildsurvival.local/schema/prototype.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "contentRevision", "runType", "promotionForbidden", "minimumPlayers", "maximumPlayers",
+    "dayCheckpoints", "progressExpByDay", "resources", "recipes", "weapons", "enemies",
+    "personalAugments", "partyAugments", "boss"
+  ],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "contentRevision": {"const": "ws-prototype-r1"},
+    "runType": {"const": "PROTOTYPE"},
+    "promotionForbidden": {"const": true},
+    "minimumPlayers": {"const": 2},
+    "maximumPlayers": {"const": 4},
+    "dayCheckpoints": {"const": [1, 3, 6, 10]},
+    "progressExpByDay": {"type": "object"},
+    "resources": {"type": "array", "minItems": 4},
+    "recipes": {"type": "array", "minItems": 6},
+    "weapons": {"type": "array", "minItems": 5},
+    "enemies": {"type": "array", "minItems": 4},
+    "personalAugments": {"type": "array", "minItems": 9},
+    "partyAugments": {"type": "array", "minItems": 3},
+    "boss": {"type": "object"}
+  }
+}
