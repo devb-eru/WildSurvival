@@ -12,22 +12,59 @@
     {"id": "WSR-STONE", "name": "석재", "sourceMaterials": ["STONE", "COBBLESTONE", "DEEPSLATE", "COBBLED_DEEPSLATE"], "amountPerNode": 1, "activityExp": 4},
     {"id": "WSR-FIBER", "name": "섬유", "sourceMaterials": ["SHORT_GRASS", "TALL_GRASS", "COBWEB"], "amountPerNode": 1, "activityExp": 5},
     {"id": "WSR-IRON", "name": "철", "sourceMaterials": ["IRON_ORE", "DEEPSLATE_IRON_ORE", "RAW_IRON_BLOCK"], "amountPerNode": 1, "activityExp": 8},
-    {"id": "WSR-TISSUE", "name": "오염 조직", "sourceMaterials": [], "amountPerNode": 1, "activityExp": 10}
+    {"id": "WSR-TISSUE", "name": "오염 조직", "sourceMaterials": [], "amountPerNode": 1, "activityExp": 10},
+    {"id": "WSR-COAL", "name": "연료탄", "sourceMaterials": ["COAL_ORE", "DEEPSLATE_COAL_ORE"], "amountPerNode": 1, "activityExp": 6}
+  ],
+  "items": [
+    {"id": "TOOL-CRUDE-PICKAXE", "name": "급조 곡괭이", "material": "WOODEN_PICKAXE", "category": "TOOL", "description": "석재를 빠르게 채집하는 첫 채집 도구"},
+    {"id": "TOOL-STONE-PICKAXE", "name": "석재 채집 곡괭이", "material": "STONE_PICKAXE", "category": "TOOL", "description": "철광석과 연료탄을 채집하는 채집 도구"},
+    {"id": "TOOL-IRON-PICKAXE", "name": "철제 채집 곡괭이", "material": "IRON_PICKAXE", "category": "TOOL", "description": "Day 6 이후 광물 채집용 내구 도구"},
+    {"id": "ARROW-BUNDLE", "name": "야전 화살", "material": "ARROW", "category": "AMMUNITION", "description": "활 기본 공격에 소비되는 탄약"},
+    {"id": "TORCH-BUNDLE", "name": "수지 횃불", "material": "TORCH", "category": "UTILITY", "description": "탐험과 거점 조명용 횃불"},
+    {"id": "RATION", "name": "응급 배급", "material": "COOKED_BEEF", "category": "QUICK_ITEM", "description": "체력 8과 AP 20 회복"},
+    {"id": "BANDAGE", "name": "압박 붕대", "material": "PAPER", "category": "QUICK_ITEM", "description": "체력 12 회복"},
+    {"id": "ANTIDOTE", "name": "오염 중화제", "material": "HONEY_BOTTLE", "category": "QUICK_ITEM", "description": "독·위더·약화·둔화 제거"}
   ],
   "recipes": [
+    {"id": "PROTO-RECIPE-CRUDE-PICKAXE", "name": "급조 곡괭이", "costs": {"WSR-WOOD": 3, "WSR-FIBER": 2}, "shape": ["WSR-FIBER", "WSR-WOOD", "WSR-FIBER", null, "WSR-WOOD", null, null, "WSR-WOOD", null], "rewardType": "ITEM", "rewardId": "TOOL-CRUDE-PICKAXE", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-STONE-TOOL", "name": "석재 채집 곡괭이", "costs": {"WSR-WOOD": 2, "WSR-STONE": 3}, "shape": ["WSR-STONE", "WSR-STONE", "WSR-STONE", null, "WSR-WOOD", null, null, "WSR-WOOD", null], "rewardType": "ITEM", "rewardId": "TOOL-STONE-PICKAXE", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-IRON-TOOL", "name": "철제 채집 곡괭이", "costs": {"WSR-WOOD": 2, "WSR-IRON": 3}, "shape": ["WSR-IRON", "WSR-IRON", "WSR-IRON", null, "WSR-WOOD", null, null, "WSR-WOOD", null], "rewardType": "ITEM", "rewardId": "TOOL-IRON-PICKAXE", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-AXE", "name": "돌날 전투 도끼", "costs": {"WSR-WOOD": 2, "WSR-STONE": 3}, "shape": ["WSR-STONE", "WSR-STONE", null, "WSR-STONE", "WSR-WOOD", null, null, "WSR-WOOD", null], "rewardType": "EQUIPMENT", "rewardId": "AXE", "rewardAmount": 1},
     {"id": "PROTO-RECIPE-SWORD", "name": "생존 검", "costs": {"WSR-WOOD": 2, "WSR-IRON": 3}, "shape": [null, "WSR-IRON", null, "WSR-IRON", "WSR-IRON", null, "WSR-WOOD", "WSR-WOOD", null], "rewardType": "EQUIPMENT", "rewardId": "SWORD", "rewardAmount": 1},
     {"id": "PROTO-RECIPE-BOW", "name": "생존 활", "costs": {"WSR-WOOD": 3, "WSR-FIBER": 3}, "shape": ["WSR-FIBER", "WSR-WOOD", null, "WSR-FIBER", null, "WSR-WOOD", "WSR-FIBER", "WSR-WOOD", null], "rewardType": "EQUIPMENT", "rewardId": "BOW", "rewardAmount": 1},
-    {"id": "PROTO-RECIPE-PICKAXE", "name": "전투 곡괭이", "costs": {"WSR-WOOD": 2, "WSR-IRON": 3}, "shape": ["WSR-IRON", "WSR-IRON", "WSR-IRON", null, "WSR-WOOD", null, null, "WSR-WOOD", null], "rewardType": "EQUIPMENT", "rewardId": "PICKAXE", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-PICKAXE", "name": "전투 곡괭이", "costs": {"WSR-WOOD": 2, "WSR-IRON": 3}, "shape": ["WSR-IRON", "WSR-IRON", "WSR-IRON", "WSR-WOOD", "WSR-WOOD", null, null, null, null], "rewardType": "EQUIPMENT", "rewardId": "PICKAXE", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-MACE", "name": "파쇄 둔기", "costs": {"WSR-STONE": 2, "WSR-IRON": 4}, "shape": ["WSR-IRON", "WSR-IRON", null, "WSR-IRON", "WSR-IRON", null, null, "WSR-STONE", "WSR-STONE"], "rewardType": "EQUIPMENT", "rewardId": "MACE", "rewardAmount": 1},
     {"id": "PROTO-RECIPE-TRIDENT", "name": "회수 삼지창", "costs": {"WSR-IRON": 6, "WSR-TISSUE": 2}, "shape": ["WSR-IRON", "WSR-TISSUE", "WSR-IRON", "WSR-IRON", "WSR-TISSUE", "WSR-IRON", null, "WSR-IRON", "WSR-IRON"], "rewardType": "EQUIPMENT", "rewardId": "TRIDENT", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-ARROWS", "name": "야전 화살 16개", "costs": {"WSR-WOOD": 1, "WSR-STONE": 1, "WSR-FIBER": 2}, "shape": [null, "WSR-STONE", null, null, "WSR-WOOD", null, "WSR-FIBER", null, "WSR-FIBER"], "rewardType": "ITEM", "rewardId": "ARROW-BUNDLE", "rewardAmount": 16},
+    {"id": "PROTO-RECIPE-TORCH", "name": "수지 횃불 8개", "costs": {"WSR-WOOD": 1, "WSR-COAL": 1}, "shape": [null, "WSR-COAL", null, null, "WSR-WOOD", null, null, null, null], "rewardType": "ITEM", "rewardId": "TORCH-BUNDLE", "rewardAmount": 8},
     {"id": "PROTO-RECIPE-RATION", "name": "응급 배급", "costs": {"WSR-FIBER": 1, "WSR-TISSUE": 1}, "shape": [null, null, null, null, "WSR-FIBER", "WSR-TISSUE", null, null, null], "rewardType": "QUICK_ITEM", "rewardId": "RATION", "rewardAmount": 2},
+    {"id": "PROTO-RECIPE-BANDAGE", "name": "압박 붕대", "costs": {"WSR-FIBER": 3}, "shape": [null, null, null, "WSR-FIBER", "WSR-FIBER", "WSR-FIBER", null, null, null], "rewardType": "QUICK_ITEM", "rewardId": "BANDAGE", "rewardAmount": 2},
+    {"id": "PROTO-RECIPE-ANTIDOTE", "name": "오염 중화제", "costs": {"WSR-FIBER": 2, "WSR-TISSUE": 1, "WSR-COAL": 1}, "shape": [null, "WSR-COAL", null, "WSR-FIBER", "WSR-TISSUE", "WSR-FIBER", null, null, null], "rewardType": "QUICK_ITEM", "rewardId": "ANTIDOTE", "rewardAmount": 1},
     {"id": "PROTO-RECIPE-COMMON-DEPOT", "name": "공용 보급 저장소", "costs": {"WSR-WOOD": 4, "WSR-STONE": 3, "WSR-IRON": 2}, "shape": ["WSR-WOOD", "WSR-WOOD", "WSR-WOOD", "WSR-WOOD", "WSR-STONE", "WSR-STONE", "WSR-STONE", "WSR-IRON", "WSR-IRON"], "rewardType": "FACILITY", "rewardId": "COMMON_RESOURCE_DEPOT", "rewardAmount": 1}
   ],
   "weapons": [
+    {"id": "AXE", "name": "도끼", "material": "STONE_AXE", "intervalTicks": 18, "range": 3.4, "arcDegrees": 85.0, "attackCoefficients": [0.92, 1.28], "breakDamage": [30.0, 48.0], "statusId": "VULNERABLE", "statusChance": 0.45},
     {"id": "SWORD", "name": "검", "material": "IRON_SWORD", "intervalTicks": 13, "range": 3.2, "arcDegrees": 90.0, "attackCoefficients": [0.70, 0.75, 1.00], "breakDamage": [18.0, 20.0, 30.0], "statusId": "MARK", "statusChance": 0.40},
     {"id": "BOW", "name": "활", "material": "BOW", "intervalTicks": 15, "range": 24.0, "arcDegrees": 5.0, "attackCoefficients": [1.00], "breakDamage": [16.0], "statusId": "SLOW", "statusChance": 0.35},
     {"id": "PICKAXE", "name": "곡괭이", "material": "IRON_PICKAXE", "intervalTicks": 17, "range": 3.0, "arcDegrees": 75.0, "attackCoefficients": [0.88, 1.18], "breakDamage": [34.0, 50.0], "statusId": "ARMOR_SHRED", "statusChance": 0.50},
+    {"id": "MACE", "name": "둔기", "material": "MACE", "intervalTicks": 22, "range": 3.1, "arcDegrees": 70.0, "attackCoefficients": [1.05, 1.42], "breakDamage": [55.0, 85.0], "statusId": "ARMOR_SHRED", "statusChance": 0.55},
     {"id": "TRIDENT", "name": "삼지창", "material": "TRIDENT", "intervalTicks": 14, "range": 3.7, "arcDegrees": 80.0, "attackCoefficients": [0.72, 0.78, 1.05], "breakDamage": [18.0, 20.0, 32.0], "statusId": "MARK", "statusChance": 0.50},
     {"id": "UNARMED", "name": "권투", "material": "AIR", "intervalTicks": 8, "range": 2.4, "arcDegrees": 65.0, "attackCoefficients": [0.34, 0.34, 0.42, 0.66], "breakDamage": [6.0, 6.0, 8.0, 15.0], "statusId": "VULNERABLE", "statusChance": 0.40}
+  ],
+  "skills": [
+    {"id":"SK-TRIDENT-THROW","name":"공명 투창","weaponIds":["TRIDENT"],"effect":"TRIDENT_THROW","apCost":34.0,"damageCoefficient":1.0,"breakDamage":45.0,"range":24.0,"arcDegrees":5.0,"maxTargets":1,"particle":"ELECTRIC_SPARK","sound":"ITEM_TRIDENT_THROW","description":"삼지창을 커스텀 투척 상태로 전환한다."},
+    {"id":"SK-TRIDENT-RECALL","name":"공명 회수","weaponIds":["TRIDENT"],"effect":"TRIDENT_RECALL","apCost":18.0,"damageCoefficient":0.75,"breakDamage":60.0,"range":24.0,"arcDegrees":360.0,"maxTargets":4,"particle":"ENCHANT","sound":"ITEM_TRIDENT_RETURN","description":"투척된 삼지창을 피해 판정과 함께 회수한다."},
+    {"id":"SK-BOW-POWER","name":"관통 사격","weaponIds":["BOW"],"effect":"MARK","apCost":24.0,"damageCoefficient":1.65,"breakDamage":35.0,"range":24.0,"arcDegrees":8.0,"maxTargets":1,"particle":"CRIT","sound":"ENTITY_ARROW_SHOOT","description":"좁은 전방의 첫 적을 강하게 타격하고 표식한다."},
+    {"id":"SK-BOW-VOLLEY","name":"부채꼴 연사","weaponIds":["BOW"],"effect":"DAMAGE","apCost":30.0,"damageCoefficient":0.90,"breakDamage":18.0,"range":18.0,"arcDegrees":55.0,"maxTargets":5,"particle":"FIREWORK","sound":"ENTITY_ARROW_SHOOT","description":"넓은 부채꼴의 적 다수를 타격한다."},
+    {"id":"SK-BOW-PIN","name":"구속 사격","weaponIds":["BOW"],"effect":"SLOW","apCost":26.0,"damageCoefficient":1.10,"breakDamage":25.0,"range":22.0,"arcDegrees":15.0,"maxTargets":2,"particle":"CLOUD","sound":"ENTITY_ARROW_HIT_PLAYER","description":"적을 타격하고 둔화한다."},
+    {"id":"SK-BOW-SIGNAL","name":"추적 신호탄","weaponIds":["BOW"],"effect":"MARK","apCost":20.0,"damageCoefficient":0.65,"breakDamage":10.0,"range":26.0,"arcDegrees":30.0,"maxTargets":4,"particle":"GLOW","sound":"BLOCK_BEACON_POWER_SELECT","description":"여러 적을 표식해 파티의 집중 공격을 돕는다."},
+    {"id":"SK-POWER-STRIKE","name":"강공","weaponIds":["AXE","SWORD","PICKAXE","MACE","TRIDENT","UNARMED"],"effect":"DAMAGE","apCost":22.0,"damageCoefficient":1.35,"breakDamage":60.0,"range":4.0,"arcDegrees":70.0,"maxTargets":2,"particle":"CRIT","sound":"ENTITY_PLAYER_ATTACK_STRONG","description":"전방을 강하게 타격하는 범용 공격."},
+    {"id":"SK-WIDE-SWEEP","name":"전방 휩쓸기","weaponIds":["AXE","SWORD","PICKAXE","MACE","TRIDENT","UNARMED"],"effect":"DAMAGE","apCost":26.0,"damageCoefficient":1.05,"breakDamage":45.0,"range":4.2,"arcDegrees":130.0,"maxTargets":5,"particle":"SWEEP_ATTACK","sound":"ENTITY_PLAYER_ATTACK_SWEEP","description":"넓은 범위의 적을 동시에 타격한다."},
+    {"id":"SK-SUNDER","name":"파쇄 타격","weaponIds":["AXE","SWORD","PICKAXE","MACE","TRIDENT"],"effect":"ARMOR_SHRED","apCost":30.0,"damageCoefficient":0.95,"breakDamage":145.0,"range":3.6,"arcDegrees":80.0,"maxTargets":3,"particle":"CRIT","sound":"BLOCK_ANVIL_LAND","description":"높은 브레이크 피해와 방어 약화를 준다."},
+    {"id":"SK-HAMSTRING","name":"기동 절단","weaponIds":["AXE","SWORD","TRIDENT","UNARMED"],"effect":"SLOW","apCost":24.0,"damageCoefficient":1.15,"breakDamage":40.0,"range":4.5,"arcDegrees":60.0,"maxTargets":3,"particle":"CLOUD","sound":"ENTITY_PLAYER_ATTACK_CRIT","description":"적의 이동을 늦춰 전열을 통제한다."},
+    {"id":"SK-QUAKE","name":"지면 파동","weaponIds":["PICKAXE","MACE"],"effect":"SLOW","apCost":34.0,"damageCoefficient":1.10,"breakDamage":180.0,"range":5.0,"arcDegrees":180.0,"maxTargets":6,"particle":"EXPLOSION","sound":"ENTITY_GENERIC_EXPLODE","description":"전방 지면을 울려 다수의 브레이크를 깎는다."},
+    {"id":"SK-EXECUTION","name":"처형 베기","weaponIds":["AXE","SWORD"],"effect":"MARK","apCost":32.0,"damageCoefficient":1.80,"breakDamage":55.0,"range":3.8,"arcDegrees":45.0,"maxTargets":1,"particle":"DAMAGE_INDICATOR","sound":"ENTITY_PLAYER_ATTACK_CRIT","description":"단일 적에게 높은 피해와 표식을 준다."},
+    {"id":"SK-EVASIVE-COUNTER","name":"견제 반격","weaponIds":["SWORD","UNARMED"],"effect":"SLOW","apCost":20.0,"damageCoefficient":1.00,"breakDamage":35.0,"range":3.5,"arcDegrees":100.0,"maxTargets":3,"particle":"POOF","sound":"ENTITY_ENDERMAN_TELEPORT","description":"전방의 적을 둔화하며 반격한다."}
   ],
   "enemies": [
     {"id": "EN-D1-01", "name": "굶주린 배회자", "entityType": "ZOMBIE", "role": "MELEE", "firstDay": 1, "hp": 300.0, "defence": 25.0, "breakMax": 0.0, "attackDamage": 80.0, "activityExp": 30, "drops": {"WSR-TISSUE": 1}},

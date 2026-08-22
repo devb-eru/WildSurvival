@@ -5,6 +5,7 @@ import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
 import com.lsc.corp.wsplugin.player.PlayerStatPolicy;
+import com.lsc.corp.wsplugin.player.SkillLoadoutService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import java.time.Instant;
@@ -27,6 +28,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
@@ -56,6 +58,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -71,6 +74,7 @@ public final class CombatService implements Listener {
     private final PrototypeContent content;
     private final EquipmentService equipment;
     private final GrowthService growth;
+    private final SkillLoadoutService skills;
     private final TelemetryService telemetry;
     private final NamespacedKey enemyIdKey;
     private final NamespacedKey enemyRunIdKey;
@@ -101,12 +105,14 @@ public final class CombatService implements Listener {
     private boolean scannedPersistedEntities;
     private int hudTick;
 
-    public CombatService(JavaPlugin plugin, RunService runs, PrototypeContent content, EquipmentService equipment, GrowthService growth, TelemetryService telemetry) {
+    public CombatService(JavaPlugin plugin, RunService runs, PrototypeContent content, EquipmentService equipment,
+                         GrowthService growth, SkillLoadoutService skills, TelemetryService telemetry) {
         this.plugin = plugin;
         this.runs = runs;
         this.content = content;
         this.equipment = equipment;
         this.growth = growth;
+        this.skills = skills;
         this.telemetry = telemetry;
         this.enemyIdKey = new NamespacedKey(plugin, "enemy_id");
         this.enemyRunIdKey = new NamespacedKey(plugin, "enemy_run_id");
@@ -699,12 +705,11 @@ public final class CombatService implements Listener {
         combo.lastAttackAtEpochMs = Instant.now().toEpochMilli();
         String executionId = UUID.randomUUID().toString();
         if ("BOW".equals(weaponId)) {
-            if (!player.getInventory().contains(Material.ARROW)) {
+            if (!takeOneMaterial(player, Material.ARROW)) {
                 attackReadyAtNanos.remove(player.getUniqueId());
                 player.sendActionBar(Component.text("화살이 필요합니다", NamedTextColor.RED));
                 return false;
             }
-            player.getInventory().removeItem(new org.bukkit.inventory.ItemStack(Material.ARROW, 1));
             Arrow arrow = player.getWorld().spawnArrow(player.getEyeLocation(), player.getEyeLocation().getDirection(), 2.8f, 0.0f);
             arrow.setShooter(player);
             arrow.setDamage(0.0);
@@ -721,46 +726,47 @@ public final class CombatService implements Listener {
             damageCombatEntity(player, target, raw, breakDamage, executionId + ":" + target.getUniqueId());
             applyWeaponStatus(player, target, weapon, stage, executionId);
         }
-        player.getWorld().playSound(player.getLocation(), targets.isEmpty() ? Sound.ENTITY_PLAYER_ATTACK_SWEEP : Sound.ENTITY_PLAYER_ATTACK_STRONG,
-                0.6f, targets.isEmpty() ? 0.8f : 1.15f);
+        if (!targets.isEmpty()) player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 0.6f, 1.15f);
         return !targets.isEmpty();
     }
 
     private boolean executeWeaponActive(Player player, int slot) {
         String weaponId = equipment.resolveWeaponId(player);
-        if ("TRIDENT".equals(weaponId)) {
-            if (slot == 1) {
-                return throwTrident(player);
-            }
-            if (slot == 2) {
-                return recallTrident(player);
-            }
-        }
-        double cost = switch (weaponId) {
-            case "SWORD", "BOW" -> 22.0;
-            case "PICKAXE" -> 28.0;
-            case "UNARMED" -> 20.0;
-            default -> 24.0;
-        };
-        if (slot == 3) {
-            cost += 8.0;
-        }
-        if (!runs.consumeAp(player, cost)) {
-            apFailure(player, cost);
+        PrototypeContent.SkillDefinition skill = skills.resolve(player, slot);
+        if (skill == null) {
+            player.sendActionBar(Component.text("W" + slot + " 스킬이 비어 있습니다. Shift+F → 스킬에서 장착하세요.", NamedTextColor.RED));
             return false;
         }
-        PrototypeContent.WeaponDefinition weapon = contentWeapon(player, weaponId);
-        List<LivingEntity> targets = coneTargets(player, Math.max(weapon.range(), 5.0), Math.min(120.0, weapon.arcDegrees() + 25.0), 4);
-        String executionId = "active:" + slot + ":" + UUID.randomUUID();
-        for (LivingEntity target : targets) {
-            damageCombatEntity(player, target, 100.0 * (1.15 + 0.20 * slot), 60.0 + 40.0 * slot,
-                    executionId + ":" + target.getUniqueId());
-            if (slot == 2) {
-                target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0, true, true));
-            }
+        if ("TRIDENT_THROW".equals(skill.effect())) {
+            boolean success = throwTrident(player, skill.apCost());
+            if (success) showSkillEffect(player, skill, List.of());
+            return success;
         }
-        player.sendActionBar(Component.text("W" + slot + " 실행 / AP -" + (int) cost, NamedTextColor.AQUA));
-        return !targets.isEmpty();
+        if ("TRIDENT_RECALL".equals(skill.effect())) {
+            boolean success = recallTrident(player, skill.apCost());
+            if (success) showSkillEffect(player, skill, List.of());
+            return success;
+        }
+        if ("BOW".equals(weaponId) && !hasMaterial(player, Material.ARROW)) {
+            player.sendActionBar(Component.text("화살이 필요합니다", NamedTextColor.RED));
+            return false;
+        }
+        if (!runs.consumeAp(player, skill.apCost())) {
+            apFailure(player, skill.apCost());
+            return false;
+        }
+        if ("BOW".equals(weaponId)) takeOneMaterial(player, Material.ARROW);
+        List<LivingEntity> targets = coneTargets(player, skill.range(), skill.arcDegrees(), skill.maxTargets());
+        String executionId = "skill:" + skill.id() + ":" + UUID.randomUUID();
+        for (LivingEntity target : targets) {
+            damageCombatEntity(player, target, 100.0 * skill.damageCoefficient(), skill.breakDamage(),
+                    executionId + ":" + target.getUniqueId());
+            applySkillEffect(target, skill);
+        }
+        showSkillEffect(player, skill, targets);
+        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tutorialSignals.add("USED_SKILL"));
+        player.sendActionBar(Component.text("W" + slot + " " + skill.name() + " / AP -" + Math.round(skill.apCost()), NamedTextColor.AQUA));
+        return true;
     }
 
     private void executeCommonActive(Player player, int slot) {
@@ -782,9 +788,7 @@ public final class CombatService implements Listener {
                 runs.broadcast(ChatColor.AQUA + player.getName() + "의 집결 신호: 근처 파티 AP +10");
             }
             case 3 -> nearestTarget(player, 16.0).ifPresent(target -> {
-                target.setGlowing(true);
-                target.getPersistentDataContainer().set(new NamespacedKey(plugin, "mark_until"), PersistentDataType.LONG,
-                        Instant.now().plusSeconds(5).toEpochMilli());
+                applyMark(target, 100L);
                 player.sendActionBar(Component.text("C3 전술 표식", NamedTextColor.YELLOW));
             });
             case 4 -> {
@@ -800,19 +804,37 @@ public final class CombatService implements Listener {
 
     private void executeQuickItem(Player player, int slot) {
         String bound = equipment.quickBinding(player, slot);
-        if (bound == null || !"RATION".equals(bound) || !equipment.consumeQuickItem(player, bound)) {
+        if (bound == null || !equipment.consumeQuickItem(player, bound)) {
             player.sendActionBar(Component.text("Q" + slot + " 소모품 없음", NamedTextColor.RED));
             return;
         }
         double maxHealth = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
                 : player.getAttribute(Attribute.MAX_HEALTH).getValue();
-        player.setHealth(Math.min(maxHealth, player.getHealth() + 8.0));
-        runs.mutateTransient(run -> {
-            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-            state.ap = Math.min(state.maxAp, state.ap + 20.0);
-        });
+        String result;
+        switch (bound) {
+            case "RATION" -> {
+                player.setHealth(Math.min(maxHealth, player.getHealth() + 8.0));
+                runs.mutateTransient(run -> {
+                    RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                    state.ap = Math.min(state.maxAp, state.ap + 20.0);
+                });
+                result = "체력 +8 / AP +20";
+            }
+            case "BANDAGE" -> {
+                player.setHealth(Math.min(maxHealth, player.getHealth() + 12.0));
+                result = "체력 +12";
+            }
+            case "ANTIDOTE" -> {
+                player.removePotionEffect(PotionEffectType.POISON);
+                player.removePotionEffect(PotionEffectType.WITHER);
+                player.removePotionEffect(PotionEffectType.WEAKNESS);
+                player.removePotionEffect(PotionEffectType.SLOWNESS);
+                result = "독·위더·약화·둔화 제거";
+            }
+            default -> { player.sendActionBar(Component.text("지원하지 않는 Q 아이템 " + bound, NamedTextColor.RED)); return; }
+        }
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EAT, 0.8f, 1.0f);
-        player.sendActionBar(Component.text("Q1 응급 배급: 체력 +8 / AP +20", NamedTextColor.GREEN));
+        player.sendActionBar(Component.text("Q" + slot + " " + content.item(bound).name() + ": " + result, NamedTextColor.GREEN));
     }
 
     private void executeDodge(Player player) {
@@ -832,14 +854,14 @@ public final class CombatService implements Listener {
         player.sendActionBar(Component.text("◇ 회피 / AP -" + Math.round(cost), NamedTextColor.AQUA));
     }
 
-    private boolean throwTrident(Player player) {
+    private boolean throwTrident(Player player, double cost) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         if (!"HELD".equals(state.tridentState)) {
             player.sendActionBar(Component.text("이미 투척 상태입니다", NamedTextColor.RED));
             return false;
         }
-        if (!runs.consumeAp(player, 34.0)) {
-            apFailure(player, 34.0);
+        if (!runs.consumeAp(player, cost)) {
+            apFailure(player, cost);
             return false;
         }
         Trident trident = player.getWorld().spawn(player.getEyeLocation(), Trident.class, entity -> {
@@ -856,22 +878,24 @@ public final class CombatService implements Listener {
             value.tridentEntityUuid = trident.getUniqueId().toString();
             value.tridentThrownAtEpochMs = Instant.now().toEpochMilli();
         });
-        player.sendActionBar(Component.text("W1 공명 투창 / AP -34", NamedTextColor.AQUA));
+        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tutorialSignals.add("USED_SKILL"));
+        player.sendActionBar(Component.text("공명 투창 / AP -" + Math.round(cost), NamedTextColor.AQUA));
         return true;
     }
 
-    private boolean recallTrident(Player player) {
+    private boolean recallTrident(Player player, double cost) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         if ("HELD".equals(state.tridentState)) {
             player.sendActionBar(Component.text("삼지창이 손에 있습니다", NamedTextColor.GRAY));
             return false;
         }
-        if (!"RETURNING".equals(state.tridentState) && !runs.consumeAp(player, 20.0)) {
-            apFailure(player, 20.0);
+        if (!"RETURNING".equals(state.tridentState) && !runs.consumeAp(player, cost)) {
+            apFailure(player, cost);
             return false;
         }
         runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tridentState = "RETURNING");
-        player.sendActionBar(Component.text("W2 회수 전류 / AP -20", NamedTextColor.AQUA));
+        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tutorialSignals.add("USED_SKILL"));
+        player.sendActionBar(Component.text("공명 회수 / AP -" + Math.round(cost), NamedTextColor.AQUA));
         return true;
     }
 
@@ -1046,7 +1070,7 @@ public final class CombatService implements Listener {
         NamespacedKey key = new NamespacedKey(plugin, "status_" + weapon.statusId().toLowerCase(java.util.Locale.ROOT));
         target.getPersistentDataContainer().set(key, PersistentDataType.LONG, expiry);
         switch (weapon.statusId()) {
-            case "MARK" -> target.setGlowing(true);
+            case "MARK" -> applyMark(target, 80L);
             case "SLOW" -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0, true, true));
             case "ARMOR_SHRED" -> {
                 double defence = target.getPersistentDataContainer().getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
@@ -1180,6 +1204,81 @@ public final class CombatService implements Listener {
         double current = runs.playerState(player.getUniqueId()).map(state -> state.ap).orElse(0.0);
         player.sendActionBar(Component.text("AP 부족: 필요 " + Math.round(required) + " / 현재 " + Math.round(current), NamedTextColor.RED));
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.5f, 0.7f);
+    }
+
+    private void applySkillEffect(LivingEntity target, PrototypeContent.SkillDefinition skill) {
+        switch (skill.effect()) {
+            case "SLOW" -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1, true, true));
+            case "MARK" -> {
+                applyMark(target, 120L);
+            }
+            case "ARMOR_SHRED" -> {
+                double before = target.getPersistentDataContainer().getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
+                double reduction = Math.min(20.0, before);
+                target.getPersistentDataContainer().set(defenceKey, PersistentDataType.DOUBLE, before - reduction);
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    if (target.isValid()) {
+                        double current = target.getPersistentDataContainer().getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
+                        target.getPersistentDataContainer().set(defenceKey, PersistentDataType.DOUBLE, current + reduction);
+                    }
+                }, 100L);
+            }
+            default -> { }
+        }
+    }
+
+    private void showSkillEffect(Player player, PrototypeContent.SkillDefinition skill, List<LivingEntity> targets) {
+        Particle particle;
+        Sound sound;
+        try { particle = Particle.valueOf(skill.particle()); }
+        catch (IllegalArgumentException exception) { particle = Particle.CRIT; }
+        sound = Registry.SOUND_EVENT.get(NamespacedKey.minecraft(
+                skill.sound().toLowerCase(java.util.Locale.ROOT).replace('_', '.')));
+        if (sound == null) sound = Sound.ENTITY_PLAYER_ATTACK_STRONG;
+        Vector direction = player.getEyeLocation().getDirection().normalize();
+        for (int step = 1; step <= 6; step++) {
+            Location point = player.getEyeLocation().clone().add(direction.clone().multiply(skill.range() * step / 6.0));
+            player.getWorld().spawnParticle(particle, point, 4, 0.18, 0.18, 0.18, 0.01);
+        }
+        for (LivingEntity target : targets) {
+            target.getWorld().spawnParticle(particle, target.getLocation().add(0, target.getHeight() * 0.6, 0),
+                    18, 0.45, 0.5, 0.45, 0.03);
+        }
+        player.getWorld().playSound(player.getLocation(), sound, 0.85f, 1.1f);
+    }
+
+    private void applyMark(LivingEntity target, long durationTicks) {
+        NamespacedKey key = new NamespacedKey(plugin, "status_mark");
+        long expiry = Instant.now().plusMillis(durationTicks * 50L).toEpochMilli();
+        target.setGlowing(true);
+        target.getPersistentDataContainer().set(key, PersistentDataType.LONG, expiry);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (!target.isValid()) return;
+            long currentExpiry = target.getPersistentDataContainer().getOrDefault(key, PersistentDataType.LONG, 0L);
+            if (currentExpiry <= Instant.now().toEpochMilli()) {
+                target.setGlowing(false);
+                target.getPersistentDataContainer().remove(key);
+            }
+        }, durationTicks);
+    }
+
+    private boolean hasMaterial(Player player, Material material) {
+        for (int slot = 1; slot <= 35; slot++) {
+            ItemStack item = player.getInventory().getItem(slot);
+            if (item != null && item.getType() == material && item.getAmount() > 0) return true;
+        }
+        return false;
+    }
+
+    private boolean takeOneMaterial(Player player, Material material) {
+        for (int slot = 1; slot <= 35; slot++) {
+            ItemStack item = player.getInventory().getItem(slot);
+            if (item == null || item.getType() != material || item.getAmount() <= 0) continue;
+            item.setAmount(item.getAmount() - 1);
+            if (item.getAmount() <= 0) player.getInventory().setItem(slot, null);
+            return true;
+        }
+        return false;
     }
 
     private boolean inCombatStance(Player player) {

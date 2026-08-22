@@ -13,8 +13,10 @@ public record PrototypeContent(
         List<Integer> dayCheckpoints,
         Map<Integer, Integer> progressExpByDay,
         List<ResourceDefinition> resources,
+        List<ItemDefinition> items,
         List<RecipeDefinition> recipes,
         List<WeaponDefinition> weapons,
+        List<SkillDefinition> skills,
         List<EnemyDefinition> enemies,
         List<AugmentDefinition> personalAugments,
         List<AugmentDefinition> partyAugments,
@@ -35,12 +37,30 @@ public record PrototypeContent(
                 .orElseThrow(() -> new IllegalArgumentException("Unknown enemy " + id));
     }
 
+    public ItemDefinition item(String id) {
+        return items.stream().filter(value -> value.id().equals(id)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown item " + id));
+    }
+
+    public SkillDefinition skill(String id) {
+        return skills.stream().filter(value -> value.id().equals(id)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown skill " + id));
+    }
+
     public record ResourceDefinition(
             String id,
             String name,
             List<String> sourceMaterials,
             int amountPerNode,
             int activityExp
+    ) {}
+
+    public record ItemDefinition(
+            String id,
+            String name,
+            String material,
+            String category,
+            String description
     ) {}
 
     public record RecipeDefinition(
@@ -64,6 +84,22 @@ public record PrototypeContent(
             List<Double> breakDamage,
             String statusId,
             double statusChance
+    ) {}
+
+    public record SkillDefinition(
+            String id,
+            String name,
+            List<String> weaponIds,
+            String effect,
+            double apCost,
+            double damageCoefficient,
+            double breakDamage,
+            double range,
+            double arcDegrees,
+            int maxTargets,
+            String particle,
+            String sound,
+            String description
     ) {}
 
     public record EnemyDefinition(

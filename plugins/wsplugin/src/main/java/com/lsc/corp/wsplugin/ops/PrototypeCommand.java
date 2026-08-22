@@ -65,6 +65,8 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
                 case "codex" -> menu.openCodex(requirePlayer(sender));
                 case "stats" -> menu.openStats(requirePlayer(sender));
                 case "settings" -> menu.openSettings(requirePlayer(sender));
+                case "skills" -> menu.openSkills(requirePlayer(sender));
+                case "guide" -> menu.openGuide(requirePlayer(sender));
                 case "ledger" -> economy.openLedger(requirePlayer(sender));
                 case "status" -> status(sender);
                 case "augment" -> growth.openPendingPersonalDraw(requirePlayer(sender));
@@ -176,7 +178,7 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
 
     private static void help(CommandSender sender, String label) {
         sender.sendMessage(ChatColor.GOLD + "WildSurvival prototype");
-        sender.sendMessage(ChatColor.WHITE + "/" + label + " menu | equipment | craft | ledger | status | augment | test");
+        sender.sendMessage(ChatColor.WHITE + "/" + label + " menu | guide | equipment | skills | craft | ledger | status | augment | test");
         if (sender.hasPermission("wildsurvival.prototype.admin")) {
             sender.sendMessage(ChatColor.GRAY + "/" + label + " prototype create [players...] | start | inspect | advance | boss");
             sender.sendMessage(ChatColor.GRAY + "/" + label + " prototype stop <reason> --dry-run|--confirm");
@@ -186,7 +188,7 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return filter(args[0], List.of("prototype", "content", "menu", "equipment", "craft", "codex", "stats", "settings", "ledger", "status", "augment", "test"));
+            return filter(args[0], List.of("prototype", "content", "menu", "guide", "equipment", "skills", "craft", "codex", "stats", "settings", "ledger", "status", "augment", "test"));
         }
         if (args.length >= 2 && "test".equalsIgnoreCase(args[0])) {
             return testLab.complete(sender, args);

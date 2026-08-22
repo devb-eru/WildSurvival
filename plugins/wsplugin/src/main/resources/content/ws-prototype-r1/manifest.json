@@ -15,13 +15,13 @@
       "path": "schemas/prototype.schema.json",
       "domain": "schema",
       "schema": "https://json-schema.org/draft/2020-12/schema",
-      "sha256": "99b46a2c4797548f0c06e66216cf00e628759618b7d42c93de24472136662667"
+      "sha256": "2a0b97ad703cb8ddc10b096df4ede6f092cb0326cd4ac786d80c104535e8f80b"
     },
     {
       "path": "prototype/prototype-data.json",
       "domain": "prototype",
       "schema": "prototype.schema.json",
-      "sha256": "f3a6a9318a33d92072d3de92d46125f5a3082168742059a985afdf64aba8342f"
+      "sha256": "23db084935092bc5afe437954643e21f291c989de89a14c42b566c76a815ddd5"
     }
   ]
 }

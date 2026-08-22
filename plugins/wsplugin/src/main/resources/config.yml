@@ -1,4 +1,5 @@
 prototype:
+  day-1-grace-seconds: 90
   checkpoint-seconds:
     day-3: 600
     day-6: 1500

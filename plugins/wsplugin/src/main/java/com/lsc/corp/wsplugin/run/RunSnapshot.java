@@ -48,7 +48,10 @@ public final class RunSnapshot {
         public Set<String> ownedEquipment = new LinkedHashSet<>();
         public Map<String, Integer> quickItems = new LinkedHashMap<>();
         public Map<Integer, String> quickBindings = new LinkedHashMap<>();
+        public Map<String, Map<Integer, String>> weaponSkillLoadouts = new LinkedHashMap<>();
         public Set<String> discoveredItemIds = new LinkedHashSet<>();
+        public Set<String> completedTutorialQuests = new LinkedHashSet<>();
+        public Set<String> tutorialSignals = new LinkedHashSet<>();
         public Map<String, Integer> investedStats = new LinkedHashMap<>();
         public boolean damageNumbersEnabled = true;
         public boolean detailedTooltips = true;

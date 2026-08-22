@@ -11,6 +11,7 @@ import com.lsc.corp.wsplugin.ops.PrototypeCommand;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
 import com.lsc.corp.wsplugin.player.PlayerStatService;
+import com.lsc.corp.wsplugin.player.SkillLoadoutService;
 import com.lsc.corp.wsplugin.run.RunRepository;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.testlab.TestLabCommand;
@@ -19,6 +20,7 @@ import com.lsc.corp.wsplugin.testlab.TestLabRepository;
 import com.lsc.corp.wsplugin.testlab.TestLabService;
 import com.lsc.corp.wsplugin.testlab.TestScenarioService;
 import com.lsc.corp.wsplugin.testlab.VirtualPartyService;
+import com.lsc.corp.wsplugin.tutorial.TutorialService;
 import com.lsc.corp.wsplugin.world.PrototypeLoopService;
 import com.lsc.corp.wsplugin.ui.PlayerMenuService;
 import java.util.Objects;
@@ -28,6 +30,7 @@ public final class Main extends JavaPlugin {
     private RunService runService;
     private TelemetryService telemetry;
     private DamageNumberService damageNumbers;
+    private TutorialService tutorial;
 
     @Override
     public void onEnable() {
@@ -39,14 +42,16 @@ public final class Main extends JavaPlugin {
             RunRepository repository = new RunRepository(getDataFolder().toPath());
             RunRepository testRepository = RunRepository.testLab(getDataFolder().toPath());
             runService = new RunService(this, repository, testRepository, content.content(), telemetry);
+            tutorial = new TutorialService(this, runService);
 
             GrowthService growth = new GrowthService(this, runService, content.content(), telemetry);
             EquipmentService equipment = new EquipmentService(this, runService, content.content(), telemetry);
-            CombatService combat = new CombatService(this, runService, content.content(), equipment, growth, telemetry);
+            SkillLoadoutService skills = new SkillLoadoutService(runService, content.content(), equipment);
+            CombatService combat = new CombatService(this, runService, content.content(), equipment, growth, skills, telemetry);
             ItemCodexService codex = new ItemCodexService(this, runService, content.content(), telemetry);
             EconomyService economy = new EconomyService(this, runService, content.content(), equipment, growth, telemetry, codex);
             PlayerStatService stats = new PlayerStatService(this, runService, growth);
-            PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, growth);
+            PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, skills, growth, tutorial);
             damageNumbers = new DamageNumberService(this, runService);
             combat.setMenuOpener(menu::open);
             combat.setItemRewardHandler((player, resourceId, amount) -> codex.grantResource(player, resourceId, amount));
@@ -64,13 +69,14 @@ public final class Main extends JavaPlugin {
             TestLabCommand testLabCommand = new TestLabCommand(testLab, testLabGui, scenarios, virtualParty, combat, runService);
 
             runService.attach(loop, equipment, growth);
-            registerListeners(equipment, combat, economy, codex, stats, menu, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
+            registerListeners(equipment, skills, combat, economy, codex, stats, menu, tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
 
             PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand, menu);
             Objects.requireNonNull(getCommand("wildsurvival"), "wildsurvival command").setExecutor(command);
             Objects.requireNonNull(getCommand("wildsurvival"), "wildsurvival command").setTabCompleter(command);
 
             runService.restore();
+            tutorial.start();
             for (org.bukkit.entity.Player player : runService.onlineMembers()) {
                 codex.reconcile(player);
                 stats.apply(player);
@@ -87,6 +93,9 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (tutorial != null) {
+            tutorial.shutdown();
+        }
         if (damageNumbers != null) {
             damageNumbers.cleanup();
         }

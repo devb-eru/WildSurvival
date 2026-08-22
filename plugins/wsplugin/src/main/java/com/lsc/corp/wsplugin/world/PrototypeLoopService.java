@@ -22,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitTask;
 
 public final class PrototypeLoopService implements Listener {
     private final JavaPlugin plugin;
@@ -37,6 +38,7 @@ public final class PrototypeLoopService implements Listener {
     private Location corruptionCenter;
     private int tickCounter;
     private boolean completionScheduled;
+    private BukkitTask dayOneEncounterTask;
 
     public PrototypeLoopService(JavaPlugin plugin, RunService runs, PrototypeContent content, EconomyService economy,
                                 CombatService combat, PrototypeBossService boss, GrowthService growth, TelemetryService telemetry) {
@@ -57,7 +59,6 @@ public final class PrototypeLoopService implements Listener {
             player.setHealth(player.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue());
             player.setFoodLevel(20);
         }
-        grantRecoverySupply();
         growth.awardCheckpointTarget(1);
         startDayEvent(1);
         scheduleNextCheckpoint(3);
@@ -73,6 +74,9 @@ public final class PrototypeLoopService implements Listener {
         rebuildCheckpointTimer(snapshot.day);
         if (snapshot.day >= 6) {
             corruptionCenter = facilityOrAnchor();
+        }
+        if (snapshot.day == 1 && !snapshot.committedKeys.contains("day-1-encounter-spawned")) {
+            scheduleDayOneEncounter();
         }
     }
 
@@ -130,6 +134,10 @@ public final class PrototypeLoopService implements Listener {
     }
 
     public void cleanupWorldObjects() {
+        if (dayOneEncounterTask != null) {
+            dayOneEncounterTask.cancel();
+            dayOneEncounterTask = null;
+        }
         economy.removeFacility();
         combat.cleanupCombatEntities();
         corruptionCenter = null;
@@ -167,7 +175,8 @@ public final class PrototypeLoopService implements Listener {
         switch (day) {
             case 1 -> {
                 runs.broadcast(ChatColor.YELLOW + "[사건: 잔해 수색] 자연 자원을 채집하고 첫 장비를 제작하세요.");
-                spawnGroup("EN-D1-01", Math.max(2, runs.effectivePartySize()));
+                runs.broadcast(ChatColor.AQUA + "[길잡이] L키에서 채집→Craft 해금→도구→무기 순서를 확인하세요.");
+                scheduleDayOneEncounter();
             }
             case 3 -> {
                 runs.broadcast(ChatColor.YELLOW + "[사건: 원거리 압박] 엄폐와 회피로 뼈 사수를 제거하세요.");
@@ -183,7 +192,9 @@ public final class PrototypeLoopService implements Listener {
             case 10 -> runs.broadcast(ChatColor.DARK_RED + "[사건: 공명 추적] 보스 호출 신호가 수렴합니다.");
             default -> throw new IllegalArgumentException("Unsupported prototype day " + day);
         }
-        telemetry.event(runs.current().orElseThrow().runId, "ENCOUNTER_COMMITTED", "{\"day\":" + day + "}");
+        if (day != 1) {
+            telemetry.event(runs.current().orElseThrow().runId, "ENCOUNTER_COMMITTED", "{\"day\":" + day + "}");
+        }
     }
 
     private void spawnGroup(String enemyId, int count) {
@@ -203,14 +214,25 @@ public final class PrototypeLoopService implements Listener {
         }
     }
 
-    private void grantRecoverySupply() {
-        for (Player player : runs.onlineMembers()) {
-            economy.grantPersonalResource(player, "WSR-WOOD", 8);
-            economy.grantPersonalResource(player, "WSR-STONE", 8);
-            economy.grantPersonalResource(player, "WSR-FIBER", 6);
-            economy.grantPersonalResource(player, "WSR-IRON", 6);
-        }
-        runs.broadcast(ChatColor.GREEN + "개인 잔해 보급: 목재 8, 석재 8, 섬유 6, 철 6");
+    private void scheduleDayOneEncounter() {
+        if (dayOneEncounterTask != null) dayOneEncounterTask.cancel();
+        RunSnapshot snapshot = runs.current().orElse(null);
+        if (snapshot == null || !"RUNNING".equals(snapshot.state) || snapshot.day != 1
+                || snapshot.committedKeys.contains("day-1-encounter-spawned")) return;
+        int graceSeconds = Math.max(0, plugin.getConfig().getInt("prototype.day-1-grace-seconds", 90));
+        long targetEpochMs = snapshot.startedAtEpochMs + graceSeconds * 1000L;
+        long remainingMs = Math.max(0L, targetEpochMs - runs.clockNowMillis());
+        long delayTicks = Math.max(1L, (remainingMs + 49L) / 50L);
+        runs.broadcast(ChatColor.GREEN + "첫 습격까지 " + Math.max(1L, (remainingMs + 999L) / 1000L)
+                + "초: 급조 곡괭이와 첫 무기를 준비하세요.");
+        dayOneEncounterTask = Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            dayOneEncounterTask = null;
+            RunSnapshot current = runs.current().orElse(null);
+            if (current == null || !"RUNNING".equals(current.state) || current.day != 1) return;
+            if (!runs.commitOnce("day-1-encounter-spawned", "ENCOUNTER_COMMITTED", "{\"day\":1}", run -> { })) return;
+            spawnGroup("EN-D1-01", Math.max(2, runs.effectivePartySize()));
+            runs.broadcast(ChatColor.RED + "[습격] 부패한 배회자가 접근합니다.");
+        }, delayTicks);
     }
 
     private void scheduleNextCheckpoint(int targetDay) {

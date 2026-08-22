@@ -35,7 +35,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class EquipmentService implements Listener {
     private static final int GUI_MAIN_WEAPON = 20;
     private static final int GUI_OFFHAND = 24;
-    private static final int[] GUI_CATALOGUE = {29, 31, 33, 35};
+    private static final int[] GUI_CATALOGUE = {28, 29, 30, 31, 32, 33, 34};
     private static final int[] GUI_QUICK = {36, 37, 38, 39};
     private final JavaPlugin plugin;
     private final RunService runs;
@@ -81,9 +81,9 @@ public final class EquipmentService implements Listener {
             String bound = state.quickBindings.get(i + 1);
             int amount = bound == null ? 0 : state.quickItems.getOrDefault(bound, 0);
             inventory.setItem(GUI_QUICK[i], named(bound == null ? Material.GRAY_DYE : Material.COOKED_BEEF,
-                    ChatColor.AQUA + "Q" + (i + 1) + ": " + (bound == null ? "비어 있음" : bound),
+                    ChatColor.AQUA + "Q" + (i + 1) + ": " + (bound == null ? "비어 있음" : content.item(bound).name()),
                     List.of(ChatColor.WHITE + "보유 " + amount,
-                            ChatColor.GRAY + "좌클릭: 응급 배급 바인딩", ChatColor.GRAY + "우클릭: 해제")));
+                            ChatColor.GRAY + "좌클릭: 보유 소모품 순환", ChatColor.GRAY + "우클릭: 해제")));
         }
         player.openInventory(inventory);
     }
@@ -262,7 +262,16 @@ public final class EquipmentService implements Listener {
                     runs.mutate(run -> {
                         RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
                         if (event.isRightClick()) state.quickBindings.remove(quickSlot);
-                        else state.quickBindings.put(quickSlot, "RATION");
+                        else {
+                            List<String> available = content.items().stream()
+                                    .filter(item -> "QUICK_ITEM".equals(item.category()) && state.quickItems.containsKey(item.id()))
+                                    .map(PrototypeContent.ItemDefinition::id).toList();
+                            if (available.isEmpty()) state.quickBindings.remove(quickSlot);
+                            else {
+                                int current = available.indexOf(state.quickBindings.get(quickSlot));
+                                state.quickBindings.put(quickSlot, available.get((current + 1) % available.size()));
+                            }
+                        }
                     });
                     open(player);
                     return;

@@ -69,6 +69,32 @@ public final class ItemCodexService implements Listener {
         return item;
     }
 
+    public ItemStack contentItem(String rawId, int amount) {
+        PrototypeContent.ItemDefinition definition = content.item(rawId.toUpperCase(java.util.Locale.ROOT));
+        Material material = Material.matchMaterial(definition.material());
+        if (material == null || material.isAir()) throw new IllegalArgumentException("Invalid item material " + definition.material());
+        ItemStack item = new ItemStack(material, Math.max(1, Math.min(material.getMaxStackSize(), amount)));
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.GOLD + "[WS] " + definition.name());
+        meta.setLore(List.of(ChatColor.WHITE + definition.description(), ChatColor.GRAY + "분류: " + definition.category(),
+                ChatColor.DARK_GRAY + "ID: " + definition.id()));
+        meta.getPersistentDataContainer().set(itemIdKey, PersistentDataType.STRING, definition.id());
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public void grantItem(Player player, String itemId, int amount) {
+        PrototypeContent.ItemDefinition definition = content.item(itemId.toUpperCase(java.util.Locale.ROOT));
+        Material material = Material.matchMaterial(definition.material());
+        int remaining = amount;
+        while (remaining > 0) {
+            int stack = Math.min(material == null ? 64 : material.getMaxStackSize(), remaining);
+            addWithoutReservedSlot(player, contentItem(definition.id(), stack));
+            remaining -= stack;
+        }
+        discover(player, definition.id(), "ACQUIRE_ITEM");
+    }
+
     public int grantResource(Player player, String resourceId, int amount) {
         if (amount <= 0) {
             return 0;
@@ -299,10 +325,15 @@ public final class ItemCodexService implements Listener {
             result.put(resource.id(), new CodexEntry(resource.id(), resource.name(), "RESOURCE",
                     resourceMaterial(resource.id()), details));
         }
+        for (PrototypeContent.ItemDefinition definition : content.items()) {
+            Material material = Material.matchMaterial(definition.material());
+            result.put(definition.id(), new CodexEntry(definition.id(), definition.name(), definition.category(),
+                    material == null || material.isAir() ? Material.PAPER : material, List.of(definition.description())));
+        }
         for (PrototypeContent.RecipeDefinition recipe : content.recipes()) {
             Material material = switch (recipe.rewardType()) {
                 case "EQUIPMENT" -> Material.matchMaterial(content.weapon(recipe.rewardId()).material());
-                case "QUICK_ITEM" -> Material.COOKED_BEEF;
+                case "ITEM", "QUICK_ITEM" -> Material.matchMaterial(content.item(recipe.rewardId()).material());
                 case "FACILITY" -> Material.BARREL;
                 default -> Material.PAPER;
             };

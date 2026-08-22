@@ -52,6 +52,7 @@ public final class EconomyService implements Listener {
     private final TelemetryService telemetry;
     private final ItemCodexService codex;
     private final NamespacedKey facilityKey;
+    private final NamespacedKey placeholderKey;
 
     public EconomyService(JavaPlugin plugin, RunService runs, PrototypeContent content, EquipmentService equipment,
                           GrowthService growth, TelemetryService telemetry, ItemCodexService codex) {
@@ -63,6 +64,7 @@ public final class EconomyService implements Listener {
         this.telemetry = telemetry;
         this.codex = codex;
         this.facilityKey = new NamespacedKey(plugin, "facility_id");
+        this.placeholderKey = new NamespacedKey(plugin, "craft_placeholder");
     }
 
     public void openCraft(Player player) {
@@ -80,10 +82,18 @@ public final class EconomyService implements Listener {
         }
         CraftHolder holder = new CraftHolder(player.getUniqueId());
         Inventory inventory = Bukkit.createInventory(holder, 54, ChatColor.DARK_AQUA + "WildSurvival Craft");
+        ItemStack border = placeholder(Material.GRAY_STAINED_GLASS_PANE, " ", "border");
+        for (int slot = 0; slot < inventory.getSize(); slot++) inventory.setItem(slot, border);
         inventory.setItem(4, named(Material.CRAFTING_TABLE, ChatColor.AQUA + "3×3 조합 제작",
                 List.of(ChatColor.GRAY + "한 칸당 개인 자원 1개를 사용합니다.", ChatColor.GRAY + "도감에서 고정 조합법을 확인하세요.")));
         inventory.setItem(23, named(Material.ARROW, ChatColor.GRAY + "→", List.of()));
         inventory.setItem(49, named(Material.OAK_DOOR, ChatColor.RED + "닫기", List.of()));
+        for (int index = 0; index < INPUTS.length; index++) {
+            int row = index / 3 + 1;
+            int column = index % 3 + 1;
+            inventory.setItem(INPUTS[index], placeholder(Material.WHITE_STAINED_GLASS_PANE,
+                    ChatColor.WHITE + "조합 칸 " + row + "-" + column, "input"));
+        }
         player.openInventory(inventory);
         renderCraft(inventory);
     }
@@ -172,12 +182,20 @@ public final class EconomyService implements Listener {
         runs.broadcast(ChatColor.GREEN + "공용 보급 저장소 설치: " + target.getX() + ", " + target.getY() + ", " + target.getZ());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onResourceBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         if (!runs.isRunningMember(player)) return;
         PrototypeContent.ResourceDefinition resource = findResource(event.getBlock().getType());
         if (resource == null) return;
+        event.setDropItems(false);
+        event.setExpToDrop(0);
+        if (!canHarvest(player, resource.id())) {
+            event.setCancelled(true);
+            player.sendActionBar(net.kyori.adventure.text.Component.text(
+                    requiredToolMessage(resource.id()), net.kyori.adventure.text.format.NamedTextColor.RED));
+            return;
+        }
         int amount = Math.max(1, (int) Math.floor(resource.amountPerNode() * growth.resourceMultiplier(player)));
         int personal = codex.grantResource(player, resource.id(), amount);
         String key = "node:" + event.getBlock().getWorld().getUID() + ":" + event.getBlock().getX() + ":"
@@ -185,6 +203,25 @@ public final class EconomyService implements Listener {
         growth.awardExp(player, resource.activityExp(), "node-exp:" + key + ":" + player.getUniqueId());
         player.sendActionBar(net.kyori.adventure.text.Component.text(resource.name() + " +" + amount + " / 개인 " + personal,
                 net.kyori.adventure.text.format.NamedTextColor.GREEN));
+    }
+
+    private boolean canHarvest(Player player, String resourceId) {
+        if ("WSR-WOOD".equals(resourceId) || "WSR-FIBER".equals(resourceId)) return true;
+        String toolId = codex.itemId(player.getInventory().getItemInMainHand());
+        return switch (resourceId) {
+            case "WSR-STONE", "WSR-COAL" -> Set.of(
+                    "TOOL-CRUDE-PICKAXE", "TOOL-STONE-PICKAXE", "TOOL-IRON-PICKAXE").contains(toolId);
+            case "WSR-IRON" -> Set.of("TOOL-STONE-PICKAXE", "TOOL-IRON-PICKAXE").contains(toolId);
+            default -> true;
+        };
+    }
+
+    private String requiredToolMessage(String resourceId) {
+        return switch (resourceId) {
+            case "WSR-STONE", "WSR-COAL" -> "급조 곡괭이 이상의 채집 도구가 필요합니다.";
+            case "WSR-IRON" -> "석재 채집 곡괭이 이상의 채집 도구가 필요합니다.";
+            default -> "알맞은 채집 도구가 필요합니다.";
+        };
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -228,8 +265,18 @@ public final class EconomyService implements Listener {
         if (raw == 49) { event.setCancelled(true); player.closeInventory(); return; }
         if (raw < top.getSize()) {
             if (!INPUT_SET.contains(raw)) { event.setCancelled(true); return; }
+            if (event.getClick() == ClickType.NUMBER_KEY) { event.setCancelled(true); return; }
             ItemStack cursor = event.getCursor();
             if (cursor != null && !cursor.getType().isAir() && !codex.isResourceItem(cursor)) event.setCancelled(true);
+            if (isPlaceholder(event.getCurrentItem())) {
+                event.setCancelled(true);
+                if (cursor != null && !cursor.getType().isAir() && codex.isResourceItem(cursor)) {
+                    int amount = event.isRightClick() ? 1 : cursor.getAmount();
+                    ItemStack placed = cursor.clone(); placed.setAmount(amount); top.setItem(raw, placed);
+                    cursor.setAmount(cursor.getAmount() - amount);
+                    if (cursor.getAmount() <= 0) event.setCursor(null);
+                }
+            }
             Bukkit.getScheduler().runTask(plugin, () -> renderCraft(top));
             return;
         }
@@ -256,7 +303,7 @@ public final class EconomyService implements Listener {
         Player player = (Player) event.getPlayer();
         for (int slot : INPUTS) {
             ItemStack item = event.getInventory().getItem(slot);
-            if (item == null || item.getType().isAir()) continue;
+            if (item == null || item.getType().isAir() || isPlaceholder(item)) continue;
             String id = codex.itemId(item);
             if (id != null) codex.grantResource(player, id, item.getAmount());
             else player.getWorld().dropItemNaturally(player.getLocation(), item);
@@ -287,12 +334,13 @@ public final class EconomyService implements Listener {
         }
         for (int slot : INPUTS) {
             ItemStack item = inventory.getItem(slot);
-            if (item == null || item.getType().isAir()) continue;
+            if (item == null || item.getType().isAir() || isPlaceholder(item)) continue;
             item.setAmount(item.getAmount() - 1);
             if (item.getAmount() <= 0) inventory.setItem(slot, null);
         }
         switch (recipe.rewardType()) {
             case "EQUIPMENT" -> { equipment.grantEquipment(player, recipe.rewardId()); codex.discover(player, recipe.rewardId(), "CRAFT"); }
+            case "ITEM" -> codex.grantItem(player, recipe.rewardId(), recipe.rewardAmount());
             case "QUICK_ITEM" -> { equipment.grantQuickItem(player, recipe.rewardId(), recipe.rewardAmount()); codex.discover(player, recipe.rewardId(), "CRAFT"); }
             case "FACILITY" -> placeFacility(player);
             default -> throw new IllegalStateException("Unknown reward type " + recipe.rewardType());
@@ -306,6 +354,13 @@ public final class EconomyService implements Listener {
         inventory.setItem(RESULT, recipe == null
                 ? named(Material.GRAY_DYE, ChatColor.GRAY + "조합 결과 없음", List.of())
                 : named(rewardMaterial(recipe), ChatColor.GOLD + recipe.name(), List.of(ChatColor.YELLOW + "클릭하여 제작", ChatColor.DARK_GRAY + recipe.id())));
+        for (int index = 0; index < INPUTS.length; index++) {
+            if (inventory.getItem(INPUTS[index]) == null || inventory.getItem(INPUTS[index]).getType().isAir()) {
+                int row = index / 3 + 1; int column = index % 3 + 1;
+                inventory.setItem(INPUTS[index], placeholder(Material.WHITE_STAINED_GLASS_PANE,
+                        ChatColor.WHITE + "조합 칸 " + row + "-" + column, "input"));
+            }
+        }
     }
 
     private List<String> grid(Inventory inventory) {
@@ -381,7 +436,7 @@ public final class EconomyService implements Listener {
     private Material rewardMaterial(PrototypeContent.RecipeDefinition recipe) {
         return switch (recipe.rewardType()) {
             case "EQUIPMENT" -> Material.matchMaterial(content.weapon(recipe.rewardId()).material());
-            case "QUICK_ITEM" -> Material.COOKED_BEEF;
+            case "ITEM", "QUICK_ITEM" -> Material.matchMaterial(content.item(recipe.rewardId()).material());
             case "FACILITY" -> Material.BARREL;
             default -> Material.PAPER;
         };
@@ -390,6 +445,17 @@ public final class EconomyService implements Listener {
     private static ItemStack named(Material material, String name, List<String> lore) {
         ItemStack item = new ItemStack(material == null || material.isAir() ? Material.PAPER : material);
         ItemMeta meta = item.getItemMeta(); meta.setDisplayName(name); meta.setLore(lore); item.setItemMeta(meta); return item;
+    }
+
+    private ItemStack placeholder(Material material, String name, String type) {
+        ItemStack item = named(material, name, List.of(type.equals("input") ? ChatColor.GRAY + "개인 WS 자원을 놓으세요." : ""));
+        ItemMeta meta = item.getItemMeta(); meta.getPersistentDataContainer().set(placeholderKey, PersistentDataType.STRING, type);
+        item.setItemMeta(meta); return item;
+    }
+
+    private boolean isPlaceholder(ItemStack item) {
+        return item != null && item.hasItemMeta()
+                && item.getItemMeta().getPersistentDataContainer().has(placeholderKey, PersistentDataType.STRING);
     }
 
     private static final class CraftHolder implements InventoryHolder {

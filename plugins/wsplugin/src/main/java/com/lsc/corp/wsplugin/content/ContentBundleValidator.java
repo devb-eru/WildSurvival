@@ -88,13 +88,16 @@ public final class ContentBundleValidator {
         if (!new HashSet<>(content.dayCheckpoints()).equals(CHECKPOINTS) || content.dayCheckpoints().size() != 4) {
             throw new ContentValidationException("Prototype checkpoints must be exactly 1,3,6,10");
         }
-        if (content.resources().size() < 4 || content.recipes().size() < 6) {
-            throw new ContentValidationException("Prototype requires at least four resources and six recipes");
+        if (content.resources().size() < 6 || content.items().size() < 8 || content.recipes().size() < 15) {
+            throw new ContentValidationException("Prototype Day 1-10 economy ladder is incomplete");
         }
+        Set<String> resourceIds = ids(content.resources().stream().map(PrototypeContent.ResourceDefinition::id).toList());
+        Set<String> itemIds = ids(content.items().stream().map(PrototypeContent.ItemDefinition::id).toList());
         Set<String> weaponIds = ids(content.weapons().stream().map(PrototypeContent.WeaponDefinition::id).toList());
-        if (!weaponIds.containsAll(Set.of("SWORD", "BOW", "PICKAXE", "UNARMED", "TRIDENT"))) {
+        if (!weaponIds.containsAll(Set.of("AXE", "SWORD", "BOW", "PICKAXE", "MACE", "UNARMED", "TRIDENT"))) {
             throw new ContentValidationException("Representative weapon routes are incomplete");
         }
+        Set<List<String>> recipeShapes = new HashSet<>();
         for (PrototypeContent.RecipeDefinition recipe : content.recipes()) {
             if (recipe.costs().values().stream().anyMatch(value -> value <= 0)) {
                 throw new ContentValidationException("Recipe costs must be positive: " + recipe.id());
@@ -112,9 +115,40 @@ public final class ContentBundleValidator {
             if (!shapeCosts.equals(recipe.costs())) {
                 throw new ContentValidationException("Recipe shape and costs disagree: " + recipe.id());
             }
+            if (!recipeShapes.add(recipe.shape())) {
+                throw new ContentValidationException("Duplicate 3x3 recipe shape: " + recipe.id());
+            }
+            switch (recipe.rewardType()) {
+                case "EQUIPMENT" -> {
+                    if (!weaponIds.contains(recipe.rewardId())) throw new ContentValidationException("Unknown recipe weapon " + recipe.rewardId());
+                }
+                case "ITEM", "QUICK_ITEM" -> {
+                    if (!itemIds.contains(recipe.rewardId())) throw new ContentValidationException("Unknown recipe item " + recipe.rewardId());
+                }
+                case "FACILITY" -> { }
+                default -> throw new ContentValidationException("Unknown reward type " + recipe.rewardType());
+            }
         }
         if (content.recipes().stream().noneMatch(recipe -> "COMMON_RESOURCE_DEPOT".equals(recipe.rewardId()))) {
             throw new ContentValidationException("Shared-resource depot recipe is required");
+        }
+        ids(content.skills().stream().map(PrototypeContent.SkillDefinition::id).toList());
+        for (PrototypeContent.SkillDefinition skill : content.skills()) {
+            if (skill.weaponIds() == null || skill.weaponIds().isEmpty() || !weaponIds.containsAll(skill.weaponIds())
+                    || skill.apCost() < 0 || skill.damageCoefficient() < 0 || skill.breakDamage() < 0
+                    || skill.range() <= 0 || skill.arcDegrees() <= 0 || skill.arcDegrees() > 360
+                    || skill.maxTargets() < 1) {
+                throw new ContentValidationException("Invalid skill definition: " + skill.id());
+            }
+        }
+        for (String weaponId : weaponIds) {
+            long count = content.skills().stream().filter(skill -> skill.weaponIds().contains(weaponId)).count();
+            if (count < 3) throw new ContentValidationException("Weapon has fewer than three skills: " + weaponId);
+        }
+        for (PrototypeContent.EnemyDefinition enemy : content.enemies()) {
+            if (!resourceIds.containsAll(enemy.drops().keySet())) {
+                throw new ContentValidationException("Enemy has an unknown resource drop: " + enemy.id());
+            }
         }
         ids(content.personalAugments().stream().map(PrototypeContent.AugmentDefinition::id).toList());
         ids(content.partyAugments().stream().map(PrototypeContent.AugmentDefinition::id).toList());
