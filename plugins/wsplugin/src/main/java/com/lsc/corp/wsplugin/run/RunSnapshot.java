@@ -29,6 +29,7 @@ public final class RunSnapshot {
     public Map<String, Integer> partyAugmentVotes = new LinkedHashMap<>();
     public BossState boss;
     public FacilityState facility;
+    public TestState test;
     public String endReason;
 
     public static final class PlayerState {
@@ -54,6 +55,17 @@ public final class RunSnapshot {
         public double tridentZ;
         public long tridentThrownAtEpochMs;
         public long downedAtEpochMs;
+        public double testDamageDealtMultiplier = 1.0;
+        public double testBreakMultiplier = 1.0;
+        public double testDamageTakenMultiplier = 1.0;
+        public double testDamageReductionRate = 0.0;
+        public double testCooldownMultiplier = 1.0;
+        public double testApCostMultiplier = 1.0;
+        public double testApRegenMultiplier = 1.0;
+        public double testMoveSpeedMultiplier = 1.0;
+        public double testMaxHealth = 20.0;
+        public int testBaseMaxAp = 100;
+        public boolean testInvulnerable;
         public String world;
         public double x;
         public double y;
@@ -104,5 +116,20 @@ public final class RunSnapshot {
         public int y;
         public int z;
         public boolean active;
+    }
+
+    public static final class TestState {
+        public String ownerUuid;
+        public int virtualPartySize = 1;
+        public long deterministicSeed;
+        public boolean timeFrozen = true;
+        public double timeScale = 1.0;
+        public long logicalNowEpochMs;
+        public long logicalTick;
+        public long snapshotSequence;
+        public String activePreset = "DEFAULT";
+        public String activeScenario = "SANDBOX";
+        public boolean restorePending;
+        public Map<String, Integer> virtualContributions = new LinkedHashMap<>();
     }
 }

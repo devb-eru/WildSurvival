@@ -30,9 +30,38 @@ class RunRepositoryTest {
         RunRepository repository = new RunRepository(temporary);
         RunSnapshot snapshot = snapshot();
         snapshot.contentRevision = "ws-content-r2";
+
+        assertThrows(IOException.class, () -> repository.save(snapshot));
+    }
+
+    @Test
+    void isolatesTestLabRunsFromPrototypeRepository(@TempDir Path temporary) throws Exception {
+        RunRepository testRepository = RunRepository.testLab(temporary);
+        RunSnapshot snapshot = snapshot();
+        snapshot.runId = "test-isolated";
+        snapshot.runType = "TEST";
+        snapshot.test = new RunSnapshot.TestState();
+        snapshot.test.ownerUuid = "owner";
+        testRepository.save(snapshot);
+
+        assertTrue(new RunRepository(temporary).load().isEmpty());
+        assertEquals("TEST", testRepository.load().orElseThrow().runType);
+        assertThrows(IOException.class, () -> new RunRepository(temporary).save(snapshot));
+    }
+
+    @Test
+    void archivesAndClearsFinishedTestRun(@TempDir Path temporary) throws Exception {
+        RunRepository repository = RunRepository.testLab(temporary);
+        RunSnapshot snapshot = snapshot();
+        snapshot.runId = "test-archive";
+        snapshot.runType = "TEST";
+        snapshot.state = "ABORTED";
         repository.save(snapshot);
 
-        assertThrows(IOException.class, repository::load);
+        repository.archiveAndClear(snapshot);
+
+        assertTrue(repository.load().isEmpty());
+        assertTrue(java.nio.file.Files.list(temporary.resolve("test-lab/runs/history")).findAny().isPresent());
     }
 
     private static RunSnapshot snapshot() {

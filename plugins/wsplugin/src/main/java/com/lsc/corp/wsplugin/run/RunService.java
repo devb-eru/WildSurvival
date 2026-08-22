@@ -27,7 +27,8 @@ import org.bukkit.potion.PotionEffectType;
 
 public final class RunService {
     private final JavaPlugin plugin;
-    private final RunRepository repository;
+    private final RunRepository prototypeRepository;
+    private final RunRepository testRepository;
     private final PrototypeContent content;
     private final TelemetryService telemetry;
     private final Object serialQueue = new Object();
@@ -39,13 +40,20 @@ public final class RunService {
     private GrowthService growth;
     private int ticksUntilSave;
 
-    public RunService(JavaPlugin plugin, RunRepository repository, PrototypeContent content, TelemetryService telemetry) {
+    public RunService(JavaPlugin plugin, RunRepository prototypeRepository, RunRepository testRepository,
+                      PrototypeContent content, TelemetryService telemetry) {
         this.plugin = plugin;
-        this.repository = repository;
+        this.prototypeRepository = prototypeRepository;
+        this.testRepository = testRepository;
         this.content = content;
         this.telemetry = telemetry;
         this.ticksUntilSave = plugin.getConfig().getInt("prototype.autosave-ticks", 100);
         plugin.saveDefaultConfig();
+    }
+
+    public RunService(JavaPlugin plugin, RunRepository prototypeRepository,
+                      PrototypeContent content, TelemetryService telemetry) {
+        this(plugin, prototypeRepository, RunRepository.testLab(plugin.getDataFolder().toPath()), content, telemetry);
     }
 
     public void attach(PrototypeLoopService loop, EquipmentService equipment, GrowthService growth) {
@@ -56,7 +64,14 @@ public final class RunService {
 
     public void restore() throws IOException {
         synchronized (serialQueue) {
-            current = repository.load().orElse(null);
+            RunSnapshot prototype = prototypeRepository.load().orElse(null);
+            RunSnapshot test = testRepository.load().orElse(null);
+            boolean prototypeActive = isActive(prototype);
+            boolean testActive = isActive(test);
+            if (prototypeActive && testActive) {
+                throw new IOException("Both prototype and Test Lab repositories contain active runs");
+            }
+            current = prototypeActive ? prototype : testActive ? test : prototype;
             if (current != null && "RUNNING".equals(current.state)) {
                 telemetry.event(current.runId, "RUN_RESTORED", "{\"version\":" + current.version + "}");
                 Bukkit.getScheduler().runTask(plugin, () -> {
@@ -79,32 +94,60 @@ public final class RunService {
             throw new IllegalArgumentException("Prototype run requires 2 to 4 players");
         }
         synchronized (serialQueue) {
-            if (current != null && !List.of("ENDED", "ABORTED").contains(current.state)) {
-                throw new IllegalStateException("A run already exists: " + current.runId);
-            }
-            RunSnapshot snapshot = new RunSnapshot();
-            snapshot.runId = "proto-" + UUID.randomUUID();
-            snapshot.contentRevision = content.contentRevision();
-            snapshot.createdAtEpochMs = Instant.now().toEpochMilli();
-            snapshot.checkpointStartedAtEpochMs = snapshot.createdAtEpochMs;
-            snapshot.seed = UUID.fromString(snapshot.runId.substring("proto-".length())).getMostSignificantBits();
-            for (PrototypeContent.ResourceDefinition definition : content.resources()) {
-                snapshot.resources.put(definition.id(), 0);
-            }
-            for (Player player : players) {
-                String uuid = player.getUniqueId().toString();
-                snapshot.registeredPlayers.add(uuid);
-                RunSnapshot.PlayerState state = new RunSnapshot.PlayerState();
-                state.uuid = uuid;
-                state.lastKnownName = player.getName();
-                snapshot.players.put(uuid, state);
-                captureLocation(state, player.getLocation());
-            }
-            current = snapshot;
-            commitEventLocked("create:" + snapshot.runId, "RUN_CREATED", "{\"members\":" + players.size() + "}");
+            return createLocked(players, "PROTOTYPE", "proto-", 0L, players.size());
+        }
+    }
+
+    public RunSnapshot createTest(Player owner, long deterministicSeed, int virtualPartySize) throws IOException {
+        if (!acceptingCommands.get()) {
+            throw new IllegalStateException("Server is shutting down");
+        }
+        if (virtualPartySize < 1 || virtualPartySize > content.maximumPlayers()) {
+            throw new IllegalArgumentException("Virtual party size must be 1 to " + content.maximumPlayers());
+        }
+        synchronized (serialQueue) {
+            RunSnapshot snapshot = createLocked(List.of(owner), "TEST", "test-", deterministicSeed, virtualPartySize);
+            snapshot.test = new RunSnapshot.TestState();
+            snapshot.test.ownerUuid = owner.getUniqueId().toString();
+            snapshot.test.virtualPartySize = virtualPartySize;
+            snapshot.test.deterministicSeed = deterministicSeed == 0L ? snapshot.seed : deterministicSeed;
+            snapshot.test.logicalNowEpochMs = snapshot.createdAtEpochMs;
+            snapshot.test.restorePending = true;
             saveLocked();
             return snapshot;
         }
+    }
+
+    private RunSnapshot createLocked(Collection<Player> players, String runType, String idPrefix,
+                                     long requestedSeed, int effectivePartySize) throws IOException {
+        if (current != null && !List.of("ENDED", "ABORTED").contains(current.state)) {
+            throw new IllegalStateException("A run already exists: " + current.runId);
+        }
+        RunSnapshot snapshot = new RunSnapshot();
+        UUID id = UUID.randomUUID();
+        snapshot.runId = idPrefix + id;
+        snapshot.runType = runType;
+        snapshot.contentRevision = content.contentRevision();
+        snapshot.createdAtEpochMs = Instant.now().toEpochMilli();
+        snapshot.checkpointStartedAtEpochMs = snapshot.createdAtEpochMs;
+        snapshot.seed = requestedSeed == 0L ? id.getMostSignificantBits() : requestedSeed;
+        for (PrototypeContent.ResourceDefinition definition : content.resources()) {
+            snapshot.resources.put(definition.id(), 0);
+        }
+        for (Player player : players) {
+            String uuid = player.getUniqueId().toString();
+            snapshot.registeredPlayers.add(uuid);
+            RunSnapshot.PlayerState state = new RunSnapshot.PlayerState();
+            state.uuid = uuid;
+            state.lastKnownName = player.getName();
+            snapshot.players.put(uuid, state);
+            captureLocation(state, player.getLocation());
+        }
+        current = snapshot;
+        commitEventLocked("create:" + snapshot.runId, "RUN_CREATED", "{\"members\":" + players.size()
+                + ",\"effectivePartySize\":" + effectivePartySize + ",\"runType\":\"" + runType + "\"}");
+        saveLocked();
+        return snapshot;
     }
 
     public void start() throws IOException {
@@ -118,7 +161,7 @@ public final class RunService {
                 throw new IllegalStateException("All registered players must be online to start");
             }
             current.state = "RUNNING";
-            current.startedAtEpochMs = Instant.now().toEpochMilli();
+            current.startedAtEpochMs = clockNowMillisLocked();
             current.checkpointStartedAtEpochMs = current.startedAtEpochMs;
             commitEventLocked("start:" + current.runId, "RUN_STARTED", "{\"day\":1}");
             saveLocked();
@@ -240,10 +283,11 @@ public final class RunService {
     public boolean consumeAp(Player player, double amount) {
         synchronized (serialQueue) {
             RunSnapshot.PlayerState state = playerState(player.getUniqueId()).orElse(null);
-            if (state == null || state.ap + 1.0e-6 < amount || !"ACTIVE".equals(state.lifeState)) {
+            double adjusted = state != null && isTestRun() ? amount * clamp(state.testApCostMultiplier, 0.0, 10.0) : amount;
+            if (state == null || state.ap + 1.0e-6 < adjusted || !"ACTIVE".equals(state.lifeState)) {
                 return false;
             }
-            state.ap = Math.max(0.0, state.ap - amount);
+            state.ap = Math.max(0.0, state.ap - adjusted);
             return true;
         }
     }
@@ -251,6 +295,81 @@ public final class RunService {
     public Optional<RunSnapshot> current() {
         synchronized (serialQueue) {
             return Optional.ofNullable(current);
+        }
+    }
+
+    public boolean isTestRun() {
+        synchronized (serialQueue) {
+            return current != null && "TEST".equals(current.runType);
+        }
+    }
+
+    public int effectivePartySize() {
+        synchronized (serialQueue) {
+            if (current == null) {
+                return 0;
+            }
+            if ("TEST".equals(current.runType) && current.test != null) {
+                return Math.max(1, Math.min(content.maximumPlayers(), current.test.virtualPartySize));
+            }
+            return Math.max(1, activeSurvivorCount());
+        }
+    }
+
+    public long clockNowMillis() {
+        synchronized (serialQueue) {
+            return clockNowMillisLocked();
+        }
+    }
+
+    public long clockTick() {
+        synchronized (serialQueue) {
+            if (current != null && "TEST".equals(current.runType) && current.test != null) {
+                return current.test.logicalTick;
+            }
+            return Bukkit.getCurrentTick();
+        }
+    }
+
+    public void stepTestClock(long ticks) {
+        if (ticks < 1 || ticks > 72_000L) {
+            throw new IllegalArgumentException("Step ticks must be 1 to 72000");
+        }
+        synchronized (serialQueue) {
+            requireTestRun();
+            current.test.logicalTick += ticks;
+            current.test.logicalNowEpochMs += ticks * 50L;
+            saveUnchecked();
+        }
+    }
+
+    public void replaceCurrentTest(RunSnapshot replacement) {
+        synchronized (serialQueue) {
+            requireTestRun();
+            if (replacement == null || !"TEST".equals(replacement.runType)
+                    || !current.runId.equals(replacement.runId)
+                    || !content.contentRevision().equals(replacement.contentRevision)) {
+                throw new IllegalArgumentException("Snapshot does not belong to the active Test Lab run");
+            }
+            current = replacement;
+            saveUnchecked();
+            for (Player player : onlineMembers()) {
+                restorePlayer(player);
+            }
+            if (loop != null) {
+                loop.restoreWorldObjects();
+            }
+        }
+    }
+
+    public void clearCurrentTest() throws IOException {
+        synchronized (serialQueue) {
+            requireTestRun();
+            if (!List.of("ENDED", "ABORTED").contains(current.state)) {
+                throw new IllegalStateException("Test run must be stopped before it is cleared");
+            }
+            testRepository.archiveAndClear(current);
+            current = null;
         }
     }
 
@@ -351,8 +470,9 @@ public final class RunService {
                 return "No prototype run";
             }
             long undelivered = current.outbox.stream().filter(event -> !event.delivered).count();
-            return "run=" + current.runId + " state=" + current.state + " day=" + current.day
-                    + " members=" + current.registeredPlayers.size() + " survivors=" + activeSurvivorCount()
+            return "run=" + current.runId + " type=" + current.runType + " state=" + current.state + " day=" + current.day
+                    + " members=" + current.registeredPlayers.size() + " effectiveParty=" + effectivePartySize()
+                    + " survivors=" + activeSurvivorCount()
                     + " revision=" + current.contentRevision + " version=" + current.version
                     + " outboxPending=" + undelivered + " resources=" + current.resources;
         }
@@ -373,6 +493,7 @@ public final class RunService {
             long started = System.nanoTime();
             synchronized (serialQueue) {
                 if (current != null && "RUNNING".equals(current.state)) {
+                    advanceTestClockLocked();
                     tickAp();
                     loop.tick();
                     equipment.tick();
@@ -416,6 +537,9 @@ public final class RunService {
                 continue;
             }
             double perTick = loop != null && loop.isCombatActive() ? 5.0 / 20.0 : 12.0 / 20.0;
+            if ("TEST".equals(current.runType)) {
+                perTick *= clamp(state.testApRegenMultiplier, 0.0, 20.0);
+            }
             state.ap = Math.min(state.maxAp, state.ap + perTick);
         }
     }
@@ -454,16 +578,51 @@ public final class RunService {
         }
     }
 
+    private void requireTestRun() {
+        requireCurrent();
+        if (!"TEST".equals(current.runType) || current.test == null) {
+            throw new IllegalStateException("An active Test Lab run is required");
+        }
+    }
+
     private void saveLocked() throws IOException {
-        repository.save(current);
+        activeRepositoryLocked().save(current);
     }
 
     private void saveUnchecked() {
         try {
-            repository.save(current);
+            activeRepositoryLocked().save(current);
         } catch (IOException exception) {
             throw new IllegalStateException("Cannot persist prototype run", exception);
         }
+    }
+
+    private RunRepository activeRepositoryLocked() {
+        return current != null && "TEST".equals(current.runType) ? testRepository : prototypeRepository;
+    }
+
+    private long clockNowMillisLocked() {
+        if (current != null && "TEST".equals(current.runType) && current.test != null) {
+            return current.test.logicalNowEpochMs;
+        }
+        return Instant.now().toEpochMilli();
+    }
+
+    private void advanceTestClockLocked() {
+        if (current == null || !"TEST".equals(current.runType) || current.test == null || current.test.timeFrozen) {
+            return;
+        }
+        double scale = clamp(current.test.timeScale, 0.05, 100.0);
+        current.test.logicalNowEpochMs += Math.max(1L, Math.round(50.0 * scale));
+        current.test.logicalTick += Math.max(1L, Math.round(scale));
+    }
+
+    private static boolean isActive(RunSnapshot snapshot) {
+        return snapshot != null && !List.of("ENDED", "ABORTED").contains(snapshot.state);
+    }
+
+    private static double clamp(double value, double minimum, double maximum) {
+        return Math.max(minimum, Math.min(maximum, value));
     }
 
     private static void captureLocation(RunSnapshot.PlayerState state, Location location) {
