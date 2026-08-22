@@ -62,7 +62,7 @@
 | STATUS·BREAK | 상태이상·브레이크 | Day 30·40·최종 보스 적용 완료 | 실측 QA |
 | BASE·ACT·CORR | 시설·활동·오염 | 재건 시설·최종 정화 연결 완료 | 구현 QA |
 | DEATH·SKILL | 사망·스킬 | 연계 개정 완료 | 구현용 데이터 직렬화 표 작성 |
-| TECH-001 | 플러그인 아키텍처 | r1 보존·r2 구현 인계 계약 연결 | `IMP-001`부터 구현 |
+| TECH-001 | 플러그인 아키텍처 | r1 보존·r2 구현 인계 계약 연결 | `DEV-ROADMAP-001`의 프로토타입 단계 수행 |
 | RES-001 | 야생 자원·채집 | Day 1~50 수급·대체 경로 연결 | 실측 QA |
 | DISC-LIST-001 | 발견 노드 | C01~C30 제작·보스·최종 완료 연결 | 실제 Story 단서 연결 |
 | WEAPON-001 | 10개 무기군 비교 | WEAPON-002 실행값 연결 완료 | 실측 후 계수 조정 |
@@ -97,7 +97,7 @@
 | RESEARCH·UX·PARTY-SYNERGY | 누락 시스템 계약 | G1 완료 | 구현 패키지 IMP-003·006·008 |
 | EVENT/ENEMY/RESOURCE/EQUIP/FACILITY/BOSS/FINAL/STORY DATA | Season 1 실행 데이터 기획 | G2 완료 | r2 JSON 빌드·schema 검증 |
 | BUDGET-PROFILE·BALANCE-*·QA-BALANCE | 통합 원장·검증 계약 | G3 정적 검증 완료 | L1~L5 실측 |
-| DATA-REVISION-002·IMPLEMENTATION-HANDOFF | 전체 번들·구현 인계 | G4 `CONTRACT_READY` | `IMP-001~017` 수행 |
+| DATA-REVISION-002·IMPLEMENTATION-HANDOFF | 전체 번들·구현 인계 | G4 `CONTRACT_READY` | `DEV-000` 보정 후 프로토타입→`IMP-001~017` 확장 |
 
 ## 5. 기획 작업 순서
 
@@ -250,7 +250,8 @@ G2 실행 데이터 기획은 완료됐다. 실제 런타임 JSON은 아직 `ws-
 6. [x] G2: Day 11~50 사건과 Day 21~50 적·자원·장비·시설·보스·Story 데이터 작성
 7. [x] G3: 예산·CHAOS·무기·후반 세션·난이도·인원 통합 원장 작성
 8. [x] G4: Season 1 전체 `DATA-REVISION-002`와 구현 인계 계약 작성
-9. [ ] Paper 런타임 구현·자동화 테스트·플레이테스트
-10. [ ] Season 2 제작 승인 뒤 세력·약속·경쟁·시즌 이관·Day 상세 시스템 기획
+9. [ ] `DEV-ROADMAP-001`의 `DEV-000~400` 프로토타입·승인
+10. [ ] `DEV-500~800` Day 1~50 확장·자동화·플레이테스트·릴리스
+11. [ ] Season 2 제작 승인 뒤 세력·약속·경쟁·시즌 이관·Day 상세 시스템 기획
 
-Season 1 기획은 G4 `CONTRACT_READY`에 도달했다. 이는 구현 착수 가능 상태이며 실제 r2 번들·플러그인·자동화 테스트·플레이테스트 완료를 뜻하지 않는다. 다음 작업은 `IMPLEMENTATION-HANDOFF-001`의 `IMP-001~017`이다.
+Season 1 기획은 G4 `CONTRACT_READY`에 도달했다. 이는 구현 착수 가능 상태이며 실제 r2 번들·플러그인·자동화 테스트·플레이테스트 완료를 뜻하지 않는다. 구현은 `DEV-ROADMAP-001`의 `DEV-000` 계약 보정, 협동 프로토타입, 승인 게이트를 거친 뒤 `IMP-001~017` 전체 범위로 확장한다.

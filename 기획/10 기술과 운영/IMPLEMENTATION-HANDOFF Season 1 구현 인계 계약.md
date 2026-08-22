@@ -9,11 +9,12 @@
 | 인계 입력 | `DOC-AUTHORITY-001`, `DATA-REVISION-002`, G1~G3 권위 문서 |
 | 구현 기준 | Minecraft Java, Paper 서버 플러그인, 바닐라 클라이언트, 모드 금지 |
 | 외부 의존 | MagicSpells 비필수; S1 기본 백엔드는 네이티브 Paper |
+| 실행 로드맵 | `DEV-ROADMAP-001` 프로토타입 우선 단계·승인 게이트 |
 | 최종 수정일 | 2026-08-21 |
 
 ## 1. 인계 범위
 
-이 계약은 구현 순서, 모듈 경계, 저장·이벤트·테스트·배포 책임을 고정한다. 구현 중 기획서에 없는 수치·콘텐츠를 임의 창작하지 않는다. 모호함은 `DOC-AUTHORITY-001`에 이슈로 등록하고 기존 불변식을 보존하는 안전 폴백을 사용한다.
+이 계약은 모듈 경계, 저장·이벤트·테스트·배포 책임과 IMP 최종 범위를 고정한다. 실제 구현 순서·프로토타입 범위·단계 승인 게이트는 `DEV-ROADMAP-001`을 따른다. 구현 중 기획서에 없는 수치·콘텐츠를 임의 창작하지 않는다. 모호함은 `DOC-AUTHORITY-001`에 이슈로 등록하고 기존 불변식을 보존하는 안전 폴백을 사용한다.
 
 ## 2. 기술 불변식
 
@@ -45,6 +46,8 @@
 
 ## 4. 구현 작업 패키지
 
+구현 시작 전 `DEV-ROADMAP-001`의 `DEV-000` 계약 보정 게이트를 통과해야 한다. 아래 IMP는 최종 기능 묶음이며 프로토타입 조각이 통과해도 전체 완료로 표시하지 않는다.
+
 | ID | 작업 | 입력 문서 | 산출물 | 핵심 승인 |
 |---|---|---|---|---|
 | `IMP-001` | r2 schema·loader·manifest | DATA-REVISION-002 | 47파일 번들 골격·validator | L0 |
@@ -65,7 +68,7 @@
 | `IMP-016` | 리소스 팩 폴백 | UX/DATA-REVISION-002 | model registry·fallback | 팩 없음 완주 |
 | `IMP-017` | E2E·부하·릴리스 | 전체 | L1~L5 보고서 | RC 승인 |
 
-작업 패키지는 순서 의존이 있다. `001→002→003~008→009~014→015~017` 순으로 병합하며, 병렬 작업도 상위 인터페이스가 main에 합쳐진 뒤 시작한다.
+작업 패키지는 순서 의존이 있다. `DEV-000→프로토타입 조각→G-400 승인→나머지 001~017` 순으로 확장한다. 최종 병합 의존은 `001→002→003~008→009~014→015~017`을 유지하며, 병렬 작업도 상위 인터페이스가 `S1_dev`에 합쳐진 뒤 시작한다.
 
 ## 5. 핵심 이벤트 계약
 
@@ -90,6 +93,7 @@ domain command
 |---|---|
 | `runs` | runId, 잠금 튜플, day, difficulty, mode, state |
 | `run_players` | registered/survivable/active, deathState, equipment snapshot |
+| `player_loadouts` | W1~W3, C1~C4, Q1~Q4, commonInputMode, version |
 | `budget_snapshots` | day, profile, domain base/multiplier/locked/residual |
 | `milestone_locks` | milestone, tier, firstPlayer, draw seed/revision |
 | `ledgers` | domain, delta, balance, idempotencyKey |
@@ -174,4 +178,4 @@ NMS 직접 접근은 금지하지 않지만 Paper API로 불가능한 경우에�
 
 ## 13. 인계 완료 상태
 
-현재 기획 인계는 `CONTRACT_READY`다. 소스 코드·r2 런타임 JSON·실제 부하 테스트는 아직 구현 산출물이며 완료로 표시하지 않는다. 구현자는 `IMP-001`부터 시작할 수 있다.
+현재 기획 인계는 `CONTRACT_READY`다. 소스 코드·r2 런타임 JSON·실제 부하 테스트는 아직 구현 산출물이며 완료로 표시하지 않는다. 구현자는 `DEV-ROADMAP-001`의 `DEV-000`을 먼저 수행하고, `G-400` 전에는 프로토타입 범위를 넘겨 콘텐츠를 확장하지 않는다.

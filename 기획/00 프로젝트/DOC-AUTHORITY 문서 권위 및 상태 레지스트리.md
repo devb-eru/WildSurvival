@@ -16,7 +16,7 @@
 충돌은 아래 순서로 해결한다. 같은 단계끼리 충돌하면 더 구체적인 범위를 소유한 문서를 우선하고, 해결되지 않으면 구현을 중단한 뒤 이 레지스트리에서 권위자를 지정한다.
 
 1. `VISION-001`, 사용자 확정 요구, `RULES-001`
-2. 이 문서와 `PLAN-AUDIT-001`, `ROADMAP-001`
+2. 이 문서와 `PLAN-AUDIT-001`, `ROADMAP-001`, `DEV-ROADMAP-001`
 3. 회차·난이도·Day·공통 시스템 계약
 4. 도메인별 상세 시스템 계약
 5. `*-DATA-*`, 목록, 밸런스 원장
@@ -115,6 +115,7 @@
 | `TECH-001` | `IMPLEMENTATION_CONTRACT` | Paper 모듈·저장·성능 | G0 |
 | `OPS-001` | `IMPLEMENTATION_CONTRACT` | 명령·권한·복구 | G0 |
 | `DATA-REVISION-001` | `PARTIAL_R1` | Day 1~20 `ws-content-r1` | 기존 r1만 |
+| `DEV-ROADMAP-001` | `ACTIVE_CONTROL` | 프로토타입 우선 구현 단계·승인 게이트 | DEV-000~800 |
 
 ## 4. 공식 위임·완료 레지스트리
 
