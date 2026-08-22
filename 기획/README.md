@@ -25,7 +25,7 @@ WildSurvival의 기획 문서를 책임 영역별로 분류한 색인이다. 문
 | `07 보스` | Day 10·20·30·40 협동 보스 | 5 |
 | `08 스토리` | Season 1 실제 Story, Season 2 기반, Story 시스템 감사 | 4 |
 | `09 데이터와 밸런스` | 세션 원장, 후반 콘텐츠 수치와 시뮬레이션 | 7 |
-| `10 기술과 운영` | 플러그인 아키텍처, 운영 복구, 콘텐츠 리비전·개발 로드맵 | 8 |
+| `10 기술과 운영` | 플러그인 아키텍처, 운영 복구, 콘텐츠 리비전·개발·테스트 도구 | 9 |
 
 ## 00 프로젝트
 
@@ -136,6 +136,7 @@ WildSurvival의 기획 문서를 책임 영역별로 분류한 색인이다. 문
 - [DATA-REVISION-002 Season 1 전체 콘텐츠 번들 계약](<10 기술과 운영/DATA-REVISION-002 Season 1 전체 콘텐츠 번들 계약.md>)
 - [IMPLEMENTATION-HANDOFF Season 1 구현 인계 계약](<10 기술과 운영/IMPLEMENTATION-HANDOFF Season 1 구현 인계 계약.md>)
 - [DEV-ROADMAP 프로토타입 우선 개발 로드맵](<10 기술과 운영/DEV-ROADMAP 프로토타입 우선 개발 로드맵.md>)
+- [TEST-LAB 솔로 테스트·튜닝 시스템 상세 기획서](<10 기술과 운영/TEST-LAB 솔로 테스트·튜닝 시스템 상세 기획서.md>)
 
 `DATA-REVISION-002`의 기계 판독 후보 레지스트리와 schema는 `10 기술과 운영/contracts/`에서 관리한다. 이는 아직 실제 `ws-content-r2` 런타임 번들이 아니라 구현 계약이다.
 

@@ -59,6 +59,54 @@ Windows:
 /ws augment
 ```
 
+## WildSurvival Test Lab
+
+Test Lab은 한 명이 콘텐츠 시스템을 격리된 `runType: TEST` 회차에서 조절·반복 검증하는 개발 도구다. 일반 프로토타입 회차 및 저장과 동시에 실행되지 않으며 기본 설정은 비활성이다.
+
+개발 서버의 `plugins/wsplugin/config.yml`에서 다음 값을 명시적으로 켠 뒤 재시작한다.
+
+```yaml
+test-lab:
+  enabled: true
+```
+
+입장과 종료:
+
+```text
+/ws test enter [seed] [virtualPartySize]
+/ws test gui
+/ws test status
+/ws test exit TEST_COMPLETE --confirm
+```
+
+입장 시 인벤토리·선택 핫바·위치·게임 모드·체력·허기·총 EXP·포션·무적·비행·핵심 속성을 백업한다. 정상 종료 시 입장 전 상태를 먼저 복원한 뒤 TEST 회차와 태그 개체를 폐기한다. 종료 도중 중단된 회차는 다음 기동에서 `restorePending` 복구 대상으로 유지된다.
+
+주요 정밀 명령:
+
+```text
+/ws test player level set 10
+/ws test player exp add 500
+/ws test player stat set damage-reduction 0.75
+/ws test player stat set damage-dealt 3
+/ws test player effect clear
+/ws test item resource fill 50
+/ws test item equipment equip PICKAXE
+/ws test augment personal give AUG-S-006
+/ws test mob spawn EN-D4-01 1
+/ws test mob set defence 100
+/ws test mob status clear
+/ws test world day set 10
+/ws test world time freeze
+/ws test party size 4
+/ws test party boss-channel 2
+/ws test scenario run BOSS-PHASE-2
+/ws test snapshot MANUAL
+/ws test undo
+/ws test export
+```
+
+조준 몬스터 변경 명령은 64블록 안에서 바라보는 WildSurvival 태그 개체만 대상으로 한다. 전체 명령·범위·시나리오 계약은 `TEST-LAB-001`을 따른다.
+
 ## 입력
 
 | 동작 | 입력 |
@@ -90,6 +138,9 @@ Day 1 잔해 수색
 ## 런타임 저장
 
 - 회차 원자 스냅샷: `plugins/wsplugin/runs/current.json`
+- Test Lab 회차: `plugins/wsplugin/test-lab/runs/current.json`
+- Test Lab 입장 백업·스냅샷·프리셋·내보내기: `plugins/wsplugin/test-lab/`
+- Test Lab 감사 로그: `plugins/wsplugin/test-lab/audit.jsonl`
 - 이벤트 로그: `plugins/wsplugin/telemetry/events.jsonl`
 - 감사 로그: `plugins/wsplugin/telemetry/audit.jsonl`
 - 세션 보고서: `plugins/wsplugin/telemetry/session-<runId>.json`
@@ -100,5 +151,7 @@ Day 1 잔해 수색
 
 - 자동 빌드·L0 콘텐츠 검증·순수 도메인 단위 테스트: 통과
 - Paper 26.1.2 기동·플러그인 활성화·런타임 L0 검증·명령 등록·정상 종료: 2026-08-22 스모크 통과
+- Test Lab 저장소 격리·수치 경계·전투 계산 자동 테스트와 `/ws test status`·도움말 노출·콘솔 진입 거부·정상 종료: 2026-08-22 통과
+- Test Lab 실제 플레이어 입장→조절→시나리오→undo→종료 후 인벤토리·위치·속성 복원: 폐쇄 인게임 E2E 필요
 - 2인·4인 `45~90분` 완주, 재접속·보스 장애·1,000회 곡괭이 입력·부하 측정: 폐쇄 플레이테스트 필요
 - `G-400` 승인 전 Day 11+와 정식 r2 확장 금지

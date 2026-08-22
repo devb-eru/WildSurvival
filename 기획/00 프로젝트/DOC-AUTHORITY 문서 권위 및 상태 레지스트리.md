@@ -9,7 +9,7 @@
 | 역할 | 문서 ID, 권위, 상태, 대체 관계와 구현 착수 가능 여부의 단일 원장 |
 | 상위 기준 | `VISION-001`, `PLAN-AUDIT-001` |
 | 갱신 책임 | 기획 리드. 문서 추가·폐기·게이트 변경과 같은 커밋에서 함께 갱신 |
-| 최종 수정일 | 2026-08-21 |
+| 최종 수정일 | 2026-08-22 |
 
 ## 1. 권위 판정 규칙
 
@@ -33,6 +33,7 @@
 | `DATA_LOCKED` | ID·수치·참조가 고정된 실행 데이터 원장 | 가능 |
 | `VALIDATED_STATIC` | 정적 원장과 경계값 검증을 통과 | 구현 전 기준으로 가능 |
 | `IMPLEMENTATION_CONTRACT` | 스키마·모듈·테스트·인계 조건 확정 | 가능 |
+| `IMPLEMENTED_PROTOTYPE` | 프로토타입 코드·자동 검증·런타임 스모크가 존재하나 폐쇄 E2E 승격 전 | 프로토타입·개발 서버에서만 가능 |
 | `PARTIAL_R1` | 한정 구간만 실행 데이터로 고정된 이전 리비전 | 해당 구간·기존 회차만 가능 |
 | `PLANNED_G1`~`PLANNED_G4` | 지정 게이트에서 작성할 공식 위임 대상 | 작성 전 구현 판단 금지 |
 | `S2_FOUNDATION` | Season 2 방향 기반이며 S1 구현 권위가 아님 | S1 구현에 사용 금지 |
@@ -116,6 +117,7 @@
 | `OPS-001` | `IMPLEMENTATION_CONTRACT` | 명령·권한·복구 | G0 |
 | `DATA-REVISION-001` | `PARTIAL_R1` | Day 1~20 `ws-content-r1` | 기존 r1만 |
 | `DEV-ROADMAP-001` | `ACTIVE_CONTROL` | 프로토타입 우선 구현 단계·승인 게이트 | DEV-000~800 |
+| `TEST-LAB-001` | `IMPLEMENTED_PROTOTYPE` | 격리 솔로 테스트·튜닝·가상 파티 계약 | `ws-prototype-r1` |
 
 ## 4. 공식 위임·완료 레지스트리
 
