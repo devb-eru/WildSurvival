@@ -67,11 +67,11 @@ public final class RunService {
             RunSnapshot prototype = prototypeRepository.load().orElse(null);
             RunSnapshot test = testRepository.load().orElse(null);
             boolean prototypeActive = isActive(prototype);
-            boolean testActive = isActive(test);
-            if (prototypeActive && testActive) {
-                throw new IOException("Both prototype and Test Lab repositories contain active runs");
+            boolean testRecoverable = RunRecoveryPolicy.isRecoverableTest(test);
+            if (prototypeActive && testRecoverable) {
+                throw new IOException("An active prototype run conflicts with a recoverable Test Lab session");
             }
-            current = prototypeActive ? prototype : testActive ? test : prototype;
+            current = prototypeActive ? prototype : testRecoverable ? test : prototype;
             if (current != null && "RUNNING".equals(current.state)) {
                 telemetry.event(current.runId, "RUN_RESTORED", "{\"version\":" + current.version + "}");
                 Bukkit.getScheduler().runTask(plugin, () -> {

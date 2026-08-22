@@ -19,7 +19,7 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
 public final class TestPlayerBackup {
-    public int schemaVersion = 1;
+    public int schemaVersion = 2;
     public String playerUuid;
     public String world;
     public double x;
@@ -31,8 +31,16 @@ public final class TestPlayerBackup {
     public double health;
     public int foodLevel;
     public float saturation;
+    public float exhaustion;
     public int level;
     public float exp;
+    public int totalExperience;
+    public int heldItemSlot;
+    public int remainingAir;
+    public int fireTicks;
+    public boolean invulnerable;
+    public boolean allowFlight;
+    public boolean flying;
     public double maxHealthBase;
     public double movementSpeedBase;
     public String storageItems;
@@ -55,8 +63,16 @@ public final class TestPlayerBackup {
         backup.health = player.getHealth();
         backup.foodLevel = player.getFoodLevel();
         backup.saturation = player.getSaturation();
+        backup.exhaustion = player.getExhaustion();
         backup.level = player.getLevel();
         backup.exp = player.getExp();
+        backup.totalExperience = player.getTotalExperience();
+        backup.heldItemSlot = player.getInventory().getHeldItemSlot();
+        backup.remainingAir = player.getRemainingAir();
+        backup.fireTicks = player.getFireTicks();
+        backup.invulnerable = player.isInvulnerable();
+        backup.allowFlight = player.getAllowFlight();
+        backup.flying = player.isFlying();
         backup.maxHealthBase = player.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
         backup.movementSpeedBase = player.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue();
         backup.storageItems = encode(player.getInventory().getStorageContents());
@@ -97,10 +113,18 @@ public final class TestPlayerBackup {
         player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(maxHealthBase);
         player.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(movementSpeedBase);
         player.setGameMode(GameMode.valueOf(gameMode));
+        player.setAllowFlight(allowFlight);
+        player.setFlying(flying && allowFlight);
+        player.setInvulnerable(invulnerable);
         player.setFoodLevel(foodLevel);
         player.setSaturation(saturation);
+        player.setExhaustion(exhaustion);
+        player.setTotalExperience(totalExperience);
         player.setLevel(level);
         player.setExp(exp);
+        player.getInventory().setHeldItemSlot(Math.max(0, Math.min(8, heldItemSlot)));
+        player.setRemainingAir(Math.min(player.getMaximumAir(), remainingAir));
+        player.setFireTicks(fireTicks);
         player.setHealth(Math.max(0.1, Math.min(health, player.getAttribute(Attribute.MAX_HEALTH).getValue())));
         World targetWorld = Bukkit.getWorld(world);
         if (targetWorld != null) {

@@ -149,8 +149,8 @@ public final class TestLabCommand {
             throw new IllegalArgumentException("/ws test exit <reason> --confirm");
         }
         String reason = args.length >= 3 && !args[2].startsWith("--") ? args[2] : "TEST_COMPLETE";
-        virtualParty.clear();
         lab.exit(requirePlayer(sender), reason);
+        virtualParty.clear();
     }
 
     private void status(CommandSender sender) {
@@ -171,8 +171,8 @@ public final class TestLabCommand {
         if (!contains(args, "--confirm")) {
             throw new IllegalArgumentException("/ws test reset --confirm");
         }
-        virtualParty.clear();
         lab.reset(requirePlayer(sender));
+        virtualParty.clear();
     }
 
     private void preset(CommandSender sender, String[] args) throws IOException {
@@ -416,7 +416,7 @@ public final class TestLabCommand {
         switch (lower(args[2])) {
             case "day" -> {
                 if ("advance".equalsIgnoreCase(args[3])) {
-                    runs.forceAdvance();
+                    lab.advanceDay(player);
                 } else {
                     requireArgs(args, 5, "/ws test world day set <1|3|6|10>");
                     lab.setDay(player, parseInt(args[4], "day"));
@@ -460,7 +460,8 @@ public final class TestLabCommand {
                         virtualParty.spawn(player, args[4], args[5]);
                     }
                     case "list" -> sender.sendMessage(ChatColor.AQUA + "Dummies: " + virtualParty.list());
-                    case "clear" -> sender.sendMessage(ChatColor.YELLOW + "Removed " + virtualParty.clear() + " dummies");
+                    case "clear" -> sender.sendMessage(ChatColor.YELLOW + "Removed "
+                            + virtualParty.clearOwned(player) + " dummies");
                     default -> throw new IllegalArgumentException("Unknown dummy operation " + args[3]);
                 }
             }

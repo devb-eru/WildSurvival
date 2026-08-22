@@ -212,8 +212,8 @@ public final class TestLabGui implements Listener {
                     player.sendMessage(ChatColor.YELLOW + "초기화는 Shift+클릭하세요.");
                     return;
                 }
-                virtualParty.clear();
                 lab.reset(player);
+                virtualParty.clear();
             }
             default -> { }
         }

@@ -106,6 +106,11 @@ public final class VirtualPartyService implements Listener {
         return removed;
     }
 
+    public int clearOwned(Player owner) {
+        requireOwner(owner);
+        return clear();
+    }
+
     public void cleanupOrphans() {
         String activeRun = runs.current().filter(run -> "TEST".equals(run.runType) && "RUNNING".equals(run.state))
                 .map(run -> run.runId).orElse(null);
@@ -159,7 +164,7 @@ public final class VirtualPartyService implements Listener {
 
     private void requireOwner(Player player) {
         RunSnapshot run = runs.current().orElseThrow(() -> new IllegalStateException("An active Test Lab run is required"));
-        if (!"TEST".equals(run.runType) || run.test == null
+        if (!"TEST".equals(run.runType) || run.test == null || !"RUNNING".equals(run.state)
                 || !player.getUniqueId().toString().equals(run.test.ownerUuid)) {
             throw new IllegalStateException("Only the Test Lab owner can manage virtual party dummies");
         }

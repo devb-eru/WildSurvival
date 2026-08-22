@@ -99,15 +99,19 @@ public final class TestLabService implements Listener {
     }
 
     public void exit(Player player, String reason) throws IOException {
-        requireOwner(player);
-        String runId = runs.current().orElseThrow().runId;
+        requireSessionOwner(player);
+        RunSnapshot run = runs.current().orElseThrow();
+        String runId = run.runId;
         String before = summary();
-        runs.stop(reason, player.getName());
-        loop.cleanupWorldObjects();
-        runs.clearCurrentTest();
         TestPlayerBackup backup = repository.loadBackup(player.getUniqueId().toString())
                 .orElseThrow(() -> new IOException("Test Lab player backup is missing"));
+        if (!List.of("ENDED", "ABORTED").contains(run.state)) {
+            runs.stop(reason, player.getName());
+        }
+        loop.cleanupWorldObjects();
         backup.restore(player);
+        runs.mutate(current -> current.test.restorePending = false);
+        runs.clearCurrentTest();
         repository.deleteBackup(player.getUniqueId().toString());
         repository.clearSnapshots(runId);
         repository.audit(runId, player.getUniqueId().toString(), "session.exit", before, reason);
@@ -552,6 +556,13 @@ public final class TestLabService implements Listener {
         afterMutation(actor, "world.day", Integer.toString(day));
     }
 
+    public void advanceDay(Player actor) throws IOException {
+        requireOwner(actor);
+        beforeMutation(actor, "world.day.advance");
+        runs.forceAdvance();
+        afterMutation(actor, "world.day.advance", Integer.toString(runs.current().orElseThrow().day));
+    }
+
     public void setWeather(Player actor, String rawWeather) throws IOException {
         requireOwner(actor);
         String weather = rawWeather.toUpperCase(Locale.ROOT);
@@ -748,6 +759,9 @@ public final class TestLabService implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         if (owner(event.getPlayer())) {
             Bukkit.getScheduler().runTask(plugin, () -> applyRuntimePlayerState(event.getPlayer()));
+        } else if (sessionOwner(event.getPlayer())) {
+            event.getPlayer().sendMessage(ChatColor.RED
+                    + "[Test Lab] 중단된 종료 복구가 대기 중입니다. /ws test exit RECOVERED --confirm");
         }
     }
 
@@ -756,15 +770,20 @@ public final class TestLabService implements Listener {
             return;
         }
         RunSnapshot run = runs.current().orElse(null);
-        if (run == null || run.test == null || !"RUNNING".equals(run.state)) {
+        if (run == null || run.test == null) {
             return;
         }
-        Player owner = Bukkit.getPlayer(UUID.fromString(run.test.ownerUuid));
-        if (owner != null) {
-            applyRuntimePlayerState(owner);
+        if ("RUNNING".equals(run.state)) {
+            Player owner = Bukkit.getPlayer(UUID.fromString(run.test.ownerUuid));
+            if (owner != null) {
+                applyRuntimePlayerState(owner);
+            }
+            plugin.getLogger().warning("Restored active Test Lab run " + run.runId
+                    + "; exit it with /ws test exit <reason> --confirm to restore the player backup.");
+        } else if (run.test.restorePending) {
+            plugin.getLogger().warning("Restored interrupted Test Lab exit " + run.runId
+                    + "; the owner must run /ws test exit RECOVERED --confirm to finish backup restoration.");
         }
-        plugin.getLogger().warning("Restored active Test Lab run " + run.runId
-                + "; exit it with /ws test exit <reason> --confirm to restore the player backup.");
     }
 
     private void resetState(Player actor, boolean preserveClock) {
@@ -986,19 +1005,40 @@ public final class TestLabService implements Listener {
         }
     }
 
+    private boolean sessionOwner(Player player) {
+        return runs.isTestRun() && runs.current().map(run -> run.test != null
+                && (!List.of("ENDED", "ABORTED").contains(run.state) || run.test.restorePending)
+                && player.getUniqueId().toString().equals(run.test.ownerUuid)).orElse(false);
+    }
+
+    private void requireSessionOwner(Player player) {
+        if (!sessionOwner(player)) {
+            throw new IllegalStateException("Only the Test Lab session owner can restore this session");
+        }
+    }
+
     private void restoreBackupAfterFailure(Player player) {
         try {
+            TestPlayerBackup backup = repository.loadBackup(player.getUniqueId().toString()).orElse(null);
             if (runs.isTestRun()) {
                 RunSnapshot run = runs.current().orElse(null);
                 if (run != null && !List.of("ENDED", "ABORTED").contains(run.state)) {
                     runs.stop("TEST_ENTRY_FAILED", "system");
                 }
-                if (runs.current().isPresent()) {
+                loop.cleanupWorldObjects();
+                if (backup != null) {
+                    backup.restore(player);
+                }
+                if (runs.current().isPresent() && backup != null) {
+                    runs.mutate(current -> current.test.restorePending = false);
                     runs.clearCurrentTest();
                 }
+            } else if (backup != null) {
+                backup.restore(player);
             }
-            repository.loadBackup(player.getUniqueId().toString()).ifPresent(backup -> backup.restore(player));
-            repository.deleteBackup(player.getUniqueId().toString());
+            if (backup != null && !runs.isTestRun()) {
+                repository.deleteBackup(player.getUniqueId().toString());
+            }
         } catch (Exception restoreFailure) {
             plugin.getLogger().log(java.util.logging.Level.SEVERE, "Cannot restore failed Test Lab entry", restoreFailure);
         }

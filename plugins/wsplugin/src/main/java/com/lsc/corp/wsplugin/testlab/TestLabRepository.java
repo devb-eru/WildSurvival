@@ -90,13 +90,14 @@ public final class TestLabRepository {
     }
 
     public synchronized void savePreset(TestPreset preset) throws IOException {
-        String id = TestValuePolicy.fileId(preset.id);
-        preset.id = id.toUpperCase(java.util.Locale.ROOT);
+        String id = TestValuePolicy.fileId(preset.id).toUpperCase(java.util.Locale.ROOT);
+        preset.id = id;
         atomicWrite(presets.resolve(id + ".json"), gson.toJson(preset));
     }
 
     public synchronized Optional<TestPreset> loadPreset(String id) throws IOException {
-        return read(presets.resolve(TestValuePolicy.fileId(id) + ".json"), TestPreset.class);
+        String normalized = TestValuePolicy.fileId(id).toUpperCase(java.util.Locale.ROOT);
+        return read(presets.resolve(normalized + ".json"), TestPreset.class);
     }
 
     public synchronized List<String> listPresets() throws IOException {
@@ -111,7 +112,8 @@ public final class TestLabRepository {
     }
 
     public synchronized void deletePreset(String id) throws IOException {
-        Files.deleteIfExists(presets.resolve(TestValuePolicy.fileId(id) + ".json"));
+        String normalized = TestValuePolicy.fileId(id).toUpperCase(java.util.Locale.ROOT);
+        Files.deleteIfExists(presets.resolve(normalized + ".json"));
     }
 
     public synchronized Path export(String category, Object value) throws IOException {

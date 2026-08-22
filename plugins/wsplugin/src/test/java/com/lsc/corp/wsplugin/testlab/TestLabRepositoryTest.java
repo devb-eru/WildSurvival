@@ -37,6 +37,7 @@ class TestLabRepositoryTest {
         preset.damageTakenMultiplier = 3.0;
         repository.savePreset(preset);
 
+        assertTrue(Files.exists(repository.root().resolve("presets/GLASS-CANNON.json")));
         TestPreset restored = repository.loadPreset("glass-cannon").orElseThrow();
         assertEquals("GLASS-CANNON", restored.id);
         assertEquals(4.0, restored.damageDealtMultiplier);
