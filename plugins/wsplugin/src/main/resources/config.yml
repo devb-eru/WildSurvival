@@ -7,3 +7,8 @@ prototype:
   revive-channel-seconds: 3
   spawn-radius: 10
   autosave-ticks: 100
+test-lab:
+  enabled: false
+  max-snapshots: 20
+  virtual-revive-ticks: 60
+  default-movement-speed: 0.1

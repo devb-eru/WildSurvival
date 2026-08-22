@@ -10,6 +10,12 @@ import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
 import com.lsc.corp.wsplugin.run.RunRepository;
 import com.lsc.corp.wsplugin.run.RunService;
+import com.lsc.corp.wsplugin.testlab.TestLabCommand;
+import com.lsc.corp.wsplugin.testlab.TestLabGui;
+import com.lsc.corp.wsplugin.testlab.TestLabRepository;
+import com.lsc.corp.wsplugin.testlab.TestLabService;
+import com.lsc.corp.wsplugin.testlab.TestScenarioService;
+import com.lsc.corp.wsplugin.testlab.VirtualPartyService;
 import com.lsc.corp.wsplugin.world.PrototypeLoopService;
 import java.util.Objects;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,7 +32,8 @@ public final class Main extends JavaPlugin {
 
             telemetry = new TelemetryService(getDataFolder().toPath());
             RunRepository repository = new RunRepository(getDataFolder().toPath());
-            runService = new RunService(this, repository, content.content(), telemetry);
+            RunRepository testRepository = RunRepository.testLab(getDataFolder().toPath());
+            runService = new RunService(this, repository, testRepository, content.content(), telemetry);
 
             GrowthService growth = new GrowthService(this, runService, content.content(), telemetry);
             EquipmentService equipment = new EquipmentService(this, runService, content.content(), telemetry);
@@ -36,14 +43,24 @@ public final class Main extends JavaPlugin {
             combat.setBossDamageHandler(boss);
             PrototypeLoopService loop = new PrototypeLoopService(this, runService, content.content(), economy, combat, boss, growth, telemetry);
 
-            runService.attach(loop, equipment, growth);
-            registerListeners(equipment, combat, economy, growth, boss, loop);
+            TestLabRepository testLabRepository = new TestLabRepository(getDataFolder().toPath());
+            TestLabService testLab = new TestLabService(this, runService, testLabRepository, content.content(),
+                    equipment, growth, combat, boss, loop, telemetry);
+            VirtualPartyService virtualParty = new VirtualPartyService(this, runService);
+            TestScenarioService scenarios = new TestScenarioService(testLab, runService, growth, combat, boss, virtualParty);
+            TestLabGui testLabGui = new TestLabGui(this, testLab, scenarios, virtualParty, runService);
+            TestLabCommand testLabCommand = new TestLabCommand(testLab, testLabGui, scenarios, virtualParty, combat, runService);
 
-            PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry);
+            runService.attach(loop, equipment, growth);
+            registerListeners(equipment, combat, economy, growth, boss, loop, testLab, virtualParty, testLabGui);
+
+            PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand);
             Objects.requireNonNull(getCommand("wildsurvival"), "wildsurvival command").setExecutor(command);
             Objects.requireNonNull(getCommand("wildsurvival"), "wildsurvival command").setTabCompleter(command);
 
             runService.restore();
+            virtualParty.cleanupOrphans();
+            testLab.recoverActiveSession();
             runService.startHeartbeat();
             getLogger().info("WildSurvival ws-prototype-r1 is ready.");
         } catch (Exception exception) {

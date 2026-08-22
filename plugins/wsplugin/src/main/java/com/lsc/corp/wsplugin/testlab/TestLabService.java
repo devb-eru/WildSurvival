@@ -988,6 +988,15 @@ public final class TestLabService implements Listener {
 
     private void restoreBackupAfterFailure(Player player) {
         try {
+            if (runs.isTestRun()) {
+                RunSnapshot run = runs.current().orElse(null);
+                if (run != null && !List.of("ENDED", "ABORTED").contains(run.state)) {
+                    runs.stop("TEST_ENTRY_FAILED", "system");
+                }
+                if (runs.current().isPresent()) {
+                    runs.clearCurrentTest();
+                }
+            }
             repository.loadBackup(player.getUniqueId().toString()).ifPresent(backup -> backup.restore(player));
             repository.deleteBackup(player.getUniqueId().toString());
         } catch (Exception restoreFailure) {

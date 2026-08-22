@@ -7,6 +7,7 @@ import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
+import com.lsc.corp.wsplugin.testlab.TestLabCommand;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -29,9 +30,11 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
     private final GrowthService growth;
     private final PrototypeBossService boss;
     private final TelemetryService telemetry;
+    private final TestLabCommand testLab;
 
     public PrototypeCommand(ContentBundleService content, RunService runs, EquipmentService equipment,
-                            EconomyService economy, GrowthService growth, PrototypeBossService boss, TelemetryService telemetry) {
+                            EconomyService economy, GrowthService growth, PrototypeBossService boss,
+                            TelemetryService telemetry, TestLabCommand testLab) {
         this.content = content;
         this.runs = runs;
         this.equipment = equipment;
@@ -39,6 +42,7 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
         this.growth = growth;
         this.boss = boss;
         this.telemetry = telemetry;
+        this.testLab = testLab;
     }
 
     @Override
@@ -56,6 +60,7 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
                 case "craft" -> economy.openCraft(requirePlayer(sender));
                 case "status" -> status(sender);
                 case "augment" -> growth.openPendingPersonalDraw(requirePlayer(sender));
+                case "test" -> testLab.execute(sender, args);
                 default -> help(sender, label);
             }
         } catch (Exception exception) {
@@ -163,7 +168,7 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
 
     private static void help(CommandSender sender, String label) {
         sender.sendMessage(ChatColor.GOLD + "WildSurvival prototype");
-        sender.sendMessage(ChatColor.WHITE + "/" + label + " equipment | craft | status | augment");
+        sender.sendMessage(ChatColor.WHITE + "/" + label + " equipment | craft | status | augment | test");
         if (sender.hasPermission("wildsurvival.prototype.admin")) {
             sender.sendMessage(ChatColor.GRAY + "/" + label + " prototype create [players...] | start | inspect | advance | boss");
             sender.sendMessage(ChatColor.GRAY + "/" + label + " prototype stop <reason> --dry-run|--confirm");
@@ -173,7 +178,10 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return filter(args[0], List.of("prototype", "content", "equipment", "craft", "status", "augment"));
+            return filter(args[0], List.of("prototype", "content", "equipment", "craft", "status", "augment", "test"));
+        }
+        if (args.length >= 2 && "test".equalsIgnoreCase(args[0])) {
+            return testLab.complete(sender, args);
         }
         if (args.length == 2 && "prototype".equalsIgnoreCase(args[0])) {
             return filter(args[1], List.of("create", "start", "stop", "inspect", "advance", "boss"));

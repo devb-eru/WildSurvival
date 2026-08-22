@@ -8,7 +8,7 @@ load: POSTWORLD
 commands:
   wildsurvival:
     description: WildSurvival prototype command
-    usage: /<command> <prototype|content|equipment|craft|status>
+    usage: /<command> <prototype|content|equipment|craft|status|test>
     aliases: [ws]
     permission: wildsurvival.use
 
@@ -21,4 +21,16 @@ permissions:
     default: op
   wildsurvival.content.validate:
     description: Validate embedded content bundles
+    default: op
+  wildsurvival.test.use:
+    description: Inspect and open the isolated WildSurvival Test Lab
+    default: op
+  wildsurvival.test.session:
+    description: Enter and exit isolated Test Lab sessions
+    default: op
+  wildsurvival.test.mutate:
+    description: Mutate Test Lab players, content, entities, and world controls
+    default: op
+  wildsurvival.test.inspect:
+    description: Inspect and export Test Lab state
     default: op
