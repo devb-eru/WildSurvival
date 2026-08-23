@@ -48,7 +48,7 @@ Season 1의 게임 디자인 원장과 개별 콘텐츠 ID 목록은 작성되�
 | 보스 | 4 | 기본 프로필 4 | 총 48패턴 ID·3페이즈·보상·복구 | `PARTIAL_RUNTIME` |
 | Final | 3단계·6단계 완료 TX | 실행 원장 1 | 3단계·12패턴·멱등 완료 TX | `RUNTIME_REVIEW` |
 | Story | 장면 73·선택 기록 9 | 장면·로그 레코드 | 큐·재생 기록·폴백 | `RUNTIME_REVIEW` |
-| 상태 | 21 | 21 | 권위 레지스트리와 참조 검증 | `L0_VALIDATED` |
+| 상태 | 21 | 21 | 17개 실행 기준선의 인스턴스·RES/TENACITY·중첩·CC 연속 방지·정화·PDC 복구, 템플릿 3개·오염 1개 분리 | `RUNTIME_REVIEW` |
 
 L0 수량 일치는 콘텐츠 존재 증거다. `BLOCKED_DATA`, `STRUCTURED_ONLY`, `PARTIAL_RUNTIME`, `RUNTIME_REVIEW`가 하나라도 남아 있으면 실제 플레이 완료로 승격하지 않는다.
 

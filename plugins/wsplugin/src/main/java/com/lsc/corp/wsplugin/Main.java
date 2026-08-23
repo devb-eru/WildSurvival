@@ -29,6 +29,7 @@ import com.lsc.corp.wsplugin.story.StoryService;
 import com.lsc.corp.wsplugin.finale.FinalService;
 import com.lsc.corp.wsplugin.ui.PlayerMenuService;
 import com.lsc.corp.wsplugin.research.ResearchService;
+import com.lsc.corp.wsplugin.status.StatusService;
 import java.util.Objects;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,6 +39,7 @@ public final class Main extends JavaPlugin {
     private DamageNumberService damageNumbers;
     private TutorialService tutorial;
     private FinalService finale;
+    private StatusService statuses;
 
     @Override
     public void onEnable() {
@@ -56,8 +58,9 @@ public final class Main extends JavaPlugin {
             EquipmentService equipment = new EquipmentService(this, runService, content.content(),
                     content.productionCatalog(), telemetry, codex);
             SkillLoadoutService skills = new SkillLoadoutService(runService, content.content(), content.productionCatalog(), equipment);
+            statuses = new StatusService(this, runService, content.productionCatalog(), equipment, telemetry);
             CombatService combat = new CombatService(this, runService, content.content(), content.productionCatalog(),
-                    equipment, growth, skills, telemetry);
+                    equipment, growth, skills, telemetry, statuses);
             EconomyService economy = new EconomyService(this, runService, content.content(),
                     content.productionCatalog(), equipment, growth, telemetry, codex);
             LootService loot = new LootService(runService, content.productionCatalog(), codex, equipment, growth, telemetry);
@@ -97,7 +100,7 @@ public final class Main extends JavaPlugin {
             TestLabCommand testLabCommand = new TestLabCommand(testLab, testLabGui, scenarios, virtualParty, combat, runService);
 
             runService.attach(loop, equipment, growth);
-            registerListeners(equipment, skills, combat, economy, facility, codex, stats, menu, discoveries, story, finale,
+            registerListeners(equipment, skills, statuses, combat, economy, facility, codex, stats, menu, discoveries, story, finale,
                     research, tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
 
             PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand, menu);
@@ -113,6 +116,7 @@ public final class Main extends JavaPlugin {
             getServer().getScheduler().runTaskTimer(this, story::tick, 30L, 20L);
             getServer().getScheduler().runTaskTimer(this, research::tick, 30L, 20L);
             getServer().getScheduler().runTaskTimer(this, finale::tick, 40L, 1L);
+            getServer().getScheduler().runTaskTimer(this, statuses::tick, 1L, 1L);
             tutorial.start();
             for (org.bukkit.entity.Player player : runService.onlineMembers()) {
                 codex.reconcile(player);
@@ -139,6 +143,9 @@ public final class Main extends JavaPlugin {
         }
         if (finale != null) {
             finale.cleanup();
+        }
+        if (statuses != null) {
+            statuses.shutdown();
         }
         if (runService != null) {
             runService.shutdown();

@@ -848,7 +848,7 @@ public final class ProductionBundleValidator {
         if (!catalog.statusesById().keySet().equals(required)) {
             throw new ContentValidationException("Status catalog mismatch " + catalog.statusesById().keySet());
         }
-        Set<String> templateLocked = Set.of("FREEZE", "BLIND", "EXHAUSTION", "MARK");
+        Set<String> templateLocked = Set.of("FREEZE", "BLIND", "EXHAUSTION");
         for (ProductionContentCatalog.StatusEntry status : catalog.statusesById().values()) {
             if (status.name().isBlank() || status.tags().isEmpty() || status.visualPriority() < 1
                     || status.visualPriority() > 4 || status.maxStacks() < 0 || status.maxStacks() > 64) {

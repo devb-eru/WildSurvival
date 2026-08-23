@@ -41,6 +41,7 @@ ID를 문서 제목, 표시명 또는 와일드카드로 대신하지 않는다.
 | 플레이어 스킬 | 64 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 기본 공격10+액티브·상황54 |
 | 개인 증강 | 50 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; Silver18+Gold18+Prism14 |
 | 파티 증강 | 16 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; Day10/20/30/40 총4회 |
+| 상태이상 | 21 | `DATA_LOCKED` | `RUNTIME_REVIEW`; 실행 기준선17+템플릿3+scripted 오염1 |
 | 일반·정예·Final 적 | 53 | `DATA_LOCKED` | `STRUCTURED_ONLY`; action bundle당 주 행동 1개 |
 | 보스 | 4 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; Day10 축약형 외 전체 상태기계 필요 |
 | 보조 엔티티 | 34 | `DATA_LOCKED` | `STRUCTURED_ONLY`; 생성·복구·cleanup 필요 |

@@ -276,7 +276,7 @@
       "path": "statuses/season1-statuses.json",
       "domain": "statuses",
       "schema": "status.schema.json",
-      "sha256": "d55766a0d473c5c1dc255dd8633372063f5d0f92fdb691fcc224005df4553603"
+      "sha256": "4149fde146006a4163b9dc1ae08740fa45bf96664ffc8e00a5d69819906b1940"
     },
     {
       "path": "research/season1-research.json",

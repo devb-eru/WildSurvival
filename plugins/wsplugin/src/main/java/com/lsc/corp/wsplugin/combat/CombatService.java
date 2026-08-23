@@ -11,6 +11,7 @@ import com.lsc.corp.wsplugin.player.PlayerStatPolicy;
 import com.lsc.corp.wsplugin.player.SkillLoadoutService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
+import com.lsc.corp.wsplugin.status.StatusService;
 import com.lsc.corp.wsplugin.ui.ActionBarService;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ public final class CombatService implements Listener {
     private final GrowthService growth;
     private final SkillLoadoutService skills;
     private final TelemetryService telemetry;
+    private final StatusService statuses;
     private final NamespacedKey enemyIdKey;
     private final NamespacedKey enemyRunIdKey;
     private final NamespacedKey customHpKey;
@@ -130,7 +132,8 @@ public final class CombatService implements Listener {
 
     public CombatService(JavaPlugin plugin, RunService runs, PrototypeContent content,
                          ProductionContentCatalog production, EquipmentService equipment,
-                         GrowthService growth, SkillLoadoutService skills, TelemetryService telemetry) {
+                         GrowthService growth, SkillLoadoutService skills, TelemetryService telemetry,
+                         StatusService statuses) {
         this.plugin = plugin;
         this.runs = runs;
         this.content = content;
@@ -139,6 +142,7 @@ public final class CombatService implements Listener {
         this.growth = growth;
         this.skills = skills;
         this.telemetry = telemetry;
+        this.statuses = statuses;
         this.enemyIdKey = new NamespacedKey(plugin, "enemy_id");
         this.enemyRunIdKey = new NamespacedKey(plugin, "enemy_run_id");
         this.customHpKey = new NamespacedKey(plugin, "custom_hp");
@@ -305,7 +309,8 @@ public final class CombatService implements Listener {
         }
         String id = enemyId(target);
         PersistentDataContainer pdc = target.getPersistentDataContainer();
-        double defence = pdc.getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
+        double defence = Math.max(0.0, pdc.getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0)
+                - statuses.strength(target, "ARMOR_BREAK"));
         long groggyUntil = pdc.getOrDefault(groggyUntilKey, PersistentDataType.LONG, 0L);
         double groggyMultiplier = groggyUntil > Instant.now().toEpochMilli() ? 1.15 : 1.0;
         RunSnapshot.PlayerState attackerState = runs.playerState(attacker.getUniqueId()).orElse(null);
@@ -318,10 +323,11 @@ public final class CombatService implements Listener {
         GrowthService.ReactiveAttackModifier reactive = growth.reactiveAttackModifier(attacker, executionId);
         double effectiveDefence = Math.max(0.0,
                 defence * (1.0 - reactive.defenceIgnoreFraction()) - equipmentStats.value("PEN"));
-        double vulnerableMultiplier = statusActive(target, "vulnerable") ? 1.12 : 1.0;
+        double vulnerableMultiplier = 1.0 + Math.max(0.0, statuses.strength(target, "VULNERABLE"));
+        double weaknessMultiplier = Math.max(0.10, 1.0 - Math.max(0.0, statuses.strength(attacker, "WEAKNESS")));
         boolean targetHasDot = hasDamageOverTime(target);
         double finalDamage = CombatMath.outgoingDamage(rawAttack + equipmentAttack, effectiveDefence,
-                growth.attackMultiplier(attacker) * reactive.damageMultiplier(),
+                growth.attackMultiplier(attacker) * reactive.damageMultiplier() * weaknessMultiplier,
                 groggyMultiplier * vulnerableMultiplier, testDamageMultiplier);
         double breakCallMultiplier = statusActive(target, "break_call") ? 1.06 : 1.0;
         double finalBreak = Math.max(0.0, breakDamage * growth.breakMultiplier(attacker) * reactive.breakMultiplier()
@@ -340,6 +346,7 @@ public final class CombatService implements Listener {
             enemyContributions.computeIfAbsent(target.getUniqueId(), ignored -> new HashMap<>())
                     .merge(attacker.getUniqueId(), finalDamage, Double::sum);
         }
+        if (finalDamage > 0.0) statuses.remove(target, "SLEEP", 64);
         double hp = pdc.getOrDefault(customHpKey, PersistentDataType.DOUBLE, 1.0) - finalDamage;
         pdc.set(customHpKey, PersistentDataType.DOUBLE, Math.max(0.0, hp));
         applyBreak(target, finalBreak);
@@ -466,6 +473,9 @@ public final class CombatService implements Listener {
             throw new IllegalArgumentException("Status duration or amplifier is outside the test boundary");
         }
         String id = statusId.toUpperCase(java.util.Locale.ROOT).replace('-', '_');
+        StatusService.ApplyResult runtime = statuses.applyTestOverride(target, id, durationTicks / 20.0,
+                Math.max(0.0, amplifier + 1.0), "test-status:" + UUID.randomUUID());
+        if (runtime.applied() || runtime.convertedToBreak()) return;
         NamespacedKey key = new NamespacedKey(plugin, "test_status_" + id.toLowerCase(java.util.Locale.ROOT));
         target.getPersistentDataContainer().set(key, PersistentDataType.LONG,
                 Instant.now().plusMillis(durationTicks * 50L).toEpochMilli());
@@ -497,6 +507,7 @@ public final class CombatService implements Listener {
         if (!isCombatEntity(target)) {
             throw new IllegalArgumentException("Target is not a WildSurvival combat entity");
         }
+        statuses.clearAll(target);
         List<NamespacedKey> keys = new ArrayList<>(target.getPersistentDataContainer().getKeys());
         keys.stream().filter(key -> key.getKey().startsWith("status_") || key.getKey().startsWith("test_status_"))
                 .forEach(target.getPersistentDataContainer()::remove);
@@ -599,7 +610,8 @@ public final class CombatService implements Listener {
         }
         double equipmentDefence = equipment.activeStat(player, "DEF") + growth.bonusDefence(player);
         event.setDamage(event.getDamage() * PlayerStatPolicy.incomingDamageMultiplier(playerState.investedStats)
-                * (100.0 / (100.0 + Math.max(0.0, equipmentDefence))));
+                * (100.0 / (100.0 + Math.max(0.0, equipmentDefence)))
+                * (1.0 + Math.max(0.0, statuses.strength(player, "VULNERABLE"))));
         long now = Instant.now().toEpochMilli();
         if (invulnerableUntilEpochMs.getOrDefault(player.getUniqueId(), 0L) >= now) {
             event.setCancelled(true);
@@ -624,6 +636,7 @@ public final class CombatService implements Listener {
             }
             case ALLOW -> {
                 if (event.getFinalDamage() > 0.0) {
+                    statuses.remove(player, "SLEEP", 64);
                     runs.mutate(run -> {
                         RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
                         state.lastDamageAtEpochMs = now;
@@ -903,8 +916,8 @@ public final class CombatService implements Listener {
     }
 
     private boolean executeBasicAttack(Player player) {
-        if (playerStatusActive(player, "disarm")) {
-            showControlRestriction(player, "DISARM — 무기 공격 불가");
+        if (statuses.blocksWeaponAttack(player)) {
+            showControlRestriction(player, "제어/무장 해제 — 무기 공격 불가");
             return false;
         }
         String weaponId = equipment.resolveWeaponId(player);
@@ -979,8 +992,8 @@ public final class CombatService implements Listener {
 
     private boolean executeWeaponActive(Player player, int slot) {
         if (!requireActiveAction(player) || !requireUsableWeapon(player)) return false;
-        if (playerStatusActive(player, "disarm") || playerStatusActive(player, "silence")) {
-            showControlRestriction(player, "DISARM/SILENCE — 무기 스킬 불가");
+        if (statuses.blocksWeaponSkill(player)) {
+            showControlRestriction(player, "제어/무장 해제/침묵 — 무기 스킬 불가");
             return false;
         }
         String weaponId = equipment.resolveWeaponId(player);
@@ -1038,7 +1051,7 @@ public final class CombatService implements Listener {
         for (LivingEntity target : targets) {
             damageCombatEntity(player, target, 100.0 * skill.damageCoefficient(), skill.breakDamage(),
                     executionId + ":" + target.getUniqueId());
-            applySkillEffect(player, target, skill);
+            applySkillEffect(player, target, skill, executionId);
         }
         applyCasterSkillEffect(player, skill, targets);
         showSkillEffect(player, skill, targets);
@@ -1049,8 +1062,8 @@ public final class CombatService implements Listener {
 
     private void executeCommonActive(Player player, int slot) {
         if (!requireActiveAction(player)) return;
-        if (playerStatusActive(player, "silence")) {
-            showControlRestriction(player, "SILENCE — 공용 액티브 불가");
+        if (statuses.blocksCommonSkill(player)) {
+            showControlRestriction(player, "제어/침묵 — 공용 액티브 불가");
             return;
         }
         PrototypeContent.SkillDefinition skill = skills.resolveCommon(player, slot);
@@ -1145,7 +1158,7 @@ public final class CombatService implements Listener {
                 player.setSaturation(Math.min(20.0f, player.getSaturation() + 6.0f));
                 result = "허기 +8 / 포화 +6";
             }
-            case "WSI-CONS-BANDAGE" -> { removePlayerStatus(player, "bleed"); result = "BLEED 1중첩 제거"; }
+            case "WSI-CONS-BANDAGE" -> { removePlayerStatus(player, "bleed", 1); result = "BLEED 1중첩 제거"; }
             case "WSI-CONS-REPAIR_KIT" -> {
                 equipment.repairMostDamagedWithConsumedKit(player); result = "가장 손상된 장착 장비 40% 수리";
             }
@@ -1168,15 +1181,16 @@ public final class CombatService implements Listener {
                 result = "FAC-P05 가동시간 +60초";
             }
             case "WSI-CONS-ANTIDOTE_INJECTION" -> {
-                player.removePotionEffect(PotionEffectType.POISON); removePlayerStatus(player, "poison"); result = "POISON 제거";
+                player.removePotionEffect(PotionEffectType.POISON); removePlayerStatus(player, "poison", 64); result = "POISON 제거";
             }
             case "WSI-CONS-COOLING_SALVE" -> {
-                player.setFireTicks(0); removePlayerStatus(player, "burn"); result = "BURN 제거";
+                player.setFireTicks(0); removePlayerStatus(player, "burn", 64); result = "BURN 제거";
             }
-            case "WSI-CONS-TOURNIQUET" -> { removePlayerStatus(player, "bleed"); result = "BLEED 2중첩 제거"; }
+            case "WSI-CONS-TOURNIQUET" -> { removePlayerStatus(player, "bleed", 2); result = "BLEED 2중첩 제거"; }
             case "WSI-CONS-NEURAL_STABILIZER" -> {
                 player.removePotionEffect(PotionEffectType.SLOWNESS); player.removePotionEffect(PotionEffectType.WEAKNESS);
-                removePlayerStatus(player, "root"); removePlayerStatus(player, "silence"); removePlayerStatus(player, "disarm");
+                statuses.cleanseControl(player, 3);
+                removePlayerStatus(player, "silence", 64); removePlayerStatus(player, "disarm", 64);
                 result = "신경계 약화 1개 제거";
             }
             case "WSI-CONS-REINFORCED_RESCUE_BRACE" -> {
@@ -1236,11 +1250,16 @@ public final class CombatService implements Listener {
         });
     }
 
-    private void removePlayerStatus(Player player, String id) {
+    private void removePlayerStatus(Player player, String id, int maximumStacks) {
+        statuses.remove(player, id, maximumStacks);
         player.getPersistentDataContainer().remove(new NamespacedKey(plugin, "status_" + id));
     }
 
     private void executeDodge(Player player) {
+        if (statuses.blocksDodge(player)) {
+            showControlRestriction(player, "제어 상태 — 회피 불가");
+            return;
+        }
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         double equipmentEvasion = Math.max(0.0, equipment.activeStat(player, "EVA"));
         double equipmentAdjustedCost = Math.max(10.0,
@@ -1386,6 +1405,7 @@ public final class CombatService implements Listener {
             value.downedAtEpochMs = Instant.now().toEpochMilli();
             value.ap = 0.0;
         });
+        statuses.clearControls(player);
         player.setHealth(1.0);
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 4, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false));
@@ -1456,6 +1476,7 @@ public final class CombatService implements Listener {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
             if ("DOWNED".equals(state.lifeState) && now - state.downedAtEpochMs >= timeout) {
                 runs.mutate(run -> run.players.get(player.getUniqueId().toString()).lifeState = "DEAD");
+                statuses.clearOnDeath(player);
                 player.setGameMode(GameMode.SPECTATOR);
                 player.removePotionEffect(PotionEffectType.SLOWNESS);
                 player.removePotionEffect(PotionEffectType.GLOWING);
@@ -1514,34 +1535,39 @@ public final class CombatService implements Listener {
 
     private void applyWeaponStatus(Player attacker, LivingEntity target, PrototypeContent.WeaponDefinition weapon, int stage,
                                    String executionId) {
-        double roll = Math.floorMod((executionId + ":" + target.getUniqueId()).hashCode(), 10_000) / 10_000.0;
         RunSnapshot.PlayerState state = runs.playerState(attacker.getUniqueId()).orElse(null);
         double chance = weapon.statusChance() + (state == null ? 0.0 : PlayerStatPolicy.statusChanceBonus(state.investedStats))
-                + Math.max(0.0, equipment.activeStat(attacker, "HIT")) / 100.0
                 + growth.statusHitBonus(attacker, hasDamageOverTime(target));
-        if (stage != weapon.attackCoefficients().size() - 1 || roll > chance) {
-            return;
-        }
-        long expiry = Instant.now().plusSeconds(4).toEpochMilli();
-        NamespacedKey key = new NamespacedKey(plugin, "status_" + weapon.statusId().toLowerCase(java.util.Locale.ROOT));
-        target.getPersistentDataContainer().set(key, PersistentDataType.LONG, expiry);
-        switch (weapon.statusId()) {
-            case "MARK" -> applyMark(target, 80L);
-            case "SLOW" -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, 0, true, true));
-            case "ARMOR_SHRED" -> {
-                double defence = target.getPersistentDataContainer().getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
-                target.getPersistentDataContainer().set(defenceKey, PersistentDataType.DOUBLE, Math.max(0.0, defence - 10.0));
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    if (target.isValid()) {
-                        double current = target.getPersistentDataContainer().getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
-                        target.getPersistentDataContainer().set(defenceKey, PersistentDataType.DOUBLE, current + 10.0);
-                    }
-                }, 80L);
+        if (stage != weapon.attackCoefficients().size() - 1) return;
+        applyStatus(attacker, target, weapon.statusId(), "basic:" + weapon.id(), chance,
+                0.0, 0.0, executionId);
+    }
+
+    private StatusService.ApplyResult applyStatus(Player attacker, LivingEntity target, String statusId,
+                                                   String sourceId, double chance, double durationSeconds,
+                                                   double strength, String executionId) {
+        StatusService.TargetGrade grade = statusTargetGrade(target);
+        StatusService.ApplyResult result = statuses.apply(target, statusId,
+                attacker == null ? null : attacker.getUniqueId(), sourceId, chance, durationSeconds,
+                strength, executionId, grade);
+        if (result.convertedToBreak()) {
+            double maximum = target.getPersistentDataContainer().getOrDefault(breakMaxKey, PersistentDataType.DOUBLE, 0.0);
+            double multiplier = attacker == null ? 1.0 : growth.breakMultiplier(attacker)
+                    * (1.0 + Math.max(0.0, equipment.activeStat(attacker, "BREAK_DAMAGE")) / 100.0);
+            applyBreak(target, maximum * result.breakFraction() * multiplier);
+            if (attacker != null) {
+                ActionBarService.notice(attacker, Component.text(statusId + " → BREAK 변환", NamedTextColor.YELLOW), 28);
             }
-            default -> { }
         }
-        telemetry.event(runs.current().orElseThrow().runId, "STATUS_APPLIED",
-                "{\"statusId\":\"" + weapon.statusId() + "\",\"source\":\"" + attacker.getUniqueId() + "\"}");
+        return result;
+    }
+
+    private StatusService.TargetGrade statusTargetGrade(LivingEntity target) {
+        if (target instanceof Player) return StatusService.TargetGrade.PLAYER;
+        String id = enemyId(target);
+        if (id.startsWith("BOSS-") || production.bossesById().containsKey(id)) return StatusService.TargetGrade.BOSS;
+        ProductionContentCatalog.EnemyEntry enemy = production.enemiesById().get(id);
+        return enemy != null && enemy.elite() ? StatusService.TargetGrade.ELITE : StatusService.TargetGrade.NORMAL;
     }
 
     private List<LivingEntity> coneTargets(Player player, double range, double arcDegrees, int maximum) {
@@ -1576,8 +1602,10 @@ public final class CombatService implements Listener {
         for (Player player : runs.onlineMembers()) {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
             NamedTextColor color = state.ap <= 20.0 ? NamedTextColor.RED : NamedTextColor.AQUA;
+            String status = statuses.summary(player);
             ActionBarService.renderHud(player, Component.text("Day " + snapshot.day + " | AP " + Math.round(state.ap) + "/" + state.maxAp
-                    + " | Lv." + state.level + " | " + equipment.resolveWeaponId(player), color));
+                    + " | Lv." + state.level + " | " + equipment.resolveWeaponId(player)
+                    + (status.isBlank() ? "" : " | " + status), color));
         }
     }
 
@@ -1642,6 +1670,7 @@ public final class CombatService implements Listener {
             ProductionContentCatalog.EnemyEntry definition = production.enemiesById().get(enemyId(enemy));
             if (definition == null) continue;
             live.add(uuid);
+            if (statuses.blocksAllActions(enemy)) continue;
             ProductionContentCatalog.ActionBundleEntry bundle = production.actionBundlesById()
                     .get(definition.actionBundleId());
             if (bundle == null || bundle.actions().isEmpty()) continue;
@@ -1702,7 +1731,7 @@ public final class CombatService implements Listener {
         damagePlayerFromPattern(enemy, target, action.damage());
         if (!action.statusId().isBlank()
                 && invulnerableUntilEpochMs.getOrDefault(target.getUniqueId(), 0L) < Instant.now().toEpochMilli()) {
-            applyEnemyStatus(target, action.statusId());
+            applyEnemyStatus(enemy, target, action);
         }
         enemy.getWorld().spawnParticle(Particle.SWEEP_ATTACK, target.getLocation().add(0, 1, 0),
                 2, 0.2, 0.2, 0.2, 0.0);
@@ -1712,25 +1741,15 @@ public final class CombatService implements Listener {
                         + "\",\"target\":\"" + target.getUniqueId() + "\"}");
     }
 
-    private void applyEnemyStatus(Player target, String rawStatus) {
-        String status = rawStatus.toLowerCase(java.util.Locale.ROOT);
-        long durationTicks = switch (status) {
-            case "root" -> 30L;
-            case "silence", "disarm" -> 60L;
-            default -> 80L;
-        };
-        setTimedStatus(target, status, durationTicks);
-        switch (status) {
-            case "poison" -> target.addPotionEffect(new PotionEffect(PotionEffectType.POISON, (int) durationTicks, 0, true, true));
-            case "weakness" -> target.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, (int) durationTicks, 0, true, true));
-            case "slow" -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) durationTicks, 1, true, true));
-            case "root" -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) durationTicks, 10, true, true));
-            case "burn" -> target.setFireTicks((int) durationTicks);
-            case "bleed" -> target.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, (int) durationTicks, 0, true, true));
-            case "corruption" -> target.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, (int) durationTicks, 1, true, true));
-            default -> { }
+    private void applyEnemyStatus(LivingEntity enemy, Player target, ProductionContentCatalog.ActionEntry action) {
+        StatusService.ApplyResult result = statuses.apply(target, action.statusId(), enemy.getUniqueId(), action.id(),
+                1.0, 0.0, 0.0, "enemy-status:" + enemy.getUniqueId() + ":" + action.id()
+                        + ":" + runs.clockTick(), StatusService.TargetGrade.PLAYER);
+        if (result.applied()) {
+            ActionBarService.critical(target, Component.text(action.statusId() + " 상태이상", NamedTextColor.DARK_RED), 35);
+        } else if ("RESISTED".equals(result.reason())) {
+            ActionBarService.notice(target, Component.text(action.statusId() + " 저항", NamedTextColor.GRAY), 24);
         }
-        ActionBarService.critical(target, Component.text(rawStatus + " 상태이상", NamedTextColor.DARK_RED), 35);
     }
 
     private boolean playerStatusActive(Player player, String id) {
@@ -1809,24 +1828,26 @@ public final class CombatService implements Listener {
 
     private boolean isActionRestricted(Player player) {
         return runs.playerState(player.getUniqueId())
-                .map(state -> !"ACTIVE".equals(state.lifeState)).orElse(true);
+                .map(state -> !"ACTIVE".equals(state.lifeState)).orElse(true)
+                || statuses.blocksAllActions(player);
     }
 
     private void showRestrictedAction(Player player) {
-        ActionBarService.notice(player,
-                Component.text("빈사·사망 상태에서는 이동과 도움 요청 외 행동을 할 수 없습니다.", NamedTextColor.RED), 30);
+        String message = statuses.blocksAllActions(player)
+                ? "강한 제어 상태에서는 행동할 수 없습니다."
+                : "빈사·사망 상태에서는 이동과 도움 요청 외 행동을 할 수 없습니다.";
+        ActionBarService.notice(player, Component.text(message, NamedTextColor.RED), 30);
     }
 
-    private void applySkillEffect(Player attacker, LivingEntity target, PrototypeContent.SkillDefinition skill) {
+    private void applySkillEffect(Player attacker, LivingEntity target, PrototypeContent.SkillDefinition skill,
+                                  String executionId) {
         switch (skill.effect()) {
-            case "SLOW" -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1, true, true));
-            case "ROOT" -> {
-                setTimedStatus(target, "root", 16L);
-                target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 16, 10, true, true));
-            }
-            case "MARK" -> {
-                applyMark(target, 120L);
-            }
+            case "SLOW" -> applyStatus(attacker, target, "SLOW", skill.id(), 1.0,
+                    3.0, 0.30, executionId + ":slow");
+            case "ROOT" -> applyStatus(attacker, target, "ROOT", skill.id(), 1.0,
+                    0.8, 1.0, executionId + ":root");
+            case "MARK" -> applyStatus(attacker, target, "MARK", skill.id(), 1.0,
+                    markDuration(skill.id()), 0.10, executionId + ":mark");
             case "BLEED" -> applyDamageOverTime(attacker, target, skill, "bleed", 4, 20L, 7.0);
             case "POISON" -> {
                 target.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 0, true, true));
@@ -1836,20 +1857,18 @@ public final class CombatService implements Listener {
                 target.setFireTicks(Math.max(target.getFireTicks(), 80));
                 applyDamageOverTime(attacker, target, skill, "burn", 4, 20L, 8.0);
             }
-            case "VULNERABLE" -> setTimedStatus(target, "vulnerable", 120L);
-            case "ARMOR_SHRED" -> {
-                double before = target.getPersistentDataContainer().getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
-                double reduction = Math.min(20.0, before);
-                target.getPersistentDataContainer().set(defenceKey, PersistentDataType.DOUBLE, before - reduction);
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    if (target.isValid()) {
-                        double current = target.getPersistentDataContainer().getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
-                        target.getPersistentDataContainer().set(defenceKey, PersistentDataType.DOUBLE, current + reduction);
-                    }
-                }, 100L);
-            }
+            case "VULNERABLE" -> applyStatus(attacker, target, "VULNERABLE", skill.id(), 1.0,
+                    6.0, 0.20, executionId + ":vulnerable");
+            case "ARMOR_SHRED" -> applyStatus(attacker, target, "ARMOR_BREAK", skill.id(), 1.0,
+                    5.0, 20.0, executionId + ":armor-break");
             default -> { }
         }
+    }
+
+    private static double markDuration(String skillId) {
+        if (skillId.contains("focused_duel")) return 8.0;
+        if (skillId.contains("rally_lunge")) return 5.0;
+        return 6.0;
     }
 
     private void applyCasterSkillEffect(Player player, PrototypeContent.SkillDefinition skill, List<LivingEntity> targets) {
@@ -1906,7 +1925,10 @@ public final class CombatService implements Listener {
                 RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
                 state.ap = Math.min(state.maxAp, state.ap + 25.0);
             });
-            case "MARK" -> applyMark(target, 120L);
+            case "MARK" -> {
+                if (target != null) applyStatus(player, target, "MARK", skill.id(), 1.0,
+                        6.0, 0.10, "common-mark:" + skill.id() + ":" + UUID.randomUUID());
+            }
             case "RESCUE_PULL" -> pullDowned(player, (Player) target);
             case "COVER" -> {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 240, 1, true, true));
@@ -1943,11 +1965,15 @@ public final class CombatService implements Listener {
     }
 
     private void setTimedStatus(LivingEntity target, String id, long durationTicks) {
+        StatusService.ApplyResult result = statuses.applyGuaranteed(target, id, null, "INTERNAL",
+                durationTicks / 20.0, 0.0, "internal:" + id + ":" + UUID.randomUUID(), statusTargetGrade(target));
+        if (!"UNKNOWN_STATUS".equals(result.reason())) return;
         target.getPersistentDataContainer().set(new NamespacedKey(plugin, "status_" + id), PersistentDataType.LONG,
                 Instant.now().plusMillis(durationTicks * 50L).toEpochMilli());
     }
 
     private boolean statusActive(LivingEntity target, String id) {
+        if (statuses.active(target, id)) return true;
         NamespacedKey key = new NamespacedKey(plugin, "status_" + id);
         long expiry = target.getPersistentDataContainer().getOrDefault(key, PersistentDataType.LONG, 0L);
         if (expiry > Instant.now().toEpochMilli()) return true;
@@ -1961,7 +1987,10 @@ public final class CombatService implements Listener {
 
     private void applyDamageOverTime(Player attacker, LivingEntity target, PrototypeContent.SkillDefinition skill,
                                      String status, int pulses, long intervalTicks, double rawDamage) {
-        setTimedStatus(target, status, pulses * intervalTicks + 10L);
+        StatusService.ApplyResult applied = applyStatus(attacker, target, status, skill.id(), 1.0,
+                (pulses * intervalTicks + 10L) / 20.0, 1.0,
+                "dot-apply:" + skill.id() + ":" + UUID.randomUUID());
+        if (!applied.applied()) return;
         for (int pulse = 1; pulse <= pulses; pulse++) {
             int sequence = pulse;
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -1976,10 +2005,12 @@ public final class CombatService implements Listener {
     private void heal(Player player, double amount) {
         double maximum = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
                 : player.getAttribute(Attribute.MAX_HEALTH).getValue();
-        player.setHealth(Math.min(maximum, player.getHealth() + amount));
+        double reduction = Math.min(0.90, Math.max(0.0, statuses.strength(player, "HEAL_REDUCTION")));
+        player.setHealth(Math.min(maximum, player.getHealth() + amount * (1.0 - reduction)));
     }
 
     private void cleanseWeakEffects(Player player) {
+        statuses.cleanseDispellable(player, 64);
         player.removePotionEffect(PotionEffectType.POISON);
         player.removePotionEffect(PotionEffectType.WITHER);
         player.removePotionEffect(PotionEffectType.WEAKNESS);
@@ -2031,21 +2062,6 @@ public final class CombatService implements Listener {
                     18, 0.45, 0.5, 0.45, 0.03);
         }
         player.getWorld().playSound(player.getLocation(), sound, 0.85f, 1.1f);
-    }
-
-    private void applyMark(LivingEntity target, long durationTicks) {
-        NamespacedKey key = new NamespacedKey(plugin, "status_mark");
-        long expiry = Instant.now().plusMillis(durationTicks * 50L).toEpochMilli();
-        target.setGlowing(true);
-        target.getPersistentDataContainer().set(key, PersistentDataType.LONG, expiry);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (!target.isValid()) return;
-            long currentExpiry = target.getPersistentDataContainer().getOrDefault(key, PersistentDataType.LONG, 0L);
-            if (currentExpiry <= Instant.now().toEpochMilli()) {
-                target.setGlowing(false);
-                target.getPersistentDataContainer().remove(key);
-            }
-        }, durationTicks);
     }
 
     private boolean hasMaterial(Player player, Material material) {
