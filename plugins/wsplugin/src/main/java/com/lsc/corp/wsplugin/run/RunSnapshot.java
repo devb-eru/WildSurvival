@@ -37,6 +37,8 @@ public final class RunSnapshot {
     public Map<String, FacilityInstanceState> facilities = new LinkedHashMap<>();
     public Set<String> facilityTypesEverActivated = new LinkedHashSet<>();
     public Map<String, Integer> facilityRecoveryLedger = new LinkedHashMap<>();
+    public Map<String, LootTransactionState> lootTransactions = new LinkedHashMap<>();
+    public Map<String, Integer> lootPityCounters = new LinkedHashMap<>();
     public TestState test;
     public String endReason;
 
@@ -70,6 +72,9 @@ public final class RunSnapshot {
         public boolean productionCommonSkillLoadoutInitialized;
         public Set<String> discoveredItemIds = new LinkedHashSet<>();
         public Map<String, Integer> pendingRegisteredItems = new LinkedHashMap<>();
+        public List<String> pendingEquipmentRewards = new ArrayList<>();
+        public Set<String> pendingBlueprintUnlocks = new LinkedHashSet<>();
+        public int lootValueReceived;
         public Set<String> completedTutorialQuests = new LinkedHashSet<>();
         public Set<String> tutorialSignals = new LinkedHashSet<>();
         public Map<String, Integer> investedStats = new LinkedHashMap<>();
@@ -190,6 +195,25 @@ public final class RunSnapshot {
         public long durationMillis;
         public Map<String, Integer> reservedInputs = new LinkedHashMap<>();
         public Map<String, Integer> outputs = new LinkedHashMap<>();
+    }
+
+    public static final class LootTransactionState {
+        public String transactionId;
+        public String sourceId;
+        public String lootTableId;
+        public String revision = "loot-s1-r1";
+        public List<String> eligibleContributors = new ArrayList<>();
+        public List<LootRollState> rolledEntries = new ArrayList<>();
+        public long rolledAtEpochMs;
+        public boolean claimed;
+    }
+
+    public static final class LootRollState {
+        public String kind;
+        public String itemId;
+        public int amount;
+        public String ownerUuid;
+        public boolean queued;
     }
 
     public static final class TestState {

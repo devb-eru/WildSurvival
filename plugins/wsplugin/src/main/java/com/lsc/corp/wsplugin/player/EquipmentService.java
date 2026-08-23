@@ -151,6 +151,34 @@ public final class EquipmentService implements Listener {
         return false;
     }
 
+    public void reconcilePendingRewards(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
+        if (state.pendingBlueprintUnlocks != null && !state.pendingBlueprintUnlocks.isEmpty()) {
+            for (String templateId : new java.util.LinkedHashSet<>(state.pendingBlueprintUnlocks)) {
+                codex.discover(player, templateId, "LOOT_BLUEPRINT");
+                runs.mutate(run -> run.players.get(player.getUniqueId().toString())
+                        .pendingBlueprintUnlocks.remove(templateId));
+            }
+        }
+        while (canGrantEquipment(player)) {
+            RunSnapshot.PlayerState current = runs.playerState(player.getUniqueId()).orElse(null);
+            if (current == null || current.pendingEquipmentRewards == null
+                    || current.pendingEquipmentRewards.isEmpty()) break;
+            String templateId = current.pendingEquipmentRewards.getFirst();
+            grantEquipment(player, templateId);
+            runs.mutate(run -> run.players.get(player.getUniqueId().toString())
+                    .pendingEquipmentRewards.remove(templateId));
+            player.sendMessage(ChatColor.GOLD + "전리품 장비가 보상함에서 지급되었습니다.");
+        }
+        RunSnapshot.PlayerState remaining = runs.playerState(player.getUniqueId()).orElse(null);
+        if (remaining != null && remaining.pendingEquipmentRewards != null
+                && !remaining.pendingEquipmentRewards.isEmpty()) {
+            player.sendMessage(ChatColor.YELLOW + "인벤토리 공간이 없어 장비 전리품 "
+                    + remaining.pendingEquipmentRewards.size() + "개를 보상함에 보관 중입니다.");
+        }
+    }
+
     public void grantEquipment(Player player, String rawWeaponId) {
         String weaponId = rawWeaponId.toUpperCase(java.util.Locale.ROOT);
         requireEquipmentTemplate(weaponId);
@@ -576,7 +604,10 @@ public final class EquipmentService implements Listener {
         }
     }
     @EventHandler public void onJoin(PlayerJoinEvent event) {
-        if (runs.isMember(event.getPlayer())) runs.restorePlayer(event.getPlayer());
+        if (runs.isMember(event.getPlayer())) {
+            runs.restorePlayer(event.getPlayer());
+            Bukkit.getScheduler().runTask(plugin, () -> reconcilePendingRewards(event.getPlayer()));
+        }
     }
     @EventHandler public void onQuit(PlayerQuitEvent event) {
         if (runs.isMember(event.getPlayer())) runs.savePlayer(event.getPlayer());

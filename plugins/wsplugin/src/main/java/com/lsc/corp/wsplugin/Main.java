@@ -6,6 +6,7 @@ import com.lsc.corp.wsplugin.combat.DamageNumberService;
 import com.lsc.corp.wsplugin.content.ContentBundleService;
 import com.lsc.corp.wsplugin.economy.EconomyService;
 import com.lsc.corp.wsplugin.economy.ItemCodexService;
+import com.lsc.corp.wsplugin.economy.LootService;
 import com.lsc.corp.wsplugin.facility.FacilityService;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.PrototypeCommand;
@@ -54,6 +55,7 @@ public final class Main extends JavaPlugin {
                     equipment, growth, skills, telemetry);
             EconomyService economy = new EconomyService(this, runService, content.content(),
                     content.productionCatalog(), equipment, growth, telemetry, codex);
+            LootService loot = new LootService(runService, content.productionCatalog(), codex, equipment, growth, telemetry);
             PlayerStatService stats = new PlayerStatService(this, runService, growth, equipment);
             equipment.setStatRefresher(stats::apply);
             FacilityService facility = new FacilityService(this, runService, content.productionCatalog(), codex, equipment, telemetry);
@@ -63,6 +65,7 @@ public final class Main extends JavaPlugin {
             damageNumbers = new DamageNumberService(this, runService);
             combat.setMenuOpener(menu::open);
             combat.setItemRewardHandler((player, resourceId, amount) -> codex.grantResource(player, resourceId, amount));
+            combat.setProductionLootHandler(loot::rewardEnemy);
             combat.setDamageNumbers(damageNumbers);
             combat.setFacilityService(facility);
             PrototypeBossService boss = new PrototypeBossService(this, runService, content.content(), combat, growth, telemetry);
@@ -91,6 +94,7 @@ public final class Main extends JavaPlugin {
             tutorial.start();
             for (org.bukkit.entity.Player player : runService.onlineMembers()) {
                 codex.reconcile(player);
+                loot.deliverPending(player);
                 stats.apply(player);
             }
             virtualParty.cleanupOrphans();

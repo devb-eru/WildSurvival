@@ -444,7 +444,9 @@ public final class TestLabService implements Listener {
     public LivingEntity spawnEnemy(Player actor, String enemyId, int count) throws IOException {
         requireOwner(actor);
         TestValuePolicy.integerInRange("enemy count", count, 1, 100);
-        PrototypeContent.EnemyDefinition definition = content.enemy(enemyId.toUpperCase(Locale.ROOT));
+        String normalizedId = enemyId.toUpperCase(Locale.ROOT);
+        ProductionContentCatalog.EnemyEntry productionEnemy = production.enemiesById().get(normalizedId);
+        PrototypeContent.EnemyDefinition definition = productionEnemy == null ? content.enemy(normalizedId) : null;
         beforeMutation(actor, "mob.spawn");
         LivingEntity first = null;
         for (int index = 0; index < count; index++) {
@@ -453,13 +455,15 @@ public final class TestLabService implements Listener {
                     actor.getLocation().getDirection().setY(0).normalize().multiply(6.0))
                     .add(Math.cos(angle) * 2.0, 0.0, Math.sin(angle) * 2.0);
             location.setY(location.getWorld().getHighestBlockYAt(location) + 1.0);
-            LivingEntity entity = combat.spawnEnemy(definition, location);
+            LivingEntity entity = productionEnemy == null
+                    ? combat.spawnEnemy(definition, location)
+                    : combat.spawnProductionEnemy(productionEnemy.id(), location, 1.0);
             entity.setRemoveWhenFarAway(false);
             if (first == null) {
                 first = entity;
             }
         }
-        afterMutation(actor, "mob.spawn", definition.id() + "x" + count);
+        afterMutation(actor, "mob.spawn", normalizedId + "x" + count);
         return first;
     }
 
@@ -743,7 +747,7 @@ public final class TestLabService implements Listener {
     }
 
     public Collection<String> enemyIds() {
-        return content.enemies().stream().map(PrototypeContent.EnemyDefinition::id).toList();
+        return production.enemiesById().keySet().stream().sorted().toList();
     }
 
     public Collection<String> resourceIds() {

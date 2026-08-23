@@ -116,7 +116,11 @@ public final class CombatService implements Listener {
     private final Set<UUID> activeCombatEntities = new HashSet<>();
     private final Map<UUID, Long> tridentHitCooldown = new HashMap<>();
     private final Map<UUID, CoverField> coverFields = new HashMap<>();
+    private final Map<UUID, Map<UUID, Double>> enemyContributions = new HashMap<>();
+    private final Map<UUID, EnemyActionState> productionActionStates = new HashMap<>();
+    private final Map<EnemyHitPermit, Double> permittedEnemyHits = new HashMap<>();
     private BossDamageHandler bossDamageHandler;
+    private ProductionLootHandler productionLootHandler = (transactionId, enemy, contributors) -> { };
     private Consumer<Player> menuOpener = player -> { };
     private ItemRewardHandler itemRewardHandler = (player, resourceId, amount) -> { };
     private DamageNumberService damageNumbers;
@@ -151,6 +155,10 @@ public final class CombatService implements Listener {
 
     public void setBossDamageHandler(BossDamageHandler bossDamageHandler) {
         this.bossDamageHandler = bossDamageHandler;
+    }
+
+    public void setProductionLootHandler(ProductionLootHandler productionLootHandler) {
+        this.productionLootHandler = java.util.Objects.requireNonNull(productionLootHandler);
     }
 
     public void setFacilityService(FacilityService facilityService) {
@@ -191,6 +199,32 @@ public final class CombatService implements Listener {
         return entity;
     }
 
+    public LivingEntity spawnProductionEnemy(String rawId, Location location, double combatScale) {
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        ProductionContentCatalog.EnemyEntry definition = production.enemiesById().get(id);
+        if (definition == null) throw new IllegalArgumentException("Unknown production enemy " + rawId);
+        EntityType type;
+        try {
+            type = EntityType.valueOf(definition.bukkitType());
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("Invalid production living entity type " + definition.bukkitType(), exception);
+        }
+        if (!type.isAlive()) throw new IllegalArgumentException("Production entity type is not living " + type);
+        double scale = clamp(combatScale, 0.1, 10.0);
+        LivingEntity entity = (LivingEntity) location.getWorld().spawnEntity(location, type);
+        tagCombatEntity(entity, definition.id(), definition.baseHp() * scale,
+                definition.defence(), definition.breakMax() * Math.max(0.5, scale));
+        entity.setCustomName(ChatColor.RED + definition.name() + ChatColor.GRAY + " [" + definition.role() + "]");
+        entity.setCustomNameVisible(true);
+        entity.setRemoveWhenFarAway(false);
+        var maxHealth = entity.getAttribute(Attribute.MAX_HEALTH);
+        if (maxHealth != null) {
+            maxHealth.setBaseValue(Math.max(1.0, Math.min(maxHealth.getBaseValue(), 40.0)));
+            entity.setHealth(maxHealth.getBaseValue());
+        }
+        return entity;
+    }
+
     public void tagCombatEntity(LivingEntity entity, String id, double hp, double defence, double breakMax) {
         PersistentDataContainer pdc = entity.getPersistentDataContainer();
         pdc.set(enemyIdKey, PersistentDataType.STRING, id);
@@ -205,6 +239,7 @@ public final class CombatService implements Listener {
 
     public void tick() {
         long now = Instant.now().toEpochMilli();
+        processProductionEnemyActions();
         processRevives(now);
         processDownedTimeouts(now);
         processTridents(now);
@@ -246,6 +281,9 @@ public final class CombatService implements Listener {
             }
         }
         activeCombatEntities.clear();
+        enemyContributions.clear();
+        productionActionStates.clear();
+        permittedEnemyHits.clear();
         breakBars.values().forEach(BossBar::removeAll);
         breakBars.clear();
     }
@@ -281,6 +319,10 @@ public final class CombatService implements Listener {
             bossDamageHandler.damage(attacker, target, finalDamage, finalBreak, executionId);
             if (damageNumbers != null) damageNumbers.show(attacker, target, finalDamage);
             return finalDamage;
+        }
+        if (finalDamage > 0.0 && production.enemiesById().containsKey(id)) {
+            enemyContributions.computeIfAbsent(target.getUniqueId(), ignored -> new HashMap<>())
+                    .merge(attacker.getUniqueId(), finalDamage, Double::sum);
         }
         double hp = pdc.getOrDefault(customHpKey, PersistentDataType.DOUBLE, 1.0) - finalDamage;
         pdc.set(customHpKey, PersistentDataType.DOUBLE, Math.max(0.0, hp));
@@ -517,7 +559,18 @@ public final class CombatService implements Listener {
             }
             LivingEntity attacker = combatAttacker(byEntity);
             if (attacker != null) {
-                event.setDamage(enemyAttackDamage(attacker) / PLAYER_HP_SCALE);
+                ProductionContentCatalog.EnemyEntry productionEnemy = production.enemiesById().get(enemyId(attacker));
+                if (productionEnemy != null) {
+                    EnemyHitPermit permit = new EnemyHitPermit(attacker.getUniqueId(), player.getUniqueId());
+                    Double actionDamage = permittedEnemyHits.remove(permit);
+                    if (actionDamage == null) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                    event.setDamage(actionDamage / PLAYER_HP_SCALE);
+                } else {
+                    event.setDamage(enemyAttackDamage(attacker) / PLAYER_HP_SCALE);
+                }
             }
         }
         if (runs.isTestRun() && playerState != null) {
@@ -830,6 +883,10 @@ public final class CombatService implements Listener {
     }
 
     private boolean executeBasicAttack(Player player) {
+        if (playerStatusActive(player, "disarm")) {
+            showControlRestriction(player, "DISARM — 무기 공격 불가");
+            return false;
+        }
         String weaponId = equipment.resolveWeaponId(player);
         if (!requireUsableWeapon(player)) return false;
         PrototypeContent.WeaponDefinition weapon = contentWeapon(player, weaponId);
@@ -902,6 +959,10 @@ public final class CombatService implements Listener {
 
     private boolean executeWeaponActive(Player player, int slot) {
         if (!requireActiveAction(player) || !requireUsableWeapon(player)) return false;
+        if (playerStatusActive(player, "disarm") || playerStatusActive(player, "silence")) {
+            showControlRestriction(player, "DISARM/SILENCE — 무기 스킬 불가");
+            return false;
+        }
         String weaponId = equipment.resolveWeaponId(player);
         PrototypeContent.SkillDefinition skill = skills.resolve(player, slot);
         if (skill == null) {
@@ -968,6 +1029,10 @@ public final class CombatService implements Listener {
 
     private void executeCommonActive(Player player, int slot) {
         if (!requireActiveAction(player)) return;
+        if (playerStatusActive(player, "silence")) {
+            showControlRestriction(player, "SILENCE — 공용 액티브 불가");
+            return;
+        }
         PrototypeContent.SkillDefinition skill = skills.resolveCommon(player, slot);
         if (skill == null) {
             ActionBarService.notice(player, Component.text("C" + slot + " 공용 액티브가 비어 있습니다.", NamedTextColor.RED), 40);
@@ -1381,12 +1446,29 @@ public final class CombatService implements Listener {
 
     private void defeatEnemy(Player attacker, LivingEntity target, String enemyId) {
         UUID entityId = target.getUniqueId();
+        ProductionContentCatalog.EnemyEntry productionEnemy = production.enemiesById().get(enemyId);
+        if (productionEnemy != null) {
+            List<Player> contributors = productionContributors(entityId, attacker);
+            if (productionEnemy.rewardsPlayers()) {
+                productionLootHandler.reward("enemy:" + entityId, productionEnemy, contributors);
+            }
+            if (productionEnemy.activityExp() > 0) {
+                for (Player contributor : contributors) {
+                    growth.awardExp(contributor, productionEnemy.activityExp(),
+                            "enemy-exp:" + entityId + ":" + contributor.getUniqueId());
+                }
+            }
+            runs.commitOnce("enemy-defeat:" + entityId, "ENEMY_DEFEATED",
+                    "{\"enemyId\":\"" + enemyId + "\",\"contributors\":" + contributors.size() + "}", run -> { });
+        }
         target.remove();
         activeCombatEntities.remove(entityId);
+        enemyContributions.remove(entityId);
         BossBar bar = breakBars.remove(entityId);
         if (bar != null) {
             bar.removeAll();
         }
+        if (productionEnemy != null) return;
         PrototypeContent.EnemyDefinition definition = contentEnemy(enemyId);
         boolean rewarded = runs.commitOnce("enemy-defeat:" + entityId, "ENEMY_DEFEATED",
                 "{\"enemyId\":\"" + enemyId + "\"}", run -> { });
@@ -1511,9 +1593,135 @@ public final class CombatService implements Listener {
         }
         String id = enemyId(attacker);
         if (id.startsWith("BOSS-")) {
-            return 110.0;
+            ProductionContentCatalog.BossEntry boss = production.bossesById().get(id);
+            return boss == null ? 110.0 : boss.attackDamage();
         }
+        ProductionContentCatalog.EnemyEntry enemy = production.enemiesById().get(id);
+        if (enemy != null) return enemy.attackDamage();
         return contentEnemy(id).attackDamage();
+    }
+
+    private void processProductionEnemyActions() {
+        long tick = runs.clockTick();
+        Set<UUID> live = new HashSet<>();
+        for (UUID uuid : new HashSet<>(activeCombatEntities)) {
+            Entity found = findEntity(uuid.toString());
+            if (!(found instanceof LivingEntity enemy) || !enemy.isValid() || enemy.isDead()) continue;
+            ProductionContentCatalog.EnemyEntry definition = production.enemiesById().get(enemyId(enemy));
+            if (definition == null) continue;
+            live.add(uuid);
+            ProductionContentCatalog.ActionBundleEntry bundle = production.actionBundlesById()
+                    .get(definition.actionBundleId());
+            if (bundle == null || bundle.actions().isEmpty()) continue;
+            ProductionContentCatalog.ActionEntry action = bundle.actions().getFirst();
+            EnemyActionState state = productionActionStates.computeIfAbsent(uuid,
+                    ignored -> new EnemyActionState(tick + 20L));
+            if (state.targetUuid != null) {
+                Player target = Bukkit.getPlayer(state.targetUuid);
+                if (tick < state.executeAtTick) {
+                    if (tick % 5L == 0L) telegraphEnemyAction(enemy, target, action);
+                    continue;
+                }
+                executeProductionEnemyAction(enemy, target, action);
+                state.targetUuid = null;
+                state.executeAtTick = 0L;
+                state.nextReadyTick = tick + action.cooldownTicks();
+                continue;
+            }
+            if (tick < state.nextReadyTick || !enemy.hasAI()
+                    || enemy.getPersistentDataContainer().getOrDefault(groggyUntilKey,
+                    PersistentDataType.LONG, 0L) > Instant.now().toEpochMilli()) continue;
+            Player target = nearestProductionTarget(enemy, action.range()).orElse(null);
+            if (target == null) continue;
+            state.targetUuid = target.getUniqueId();
+            state.executeAtTick = tick + action.telegraphTicks();
+            telegraphEnemyAction(enemy, target, action);
+        }
+        productionActionStates.keySet().removeIf(uuid -> !live.contains(uuid));
+    }
+
+    private java.util.Optional<Player> nearestProductionTarget(LivingEntity enemy, double range) {
+        double maximum = Math.max(3.0, range);
+        return runs.onlineMembers().stream().filter(player -> player.getWorld().equals(enemy.getWorld()))
+                .filter(player -> runs.playerState(player.getUniqueId())
+                        .map(state -> "ACTIVE".equals(state.lifeState)).orElse(false))
+                .filter(player -> player.getLocation().distanceSquared(enemy.getLocation()) <= maximum * maximum)
+                .filter(enemy::hasLineOfSight)
+                .min(Comparator.comparingDouble(player -> player.getLocation().distanceSquared(enemy.getLocation())));
+    }
+
+    private void telegraphEnemyAction(LivingEntity enemy, Player target,
+                                      ProductionContentCatalog.ActionEntry action) {
+        if (target == null || !target.isOnline() || !target.getWorld().equals(enemy.getWorld())) return;
+        enemy.getWorld().spawnParticle(Particle.ENCHANTED_HIT, enemy.getEyeLocation(), 8, 0.35, 0.35, 0.35, 0.01);
+        enemy.getWorld().spawnParticle(Particle.DUST_PLUME, target.getLocation().add(0, 0.1, 0),
+                5, 0.45, 0.02, 0.45, 0.0);
+        if (runs.clockTick() % 10L == 0L) {
+            target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 0.45f, 0.6f);
+            ActionBarService.critical(target, Component.text(action.name() + " 전조", NamedTextColor.RED), 12);
+        }
+    }
+
+    private void executeProductionEnemyAction(LivingEntity enemy, Player target,
+                                              ProductionContentCatalog.ActionEntry action) {
+        if (target == null || !target.isOnline() || !target.getWorld().equals(enemy.getWorld())
+                || target.getLocation().distanceSquared(enemy.getLocation()) > action.range() * action.range()
+                || !enemy.hasLineOfSight(target)) return;
+        EnemyHitPermit permit = new EnemyHitPermit(enemy.getUniqueId(), target.getUniqueId());
+        permittedEnemyHits.put(permit, action.damage());
+        try {
+            target.damage(Math.max(0.1, action.damage() / PLAYER_HP_SCALE), enemy);
+        } finally {
+            permittedEnemyHits.remove(permit);
+        }
+        if (!action.statusId().isBlank()
+                && invulnerableUntilEpochMs.getOrDefault(target.getUniqueId(), 0L) < Instant.now().toEpochMilli()) {
+            applyEnemyStatus(target, action.statusId());
+        }
+        enemy.getWorld().spawnParticle(Particle.SWEEP_ATTACK, target.getLocation().add(0, 1, 0),
+                2, 0.2, 0.2, 0.2, 0.0);
+        enemy.getWorld().playSound(target.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.65f, 0.75f);
+        telemetry.event(runs.current().orElseThrow().runId, "ENEMY_ACTION_COMMITTED",
+                "{\"enemyId\":\"" + enemyId(enemy) + "\",\"actionId\":\"" + action.id()
+                        + "\",\"target\":\"" + target.getUniqueId() + "\"}");
+    }
+
+    private void applyEnemyStatus(Player target, String rawStatus) {
+        String status = rawStatus.toLowerCase(java.util.Locale.ROOT);
+        long durationTicks = switch (status) {
+            case "root" -> 30L;
+            case "silence", "disarm" -> 60L;
+            default -> 80L;
+        };
+        setTimedStatus(target, status, durationTicks);
+        switch (status) {
+            case "poison" -> target.addPotionEffect(new PotionEffect(PotionEffectType.POISON, (int) durationTicks, 0, true, true));
+            case "weakness" -> target.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, (int) durationTicks, 0, true, true));
+            case "slow" -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) durationTicks, 1, true, true));
+            case "root" -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, (int) durationTicks, 10, true, true));
+            case "burn" -> target.setFireTicks((int) durationTicks);
+            case "bleed" -> target.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, (int) durationTicks, 0, true, true));
+            case "corruption" -> target.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, (int) durationTicks, 1, true, true));
+            default -> { }
+        }
+        ActionBarService.critical(target, Component.text(rawStatus + " 상태이상", NamedTextColor.DARK_RED), 35);
+    }
+
+    private boolean playerStatusActive(Player player, String id) {
+        return statusActive(player, id);
+    }
+
+    private void showControlRestriction(Player player, String message) {
+        ActionBarService.notice(player, Component.text(message, NamedTextColor.RED), 35);
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.5f, 0.65f);
+    }
+
+    private List<Player> productionContributors(UUID entityId, Player fallback) {
+        Set<UUID> ids = new HashSet<>(enemyContributions.getOrDefault(entityId, Map.of()).keySet());
+        if (fallback != null) ids.add(fallback.getUniqueId());
+        return ids.stream().map(Bukkit::getPlayer).filter(java.util.Objects::nonNull)
+                .filter(Player::isOnline).filter(runs::isMember)
+                .sorted(Comparator.comparing(Player::getUniqueId)).toList();
     }
 
     private LivingEntity combatAttacker(EntityDamageByEntityEvent event) {
@@ -1892,6 +2100,18 @@ public final class CombatService implements Listener {
 
     private record CoverField(Location location, long expiresAtEpochMs) { }
 
+    private static final class EnemyActionState {
+        private long nextReadyTick;
+        private UUID targetUuid;
+        private long executeAtTick;
+
+        private EnemyActionState(long nextReadyTick) {
+            this.nextReadyTick = nextReadyTick;
+        }
+    }
+
+    private record EnemyHitPermit(UUID enemyUuid, UUID playerUuid) { }
+
     public record DamagePreview(double rawDamage, double defenceFactor, double augmentDamageMultiplier,
                                 double testDamageMultiplier, double finalDamage, double rawBreak,
                                 double augmentBreakMultiplier, double testBreakMultiplier, double finalBreak) {
@@ -1912,5 +2132,10 @@ public final class CombatService implements Listener {
     @FunctionalInterface
     public interface ItemRewardHandler {
         void reward(Player player, String resourceId, int amount);
+    }
+
+    @FunctionalInterface
+    public interface ProductionLootHandler {
+        void reward(String transactionId, ProductionContentCatalog.EnemyEntry enemy, List<Player> contributors);
     }
 }
