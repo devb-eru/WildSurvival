@@ -692,6 +692,13 @@ public final class ProductionBundleValidator {
 
     private void validateReferences(ResourceReader reader, ProductionContentCatalog catalog) throws Exception {
         Set<String> knownOutputs = new HashSet<>(catalog.itemsById().keySet());
+        for (String tag : RecipeTagCatalog.tags()) {
+            for (String member : RecipeTagCatalog.members(tag)) {
+                if (!knownOutputs.contains(member)) {
+                    throw new ContentValidationException("Unknown recipe tag member " + tag + " -> " + member);
+                }
+            }
+        }
         for (ProductionContentCatalog.RecipeEntry recipe : catalog.recipes()) {
             String output = recipe.outputId();
             if (!knownOutputs.contains(output) && !output.matches("FAC-[SR][0-9]{2}@[A-Z0-9_]+")) {
@@ -717,8 +724,20 @@ public final class ProductionBundleValidator {
                 if ("ITEM".equals(ingredient.kind()) && !knownOutputs.contains(ingredient.key())) {
                     throw new ContentValidationException("Unknown recipe input " + recipe.id() + " -> " + ingredient.key());
                 }
+                if ("TAG".equals(ingredient.kind()) && !RecipeTagCatalog.supports(ingredient.key())) {
+                    throw new ContentValidationException("Unknown recipe tag " + recipe.id() + " -> " + ingredient.key());
+                }
+                if ("VANILLA".equals(ingredient.kind())
+                        && !RecipeTagCatalog.supportsVanillaItem(ingredient.key())) {
+                    throw new ContentValidationException("Unknown vanilla recipe item " + recipe.id()
+                            + " -> " + ingredient.key());
+                }
                 if ("PROOF".equals(ingredient.kind()) && ingredient.consume()) {
                     throw new ContentValidationException("Proof cannot be consumed " + recipe.id() + " -> " + ingredient.key());
+                }
+                if (!"PROOF".equals(ingredient.kind()) && !ingredient.consume()) {
+                    throw new ContentValidationException("Physical recipe inputs must be consumed "
+                            + recipe.id() + " -> " + ingredient.key());
                 }
             }
         }

@@ -428,10 +428,14 @@ public final class ItemCodexService implements Listener {
                 for (ProductionContentCatalog.RecipeEntry recipe : recipes) {
                     lore.add(ChatColor.WHITE + "- " + recipe.id() + " [" + recipe.layout() + "] → ×" + recipe.outputAmount());
                     for (ProductionContentCatalog.IngredientEntry ingredient : recipe.ingredients()) {
-                        String marker = "PROOF".equals(ingredient.kind()) ? "검사·비소비 "
-                                : "TAG".equals(ingredient.kind()) ? "대체 가치 " : "";
-                        lore.add(ChatColor.GRAY + "  " + (ingredient.slot() + 1) + "번: " + marker
-                                + ingredient.key() + " ×" + ingredient.amount());
+                        if ("PROOF".equals(ingredient.kind())) {
+                            lore.add(ChatColor.GRAY + "  격자 밖 자동 검사·비소비: "
+                                    + ingredient.key() + " ×" + ingredient.amount());
+                        } else {
+                            String marker = "TAG".equals(ingredient.kind()) ? "대체 가치 " : "";
+                            lore.add(ChatColor.GRAY + "  " + (ingredient.slot() + 1) + "번: " + marker
+                                    + ingredient.key() + " ×" + ingredient.amount());
+                        }
                     }
                 }
             }

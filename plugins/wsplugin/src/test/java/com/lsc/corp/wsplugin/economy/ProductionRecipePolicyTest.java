@@ -1,11 +1,17 @@
 package com.lsc.corp.wsplugin.economy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.lsc.corp.wsplugin.content.ProductionBundleValidator;
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
+import com.lsc.corp.wsplugin.content.RecipeTagCatalog;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class ProductionRecipePolicyTest {
@@ -39,6 +45,89 @@ class ProductionRecipePolicyTest {
         grid.set(0, new ProductionRecipePolicy.GridCell("SAMPLE-A", null, 1));
         grid.set(1, new ProductionRecipePolicy.GridCell("SAMPLE-A", null, 1));
         assertTrue(ProductionRecipePolicy.evaluate(recipe, grid, (tag, cell) -> 1, (proof, amount) -> true).isEmpty());
+    }
+
+    @Test
+    void resetsCanBeDrivenByCompleteGridFingerprint() {
+        List<ProductionRecipePolicy.GridCell> first = emptyGrid();
+        List<ProductionRecipePolicy.GridCell> second = emptyGrid();
+        first.set(0, new ProductionRecipePolicy.GridCell("WSR-WOOD", "OAK_LOG", 1));
+        second.set(0, new ProductionRecipePolicy.GridCell("WSR-WOOD", "OAK_LOG", 2));
+        assertNotEquals(ProductionRecipePolicy.fingerprint(first), ProductionRecipePolicy.fingerprint(second));
+        assertEquals(ProductionRecipePolicy.identityFingerprint(first),
+                ProductionRecipePolicy.identityFingerprint(second));
+    }
+
+    @Test
+    void everyProductionRecipeAcceptsItsCanonicalExactGrid() throws Exception {
+        ProductionContentCatalog catalog = new ProductionBundleValidator().validateDirectory(
+                Path.of("src/main/resources/content/ws-content-r2")).catalog();
+        int tested = 0;
+        for (ProductionContentCatalog.RecipeEntry recipe : catalog.recipes()) {
+            List<ProductionRecipePolicy.GridCell> grid = canonicalGrid(recipe);
+            ProductionRecipePolicy.Match match = ProductionRecipePolicy.evaluate(recipe, grid,
+                    (tag, cell) -> RecipeTagCatalog.value(tag, cell.itemId()), (proof, amount) -> true).orElseThrow(
+                            () -> new AssertionError("Canonical grid did not match " + recipe.id()));
+            long consumingPhysicalInputs = recipe.ingredients().stream()
+                    .filter(ingredient -> !"PROOF".equals(ingredient.kind()) && ingredient.consume()).count();
+            assertEquals(consumingPhysicalInputs, match.consumedBySlot().size(), recipe.id());
+            tested++;
+        }
+        assertEquals(315, tested);
+    }
+
+    @Test
+    void sharedGridCandidatesCycleDeterministically() throws Exception {
+        ProductionContentCatalog catalog = new ProductionBundleValidator().validateDirectory(
+                Path.of("src/main/resources/content/ws-content-r2")).catalog();
+        ProductionContentCatalog.RecipeEntry facility = catalog.recipes().stream()
+                .filter(recipe -> "WSRCP-FAC-S14".equals(recipe.id())).findFirst().orElseThrow();
+        List<ProductionRecipePolicy.GridCell> grid = canonicalGrid(facility);
+        ProductionRecipePolicy.Match first = ProductionRecipePolicy.match(catalog.recipes(), grid,
+                (tag, cell) -> RecipeTagCatalog.value(tag, cell.itemId()), (proof, amount) -> true, 0).orElseThrow();
+        int candidateCount = first.candidateCount();
+        assertTrue(candidateCount >= 5);
+        List<String> recipeIds = new ArrayList<>();
+        for (int selection = 0; selection < candidateCount; selection++) {
+            ProductionRecipePolicy.Match match = ProductionRecipePolicy.match(catalog.recipes(), grid,
+                    (tag, cell) -> RecipeTagCatalog.value(tag, cell.itemId()), (proof, amount) -> true,
+                    selection).orElseThrow();
+            assertEquals(candidateCount, match.candidateCount());
+            recipeIds.add(match.recipe().id());
+        }
+        assertEquals(candidateCount, recipeIds.stream().distinct().count());
+        assertEquals(first.recipe().id(), ProductionRecipePolicy.match(catalog.recipes(), grid,
+                (tag, cell) -> RecipeTagCatalog.value(tag, cell.itemId()), (proof, amount) -> true,
+                candidateCount).orElseThrow().recipe().id());
+        assertEquals("WSRCP-FAC-S14", ProductionRecipePolicy.match(catalog.recipes(), grid,
+                (tag, cell) -> RecipeTagCatalog.value(tag, cell.itemId()), (proof, amount) -> true,
+                "WSRCP-FAC-S14", 0).orElseThrow().recipe().id());
+    }
+
+    private static List<ProductionRecipePolicy.GridCell> canonicalGrid(
+            ProductionContentCatalog.RecipeEntry recipe) {
+        List<ProductionRecipePolicy.GridCell> grid = emptyGrid();
+        Map<String, Integer> nextDistinctMember = new HashMap<>();
+        for (ProductionContentCatalog.IngredientEntry ingredient : recipe.ingredients()) {
+            switch (ingredient.kind()) {
+                case "ITEM" -> grid.set(ingredient.slot(), new ProductionRecipePolicy.GridCell(
+                        ingredient.key(), null, ingredient.amount()));
+                case "VANILLA" -> grid.set(ingredient.slot(), new ProductionRecipePolicy.GridCell(
+                        null, ingredient.key(), ingredient.amount()));
+                case "TAG" -> {
+                    List<String> members = RecipeTagCatalog.members(ingredient.key());
+                    int memberIndex = ingredient.key().startsWith("DISTINCT_")
+                            ? nextDistinctMember.merge(ingredient.key(), 1, Integer::sum) - 1 : 0;
+                    String itemId = members.get(memberIndex);
+                    int unitValue = RecipeTagCatalog.value(ingredient.key(), itemId);
+                    int amount = (ingredient.amount() + unitValue - 1) / unitValue;
+                    grid.set(ingredient.slot(), new ProductionRecipePolicy.GridCell(itemId, null, amount));
+                }
+                case "PROOF" -> { }
+                default -> throw new AssertionError("Unsupported ingredient kind " + ingredient.kind());
+            }
+        }
+        return grid;
     }
 
     private static List<ProductionRecipePolicy.GridCell> emptyGrid() {

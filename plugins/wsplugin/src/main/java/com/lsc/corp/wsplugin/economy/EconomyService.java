@@ -2,6 +2,7 @@ package com.lsc.corp.wsplugin.economy;
 
 import com.lsc.corp.wsplugin.content.PrototypeContent;
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
+import com.lsc.corp.wsplugin.content.RecipeTagCatalog;
 import com.lsc.corp.wsplugin.facility.FacilityStateAccess;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
@@ -112,7 +113,8 @@ public final class EconomyService implements Listener {
         ItemStack border = named(Material.GRAY_STAINED_GLASS_PANE, " ", List.of());
         for (int slot = 0; slot < inventory.getSize(); slot++) inventory.setItem(slot, border);
         inventory.setItem(4, named(Material.CRAFTING_TABLE, ChatColor.AQUA + "3×3 조합 제작",
-                List.of(ChatColor.GRAY + "한 칸당 개인 자원 1개를 사용합니다.", ChatColor.GRAY + "도감에서 고정 조합법을 확인하세요.")));
+                List.of(ChatColor.GRAY + "칸별 요구 수량·대체 태그 가치를 정확히 검사합니다.",
+                        ChatColor.GRAY + "도감에서 고정 조합법을 확인하세요.")));
         inventory.setItem(23, named(Material.ARROW, ChatColor.GRAY + "→", List.of()));
         inventory.setItem(49, named(Material.OAK_DOOR, ChatColor.RED + "닫기", List.of()));
         for (int slot : INPUTS) inventory.setItem(slot, null);
@@ -348,7 +350,10 @@ public final class EconomyService implements Listener {
         int raw = event.getRawSlot();
         if (raw == RESULT) {
             event.setCancelled(true);
-            if (event.isRightClick()) holder.selectedRecipeIndex++;
+            if (event.isRightClick()) {
+                holder.selectedRecipeIndex++;
+                holder.selectedRecipeId = null;
+            }
             else craft(player, top);
             renderCraft(player, top);
             return;
@@ -382,11 +387,15 @@ public final class EconomyService implements Listener {
     public void onClose(InventoryCloseEvent event) {
         if (!(event.getInventory().getHolder() instanceof CraftHolder)) return;
         Player player = (Player) event.getPlayer();
+        boolean dropped = false;
         for (int slot : INPUTS) {
             ItemStack item = event.getInventory().getItem(slot);
             if (item == null || item.getType().isAir()) continue;
-            returnCraftInput(player, item);
+            dropped |= returnCraftInput(player, item);
             event.getInventory().setItem(slot, null);
+        }
+        if (dropped) {
+            player.sendMessage(ChatColor.YELLOW + "인벤토리가 가득 차 일부 제작 입력을 발밑에 본인 전용으로 반환했습니다.");
         }
     }
 
@@ -505,9 +514,19 @@ public final class EconomyService implements Listener {
 
     private java.util.Optional<ProductionRecipePolicy.Match> productionMatch(Player player, Inventory inventory) {
         CraftHolder holder = inventory.getHolder() instanceof CraftHolder value ? value : null;
+        List<ProductionRecipePolicy.GridCell> grid = productionGrid(inventory);
+        String fingerprint = ProductionRecipePolicy.identityFingerprint(grid);
+        if (holder != null && !fingerprint.equals(holder.gridFingerprint)) {
+            holder.gridFingerprint = fingerprint;
+            holder.selectedRecipeIndex = 0;
+            holder.selectedRecipeId = null;
+        }
         int selected = holder == null ? 0 : holder.selectedRecipeIndex;
-        return ProductionRecipePolicy.match(production.recipes(), productionGrid(inventory), this::tagValue,
-                (proof, amount) -> proofPresent(player, proof, amount), selected);
+        java.util.Optional<ProductionRecipePolicy.Match> result = ProductionRecipePolicy.match(production.recipes(), grid,
+                this::tagValue, (proof, amount) -> proofPresent(player, proof, amount),
+                holder == null ? null : holder.selectedRecipeId, selected);
+        if (holder != null) result.ifPresent(match -> holder.selectedRecipeId = match.recipe().id());
+        return result;
     }
 
     private List<ProductionRecipePolicy.GridCell> productionGrid(Inventory inventory) {
@@ -521,25 +540,7 @@ public final class EconomyService implements Listener {
     }
 
     private int tagValue(String tag, ProductionRecipePolicy.GridCell cell) {
-        String id = cell.itemId();
-        if (id == null) return 0;
-        return switch (tag) {
-            case "CONSTRUCTION" -> Map.of("WSR-WOOD", 1, "WSR-STONE", 1, "WSR-HARD_AGGREGATE", 4,
-                    "WSR-STABILIZED_FRAME", 8).getOrDefault(id, 0);
-            case "SURVIVAL" -> Map.of("WSR-RATION", 1, "WSR-HERB", 2, "WSR-STERILE_GEL", 3,
-                    "WSR-BIO_MEDIUM", 5).getOrDefault(id, 0);
-            case "METAL" -> Map.of("WSR-IRON", 1, "WSR-REFINED_ALLOY", 2, "WSR-REINFORCED_ALLOY", 3,
-                    "WSR-HIGH_DENSITY_ALLOY", 6, "WSR-METAL_PLATE", 1).getOrDefault(id, 0);
-            case "SIGNAL" -> Map.of("WSR-REDSTONE", 1, "WSR-COPPER_COIL", 2, "WSR-NEURAL_CIRCUIT", 4,
-                    "WSR-RESONANCE_COIL", 6).getOrDefault(id, 0);
-            case "SPECIAL" -> Map.of("WSR-MAGIC_CRYSTAL", 2, "WSR-PURIFY_CATALYST", 3,
-                    "WSR-PATTERN_RESIDUE", 5, "WSR-INTERRUPT_CORE", 8).getOrDefault(id, 0);
-            case "CORRUPTION_SAMPLE" -> Set.of("WSR-TISSUE", "WSR-TOXIN_SAMPLE", "WSR-THERMAL_SAMPLE",
-                    "WSR-HEMATIC_SAMPLE", "WSR-NEURAL_SAMPLE", "WSR-MUTATION_SHARD").contains(id) ? 1 : 0;
-            case "DISTINCT_MUTATION_SAMPLE" -> Set.of("WSR-TOXIN_SAMPLE", "WSR-THERMAL_SAMPLE",
-                    "WSR-HEMATIC_SAMPLE", "WSR-NEURAL_SAMPLE", "WSR-MUTATION_SHARD").contains(id) ? 1 : 0;
-            default -> 0;
-        };
+        return RecipeTagCatalog.value(tag, cell.itemId());
     }
 
     private boolean proofPresent(Player player, String proof, int amount) {
@@ -577,7 +578,7 @@ public final class EconomyService implements Listener {
         return output == null ? outputId : output.name();
     }
 
-    private void returnCraftInput(Player player, ItemStack returned) {
+    private boolean returnCraftInput(Player player, ItemStack returned) {
         ItemStack remaining = returned.clone();
         for (int slot = 1; slot <= 35 && remaining.getAmount() > 0; slot++) {
             ItemStack existing = player.getInventory().getItem(slot);
@@ -596,7 +597,12 @@ public final class EconomyService implements Listener {
             player.getInventory().setItem(slot, placed);
             remaining.setAmount(remaining.getAmount() - moved);
         }
-        if (remaining.getAmount() > 0) throw new IllegalStateException("Craft 입력 반환 공간이 없습니다.");
+        if (remaining.getAmount() <= 0) return false;
+        org.bukkit.entity.Item dropped = player.getWorld().dropItem(player.getLocation(), remaining.clone());
+        dropped.setOwner(player.getUniqueId());
+        dropped.setPickupDelay(0);
+        dropped.setUnlimitedLifetime(true);
+        return true;
     }
 
     private void showClock(Player player) {
@@ -767,6 +773,8 @@ public final class EconomyService implements Listener {
     private static final class CraftHolder implements InventoryHolder {
         private final UUID owner;
         private int selectedRecipeIndex;
+        private String selectedRecipeId;
+        private String gridFingerprint = "";
         private CraftHolder(UUID owner) { this.owner = owner; }
         @Override public Inventory getInventory() { return null; }
     }

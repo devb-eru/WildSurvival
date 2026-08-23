@@ -15,12 +15,43 @@ public final class ProductionRecipePolicy {
     public static Optional<Match> match(List<ProductionContentCatalog.RecipeEntry> recipes,
                                         List<GridCell> grid, TagValueResolver tags, ProofResolver proofs,
                                         int selectedIndex) {
+        return match(recipes, grid, tags, proofs, null, selectedIndex);
+    }
+
+    public static Optional<Match> match(List<ProductionContentCatalog.RecipeEntry> recipes,
+                                        List<GridCell> grid, TagValueResolver tags, ProofResolver proofs,
+                                        String preferredRecipeId, int selectedIndex) {
         if (grid.size() != 9) throw new IllegalArgumentException("Production craft grid must have nine cells");
         List<Match> matches = recipes.stream().map(recipe -> evaluate(recipe, grid, tags, proofs))
                 .flatMap(Optional::stream).toList();
         if (matches.isEmpty()) return Optional.empty();
-        return Optional.of(matches.get(Math.floorMod(selectedIndex, matches.size()))
-                .withCandidateCount(matches.size()));
+        Match selected = preferredRecipeId == null ? null : matches.stream()
+                .filter(match -> preferredRecipeId.equals(match.recipe().id())).findFirst().orElse(null);
+        if (selected == null) selected = matches.get(Math.floorMod(selectedIndex, matches.size()));
+        return Optional.of(selected.withCandidateCount(matches.size()));
+    }
+
+    public static String fingerprint(List<GridCell> grid) {
+        if (grid.size() != 9) throw new IllegalArgumentException("Production craft grid must have nine cells");
+        StringBuilder result = new StringBuilder();
+        for (GridCell cell : grid) {
+            if (!result.isEmpty()) result.append('|');
+            result.append(cell.itemId() == null ? "-" : cell.itemId()).append(':')
+                    .append(cell.vanillaMaterial() == null ? "-" : cell.vanillaMaterial()).append(':')
+                    .append(cell.amount());
+        }
+        return result.toString();
+    }
+
+    public static String identityFingerprint(List<GridCell> grid) {
+        if (grid.size() != 9) throw new IllegalArgumentException("Production craft grid must have nine cells");
+        StringBuilder result = new StringBuilder();
+        for (GridCell cell : grid) {
+            if (!result.isEmpty()) result.append('|');
+            result.append(cell.itemId() == null ? "-" : cell.itemId()).append(':')
+                    .append(cell.vanillaMaterial() == null ? "-" : cell.vanillaMaterial());
+        }
+        return result.toString();
     }
 
     public static Optional<Match> evaluate(ProductionContentCatalog.RecipeEntry recipe, List<GridCell> grid,
