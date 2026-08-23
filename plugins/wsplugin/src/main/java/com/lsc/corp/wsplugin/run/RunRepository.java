@@ -119,6 +119,7 @@ public final class RunRepository {
             snapshot.finalObjective.completedTransactionSteps = new LinkedHashSet<>();
         }
         for (RunSnapshot.EncounterState encounter : snapshot.encounters.values()) {
+            if (encounter.plannedEnemyIds == null) encounter.plannedEnemyIds = new ArrayList<>();
             if (encounter.spawnedEntityUuids == null) encounter.spawnedEntityUuids = new LinkedHashSet<>();
             if (encounter.participantUuids == null) encounter.participantUuids = new LinkedHashSet<>();
         }

@@ -251,6 +251,8 @@ public final class RunSnapshot {
         public int threatBudget;
         public int waveIndex;
         public int waveCount;
+        public List<String> plannedEnemyIds = new ArrayList<>();
+        public int nextEnemyIndex;
         public Set<String> spawnedEntityUuids = new LinkedHashSet<>();
         public Set<String> participantUuids = new LinkedHashSet<>();
         public long startedAtEpochMs;
