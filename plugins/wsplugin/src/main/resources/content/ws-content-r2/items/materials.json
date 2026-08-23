@@ -430,7 +430,7 @@
       "codexIndex": 22,
       "name": "안정 정화 촉매",
       "firstDay": 21,
-      "displayMaterial": "T4",
+      "displayMaterial": "AMETHYST_SHARD",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-PURIFY_CATALYST",
@@ -449,7 +449,7 @@
       "codexIndex": 23,
       "name": "균열 가루",
       "firstDay": 23,
-      "displayMaterial": "T4",
+      "displayMaterial": "GUNPOWDER",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-RIFT_POWDER",
@@ -468,7 +468,7 @@
       "codexIndex": 24,
       "name": "정제 변이 파편",
       "firstDay": 25,
-      "displayMaterial": "T4",
+      "displayMaterial": "PAPER",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-REFINED_MUTATION",
@@ -487,7 +487,7 @@
       "codexIndex": 25,
       "name": "안정화 코어",
       "firstDay": 27,
-      "displayMaterial": "T5",
+      "displayMaterial": "HEART_OF_THE_SEA",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-STABLE_CORE",
@@ -506,7 +506,7 @@
       "codexIndex": 26,
       "name": "정화 매질",
       "firstDay": 28,
-      "displayMaterial": "T5",
+      "displayMaterial": "SLIME_BALL",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-PURIFY_MEDIUM",
@@ -525,7 +525,7 @@
       "codexIndex": 27,
       "name": "고강도 구조 골재",
       "firstDay": 31,
-      "displayMaterial": "T4",
+      "displayMaterial": "DEEPSLATE",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-HARD_AGGREGATE",
@@ -544,7 +544,7 @@
       "codexIndex": 28,
       "name": "공진 코일",
       "firstDay": 32,
-      "displayMaterial": "T5",
+      "displayMaterial": "REDSTONE_TORCH",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-RESONANCE_COIL",
@@ -563,7 +563,7 @@
       "codexIndex": 29,
       "name": "패턴 잔재",
       "firstDay": 34,
-      "displayMaterial": "T5",
+      "displayMaterial": "GUNPOWDER",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-PATTERN_RESIDUE",
@@ -582,7 +582,7 @@
       "codexIndex": 30,
       "name": "고밀도 합금",
       "firstDay": 37,
-      "displayMaterial": "T5",
+      "displayMaterial": "NETHERITE_SCRAP",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-HIGH_DENSITY_ALLOY",
@@ -601,7 +601,7 @@
       "codexIndex": 31,
       "name": "중단 코어",
       "firstDay": 39,
-      "displayMaterial": "T6",
+      "displayMaterial": "HEART_OF_THE_SEA",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-INTERRUPT_CORE",
@@ -620,7 +620,7 @@
       "codexIndex": 32,
       "name": "동력 행렬",
       "firstDay": 41,
-      "displayMaterial": "T6",
+      "displayMaterial": "REDSTONE_TORCH",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-POWER_MATRIX",
@@ -639,7 +639,7 @@
       "codexIndex": 33,
       "name": "교정 렌즈",
       "firstDay": 42,
-      "displayMaterial": "T6",
+      "displayMaterial": "AMETHYST_SHARD",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-CALIBRATED_LENS",
@@ -658,7 +658,7 @@
       "codexIndex": 34,
       "name": "정화 행렬",
       "firstDay": 43,
-      "displayMaterial": "T6",
+      "displayMaterial": "REDSTONE_TORCH",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-PURIFY_MATRIX",
@@ -677,7 +677,7 @@
       "codexIndex": 35,
       "name": "안정 프레임",
       "firstDay": 44,
-      "displayMaterial": "T6",
+      "displayMaterial": "NETHERITE_SCRAP",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-STABILIZED_FRAME",
@@ -696,7 +696,7 @@
       "codexIndex": 36,
       "name": "최종 신호 키",
       "firstDay": 49,
-      "displayMaterial": "UNIQUE",
+      "displayMaterial": "HEART_OF_THE_SEA",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-FINAL_SIGNAL_KEY",
@@ -715,7 +715,7 @@
       "codexIndex": 37,
       "name": "경목 부품",
       "firstDay": 1,
-      "displayMaterial": "T1",
+      "displayMaterial": "PAPER",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-HARDWOOD_PART",
@@ -734,7 +734,7 @@
       "codexIndex": 38,
       "name": "소결 골재",
       "firstDay": 2,
-      "displayMaterial": "T1",
+      "displayMaterial": "DEEPSLATE",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-SINTERED_AGGREGATE",
@@ -753,7 +753,7 @@
       "codexIndex": 39,
       "name": "금속 판재",
       "firstDay": 2,
-      "displayMaterial": "T1",
+      "displayMaterial": "NETHERITE_SCRAP",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-METAL_PLATE",
@@ -772,7 +772,7 @@
       "codexIndex": 40,
       "name": "구리 코일",
       "firstDay": 4,
-      "displayMaterial": "T2",
+      "displayMaterial": "REDSTONE_TORCH",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-COPPER_COIL",
@@ -791,7 +791,7 @@
       "codexIndex": 41,
       "name": "정련 합금",
       "firstDay": 5,
-      "displayMaterial": "T2",
+      "displayMaterial": "NETHERITE_SCRAP",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-REFINED_ALLOY",
@@ -810,7 +810,7 @@
       "codexIndex": 42,
       "name": "정밀 부품",
       "firstDay": 5,
-      "displayMaterial": "T2",
+      "displayMaterial": "PAPER",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-PRECISION_PART",
@@ -829,7 +829,7 @@
       "codexIndex": 43,
       "name": "조잡한 정화 촉매",
       "firstDay": 5,
-      "displayMaterial": "T2",
+      "displayMaterial": "AMETHYST_SHARD",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-CRUDE_PURIFY_CATALYST",
@@ -848,7 +848,7 @@
       "codexIndex": 44,
       "name": "신호 렌즈",
       "firstDay": 6,
-      "displayMaterial": "T3",
+      "displayMaterial": "AMETHYST_SHARD",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-SIGNAL_LENS",
@@ -867,7 +867,7 @@
       "codexIndex": 45,
       "name": "보강 천",
       "firstDay": 2,
-      "displayMaterial": "T1",
+      "displayMaterial": "PAPER",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-REINFORCED_CLOTH",
@@ -886,7 +886,7 @@
       "codexIndex": 46,
       "name": "멸균 젤",
       "firstDay": 11,
-      "displayMaterial": "T3",
+      "displayMaterial": "SLIME_BALL",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-STERILE_GEL",
@@ -905,7 +905,7 @@
       "codexIndex": 47,
       "name": "탄성 직조",
       "firstDay": 12,
-      "displayMaterial": "T3",
+      "displayMaterial": "PAPER",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-ELASTIC_WEAVE",
@@ -924,7 +924,7 @@
       "codexIndex": 48,
       "name": "강화 합금",
       "firstDay": 14,
-      "displayMaterial": "T3",
+      "displayMaterial": "NETHERITE_SCRAP",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-REINFORCED_ALLOY",
@@ -943,7 +943,7 @@
       "codexIndex": 49,
       "name": "신경 회로",
       "firstDay": 15,
-      "displayMaterial": "T3",
+      "displayMaterial": "REDSTONE_TORCH",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-NEURAL_CIRCUIT",
@@ -962,7 +962,7 @@
       "codexIndex": 50,
       "name": "생체 매질",
       "firstDay": 16,
-      "displayMaterial": "T4",
+      "displayMaterial": "SLIME_BALL",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-BIO_MEDIUM",
@@ -981,7 +981,7 @@
       "codexIndex": 51,
       "name": "상태 분류판",
       "firstDay": 13,
-      "displayMaterial": "T3",
+      "displayMaterial": "NETHERITE_SCRAP",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-STATUS_PLATE",

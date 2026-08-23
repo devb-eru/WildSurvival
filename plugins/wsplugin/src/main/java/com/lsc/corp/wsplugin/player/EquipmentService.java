@@ -154,6 +154,45 @@ public final class EquipmentService implements Listener {
         player.sendMessage(ChatColor.GREEN + templateName(weaponId) + " 제작 완료. 인벤토리에서 보관하거나 장비 GUI로 장착하세요.");
     }
 
+    public void forgeEquipment(Player player, String rawOutputId, ItemStack baseItem) {
+        String outputId = rawOutputId.toUpperCase(java.util.Locale.ROOT);
+        requireEquipmentTemplate(outputId);
+        String instanceId = equipmentInstanceId(baseItem);
+        if (instanceId == null) {
+            grantEquipment(player, outputId);
+            return;
+        }
+        RunSnapshot.PlayerState before = runs.playerState(player.getUniqueId()).orElseThrow();
+        RunSnapshot.EquipmentInstanceState source = equipmentInstances(before).get(instanceId);
+        if (source == null) {
+            grantEquipment(player, outputId);
+            return;
+        }
+        Material outputMaterial = templateMaterial(outputId);
+        int newMaximum = outputMaterial == null || outputMaterial.getMaxDurability() < 1 ? 100 : outputMaterial.getMaxDurability();
+        double durabilityRatio = source.maxDurability <= 0 ? 1.0
+                : Math.max(0.0, Math.min(1.0, source.currentDurability / (double) source.maxDurability));
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            RunSnapshot.EquipmentInstanceState target = equipmentInstances(state).get(instanceId);
+            if (target == null) return;
+            target.templateId = outputId;
+            target.maxDurability = newMaximum;
+            target.currentDurability = Math.max(1, (int) Math.round(newMaximum * durabilityRatio));
+            target.condition = "ACTIVE";
+            state.ownedEquipment.add(outputId);
+        });
+        RunSnapshot.EquipmentInstanceState forged = equipmentInstances(
+                runs.playerState(player.getUniqueId()).orElseThrow()).get(instanceId);
+        if (forged == null || !storeInventory(player, weaponItem(forged))) {
+            throw new IllegalStateException("제작된 장비를 받을 인벤토리 공간이 없습니다.");
+        }
+        codex.discover(player, outputId, "FORGE");
+        telemetry.event(runs.current().orElseThrow().runId, "EQUIPMENT_FORGED",
+                "{\"instanceId\":\"" + instanceId + "\",\"outputId\":\"" + outputId + "\"}");
+        player.sendMessage(ChatColor.GREEN + "장비 계보·내구 비율을 계승해 제작: " + templateName(outputId));
+    }
+
     public void setEquipmentOwned(Player player, String rawWeaponId, boolean owned) {
         String weaponId = rawWeaponId.toUpperCase(java.util.Locale.ROOT);
         requireEquipmentTemplate(weaponId);

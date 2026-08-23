@@ -407,8 +407,13 @@ public final class ItemCodexService implements Listener {
             } else {
                 lore.add(ChatColor.YELLOW + "등록 조합법 " + recipes.size() + "개:");
                 for (ProductionContentCatalog.RecipeEntry recipe : recipes) {
-                    lore.add(ChatColor.WHITE + "- " + recipe.id() + " [" + recipe.recipeType() + "]");
-                    lore.add(ChatColor.GRAY + "  입력 권위: " + recipe.inputAuthority());
+                    lore.add(ChatColor.WHITE + "- " + recipe.id() + " [" + recipe.layout() + "] → ×" + recipe.outputAmount());
+                    for (ProductionContentCatalog.IngredientEntry ingredient : recipe.ingredients()) {
+                        String marker = "PROOF".equals(ingredient.kind()) ? "검사·비소비 "
+                                : "TAG".equals(ingredient.kind()) ? "대체 가치 " : "";
+                        lore.add(ChatColor.GRAY + "  " + (ingredient.slot() + 1) + "번: " + marker
+                                + ingredient.key() + " ×" + ingredient.amount());
+                    }
                 }
             }
         }

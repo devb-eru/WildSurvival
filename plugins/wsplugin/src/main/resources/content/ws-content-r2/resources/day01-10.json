@@ -290,7 +290,7 @@
       "codexIndex": 37,
       "name": "경목 부품",
       "firstDay": 1,
-      "displayMaterial": "T1",
+      "displayMaterial": "PAPER",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-HARDWOOD_PART",
@@ -309,7 +309,7 @@
       "codexIndex": 38,
       "name": "소결 골재",
       "firstDay": 2,
-      "displayMaterial": "T1",
+      "displayMaterial": "DEEPSLATE",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-SINTERED_AGGREGATE",
@@ -328,7 +328,7 @@
       "codexIndex": 39,
       "name": "금속 판재",
       "firstDay": 2,
-      "displayMaterial": "T1",
+      "displayMaterial": "NETHERITE_SCRAP",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-METAL_PLATE",
@@ -347,7 +347,7 @@
       "codexIndex": 40,
       "name": "구리 코일",
       "firstDay": 4,
-      "displayMaterial": "T2",
+      "displayMaterial": "REDSTONE_TORCH",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-COPPER_COIL",
@@ -366,7 +366,7 @@
       "codexIndex": 41,
       "name": "정련 합금",
       "firstDay": 5,
-      "displayMaterial": "T2",
+      "displayMaterial": "NETHERITE_SCRAP",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-REFINED_ALLOY",
@@ -385,7 +385,7 @@
       "codexIndex": 42,
       "name": "정밀 부품",
       "firstDay": 5,
-      "displayMaterial": "T2",
+      "displayMaterial": "PAPER",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-PRECISION_PART",
@@ -404,7 +404,7 @@
       "codexIndex": 43,
       "name": "조잡한 정화 촉매",
       "firstDay": 5,
-      "displayMaterial": "T2",
+      "displayMaterial": "AMETHYST_SHARD",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-CRUDE_PURIFY_CATALYST",
@@ -423,7 +423,7 @@
       "codexIndex": 44,
       "name": "신호 렌즈",
       "firstDay": 6,
-      "displayMaterial": "T3",
+      "displayMaterial": "AMETHYST_SHARD",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-SIGNAL_LENS",
@@ -442,7 +442,7 @@
       "codexIndex": 45,
       "name": "보강 천",
       "firstDay": 2,
-      "displayMaterial": "T1",
+      "displayMaterial": "PAPER",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-REINFORCED_CLOTH",

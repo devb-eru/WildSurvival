@@ -54,7 +54,7 @@
       "path": "schemas/recipe.schema.json",
       "domain": "schema",
       "schema": "common.schema.json",
-      "sha256": "11618c7119ac4443a2a8ce6341ce2d7d50b16378c6b1457e2214940024b80e27"
+      "sha256": "c6bc068263a263d5743e277adb69655c1d26488397b61cd74493badc4b908b73"
     },
     {
       "path": "schemas/equipment.schema.json",
@@ -198,25 +198,25 @@
       "path": "resources/day01-10.json",
       "domain": "resources",
       "schema": "resource.schema.json",
-      "sha256": "3d907aba3fe3335f152b0e3d4bd88261221e20480dcce706e8bc4b622d46ea32"
+      "sha256": "979527c97aec09361b46dfd272d0902f4d1bb9ece0fc0e8b43c459887174aa32"
     },
     {
       "path": "resources/day11-20.json",
       "domain": "resources",
       "schema": "resource.schema.json",
-      "sha256": "333d86ecda64ba774d6609f7dd4f6e824c6fd48db9109d79318fae776e740c1c"
+      "sha256": "1553aed89b190ee1735196465722cc083ad6b924a00e4625f69a1a2892d2b1ee"
     },
     {
       "path": "resources/day21-50.json",
       "domain": "resources",
       "schema": "resource.schema.json",
-      "sha256": "759ac30653fb9964fafa1b35188b408b5f7acd2c314a300047849304ea27f00f"
+      "sha256": "e183a1794d368ed0531a81ff72bf23115fc42f168a0b4be779c0f76f2340413d"
     },
     {
       "path": "items/materials.json",
       "domain": "materials",
       "schema": "resource.schema.json",
-      "sha256": "ef085b951e90d9d287e3d997df468d880505fe84195ef94286237cedba03f078"
+      "sha256": "edf16622aa708b964551c27c5d3ca5e575c3d62354129c955fb1948df16e4c18"
     },
     {
       "path": "items/non-equipment-items.json",
@@ -228,13 +228,13 @@
       "path": "items/codex-index.json",
       "domain": "codex",
       "schema": "codex.schema.json",
-      "sha256": "9901d71f060353d30f333a8d71daddc9361a295eaf5a79fb36a84d52cd6f0b3c"
+      "sha256": "805c1bb0c7cb1cebb263ab2c72af560944c7e10902dc9d23ab83f9da6cfa2578"
     },
     {
       "path": "recipes/season1-recipes.json",
       "domain": "recipes",
       "schema": "recipe.schema.json",
-      "sha256": "12aad287be04e59de28d80117834aa4b8dd76f01e1c8a1e4121b8978d27a0830"
+      "sha256": "902546e7e6ffb834a61e923115655c6130cb83aac60e79e24350ef24d21ba72a"
     },
     {
       "path": "equipment/day01-10.json",

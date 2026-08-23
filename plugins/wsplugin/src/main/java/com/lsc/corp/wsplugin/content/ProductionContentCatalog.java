@@ -23,7 +23,10 @@ public record ProductionContentCatalog(
         }
     }
 
-    public record RecipeEntry(String id, String outputId, String recipeType, String inputAuthority,
-                              String layout, List<String> raw) {
+    public record RecipeEntry(String id, String outputId, int outputAmount, String recipeType, String inputAuthority,
+                              String layout, List<IngredientEntry> ingredients, List<String> raw) {
+    }
+
+    public record IngredientEntry(int slot, String kind, String key, int amount, boolean consume) {
     }
 }

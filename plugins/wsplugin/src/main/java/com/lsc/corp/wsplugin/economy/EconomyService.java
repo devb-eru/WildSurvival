@@ -1,6 +1,7 @@
 package com.lsc.corp.wsplugin.economy;
 
 import com.lsc.corp.wsplugin.content.PrototypeContent;
+import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
@@ -50,17 +51,20 @@ public final class EconomyService implements Listener {
     private final JavaPlugin plugin;
     private final RunService runs;
     private final PrototypeContent content;
+    private final ProductionContentCatalog production;
     private final EquipmentService equipment;
     private final GrowthService growth;
     private final TelemetryService telemetry;
     private final ItemCodexService codex;
     private final NamespacedKey facilityKey;
 
-    public EconomyService(JavaPlugin plugin, RunService runs, PrototypeContent content, EquipmentService equipment,
+    public EconomyService(JavaPlugin plugin, RunService runs, PrototypeContent content,
+                          ProductionContentCatalog production, EquipmentService equipment,
                           GrowthService growth, TelemetryService telemetry, ItemCodexService codex) {
         this.plugin = plugin;
         this.runs = runs;
         this.content = content;
+        this.production = production;
         this.equipment = equipment;
         this.growth = growth;
         this.telemetry = telemetry;
@@ -91,7 +95,7 @@ public final class EconomyService implements Listener {
         inventory.setItem(49, named(Material.OAK_DOOR, ChatColor.RED + "닫기", List.of()));
         for (int slot : INPUTS) inventory.setItem(slot, null);
         player.openInventory(inventory);
-        renderCraft(inventory);
+        renderCraft(player, inventory);
     }
 
     public void openLedger(Player player) {
@@ -303,14 +307,18 @@ public final class EconomyService implements Listener {
             event.setCancelled(true); return;
         }
         int raw = event.getRawSlot();
-        if (raw == RESULT) { event.setCancelled(true); craft(player, top); renderCraft(top); return; }
+        if (raw == RESULT) {
+            event.setCancelled(true);
+            if (event.isRightClick()) holder.selectedRecipeIndex++;
+            else craft(player, top);
+            renderCraft(player, top);
+            return;
+        }
         if (raw == 49) { event.setCancelled(true); player.closeInventory(); return; }
         if (raw < top.getSize()) {
             if (!INPUT_SET.contains(raw)) { event.setCancelled(true); return; }
             if (event.getClick() == ClickType.NUMBER_KEY) { event.setCancelled(true); return; }
-            ItemStack cursor = event.getCursor();
-            if (cursor != null && !cursor.getType().isAir() && !codex.isResourceItem(cursor)) event.setCancelled(true);
-            Bukkit.getScheduler().runTask(plugin, () -> renderCraft(top));
+            Bukkit.getScheduler().runTask(plugin, () -> renderCraft(player, top));
             return;
         }
         if (event.isShiftClick() || event.getClick() == ClickType.NUMBER_KEY || event.getAction() == InventoryAction.COLLECT_TO_CURSOR) event.setCancelled(true);
@@ -324,10 +332,11 @@ public final class EconomyService implements Listener {
         Set<Integer> topSlots = new HashSet<>();
         for (int raw : event.getRawSlots()) if (raw < top.getSize()) topSlots.add(raw);
         if (topSlots.isEmpty()) return;
-        if (!INPUT_SET.containsAll(topSlots) || event.getNewItems().values().stream().anyMatch(item -> !codex.isResourceItem(item))) {
+        if (!INPUT_SET.containsAll(topSlots)) {
             event.setCancelled(true); return;
         }
-        Bukkit.getScheduler().runTask(plugin, () -> renderCraft(top));
+        Player player = (Player) event.getWhoClicked();
+        Bukkit.getScheduler().runTask(plugin, () -> renderCraft(player, top));
     }
 
     @EventHandler
@@ -337,9 +346,7 @@ public final class EconomyService implements Listener {
         for (int slot : INPUTS) {
             ItemStack item = event.getInventory().getItem(slot);
             if (item == null || item.getType().isAir()) continue;
-            String id = codex.itemId(item);
-            if (id != null) codex.grantResource(player, id, item.getAmount());
-            else player.getWorld().dropItemNaturally(player.getLocation(), item);
+            returnCraftInput(player, item);
             event.getInventory().setItem(slot, null);
         }
     }
@@ -356,10 +363,7 @@ public final class EconomyService implements Listener {
 
     private void craft(Player player, Inventory inventory) {
         PrototypeContent.RecipeDefinition recipe = RecipeGridPolicy.match(content.recipes(), grid(inventory)).orElse(null);
-        if (recipe == null) {
-            ActionBarService.notice(player, net.kyori.adventure.text.Component.text("유효한 조합법이 아닙니다."), 35);
-            return;
-        }
+        if (recipe == null) { craftProduction(player, inventory); return; }
         RunSnapshot snapshot = runs.current().orElseThrow();
         if ("COMMON_RESOURCE_DEPOT".equals(recipe.rewardId()) && snapshot.facility != null && snapshot.facility.active) {
             player.sendMessage(ChatColor.RED + "공용 보급 저장소는 하나만 설치할 수 있습니다."); return;
@@ -385,11 +389,170 @@ public final class EconomyService implements Listener {
         player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 0.5f, 1.4f);
     }
 
-    private void renderCraft(Inventory inventory) {
+    private void renderCraft(Player player, Inventory inventory) {
         PrototypeContent.RecipeDefinition recipe = RecipeGridPolicy.match(content.recipes(), grid(inventory)).orElse(null);
-        inventory.setItem(RESULT, recipe == null
-                ? named(Material.GRAY_DYE, ChatColor.GRAY + "조합 결과 없음", List.of())
-                : named(rewardMaterial(recipe), ChatColor.GOLD + recipe.name(), List.of(ChatColor.YELLOW + "클릭하여 제작", ChatColor.DARK_GRAY + recipe.id())));
+        if (recipe != null) {
+            inventory.setItem(RESULT, named(rewardMaterial(recipe), ChatColor.GOLD + recipe.name(),
+                    List.of(ChatColor.YELLOW + "좌클릭하여 제작", ChatColor.DARK_GRAY + recipe.id())));
+            return;
+        }
+        ProductionRecipePolicy.Match match = productionMatch(player, inventory).orElse(null);
+        if (match == null) {
+            inventory.setItem(RESULT, named(Material.GRAY_DYE, ChatColor.GRAY + "조합 결과 없음", List.of()));
+            return;
+        }
+        ProductionContentCatalog.RecipeEntry productionRecipe = match.recipe();
+        boolean dayReady = recipeFirstDay(productionRecipe) <= runs.current().orElseThrow().day;
+        List<String> lore = new ArrayList<>();
+        lore.add(dayReady ? ChatColor.YELLOW + "좌클릭하여 제작" : ChatColor.RED + "Day " + recipeFirstDay(productionRecipe) + "부터 제작 가능");
+        if (match.candidateCount() > 1) lore.add(ChatColor.AQUA + "우클릭: 같은 배열 결과 순환 (" + match.candidateCount() + "개)");
+        lore.add(ChatColor.DARK_GRAY + productionRecipe.id());
+        inventory.setItem(RESULT, named(productionRewardMaterial(productionRecipe),
+                (dayReady ? ChatColor.GOLD : ChatColor.RED) + productionName(productionRecipe.outputId()), lore));
+    }
+
+    private void craftProduction(Player player, Inventory inventory) {
+        ProductionRecipePolicy.Match match = productionMatch(player, inventory).orElse(null);
+        if (match == null) {
+            ActionBarService.notice(player, net.kyori.adventure.text.Component.text("유효한 조합법이 아닙니다."), 35);
+            return;
+        }
+        ProductionContentCatalog.RecipeEntry recipe = match.recipe();
+        RunSnapshot snapshot = runs.current().orElseThrow();
+        int firstDay = recipeFirstDay(recipe);
+        if (snapshot.day < firstDay) {
+            player.sendMessage(ChatColor.RED + "이 조합법은 Day " + firstDay + "부터 실행할 수 있습니다.");
+            return;
+        }
+        ProductionContentCatalog.CatalogEntry output = production.itemsById().get(recipe.outputId());
+        if (output != null && output.equipment() && !equipment.canGrantEquipment(player)) {
+            player.sendMessage(ChatColor.RED + "장비 결과를 받을 인벤토리 공간이 없습니다.");
+            return;
+        }
+        ItemStack baseEquipment = null;
+        for (ProductionContentCatalog.IngredientEntry ingredient : recipe.ingredients()) {
+            if (!"ITEM".equals(ingredient.kind())) continue;
+            ProductionContentCatalog.CatalogEntry input = production.itemsById().get(ingredient.key());
+            if (input != null && input.equipment()) {
+                baseEquipment = inventory.getItem(INPUTS[ingredient.slot()]).clone();
+                break;
+            }
+        }
+        for (Map.Entry<Integer, Integer> consumed : match.consumedBySlot().entrySet()) {
+            int inventorySlot = INPUTS[consumed.getKey()];
+            ItemStack item = inventory.getItem(inventorySlot);
+            if (item == null || item.getAmount() < consumed.getValue()) {
+                throw new IllegalStateException("검증 이후 조합 입력이 변경되었습니다.");
+            }
+            item.setAmount(item.getAmount() - consumed.getValue());
+            if (item.getAmount() <= 0) inventory.setItem(inventorySlot, null);
+        }
+        if (output == null) {
+            runs.commitOnce("virtual-recipe:" + recipe.id(), "VIRTUAL_RECIPE_COMMITTED",
+                    "{\"recipeId\":\"" + recipe.id() + "\",\"outputId\":\"" + recipe.outputId() + "\"}",
+                    run -> run.committedKeys.add("proof:" + recipe.outputId()));
+            player.sendMessage(ChatColor.GREEN + "시설/재건 단계 등록: " + recipe.outputId());
+        } else if (output.equipment()) {
+            if (baseEquipment == null) equipment.grantEquipment(player, output.id());
+            else equipment.forgeEquipment(player, output.id(), baseEquipment);
+        } else if ("MATERIAL".equals(output.domain())) {
+            codex.grantResource(player, output.id(), recipe.outputAmount());
+        } else {
+            codex.grantItem(player, output.id(), recipe.outputAmount());
+        }
+        telemetry.event(snapshot.runId, "CRAFT_COMMITTED", "{\"recipeId\":\"" + recipe.id()
+                + "\",\"revision\":\"ws-content-r2\"}");
+        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 0.5f, 1.4f);
+    }
+
+    private java.util.Optional<ProductionRecipePolicy.Match> productionMatch(Player player, Inventory inventory) {
+        CraftHolder holder = inventory.getHolder() instanceof CraftHolder value ? value : null;
+        int selected = holder == null ? 0 : holder.selectedRecipeIndex;
+        return ProductionRecipePolicy.match(production.recipes(), productionGrid(inventory), this::tagValue,
+                (proof, amount) -> proofPresent(player, proof, amount), selected);
+    }
+
+    private List<ProductionRecipePolicy.GridCell> productionGrid(Inventory inventory) {
+        List<ProductionRecipePolicy.GridCell> result = new ArrayList<>(9);
+        for (int slot : INPUTS) {
+            ItemStack item = inventory.getItem(slot);
+            if (item == null || item.getType().isAir()) result.add(ProductionRecipePolicy.GridCell.emptyCell());
+            else result.add(new ProductionRecipePolicy.GridCell(codex.itemId(item), item.getType().name(), item.getAmount()));
+        }
+        return result;
+    }
+
+    private int tagValue(String tag, ProductionRecipePolicy.GridCell cell) {
+        String id = cell.itemId();
+        if (id == null) return 0;
+        return switch (tag) {
+            case "CONSTRUCTION" -> Map.of("WSR-WOOD", 1, "WSR-STONE", 1, "WSR-HARD_AGGREGATE", 4,
+                    "WSR-STABILIZED_FRAME", 8).getOrDefault(id, 0);
+            case "SURVIVAL" -> Map.of("WSR-RATION", 1, "WSR-HERB", 2, "WSR-STERILE_GEL", 3,
+                    "WSR-BIO_MEDIUM", 5).getOrDefault(id, 0);
+            case "METAL" -> Map.of("WSR-IRON", 1, "WSR-REFINED_ALLOY", 2, "WSR-REINFORCED_ALLOY", 3,
+                    "WSR-HIGH_DENSITY_ALLOY", 6, "WSR-METAL_PLATE", 1).getOrDefault(id, 0);
+            case "SIGNAL" -> Map.of("WSR-REDSTONE", 1, "WSR-COPPER_COIL", 2, "WSR-NEURAL_CIRCUIT", 4,
+                    "WSR-RESONANCE_COIL", 6).getOrDefault(id, 0);
+            case "SPECIAL" -> Map.of("WSR-MAGIC_CRYSTAL", 2, "WSR-PURIFY_CATALYST", 3,
+                    "WSR-PATTERN_RESIDUE", 5, "WSR-INTERRUPT_CORE", 8).getOrDefault(id, 0);
+            case "CORRUPTION_SAMPLE" -> Set.of("WSR-TISSUE", "WSR-TOXIN_SAMPLE", "WSR-THERMAL_SAMPLE",
+                    "WSR-HEMATIC_SAMPLE", "WSR-NEURAL_SAMPLE", "WSR-MUTATION_SHARD").contains(id) ? 1 : 0;
+            case "DISTINCT_MUTATION_SAMPLE" -> Set.of("WSR-TOXIN_SAMPLE", "WSR-THERMAL_SAMPLE",
+                    "WSR-HEMATIC_SAMPLE", "WSR-NEURAL_SAMPLE", "WSR-MUTATION_SHARD").contains(id) ? 1 : 0;
+            default -> 0;
+        };
+    }
+
+    private boolean proofPresent(Player player, String proof, int amount) {
+        RunSnapshot snapshot = runs.current().orElseThrow();
+        if (codex.countItem(player, proof) >= amount || snapshot.resources.getOrDefault(proof, 0) >= amount) return true;
+        if (snapshot.committedKeys.contains("proof:" + proof) || snapshot.committedKeys.contains(proof)) return true;
+        if (proof.endsWith("_ACTIVE") && snapshot.facility != null && snapshot.facility.active) {
+            return proof.substring(0, proof.length() - "_ACTIVE".length()).equals(snapshot.facility.id);
+        }
+        return false;
+    }
+
+    private int recipeFirstDay(ProductionContentCatalog.RecipeEntry recipe) {
+        ProductionContentCatalog.CatalogEntry output = production.itemsById().get(recipe.outputId());
+        if (output != null) return output.firstDay();
+        java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("D(\\d{1,2})").matcher(recipe.id());
+        return matcher.find() ? Math.min(50, Integer.parseInt(matcher.group(1))) : 1;
+    }
+
+    private Material productionRewardMaterial(ProductionContentCatalog.RecipeEntry recipe) {
+        ProductionContentCatalog.CatalogEntry output = production.itemsById().get(recipe.outputId());
+        if (output == null) return Material.BEACON;
+        Material material = Material.matchMaterial(output.displayMaterial());
+        return material == null || material.isAir() ? Material.PAPER : material;
+    }
+
+    private String productionName(String outputId) {
+        ProductionContentCatalog.CatalogEntry output = production.itemsById().get(outputId);
+        return output == null ? outputId : output.name();
+    }
+
+    private void returnCraftInput(Player player, ItemStack returned) {
+        ItemStack remaining = returned.clone();
+        for (int slot = 1; slot <= 35 && remaining.getAmount() > 0; slot++) {
+            ItemStack existing = player.getInventory().getItem(slot);
+            if (existing == null || existing.getType().isAir() || !existing.isSimilar(remaining)) continue;
+            int moved = Math.min(existing.getMaxStackSize() - existing.getAmount(), remaining.getAmount());
+            if (moved <= 0) continue;
+            existing.setAmount(existing.getAmount() + moved);
+            remaining.setAmount(remaining.getAmount() - moved);
+        }
+        for (int slot = 1; slot <= 35 && remaining.getAmount() > 0; slot++) {
+            ItemStack existing = player.getInventory().getItem(slot);
+            if (existing != null && !existing.getType().isAir()) continue;
+            ItemStack placed = remaining.clone();
+            int moved = Math.min(placed.getMaxStackSize(), remaining.getAmount());
+            placed.setAmount(moved);
+            player.getInventory().setItem(slot, placed);
+            remaining.setAmount(remaining.getAmount() - moved);
+        }
+        if (remaining.getAmount() > 0) throw new IllegalStateException("Craft 입력 반환 공간이 없습니다.");
     }
 
     private void showClock(Player player) {
@@ -488,7 +651,9 @@ public final class EconomyService implements Listener {
     }
 
     private static final class CraftHolder implements InventoryHolder {
-        private final UUID owner; private CraftHolder(UUID owner) { this.owner = owner; }
+        private final UUID owner;
+        private int selectedRecipeIndex;
+        private CraftHolder(UUID owner) { this.owner = owner; }
         @Override public Inventory getInventory() { return null; }
     }
     private static final class UnlockHolder implements InventoryHolder {

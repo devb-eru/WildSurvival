@@ -133,181 +133,181 @@
       "id": "WSR-PURIFY_CATALYST",
       "codexIndex": 22,
       "domain": "MATERIAL",
-      "displayMaterial": "T4"
+      "displayMaterial": "AMETHYST_SHARD"
     },
     {
       "id": "WSR-RIFT_POWDER",
       "codexIndex": 23,
       "domain": "MATERIAL",
-      "displayMaterial": "T4"
+      "displayMaterial": "GUNPOWDER"
     },
     {
       "id": "WSR-REFINED_MUTATION",
       "codexIndex": 24,
       "domain": "MATERIAL",
-      "displayMaterial": "T4"
+      "displayMaterial": "PAPER"
     },
     {
       "id": "WSR-STABLE_CORE",
       "codexIndex": 25,
       "domain": "MATERIAL",
-      "displayMaterial": "T5"
+      "displayMaterial": "HEART_OF_THE_SEA"
     },
     {
       "id": "WSR-PURIFY_MEDIUM",
       "codexIndex": 26,
       "domain": "MATERIAL",
-      "displayMaterial": "T5"
+      "displayMaterial": "SLIME_BALL"
     },
     {
       "id": "WSR-HARD_AGGREGATE",
       "codexIndex": 27,
       "domain": "MATERIAL",
-      "displayMaterial": "T4"
+      "displayMaterial": "DEEPSLATE"
     },
     {
       "id": "WSR-RESONANCE_COIL",
       "codexIndex": 28,
       "domain": "MATERIAL",
-      "displayMaterial": "T5"
+      "displayMaterial": "REDSTONE_TORCH"
     },
     {
       "id": "WSR-PATTERN_RESIDUE",
       "codexIndex": 29,
       "domain": "MATERIAL",
-      "displayMaterial": "T5"
+      "displayMaterial": "GUNPOWDER"
     },
     {
       "id": "WSR-HIGH_DENSITY_ALLOY",
       "codexIndex": 30,
       "domain": "MATERIAL",
-      "displayMaterial": "T5"
+      "displayMaterial": "NETHERITE_SCRAP"
     },
     {
       "id": "WSR-INTERRUPT_CORE",
       "codexIndex": 31,
       "domain": "MATERIAL",
-      "displayMaterial": "T6"
+      "displayMaterial": "HEART_OF_THE_SEA"
     },
     {
       "id": "WSR-POWER_MATRIX",
       "codexIndex": 32,
       "domain": "MATERIAL",
-      "displayMaterial": "T6"
+      "displayMaterial": "REDSTONE_TORCH"
     },
     {
       "id": "WSR-CALIBRATED_LENS",
       "codexIndex": 33,
       "domain": "MATERIAL",
-      "displayMaterial": "T6"
+      "displayMaterial": "AMETHYST_SHARD"
     },
     {
       "id": "WSR-PURIFY_MATRIX",
       "codexIndex": 34,
       "domain": "MATERIAL",
-      "displayMaterial": "T6"
+      "displayMaterial": "REDSTONE_TORCH"
     },
     {
       "id": "WSR-STABILIZED_FRAME",
       "codexIndex": 35,
       "domain": "MATERIAL",
-      "displayMaterial": "T6"
+      "displayMaterial": "NETHERITE_SCRAP"
     },
     {
       "id": "WSR-FINAL_SIGNAL_KEY",
       "codexIndex": 36,
       "domain": "MATERIAL",
-      "displayMaterial": "UNIQUE"
+      "displayMaterial": "HEART_OF_THE_SEA"
     },
     {
       "id": "WSR-HARDWOOD_PART",
       "codexIndex": 37,
       "domain": "MATERIAL",
-      "displayMaterial": "T1"
+      "displayMaterial": "PAPER"
     },
     {
       "id": "WSR-SINTERED_AGGREGATE",
       "codexIndex": 38,
       "domain": "MATERIAL",
-      "displayMaterial": "T1"
+      "displayMaterial": "DEEPSLATE"
     },
     {
       "id": "WSR-METAL_PLATE",
       "codexIndex": 39,
       "domain": "MATERIAL",
-      "displayMaterial": "T1"
+      "displayMaterial": "NETHERITE_SCRAP"
     },
     {
       "id": "WSR-COPPER_COIL",
       "codexIndex": 40,
       "domain": "MATERIAL",
-      "displayMaterial": "T2"
+      "displayMaterial": "REDSTONE_TORCH"
     },
     {
       "id": "WSR-REFINED_ALLOY",
       "codexIndex": 41,
       "domain": "MATERIAL",
-      "displayMaterial": "T2"
+      "displayMaterial": "NETHERITE_SCRAP"
     },
     {
       "id": "WSR-PRECISION_PART",
       "codexIndex": 42,
       "domain": "MATERIAL",
-      "displayMaterial": "T2"
+      "displayMaterial": "PAPER"
     },
     {
       "id": "WSR-CRUDE_PURIFY_CATALYST",
       "codexIndex": 43,
       "domain": "MATERIAL",
-      "displayMaterial": "T2"
+      "displayMaterial": "AMETHYST_SHARD"
     },
     {
       "id": "WSR-SIGNAL_LENS",
       "codexIndex": 44,
       "domain": "MATERIAL",
-      "displayMaterial": "T3"
+      "displayMaterial": "AMETHYST_SHARD"
     },
     {
       "id": "WSR-REINFORCED_CLOTH",
       "codexIndex": 45,
       "domain": "MATERIAL",
-      "displayMaterial": "T1"
+      "displayMaterial": "PAPER"
     },
     {
       "id": "WSR-STERILE_GEL",
       "codexIndex": 46,
       "domain": "MATERIAL",
-      "displayMaterial": "T3"
+      "displayMaterial": "SLIME_BALL"
     },
     {
       "id": "WSR-ELASTIC_WEAVE",
       "codexIndex": 47,
       "domain": "MATERIAL",
-      "displayMaterial": "T3"
+      "displayMaterial": "PAPER"
     },
     {
       "id": "WSR-REINFORCED_ALLOY",
       "codexIndex": 48,
       "domain": "MATERIAL",
-      "displayMaterial": "T3"
+      "displayMaterial": "NETHERITE_SCRAP"
     },
     {
       "id": "WSR-NEURAL_CIRCUIT",
       "codexIndex": 49,
       "domain": "MATERIAL",
-      "displayMaterial": "T3"
+      "displayMaterial": "REDSTONE_TORCH"
     },
     {
       "id": "WSR-BIO_MEDIUM",
       "codexIndex": 50,
       "domain": "MATERIAL",
-      "displayMaterial": "T4"
+      "displayMaterial": "SLIME_BALL"
     },
     {
       "id": "WSR-STATUS_PLATE",
       "codexIndex": 51,
       "domain": "MATERIAL",
-      "displayMaterial": "T3"
+      "displayMaterial": "NETHERITE_SCRAP"
     },
     {
       "id": "WSR-RESONANT_RESIDUE",

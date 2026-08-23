@@ -1,6 +1,7 @@
 package com.lsc.corp.wsplugin.content;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,10 @@ class ProductionBundleValidatorTest {
         assertEquals(66, result.verifiedFileCount());
         assertEquals(334, result.catalog().codexEntries().size());
         assertEquals(315, result.catalog().recipes().size());
+        assertTrue(result.catalog().recipes().stream().allMatch(recipe -> !recipe.ingredients().isEmpty()));
+        assertTrue(result.catalog().recipes().stream().noneMatch(recipe -> recipe.layout().contains("AUTHORITY_DEFINED")));
+        assertTrue(result.catalog().recipes().stream().flatMap(recipe -> recipe.ingredients().stream())
+                .filter(ingredient -> "PROOF".equals(ingredient.kind())).allMatch(ingredient -> !ingredient.consume()));
         assertEquals(214, result.catalog().codexEntries().stream().filter(ProductionContentCatalog.CatalogEntry::equipment).count());
         assertEquals(108, result.catalog().codexEntries().stream().filter(entry -> "MAIN_WEAPON".equals(entry.equipmentSlot())).count());
         assertEquals(91, result.counts().get("enemies") + result.counts().get("bosses") + result.counts().get("support"));

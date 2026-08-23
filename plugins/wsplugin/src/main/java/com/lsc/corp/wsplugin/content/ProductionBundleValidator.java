@@ -140,9 +140,21 @@ public final class ProductionBundleValidator {
             if (!recipeIds.add(id)) throw new ContentValidationException("Duplicate recipe ID " + id);
             List<String> raw = new ArrayList<>();
             if (record.has("raw")) record.getAsJsonArray("raw").forEach(value -> raw.add(value.getAsString()));
+            List<ProductionContentCatalog.IngredientEntry> ingredients = new ArrayList<>();
+            JsonArray ingredientArray = record.getAsJsonArray("ingredients");
+            if (ingredientArray == null || ingredientArray.isEmpty()) {
+                throw new ContentValidationException("Executable recipe inputs missing " + id);
+            }
+            for (JsonElement value : ingredientArray) {
+                JsonObject ingredient = value.getAsJsonObject();
+                ingredients.add(new ProductionContentCatalog.IngredientEntry(requiredInt(ingredient, "slot"),
+                        requiredString(ingredient, "kind"), requiredString(ingredient, "key"),
+                        requiredInt(ingredient, "amount"), ingredient.get("consume").getAsBoolean()));
+            }
             ProductionContentCatalog.RecipeEntry recipe = new ProductionContentCatalog.RecipeEntry(id,
-                    requiredString(record, "outputId"), optionalString(record, "recipeType", "UNKNOWN"),
-                    optionalString(record, "inputAuthority", "UNKNOWN"), optionalString(record, "layout", "UNKNOWN"), List.copyOf(raw));
+                    requiredString(record, "outputId"), requiredInt(record, "outputAmount"),
+                    optionalString(record, "recipeType", "UNKNOWN"), optionalString(record, "inputAuthority", "UNKNOWN"),
+                    optionalString(record, "layout", "UNKNOWN"), List.copyOf(ingredients), List.copyOf(raw));
             recipes.add(recipe);
             byOutput.computeIfAbsent(recipe.outputId(), ignored -> new ArrayList<>()).add(recipe);
         }
@@ -157,6 +169,30 @@ public final class ProductionBundleValidator {
             String output = recipe.outputId();
             if (!knownOutputs.contains(output) && !output.matches("FAC-[SR][0-9]{2}@[A-Z0-9_]+")) {
                 throw new ContentValidationException("Unknown recipe output " + recipe.id() + " -> " + output);
+            }
+            if (recipe.outputAmount() < 1 || recipe.outputAmount() > 64) {
+                throw new ContentValidationException("Invalid recipe output amount " + recipe.id());
+            }
+            if (!Set.of("ORDERED_3X3", "CALL_FRAME", "EQUIPMENT_FRAME", "FACILITY_FRAME", "REBUILD_FRAME").contains(recipe.layout())) {
+                throw new ContentValidationException("Unresolved recipe layout " + recipe.id() + " -> " + recipe.layout());
+            }
+            Set<Integer> slots = new HashSet<>();
+            for (ProductionContentCatalog.IngredientEntry ingredient : recipe.ingredients()) {
+                if (ingredient.slot() < 0 || ingredient.slot() > 8 || !slots.add(ingredient.slot())) {
+                    throw new ContentValidationException("Invalid/duplicate ingredient slot " + recipe.id() + " -> " + ingredient.slot());
+                }
+                if (ingredient.amount() < 1 || ingredient.amount() > 64 || ingredient.key().isBlank()) {
+                    throw new ContentValidationException("Invalid ingredient " + recipe.id() + " -> " + ingredient);
+                }
+                if (!Set.of("ITEM", "TAG", "VANILLA", "PROOF").contains(ingredient.kind())) {
+                    throw new ContentValidationException("Unknown ingredient kind " + recipe.id() + " -> " + ingredient.kind());
+                }
+                if ("ITEM".equals(ingredient.kind()) && !knownOutputs.contains(ingredient.key())) {
+                    throw new ContentValidationException("Unknown recipe input " + recipe.id() + " -> " + ingredient.key());
+                }
+                if ("PROOF".equals(ingredient.kind()) && ingredient.consume()) {
+                    throw new ContentValidationException("Proof cannot be consumed " + recipe.id() + " -> " + ingredient.key());
+                }
             }
         }
         Set<String> lootIds = ids(reader, "loot/season1-loot.json");

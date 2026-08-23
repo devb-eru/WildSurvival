@@ -150,7 +150,7 @@
       "codexIndex": 46,
       "name": "멸균 젤",
       "firstDay": 11,
-      "displayMaterial": "T3",
+      "displayMaterial": "SLIME_BALL",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-STERILE_GEL",
@@ -169,7 +169,7 @@
       "codexIndex": 47,
       "name": "탄성 직조",
       "firstDay": 12,
-      "displayMaterial": "T3",
+      "displayMaterial": "PAPER",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-ELASTIC_WEAVE",
@@ -188,7 +188,7 @@
       "codexIndex": 48,
       "name": "강화 합금",
       "firstDay": 14,
-      "displayMaterial": "T3",
+      "displayMaterial": "NETHERITE_SCRAP",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-REINFORCED_ALLOY",
@@ -207,7 +207,7 @@
       "codexIndex": 49,
       "name": "신경 회로",
       "firstDay": 15,
-      "displayMaterial": "T3",
+      "displayMaterial": "REDSTONE_TORCH",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-NEURAL_CIRCUIT",
@@ -226,7 +226,7 @@
       "codexIndex": 50,
       "name": "생체 매질",
       "firstDay": 16,
-      "displayMaterial": "T4",
+      "displayMaterial": "SLIME_BALL",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-BIO_MEDIUM",
@@ -245,7 +245,7 @@
       "codexIndex": 51,
       "name": "상태 분류판",
       "firstDay": 13,
-      "displayMaterial": "T3",
+      "displayMaterial": "NETHERITE_SCRAP",
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "raw": [
         "WSR-STATUS_PLATE",

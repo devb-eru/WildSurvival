@@ -66,11 +66,152 @@ function Korean-Name([object[]]$Cells, [string]$Fallback) {
     $candidate = $Cells | Where-Object { $_ -match '[가-힣]' -and $_ -notmatch '^(본 문서|EQUIP-|RESOURCE-|RECIPE-|ENEMY-)' } | Select-Object -First 1
     return $(if ($candidate) { $candidate } else { $Fallback })
 }
+function Fallback-Material([string]$Id) {
+    if ($Id -match '(ALLOY|PLATE|FRAME)') { return 'NETHERITE_SCRAP' }
+    if ($Id -match '(COIL|CIRCUIT|MATRIX)') { return 'REDSTONE_TORCH' }
+    if ($Id -match '(CATALYST|CRYSTAL|LENS)') { return 'AMETHYST_SHARD' }
+    if ($Id -match '(POWDER|RESIDUE)') { return 'GUNPOWDER' }
+    if ($Id -match '(CORE|KEY)') { return 'HEART_OF_THE_SEA' }
+    if ($Id -match '(MEDIUM|GEL|TISSUE)') { return 'SLIME_BALL' }
+    if ($Id -match '(AGGREGATE|STONE)') { return 'DEEPSLATE' }
+    return 'PAPER'
+}
 function Domain([string]$Name, [object[]]$Records) {
     return [ordered]@{ schemaVersion = 2; contentRevision = 'ws-content-r2'; domain = $Name; records = @($Records) }
 }
 function Raw-Record([string]$Id, [string]$Source, [object[]]$Cells) {
     return [ordered]@{ id = $Id; sourceDocumentId = $Source; enabled = $true; raw = @($Cells) }
+}
+function Recipe-Ingredient([int]$Slot, [string]$Key, [int]$Amount, [bool]$Consume = $true) {
+    $kind = 'ITEM'
+    if ($Key.StartsWith('TAG:')) { $kind = 'TAG'; $Key = $Key.Substring(4) }
+    elseif ($Key.StartsWith('VANILLA:')) { $kind = 'VANILLA'; $Key = $Key.Substring(8) }
+    elseif ($Key.StartsWith('PROOF:')) { $kind = 'PROOF'; $Key = $Key.Substring(6); $Consume = $false }
+    return [ordered]@{ slot = $Slot; kind = $kind; key = $Key; amount = $Amount; consume = $Consume }
+}
+function Ingredients-FromSpec([string]$Spec, [int[]]$Slots = @(0,1,2,3,4,5,6,7,8)) {
+    $result = [Collections.Generic.List[object]]::new()
+    $parts = @($Spec.Split(';', [StringSplitOptions]::RemoveEmptyEntries))
+    if ($parts.Count -gt $Slots.Count) { throw "Recipe input exceeds 3x3: $Spec" }
+    for ($index = 0; $index -lt $parts.Count; $index++) {
+        $pair = $parts[$index].Trim().Split('*')
+        if ($pair.Count -ne 2) { throw "Invalid recipe input token $($parts[$index])" }
+        $result.Add((Recipe-Ingredient $Slots[$index] $pair[0] ([int]$pair[1])))
+    }
+    return @($result)
+}
+function Equipment-ClassCode([string]$Id) {
+    foreach ($code in @('SW','AX','BO','CB','DG','BL','ST','PK','TR')) {
+        if ($Id -match "(^|-)$code(-|$)") { return $code }
+    }
+    return ''
+}
+function Base-WeaponId([string]$Code) {
+    return @{SW='EQL-W01';AX='EQL-W02';BO='EQL-W03';CB='EQL-W04';DG='EQL-W05';BL='EQL-W06';ST='EQL-W07';PK='EQL-W08';TR='EQL-W09'}[$Code]
+}
+function Previous-EquipmentId([string]$OutputId) {
+    $code = Equipment-ClassCode $OutputId
+    if ($code) {
+        if ($OutputId -match '^EQD20-') { return "EQL-$code-R01" }
+        if ($OutputId -match '-U\d+$') { return Base-WeaponId $code }
+        if ($OutputId -match '-R\d+$') { return ($OutputId -replace '-R(\d+)$','-U$1') }
+        if ($OutputId -match '-E21$') { return "EQD20-$code-R01" }
+        if ($OutputId -match '-L31$') { return "EQD50-$code-E21" }
+        if ($OutputId -match '-A41$') { return "EQD50-$code-L31" }
+        if ($OutputId -match 'B(10|20|30|40)-W01-') { return Base-WeaponId $code }
+        if ($OutputId -match '^EQD20-(EP|LG)-W01-') { return "EQD20-$code-R01" }
+        if ($OutputId -match '^EQD50-') { return "EQD50-$code-E21" }
+        if ($OutputId -match '^EQD20-') { return Base-WeaponId $code }
+        return Base-WeaponId $code
+    }
+    if ($OutputId -match '^EQD20-') {
+        if ($OutputId -match 'UA') { return 'EQL-UA-R01' }
+        if ($OutputId -match 'OH') { return 'EQL-OH-R01' }
+        if ($OutputId -match 'CH') { return 'EQL-CH-R01' }
+        if ($OutputId -match 'AC') { return 'EQL-AC-R01' }
+    }
+    if ($OutputId -match '-HEAD$') { return 'EQL-AR-C01' }
+    if ($OutputId -match '-CHEST$' -or $OutputId -match '-AR\d+$') { return 'EQL-AR-C02' }
+    if ($OutputId -match '-LEGS$') { return 'EQL-AR-C03' }
+    if ($OutputId -match '-FEET$') { return 'EQL-AR-C04' }
+    if ($OutputId -match '(^|-)OH') { return 'EQL-OH-C01' }
+    if ($OutputId -match '(^|-)CH') { return 'EQL-CH-C01' }
+    if ($OutputId -match 'UA') { return 'EQL-UA-U01' }
+    return 'EQL-AC-C01'
+}
+
+$recipeExact = @{
+    'WSRCP-P01'='WSR-WOOD*3;WSR-FIBER*1'; 'WSRCP-P02'='WSR-STONE*4;WSR-COAL*1';
+    'WSRCP-P03'='WSR-IRON*3;WSR-COAL*1'; 'WSRCP-P04'='WSR-COPPER*3;WSR-REDSTONE*1';
+    'WSRCP-P05'='WSR-IRON*3;WSR-COPPER*2;WSR-COAL*2'; 'WSRCP-P06'='WSR-METAL_PLATE*1;WSR-COPPER_COIL*1;WSR-REDSTONE*2';
+    'WSRCP-P07'='WSR-TISSUE*2;WSR-GOLD*1;WSR-COAL*2'; 'WSRCP-P08'='WSR-AMETHYST*1;WSR-TISSUE*2;WSR-COAL*2';
+    'WSRCP-P09'='WSR-MAGIC_CRYSTAL*1;WSR-GOLD*1;WSR-COPPER*2'; 'WSRCP-P10'='WSR-FIBER*3;WSR-LEATHER*1';
+    'WSRCP-D20-P01'='WSR-HERB*3;WSR-TISSUE*1;WSR-COAL*1'; 'WSRCP-D20-P02'='WSR-ELASTIC_FIBER*3;WSR-FIBER*2';
+    'WSRCP-D20-P03'='WSR-IRON*4;WSR-COPPER*2;WSR-GOLD*1;WSR-COAL*2'; 'WSRCP-D20-P04'='WSR-NEURAL_SAMPLE*2;WSR-REDSTONE*2;WSR-COPPER*2';
+    'WSRCP-D20-P05'='WSR-VITAL_TISSUE*2;WSR-STERILE_GEL*2;WSR-MAGIC_CRYSTAL*1'; 'WSRCP-D20-P06'='WSR-TOXIN_SAMPLE*1;WSR-THERMAL_SAMPLE*1;WSR-HEMATIC_SAMPLE*1;WSR-REDSTONE*1';
+    'WSRCP-D50-P01'='VANILLA:WATER_BUCKET*1;VANILLA:WATER_BUCKET*1;WSR-AMETHYST*1;TAG:METAL*2;TAG:CORRUPTION_SAMPLE*1';
+    'WSRCP-D50-P02'='WSR-MUTATION_SHARD*3;WSR-REDSTONE*2;WSR-COAL*1'; 'WSRCP-D50-P03'='TAG:DISTINCT_MUTATION_SAMPLE*1;TAG:DISTINCT_MUTATION_SAMPLE*1;TAG:DISTINCT_MUTATION_SAMPLE*1;WSR-PURIFY_CATALYST*1';
+    'WSRCP-D50-P04'='WSR-RIFT_POWDER*4;WSR-PURIFY_CATALYST*2;WSR-MAGIC_CRYSTAL*2;TAG:METAL*2';
+    'WSRCP-D50-P05'='WSR-PURIFY_CATALYST*3;WSR-RIFT_POWDER*2;WSR-BIO_MEDIUM*1'; 'WSRCP-D50-P06'='WSR-HARD_AGGREGATE*4;WSR-STONE*4;WSR-COAL*2';
+    'WSRCP-D50-P07'='WSR-REDSTONE*3;WSR-COPPER*3;WSR-MAGIC_CRYSTAL*2'; 'WSRCP-D50-P08'='PROOF:VALID_OBSERVATION*3;WSR-RESONANT_RESIDUE*1';
+    'WSRCP-D50-P09'='WSR-REINFORCED_ALLOY*3;WSR-HARD_AGGREGATE*3;WSR-COAL*3'; 'WSRCP-D50-P10'='WSR-RESONANCE_COIL*2;WSR-PATTERN_RESIDUE*3;PROOF:INTERRUPT_METHOD*3';
+    'WSRCP-D50-P11'='WSR-RESONANCE_COIL*3;WSR-MAGIC_CRYSTAL*3;PROOF:WSP-REBUILD-PART-B*1';
+    'WSRCP-D50-P12'='WSR-AMETHYST*4;WSR-PRECISION_PART*2;PROOF:WSP-REBUILD-PART-C*1';
+    'WSRCP-D50-P13'='WSR-PURIFY_MEDIUM*3;WSR-PURIFY_CATALYST*2;PROOF:THREE_CATEGORY_RECORD*1';
+    'WSRCP-D50-P14'='WSR-HIGH_DENSITY_ALLOY*3;WSR-HARD_AGGREGATE*4;PROOF:WSP-REBUILD-PART-A*1';
+    'WSRCP-S01'='WSR-FIBER*2;WSR-LEATHER*1'; 'WSRCP-S02'='WSR-IRON*1;WSR-WOOD*1;WSR-FIBER*1';
+    'WSRCP-S03'='WSR-WOOD*1;WSR-STONE*1;WSR-FIBER*1'; 'WSRCP-S04'='WSR-IRON*2;WSR-WOOD*1;WSR-FIBER*1';
+    'WSRCP-S05'='WSR-CRUDE_PURIFY_CATALYST*1;WSR-FIBER*1'; 'WSRCP-S06'='WSR-RATION*1;WSR-GOLD*1;WSR-TISSUE*1';
+    'WSRCP-S07'='WSR-REINFORCED_CLOTH*1;WSR-METAL_PLATE*1'; 'WSRCP-S08'='WSR-CRUDE_PURIFY_CATALYST*2;WSR-REDSTONE*1';
+    'WSRCP-S09'='WSR-RATION*1;WSR-REINFORCED_CLOTH*1';
+    'WSRCP-D20-S01'='WSR-HERB*2;WSR-TOXIN_SAMPLE*1;WSR-STERILE_GEL*1'; 'WSRCP-D20-S02'='WSR-HERB*1;WSR-THERMAL_SAMPLE*1;WSR-STERILE_GEL*1';
+    'WSRCP-D20-S03'='WSR-FIBER*2;WSR-HERB*1;WSR-HEMATIC_SAMPLE*1'; 'WSRCP-D20-S04'='WSR-NEURAL_SAMPLE*1;WSR-GOLD*1;WSR-STERILE_GEL*1';
+    'WSRCP-D20-S05'='WSR-ELASTIC_WEAVE*1;WSR-REINFORCED_ALLOY*1'; 'WSRCP-D20-S06'='WSR-BIO_MEDIUM*1;WSR-HERB*1';
+    'WSRCP-D50-S01'='WSI-AMMO-ARROW_BUNDLE*1;WSR-PURIFY_CATALYST*1;WSR-REFINED_MUTATION*1';
+    'WSRCP-D50-S02'='WSI-AMMO-PIERCING_BOLT_BUNDLE*1;WSR-RESONANCE_COIL*1;WSR-PATTERN_RESIDUE*1';
+    'WSRCP-D50-S03'='WSI-AMMO-ARROW_BUNDLE*1;WSR-POWER_MATRIX*1;WSR-STERILE_GEL*2';
+    'WSRCP-F01'='WSR-WOOD*4;WSR-STONE*2;WSR-FIBER*2'; 'WSRCP-F02'='WSR-WOOD*6;WSR-STONE*4;WSR-IRON*2';
+    'WSRCP-F03'='WSR-STONE*8;WSR-COAL*2;WSR-IRON*1'; 'WSRCP-F04'='WSR-WOOD*8;WSR-IRON*2';
+    'WSRCP-F05'='WSR-WOOD*4;WSR-STONE*4;WSR-IRON*2;WSR-LEATHER*2'; 'WSRCP-F06'='WSR-WOOD*4;WSR-STONE*2;WSR-IRON*2';
+    'WSRCP-F07'='WSR-WOOD*1;WSR-IRON*2;WSR-COPPER*4;WSR-REDSTONE*4';
+    'WSRCP-F08'='WSR-PRECISION_PART*1;WSR-REINFORCED_CLOTH*1;WSR-IRON*1';
+    'WSRCP-F09'='WSR-CRUDE_PURIFY_CATALYST*2;WSR-MAGIC_CRYSTAL*1;WSR-COPPER_COIL*2;WSR-METAL_PLATE*2';
+    'WSRCP-F10'='WSR-METAL_PLATE*2;WSR-REDSTONE*2;WSR-SIGNAL_LENS*1'; 'WSRCP-F11'='VANILLA:BOOK*1;WSR-COPPER_COIL*1;WSR-REDSTONE*2';
+    'WSRCP-F12'='WSR-WOOD*2;WSR-REINFORCED_CLOTH*2'; 'WSRCP-F13'='WSR-METAL_PLATE*2;WSR-COPPER_COIL*1';
+    'WSRCP-F14'='WSR-METAL_PLATE*3;WSR-HARDWOOD_PART*2';
+    'WSRCP-G01'='WSR-IRON*1;WSR-COPPER*2;WSR-REDSTONE*2'; 'WSRCP-G02'='WSR-IRON*4;WSR-COPPER*8;WSR-GOLD*2;WSR-REDSTONE*8;WSR-MAGIC_CRYSTAL*1;WSR-TISSUE*2';
+    'WSRCP-G03'='WSI-PORTABLE-SIGNAL_STAKE*3;WSR-BOSS_SIGNAL_CORE*1';
+    'WSRCP-D20-CALL'='WSR-BIO_MEDIUM*2;WSR-NEURAL_CIRCUIT*2;WSR-SIGNAL_LENS*2;WSR-REINFORCED_ALLOY*3;WSR-STATUS_PLATE*1;PROOF:WSP-REBUILD-PART-A*1;PROOF:WSP-BOSS-D10-CORE*1';
+    'WSRCP-D30-CALL'='WSR-STABLE_CORE*2;WSR-PURIFY_MEDIUM*4;WSR-REFINED_MUTATION*3;WSR-SIGNAL_LENS*2';
+    'WSRCP-D40-CALL'='WSR-INTERRUPT_CORE*2;WSR-HIGH_DENSITY_ALLOY*4;WSR-PATTERN_RESIDUE*6;WSR-RESONANCE_COIL*4';
+    'WSRCP-FINAL-KEY'='WSR-STABILIZED_FRAME*2;WSR-POWER_MATRIX*2;WSR-CALIBRATED_LENS*2;WSR-PURIFY_MATRIX*2';
+    'WSRCP-R01'='WSR-STABILIZED_FRAME*12;WSR-HARD_AGGREGATE*16;PROOF:WSP-REBUILD-PART-A*1';
+    'WSRCP-R02'='WSR-POWER_MATRIX*6;WSR-RESONANCE_COIL*8;PROOF:WSP-REBUILD-PART-B*1';
+    'WSRCP-R03'='WSR-CALIBRATED_LENS*4;WSR-PATTERN_RESIDUE*6;PROOF:WSP-REBUILD-PART-C*1';
+    'WSRCP-R04'='WSR-PURIFY_MATRIX*6;WSR-PURIFY_CATALYST*10;PROOF:WSP-REBUILD-PART-D*1';
+    'WSRCP-R05'='WSR-HIGH_DENSITY_ALLOY*6;WSR-CALIBRATED_LENS*3;WSR-RESONANCE_COIL*6';
+    'WSRCP-R06'='PROOF:FAC-R01_READY*1;PROOF:FAC-R02_READY*1;PROOF:FAC-R03_READY*1;PROOF:FAC-R04_READY*1;PROOF:FAC-R05_READY*1;PROOF:WSR-FINAL_SIGNAL_KEY*1';
+    'WSRCP-D20-F01'='WSR-WOOD*5;WSR-STONE*3;WSR-IRON*3;WSR-HERB*3';
+    'WSRCP-D20-F02'='WSR-WOOD*8;WSR-STONE*6;WSR-COPPER*6;WSR-REDSTONE*6;WSR-MAGIC_CRYSTAL*1';
+    'WSRCP-D20-F03'='WSR-WOOD*8;WSR-STONE*6;WSR-IRON*8;WSR-HERB*8;WSR-STERILE_GEL*4';
+    'WSRCP-D20-F04'='WSR-WOOD*6;WSR-STONE*8;WSR-IRON*5;WSR-REDSTONE*4';
+    'WSRCP-D20-F05'='WSR-REINFORCED_ALLOY*4;WSR-REDSTONE*8;WSR-MAGIC_CRYSTAL*3;WSR-GOLD*4';
+    'WSRCP-D20-F06'='PROOF:FAC-S06_ACTIVE*1;WSR-NEURAL_CIRCUIT*2;WSR-STATUS_PLATE*1';
+    'WSRCP-W01'='WSR-METAL_PLATE*2;WSR-HARDWOOD_PART*1'; 'WSRCP-W02'='WSR-METAL_PLATE*3;WSR-HARDWOOD_PART*1';
+    'WSRCP-W03'='WSR-HARDWOOD_PART*2;WSR-REINFORCED_CLOTH*2'; 'WSRCP-W04'='WSR-METAL_PLATE*1;WSR-HARDWOOD_PART*2;WSR-REINFORCED_CLOTH*1;WSR-COPPER_COIL*1';
+    'WSRCP-W05'='WSR-METAL_PLATE*2;WSR-REINFORCED_CLOTH*1'; 'WSRCP-W06'='WSR-METAL_PLATE*3;WSR-HARDWOOD_PART*1;WSR-SINTERED_AGGREGATE*1';
+    'WSRCP-W07'='WSR-HARDWOOD_PART*2;WSR-COAL*2;WSR-REDSTONE*1'; 'WSRCP-W08'='WSR-METAL_PLATE*3;WSR-HARDWOOD_PART*1';
+    'WSRCP-W09'='WSR-METAL_PLATE*3;WSR-COPPER_COIL*1;WSR-REINFORCED_CLOTH*1';
+    'WSRCP-E01'='WSR-METAL_PLATE*1;WSR-REINFORCED_CLOTH*1'; 'WSRCP-E02'='WSR-METAL_PLATE*3;WSR-REINFORCED_CLOTH*2';
+    'WSRCP-E03'='WSR-METAL_PLATE*2;WSR-REINFORCED_CLOTH*2'; 'WSRCP-E04'='WSR-METAL_PLATE*1;WSR-REINFORCED_CLOTH*1';
+    'WSRCP-E05'='WSR-METAL_PLATE*2;WSR-HARDWOOD_PART*2'; 'WSRCP-E06'='WSR-REINFORCED_CLOTH*2;WSR-HARDWOOD_PART*1';
+    'WSRCP-E07'='WSR-COPPER_COIL*1;WSR-REDSTONE*1;WSR-IRON*1'
+}
+$recipeAmounts = @{
+    'WSRCP-P01'=2;'WSRCP-P02'=2;'WSRCP-P03'=2;'WSRCP-P04'=2;'WSRCP-P05'=2;'WSRCP-P07'=2;'WSRCP-P10'=2;
+    'WSRCP-D20-P01'=2;'WSRCP-D20-P02'=2;'WSRCP-D20-P03'=2;'WSRCP-D20-S01'=2;'WSRCP-D20-S02'=2;'WSRCP-D20-S03'=2;
+    'WSRCP-D50-P01'=2;'WSRCP-D50-P02'=2;'WSRCP-D50-P06'=2;'WSRCP-S01'=2;'WSRCP-S03'=16;'WSRCP-S04'=8;'WSRCP-S05'=2;'WSRCP-S09'=2;
+    'WSRCP-D50-S01'=8;'WSRCP-D50-S02'=8;'WSRCP-D50-S03'=4;'WSRCP-F14'=4;'WSRCP-R05'=3
 }
 
 $materialRows = Read-TableRows '기획\04 장비와 경제\MATERIAL-LIST Season 1 재료 목록 기획서.md'
@@ -82,6 +223,7 @@ $personalAugmentRows = Read-TableRows '기획\02 플레이어 성장\AUGMENT-PER
 $partyAugmentRows = Read-TableRows '기획\02 플레이어 성장\AUGMENT-PARTY-LIST Season 1 파티 증강 목록 기획서.md'
 $entityRows = Read-TableRows '기획\06 사건과 적\ENTITY-LIST Season 1 엔티티 목록 기획서.md'
 $facilityRows = Read-TableRows '기획\05 세계와 생존\FACILITY 플레이어 시설 목록 기획서.md'
+$facilityDataRows = Read-TableRows '기획\05 세계와 생존\FACILITY-DATA Day 11-50 시설 실행 데이터 기획서.md'
 $lootRows = Read-TableRows '기획\04 장비와 경제\LOOT-LIST Season 1 획득·드롭 목록 기획서.md'
 
 $materialCodex = [ordered]@{}
@@ -94,11 +236,13 @@ $materialMetadata = Find-IdRows $materialRows '^WS[RP]-[A-Z0-9_-]+$'
 $materials = foreach ($entry in $materialCodex.GetEnumerator()) {
     $cells = $materialMetadata[$entry.Key]
     $firstDay = @($cells | Where-Object { $_ -match '^\d{1,2}$' } | ForEach-Object { [int]$_ } | Where-Object { $_ -le 50 } | Select-Object -First 1)
+    $displayMaterial = First-Material $cells ''
+    if ($displayMaterial -match '^T\d$' -or $displayMaterial -eq 'UNIQUE') { $displayMaterial = Fallback-Material $entry.Key }
     [ordered]@{
         id = $entry.Key; sourceDocumentId = 'MATERIAL-LIST-001'; enabled = $true
         codexIndex = $entry.Value; name = Korean-Name $cells $entry.Key
         firstDay = $(if ($firstDay.Count) { $firstDay[0] } else { 1 })
-        displayMaterial = First-Material $cells ''; ledgerScope = $(if ($entry.Key.StartsWith('WSP-')) { 'RUN_PROOF' } else { 'PERSONAL_THEN_PUBLIC' })
+        displayMaterial = $displayMaterial; ledgerScope = $(if ($entry.Key.StartsWith('WSP-')) { 'RUN_PROOF' } else { 'PERSONAL_THEN_PUBLIC' })
         raw = @($cells)
     }
 }
@@ -137,12 +281,70 @@ $recipesById = Find-IdRows $recipeRows '^WSRCP-[A-Z0-9_-]+$'
 $recipes = foreach ($entry in $recipesById.GetEnumerator()) {
     $cells = $entry.Value
     $idIndex = [Array]::IndexOf($cells, $entry.Key)
+    $outputId = $(if ($idIndex + 1 -lt $cells.Count) { $cells[$idIndex + 1] } else { 'UNRESOLVED' })
+    $recipeType = $(if ($idIndex + 2 -lt $cells.Count) { $cells[$idIndex + 2] } else { 'UNRESOLVED' })
+    $layout = 'ORDERED_3X3'
+    $ingredients = @()
+    if ($recipeExact.ContainsKey($entry.Key)) {
+        $ingredients = @(Ingredients-FromSpec $recipeExact[$entry.Key])
+        if ($recipeType -eq 'BOSS_CALL') { $layout = 'CALL_FRAME' }
+        elseif ($recipeType -eq 'EQUIPMENT_FORGE') { $layout = 'EQUIPMENT_FRAME' }
+        elseif ($recipeType -eq 'FACILITY_KIT') { $layout = 'FACILITY_FRAME' }
+        elseif ($recipeType -eq 'VIRTUAL_BUILD') { $layout = 'REBUILD_FRAME' }
+    } elseif ($recipeType -eq 'FACILITY_KIT') {
+        $layout = 'FACILITY_FRAME'
+        $facilityId = 'FAC-' + ($outputId -replace '^WSI-FAC-','' -replace '-KIT$','')
+        $profile = 'PRODUCTION'
+        $facilityRow = (Find-IdRows $facilityDataRows ([regex]::Escape($facilityId))).GetEnumerator() | Select-Object -First 1
+        if ($facilityRow -and $facilityRow.Value.Count -gt 1) { $profile = $facilityRow.Value[1] }
+        $cost = switch ($profile) {
+            'RESEARCH' {@(10,2,8,12,2)} 'SURVIVAL' {@(10,8,8,4,2)}
+            'LOGISTICS' {@(14,2,10,10,0)} 'DEFENSE' {@(8,2,12,4,0)}
+            default {@(12,2,10,4,0)}
+        }
+        $tags = @('CONSTRUCTION','SURVIVAL','METAL','SIGNAL','SPECIAL')
+        $slots = @(0,2,4,6,8)
+        $built = [Collections.Generic.List[object]]::new()
+        for ($i=0; $i -lt 5; $i++) { if ($cost[$i] -gt 0) { $built.Add((Recipe-Ingredient $slots[$i] ("TAG:"+$tags[$i]) $cost[$i])) } }
+        $ingredients = @($built)
+    } elseif ($recipeType -eq 'UTILITY_FORGE') {
+        $layout = 'EQUIPMENT_FRAME'
+        if ($entry.Key -match '^WSRCP-UT-(RI|RS|HD|RC)-(PICKAXE|AXE|SHOVEL|HOE)$') {
+            $tier = $Matches[1]; $tool = $Matches[2]; $lower = $tool.ToLowerInvariant()
+            $spec = switch ($tier) {
+                'RI' { "VANILLA:IRON_$($tool)*1;WSR-REFINED_ALLOY*3;WSR-HARDWOOD_PART*2" }
+                'RS' { "EQL-UT-RI-$tool*1;WSR-PURIFY_CATALYST*2;WSR-REINFORCED_ALLOY*3;WSR-MAGIC_CRYSTAL*2" }
+                'HD' { "EQL-UT-RS-$tool*1;WSR-HARD_AGGREGATE*4;WSR-REFINED_MUTATION*2;WSR-STABLE_CORE*1" }
+                default {
+                    $special = @{PICKAXE='WSR-CALIBRATED_LENS*1';AXE='WSR-RESONANCE_COIL*2';SHOVEL='WSR-PURIFY_MATRIX*1';HOE='WSR-BIO_MEDIUM*3'}[$tool]
+                    "EQL-UT-HD-$tool*1;WSR-POWER_MATRIX*1;WSR-HIGH_DENSITY_ALLOY*3;$special"
+                }
+            }
+            $ingredients = @(Ingredients-FromSpec $spec @(4,1,3,5,7,0,2,6,8))
+        }
+    } elseif ($recipeType -eq 'EQUIPMENT_FORGE') {
+        $layout = 'EQUIPMENT_FRAME'
+        $base = Previous-EquipmentId $outputId
+        $spec = if ($outputId -match '-E21$') { "$base*1;WSR-REINFORCED_ALLOY*14;WSR-NEURAL_CIRCUIT*8;WSR-PURIFY_CATALYST*8" }
+            elseif ($outputId -match '-L31$') { "$base*1;WSR-HIGH_DENSITY_ALLOY*24;WSR-RESONANCE_COIL*16;WSR-PATTERN_RESIDUE*14" }
+            elseif ($outputId -match '-A41$') { "$base*1;WSR-HIGH_DENSITY_ALLOY*38;WSR-RESONANCE_COIL*28;WSR-INTERRUPT_CORE*28" }
+            elseif ($outputId -match '^EQD50-B(30|40)-') { "$base*1;WSR-PATTERN_RESIDUE*8;WSR-HIGH_DENSITY_ALLOY*8;WSR-NEURAL_RESIDUE*3" }
+            elseif ($outputId -match '^EQD50-') { "$base*1;WSR-PURIFY_CATALYST*8;WSR-REINFORCED_ALLOY*10;WSR-PATTERN_RESIDUE*4" }
+            elseif ($outputId -match '^EQD20-LG-') { "$base*1;WSR-REINFORCED_ALLOY*8;WSR-NEURAL_CIRCUIT*5;WSR-NEURAL_RESIDUE*3" }
+            elseif ($outputId -match '^EQD20-EP-') { "$base*1;WSR-REINFORCED_ALLOY*6;WSR-NEURAL_CIRCUIT*4;WSR-RESONANT_RESIDUE*4" }
+            elseif ($outputId -match '^EQD20-') { "$base*1;WSR-REINFORCED_ALLOY*3;WSR-NEURAL_CIRCUIT*1;WSR-MAGIC_CRYSTAL*1" }
+            elseif ($outputId -match '^EQL-D10-') { "$base*1;WSR-RESONANT_RESIDUE*4;WSR-REFINED_ALLOY*4;WSR-PRECISION_PART*3" }
+            elseif ($outputId -match '-R\d+$') { "$base*1;WSR-REFINED_ALLOY*3;WSR-PRECISION_PART*1;WSR-MAGIC_CRYSTAL*1" }
+            else { "$base*1;WSR-METAL_PLATE*2;WSR-REINFORCED_CLOTH*1" }
+        $ingredients = @(Ingredients-FromSpec $spec @(4,1,3,5,7,0,2,6,8))
+    }
+    if ($ingredients.Count -eq 0) { throw "No executable inputs compiled for $($entry.Key) ($recipeType)" }
+    $outputAmount = $(if ($recipeAmounts.ContainsKey($entry.Key)) { [int]$recipeAmounts[$entry.Key] } else { 1 })
     [ordered]@{
         id = $entry.Key; sourceDocumentId = 'RECIPE-LIST-001'; enabled = $true
-        outputId = $(if ($idIndex + 1 -lt $cells.Count) { $cells[$idIndex + 1] } else { 'UNRESOLVED' })
-        recipeType = $(if ($idIndex + 2 -lt $cells.Count) { $cells[$idIndex + 2] } else { 'UNRESOLVED' })
+        outputId = $outputId; outputAmount = $outputAmount; recipeType = $recipeType
         inputAuthority = $(if ($idIndex + 3 -lt $cells.Count) { $cells[$idIndex + 3] } else { 'RECIPE-LIST-001' })
-        layout = 'AUTHORITY_DEFINED_3X3'; raw = @($cells)
+        layout = $layout; ingredients = @($ingredients); raw = @($cells)
     }
 }
 
@@ -216,7 +418,32 @@ $manifestSchema = [ordered]@{
         files=[ordered]@{type='array';minItems=64;maxItems=64;items=[ordered]@{type='object'}}
     }
 }
-foreach ($name in $schemaNames) { Write-Json "schemas/$name.schema.json" $(if ($name -eq 'manifest') { $manifestSchema } else { $genericSchema }) }
+$recipeSchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema'; type='object'; additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; domain=[ordered]@{const='recipes'}
+        records=[ordered]@{type='array';minItems=315;maxItems=315;items=[ordered]@{
+            type='object';additionalProperties=$false
+            required=@('id','sourceDocumentId','enabled','outputId','outputAmount','recipeType','inputAuthority','layout','ingredients','raw')
+            properties=[ordered]@{
+                id=[ordered]@{type='string';pattern='^WSRCP-'};sourceDocumentId=[ordered]@{type='string';minLength=1};enabled=[ordered]@{const=$true}
+                outputId=[ordered]@{type='string';minLength=1};outputAmount=[ordered]@{type='integer';minimum=1;maximum=64}
+                recipeType=[ordered]@{enum=@('CRAFT','PROCESS','BOSS_CALL','FACILITY_KIT','EQUIPMENT_FORGE','UTILITY_FORGE','VIRTUAL_BUILD')}
+                inputAuthority=[ordered]@{type='string';minLength=1};layout=[ordered]@{enum=@('ORDERED_3X3','CALL_FRAME','EQUIPMENT_FRAME','FACILITY_FRAME','REBUILD_FRAME')}
+                ingredients=[ordered]@{type='array';minItems=1;maxItems=9;items=[ordered]@{
+                    type='object';additionalProperties=$false;required=@('slot','kind','key','amount','consume')
+                    properties=[ordered]@{slot=[ordered]@{type='integer';minimum=0;maximum=8};kind=[ordered]@{enum=@('ITEM','TAG','VANILLA','PROOF')};key=[ordered]@{type='string';minLength=1};amount=[ordered]@{type='integer';minimum=1;maximum=64};consume=[ordered]@{type='boolean'}}
+                }}
+                raw=[ordered]@{type='array';items=[ordered]@{type='string'}}
+            }
+        }}
+    }
+}
+foreach ($name in $schemaNames) {
+    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'recipe') { $recipeSchema } else { $genericSchema }
+    Write-Json "schemas/$name.schema.json" $schema
+}
 
 $eventStub = { param($id,$source) Raw-Record $id $source @('AUTHORITY_DATA') }
 $data = [ordered]@{}
