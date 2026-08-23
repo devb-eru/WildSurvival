@@ -4,6 +4,7 @@ import com.lsc.corp.wsplugin.boss.PrototypeBossService;
 import com.lsc.corp.wsplugin.combat.CombatService;
 import com.lsc.corp.wsplugin.combat.DeathRuntimePolicy;
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
+import com.lsc.corp.wsplugin.death.GraveService;
 import com.lsc.corp.wsplugin.economy.EconomyService;
 import com.lsc.corp.wsplugin.facility.FacilityStateAccess;
 import com.lsc.corp.wsplugin.growth.GrowthService;
@@ -39,6 +40,7 @@ public final class PrototypeLoopService implements Listener {
     private final ProductionContentCatalog production;
     private final EconomyService economy;
     private final CombatService combat;
+    private final GraveService graves;
     private final PrototypeBossService boss;
     private final GrowthService growth;
     private final PlayerStatService stats;
@@ -48,13 +50,14 @@ public final class PrototypeLoopService implements Listener {
 
     public PrototypeLoopService(JavaPlugin plugin, RunService runs,
                                 ProductionContentCatalog production, EconomyService economy,
-                                CombatService combat, PrototypeBossService boss, GrowthService growth,
+                                CombatService combat, GraveService graves, PrototypeBossService boss, GrowthService growth,
                                 PlayerStatService stats, TelemetryService telemetry) {
         this.plugin = plugin;
         this.runs = runs;
         this.production = production;
         this.economy = economy;
         this.combat = combat;
+        this.graves = graves;
         this.boss = boss;
         this.growth = growth;
         this.stats = stats;
@@ -144,6 +147,7 @@ public final class PrototypeLoopService implements Listener {
         boss.cleanup();
         economy.removeFacility();
         combat.cleanupCombatEntities();
+        graves.cleanup();
         corruptionCenter = null;
     }
 

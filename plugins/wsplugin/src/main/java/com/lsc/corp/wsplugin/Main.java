@@ -7,6 +7,7 @@ import com.lsc.corp.wsplugin.content.ContentBundleService;
 import com.lsc.corp.wsplugin.economy.EconomyService;
 import com.lsc.corp.wsplugin.economy.ItemCodexService;
 import com.lsc.corp.wsplugin.economy.LootService;
+import com.lsc.corp.wsplugin.death.GraveService;
 import com.lsc.corp.wsplugin.facility.FacilityService;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.PrototypeCommand;
@@ -61,6 +62,9 @@ public final class Main extends JavaPlugin {
             statuses = new StatusService(this, runService, content.productionCatalog(), equipment, telemetry);
             CombatService combat = new CombatService(this, runService, content.content(), content.productionCatalog(),
                     equipment, growth, skills, telemetry, statuses);
+            GraveService graves = new GraveService(this, runService, content.content(),
+                    content.productionCatalog(), codex, equipment, telemetry);
+            combat.setDeathHandler(graves::prepareDeath);
             EconomyService economy = new EconomyService(this, runService, content.content(),
                     content.productionCatalog(), equipment, growth, telemetry, codex);
             LootService loot = new LootService(runService, content.productionCatalog(), codex, equipment, growth, telemetry);
@@ -90,7 +94,7 @@ public final class Main extends JavaPlugin {
                 else boss.damage(attacker, entity, damage, breakDamage, executionId);
             });
             PrototypeLoopService loop = new PrototypeLoopService(this, runService,
-                    content.productionCatalog(), economy, combat, boss, growth, stats, telemetry);
+                    content.productionCatalog(), economy, combat, graves, boss, growth, stats, telemetry);
 
             TestLabRepository testLabRepository = new TestLabRepository(getDataFolder().toPath());
             TestLabService testLab = new TestLabService(this, runService, testLabRepository, content.content(),
@@ -101,7 +105,7 @@ public final class Main extends JavaPlugin {
             TestLabCommand testLabCommand = new TestLabCommand(testLab, testLabGui, scenarios, virtualParty, combat, runService);
 
             runService.attach(loop, equipment, growth);
-            registerListeners(equipment, skills, statuses, combat, economy, facility, codex, stats, menu, discoveries, story, finale,
+            registerListeners(equipment, skills, statuses, combat, graves, economy, facility, codex, stats, menu, discoveries, story, finale,
                     research, tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
 
             PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand, menu);
@@ -110,6 +114,7 @@ public final class Main extends JavaPlugin {
 
             runService.restore();
             facility.restore();
+            graves.restore();
             research.restore();
             finale.restore();
             getServer().getScheduler().runTaskTimer(this, facility::tick, 20L, 20L);

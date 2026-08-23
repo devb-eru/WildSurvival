@@ -39,6 +39,7 @@ public final class RunSnapshot {
     public Map<String, Integer> facilityRecoveryLedger = new LinkedHashMap<>();
     public Map<String, LootTransactionState> lootTransactions = new LinkedHashMap<>();
     public Map<String, Integer> lootPityCounters = new LinkedHashMap<>();
+    public Map<String, RemainsState> remains = new LinkedHashMap<>();
     public DayState seasonDay = new DayState();
     public Map<String, EncounterState> encounters = new LinkedHashMap<>();
     public Map<String, ResearchNodeState> researchNodes = new LinkedHashMap<>();
@@ -109,6 +110,12 @@ public final class RunSnapshot {
         public Map<String, Double> reviveContributions = new LinkedHashMap<>();
         public long reviveProtectionUntilEpochMs;
         public long reviveTailProtectionUntilEpochMs;
+        public int deathCount;
+        public String remainsId;
+        public DeathRecordState death;
+        public Map<String, PendingRemainsDeliveryState> pendingRemainsDeliveries = new LinkedHashMap<>();
+        public int resurrectionUsedCount;
+        public String pendingResurrectionType;
         public double testDamageDealtMultiplier = 1.0;
         public double testBreakMultiplier = 1.0;
         public double testDamageTakenMultiplier = 1.0;
@@ -134,6 +141,50 @@ public final class RunSnapshot {
         public int currentDurability;
         public int maxDurability;
         public String condition = "ACTIVE";
+    }
+
+    public static final class DeathRecordState {
+        public int day;
+        public String cause;
+        public String world;
+        public double x;
+        public double y;
+        public double z;
+        public long occurredAtEpochMs;
+    }
+
+    public static final class RemainsState {
+        public String remainsId;
+        public String ownerUuid;
+        public String ownerName;
+        public int day;
+        public String state = "AVAILABLE";
+        public String world;
+        public double x;
+        public double y;
+        public double z;
+        public long createdAtEpochMs;
+        public int lostConsumableCount;
+        public String markerEntityUuid;
+        public Map<String, RemainsItemState> contents = new LinkedHashMap<>();
+        public Map<String, EquipmentInstanceState> equipmentInstances = new LinkedHashMap<>();
+    }
+
+    public static final class RemainsItemState {
+        public String entryId;
+        public String encodedItem;
+        public String equipmentInstanceId;
+        public String state = "AVAILABLE";
+        public String claimedBy;
+        public long claimedAtEpochMs;
+    }
+
+    public static final class PendingRemainsDeliveryState {
+        public String deliveryId;
+        public String remainsId;
+        public String entryId;
+        public String encodedItem;
+        public long claimedAtEpochMs;
     }
 
     public static final class MilestoneLock {

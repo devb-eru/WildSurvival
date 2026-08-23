@@ -128,6 +128,7 @@ public final class CombatService implements Listener {
     private ItemRewardHandler itemRewardHandler = (player, resourceId, amount) -> { };
     private DamageNumberService damageNumbers;
     private FacilityService facilityService;
+    private DeathHandler deathHandler = (player, reason) -> false;
     private boolean scannedPersistedEntities;
     private int hudTick;
 
@@ -168,6 +169,10 @@ public final class CombatService implements Listener {
 
     public void setFacilityService(FacilityService facilityService) {
         this.facilityService = facilityService;
+    }
+
+    public void setDeathHandler(DeathHandler deathHandler) {
+        this.deathHandler = java.util.Objects.requireNonNull(deathHandler);
     }
 
     public void setMenuOpener(Consumer<Player> menuOpener) {
@@ -1696,7 +1701,10 @@ public final class CombatService implements Listener {
                 ActionBarService.critical(player, Component.text("빈사 상태 · 구조가 필요합니다.", NamedTextColor.RED), 60);
             }
         }
-        if (runs.current().map(run -> "RUNNING".equals(run.state)).orElse(false) && runs.survivableCount() == 0) {
+        boolean deathTransactionPending = runs.current().stream().flatMap(run -> run.players.values().stream())
+                .anyMatch(state -> "DEAD_PENDING".equals(state.lifeState));
+        if (!deathTransactionPending && runs.current().map(run -> "RUNNING".equals(run.state)).orElse(false)
+                && runs.survivableCount() == 0) {
             try {
                 runs.stop("PARTY_WIPED", "system");
             } catch (java.io.IOException exception) {
@@ -1738,6 +1746,11 @@ public final class CombatService implements Listener {
         reviveSessions.remove(player.getUniqueId());
         if (!"DEAD_PENDING".equals(state.lifeState)) {
             runs.mutate(run -> run.players.get(player.getUniqueId().toString()).lifeState = "DEAD_PENDING");
+        }
+        if (!deathHandler.prepareDeath(player, reason)) {
+            telemetry.event(runs.current().orElseThrow().runId, "PLAYER_DEATH_BLOCKED",
+                    "{\"reason\":\"REMAINS_NOT_PERSISTED\"}");
+            return;
         }
         statuses.clearOnDeath(player);
         player.setGameMode(GameMode.SPECTATOR);
@@ -2473,6 +2486,11 @@ public final class CombatService implements Listener {
 
     public interface BossDamageHandler {
         void damage(Player attacker, LivingEntity boss, double damage, double breakDamage, String executionId);
+    }
+
+    @FunctionalInterface
+    public interface DeathHandler {
+        boolean prepareDeath(Player player, String reason);
     }
 
     @FunctionalInterface

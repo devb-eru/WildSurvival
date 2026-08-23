@@ -333,10 +333,12 @@ Season 1 실제 플레이 완료는 다음을 모두 만족할 때만 선언한�
 | D3 | 최대 2명 공유 진행, 100%+60%, 각자 AP, 중단 유예·진행 감소 | `AUTO_TEST_VERIFIED` | E2E-42와 재접속 시 중복 기여 0 |
 | D4 | Day 종료 부상 1 회복, 보스·잔존 공세 예외, 치료 시설 | `DAY_END_AUTO_TEST_VERIFIED / FACILITY_BLOCKED_DATA` | E2E-41과 저장 재시작 통과, FAC-S11 환자당 생존 비용의 구체 WSR ID 확정 |
 | D5 | 도움 요청, 전 행동 차단, 빈사 적 대상 우선순위, 공허·환경 예외 | `NOT_STARTED` | DEATH-001 행동·환경 행렬 전수 E2E |
-| D6 | `DEAD_PENDING` 불변 스냅샷, 유품함, 25% 소모품 손실, 회수 | `IN_PROGRESS` | E2E-43과 강제 종료 단계별 복구 통과 |
+| D6 | `DEAD_PENDING` 불변 스냅샷, 유품함, 25% 소모품 손실, 회수 | `PERSISTENCE_AND_BOOT_VERIFIED / CLIENT_E2E_PENDING` | E2E-43과 강제 종료 단계별 복구 통과 |
 | D7 | 희귀 부활 아이템·장비 능력, 전멸·복구·운영 명령 | `NOT_STARTED` | 중복 부활·복제 0, 1~4인 전멸 판정 일치 |
 
 - 빈사는 시간 경과만으로 완전 사망하지 않는다.
 - `DEAD_PENDING`은 유품 스냅샷을 영속한 뒤에만 `DEAD`로 전이한다. 스냅샷 생성 실패 시 관전 전환을 완료 처리하지 않는다.
 - 유품은 장비 instanceId와 일반 재료 원본을 보존하고, 개인 소모품만 스택별 `floor(수량 × 0.25)`를 손실한다.
+- 유품 항목 회수는 `AVAILABLE→CLAIMED→pendingRemainsDeliveries`로 커밋한다. 지급 아이템의 고유 전달 토큰을 재접속 때 대조하여 지급 직전·직후 장애 모두에서 중복을 차단한다.
+- 월드 유품 표식은 플러그인 관리 갑옷 거치대로 생성하며 파괴·장비 조작을 취소한다. FAC-S12 원격 이전은 구체 비용 ID가 확정될 때까지 별도 `BLOCKED_DATA`다.
 - 실제 클라이언트 검증 전에는 이동·점프·블록·GUI·아이템 행동 차단과 구조 우클릭 유지를 `CLIENT_E2E=VERIFIED`로 표시하지 않는다.

@@ -524,6 +524,21 @@ public final class EquipmentService implements Listener {
         return item.getItemMeta().getPersistentDataContainer().get(equipmentInstanceIdKey, PersistentDataType.STRING);
     }
 
+    public ItemStack itemForInstance(RunSnapshot.EquipmentInstanceState instance) {
+        if (instance == null) return null;
+        return weaponItem(copyInstance(instance));
+    }
+
+    private static RunSnapshot.EquipmentInstanceState copyInstance(RunSnapshot.EquipmentInstanceState source) {
+        RunSnapshot.EquipmentInstanceState copy = new RunSnapshot.EquipmentInstanceState();
+        copy.instanceId = source.instanceId;
+        copy.templateId = source.templateId;
+        copy.currentDurability = source.currentDurability;
+        copy.maxDurability = source.maxDurability;
+        copy.condition = source.condition;
+        return copy;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEquipmentClick(InventoryClickEvent event) {
         Inventory top = event.getView().getTopInventory();

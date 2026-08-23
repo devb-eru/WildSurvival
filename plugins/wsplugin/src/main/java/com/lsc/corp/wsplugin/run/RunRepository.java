@@ -87,6 +87,7 @@ public final class RunRepository {
 
     private static void normalizeSeasonState(RunSnapshot snapshot) {
         if (snapshot.encounters == null) snapshot.encounters = new LinkedHashMap<>();
+        if (snapshot.remains == null) snapshot.remains = new LinkedHashMap<>();
         if (snapshot.researchNodes == null) snapshot.researchNodes = new LinkedHashMap<>();
         if (snapshot.discoveryNodes == null) snapshot.discoveryNodes = new LinkedHashMap<>();
         if (snapshot.defeatedBossIds == null) snapshot.defeatedBossIds = new LinkedHashSet<>();
@@ -126,6 +127,14 @@ public final class RunRepository {
             if (encounter.plannedEnemyIds == null) encounter.plannedEnemyIds = new ArrayList<>();
             if (encounter.spawnedEntityUuids == null) encounter.spawnedEntityUuids = new LinkedHashSet<>();
             if (encounter.participantUuids == null) encounter.participantUuids = new LinkedHashSet<>();
+        }
+        for (RunSnapshot.RemainsState remains : snapshot.remains.values()) {
+            if (remains.contents == null) remains.contents = new LinkedHashMap<>();
+            if (remains.equipmentInstances == null) remains.equipmentInstances = new LinkedHashMap<>();
+        }
+        for (RunSnapshot.PlayerState player : snapshot.players.values()) {
+            if (player.pendingRemainsDeliveries == null) player.pendingRemainsDeliveries = new LinkedHashMap<>();
+            if (player.reviveContributions == null) player.reviveContributions = new LinkedHashMap<>();
         }
         for (RunSnapshot.ResearchNodeState research : snapshot.researchNodes.values()) {
             if (research.reservedCost == null) research.reservedCost = new LinkedHashMap<>();

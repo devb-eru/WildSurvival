@@ -239,6 +239,13 @@ public final class ItemCodexService implements Listener {
         return item.getItemMeta().getPersistentDataContainer().get(itemIdKey, PersistentDataType.STRING);
     }
 
+    public ItemStack registeredItem(String rawId, int amount) {
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        ProductionContentCatalog.CatalogEntry entry = production.itemsById().get(id);
+        boolean resource = entry != null && "MATERIAL".equals(entry.domain()) && id.startsWith("WSR-");
+        return resource ? resourceItem(id, Math.min(64, amount)) : contentItem(id, amount);
+    }
+
     public void discover(Player player, String rawId, String source) {
         if (!runs.isMember(player)) {
             return;
@@ -475,12 +482,6 @@ public final class ItemCodexService implements Listener {
             case "WSR-COAL" -> Material.COAL;
             default -> Material.PAPER;
         };
-    }
-
-    private ItemStack registeredItem(String id, int amount) {
-        ProductionContentCatalog.CatalogEntry entry = production.itemsById().get(id);
-        boolean resource = entry != null && "MATERIAL".equals(entry.domain()) && id.startsWith("WSR-");
-        return resource ? resourceItem(id, Math.min(64, amount)) : contentItem(id, amount);
     }
 
     private void queueRegisteredItem(Player player, String id, int amount) {
