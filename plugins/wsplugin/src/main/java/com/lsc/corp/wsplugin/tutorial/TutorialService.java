@@ -34,7 +34,7 @@ public final class TutorialService implements Listener {
             new Quest("equip_weapon", "전투 자세", "Shift+F → 장비에서 주무기를 장착해 슬롯 0에 동기화하세요.", Material.IRON_CHESTPLATE, "craft_weapon", "EQUIP", "task"),
             new Quest("configure_skill", "나만의 기술 구성", "플레이어 메뉴 → 무기 스킬에서 후보를 선택하고 W1~W3에 장착하세요.", Material.ENCHANTED_BOOK, "equip_weapon", "CONFIGURE_SKILL", "task"),
             new Quest("use_skill", "AP를 힘으로", "슬롯 0 전투 자세에서 R·Shift+L·Shift+R 중 하나로 스킬을 사용하세요.", Material.BLAZE_POWDER, "configure_skill", "USE_SKILL", "task"),
-            new Quest("build_depot", "함께 쓰는 보급", "목재 4·석재 3·철 2로 공용 보급 저장소를 제작하세요.", Material.BARREL, "use_skill", "DEPOT", "goal"),
+            new Quest("build_depot", "함께 쓰는 보급", "목재 4·석재 3·철 2로 공용 보급 저장소를 제작한 뒤 블록 면에 우클릭해 설치하세요.", Material.BARREL, "use_skill", "DEPOT", "goal"),
             new Quest("level_three", "첫 성장 분기", "활동 경험치를 모아 레벨 3에 도달하세요.", Material.EXPERIENCE_BOTTLE, "build_depot", "LEVEL3", "task"),
             new Quest("first_augment", "실버 증강", "레벨 3 개인 증강 3개 중 하나를 선택하세요.", Material.IRON_NUGGET, "level_three", "AUGMENT", "goal"),
             new Quest("day_three", "Day 3: 원거리 압박", "활·엄폐·회피를 준비하고 Day 3에 진입하세요.", Material.BOW, "first_augment", "DAY3", "goal"),

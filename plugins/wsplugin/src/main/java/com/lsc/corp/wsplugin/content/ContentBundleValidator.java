@@ -88,7 +88,7 @@ public final class ContentBundleValidator {
         if (!new HashSet<>(content.dayCheckpoints()).equals(CHECKPOINTS) || content.dayCheckpoints().size() != 4) {
             throw new ContentValidationException("Prototype checkpoints must be exactly 1,3,6,10");
         }
-        if (content.resources().size() < 6 || content.items().size() < 8 || content.recipes().size() < 15) {
+        if (content.resources().size() < 6 || content.items().size() < 10 || content.recipes().size() < 15) {
             throw new ContentValidationException("Prototype Day 1-10 economy ladder is incomplete");
         }
         Set<String> resourceIds = ids(content.resources().stream().map(PrototypeContent.ResourceDefinition::id).toList());
@@ -97,7 +97,7 @@ public final class ContentBundleValidator {
         if (!weaponIds.containsAll(Set.of("AXE", "SWORD", "BOW", "PICKAXE", "MACE", "UNARMED", "TRIDENT"))) {
             throw new ContentValidationException("Representative weapon routes are incomplete");
         }
-        Set<List<String>> recipeShapes = new HashSet<>();
+        Set<String> recipeShapes = new HashSet<>();
         for (PrototypeContent.RecipeDefinition recipe : content.recipes()) {
             if (recipe.costs().values().stream().anyMatch(value -> value <= 0)) {
                 throw new ContentValidationException("Recipe costs must be positive: " + recipe.id());
@@ -115,7 +115,10 @@ public final class ContentBundleValidator {
             if (!shapeCosts.equals(recipe.costs())) {
                 throw new ContentValidationException("Recipe shape and costs disagree: " + recipe.id());
             }
-            if (!recipeShapes.add(recipe.shape())) {
+            String placementKey = recipe.shapeless()
+                    ? "FREE:" + shapeCosts.entrySet().stream().sorted(java.util.Map.Entry.comparingByKey()).toList()
+                    : "FIXED:" + recipe.shape();
+            if (!recipeShapes.add(placementKey)) {
                 throw new ContentValidationException("Duplicate 3x3 recipe shape: " + recipe.id());
             }
             switch (recipe.rewardType()) {

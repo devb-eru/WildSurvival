@@ -2,6 +2,7 @@ package com.lsc.corp.wsplugin.testlab;
 
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
+import com.lsc.corp.wsplugin.ui.ActionBarService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -136,7 +137,7 @@ public final class VirtualPartyService implements Listener {
         }
         event.setCancelled(true);
         if (!player.isSneaking()) {
-            player.sendActionBar(Component.text("웅크린 상태로 가상 빈사 대상을 우클릭하세요", NamedTextColor.YELLOW));
+            ActionBarService.notice(player, Component.text("웅크린 상태로 가상 빈사 대상을 우클릭하세요", NamedTextColor.YELLOW), 40);
             return;
         }
         cancelChannel(dummy.getUniqueId());
@@ -146,7 +147,7 @@ public final class VirtualPartyService implements Listener {
             if (!dummy.isValid() || !player.isOnline() || !player.isSneaking()
                     || player.getLocation().distanceSquared(dummy.getLocation()) > 9.0) {
                 cancelChannel(dummy.getUniqueId());
-                player.sendActionBar(Component.text("가상 구조 취소", NamedTextColor.RED));
+                ActionBarService.important(player, Component.text("가상 구조 취소", NamedTextColor.RED), 30);
                 return;
             }
             long remaining = completesAt - Bukkit.getCurrentTick();
@@ -156,7 +157,7 @@ public final class VirtualPartyService implements Listener {
                 player.playSound(player.getLocation(), Sound.ITEM_TOTEM_USE, 0.7f, 1.3f);
                 player.sendMessage(ChatColor.GREEN + "가상 파티원 구조 성공: " + dummyId(dummy));
             } else {
-                player.sendActionBar(Component.text("가상 구조 " + Math.ceil(remaining / 20.0) + "초", NamedTextColor.AQUA));
+                ActionBarService.show(player, Component.text("가상 구조 " + Math.ceil(remaining / 20.0) + "초", NamedTextColor.AQUA), 7, 70);
             }
         }, 1L, 5L);
         channels.put(dummy.getUniqueId(), new ReviveChannel(player.getUniqueId(), completesAt, task));

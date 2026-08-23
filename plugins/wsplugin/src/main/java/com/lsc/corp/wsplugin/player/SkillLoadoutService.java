@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +19,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -50,7 +52,7 @@ public final class SkillLoadoutService implements Listener {
         String weaponId = equipment.resolveWeaponId(player);
         ensureDefaults(player, weaponId);
         SkillHolder holder = new SkillHolder(player.getUniqueId(), weaponId);
-        Inventory inventory = Bukkit.createInventory(holder, 54, ChatColor.DARK_PURPLE + "무기 스킬 로드아웃");
+        Inventory inventory = Bukkit.createInventory(holder, 54, ChatColor.DARK_PURPLE + "스킬 · 무기/공용");
         render(inventory, holder);
         player.openInventory(inventory);
     }
@@ -109,14 +111,40 @@ public final class SkillLoadoutService implements Listener {
         RunSnapshot.PlayerState state = runs.playerState(holder.owner).orElseThrow();
         Map<Integer, String> loadout = state.weaponSkillLoadouts.getOrDefault(holder.weaponId, Map.of());
         inventory.setItem(4, named(Material.BLAZE_POWDER, ChatColor.LIGHT_PURPLE + content.weapon(holder.weaponId).name() + " 스킬",
-                List.of(ChatColor.WHITE + "후보를 선택한 뒤 W 슬롯을 클릭", ChatColor.GRAY + "선택 없이 W 슬롯 클릭: 장착 해제")));
+                List.of(ChatColor.WHITE + "무기 스킬과 공용 액티브는 별도 입력입니다.",
+                        ChatColor.GRAY + (state.detailedTooltips ? "상세 설명 모드" : "간단 설명 모드"))));
+        inventory.setItem(2, named(Material.IRON_SWORD, ChatColor.AQUA + "무기 스킬 W1~W3",
+                List.of(ChatColor.GRAY + "후보 선택 후 W 슬롯 클릭", ChatColor.GRAY + "빈 선택으로 클릭하면 해제")));
+        inventory.setItem(6, named(Material.NETHER_STAR, ChatColor.GOLD + "공용 액티브 C1~C4",
+                List.of(ChatColor.GRAY + "전투 자세와 무관하게 Shift+2~5", ChatColor.GRAY + "현재 프로토타입에서는 고정 장착")));
         String[] inputs = {"R", "Shift+L", "Shift+R / F"};
         for (int i = 0; i < EQUIPPED.length; i++) {
             String skillId = loadout.get(i + 1);
             inventory.setItem(EQUIPPED[i], skillId == null
                     ? named(Material.BARRIER, ChatColor.RED + "W" + (i + 1) + " 비어 있음", List.of(ChatColor.GRAY + inputs[i]))
                     : skillIcon(content.skill(skillId), ChatColor.GREEN + "W" + (i + 1) + " " + content.skill(skillId).name(),
-                            List.of(ChatColor.GRAY + inputs[i], ChatColor.YELLOW + "선택 없이 클릭하면 해제")));
+                            List.of(ChatColor.GRAY + "입력: " + inputs[i], ChatColor.YELLOW + "장착됨 · 클릭하면 해제"),
+                            state.detailedTooltips, true));
+        }
+        String[][] common = {
+                {"C1 회피", "짧게 이동하며 잠시 피해를 회피합니다.", "Shift+2"},
+                {"C2 집결 신호", "주변 파티원의 AP를 회복합니다.", "Shift+3"},
+                {"C3 전술 표식", "조준한 적에게 파티 집중 표식을 부여합니다.", "Shift+4"},
+                {"C4 위치 신호", "파티에 현재 좌표를 알립니다.", "Shift+5"}
+        };
+        int[] commonSlots = {19, 21, 23, 25};
+        for (int i = 0; i < common.length; i++) {
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.WHITE + common[i][1]);
+            lore.add(ChatColor.GRAY + "입력: " + common[i][2]);
+            if (state.detailedTooltips) lore.add(ChatColor.DARK_GRAY + switch (i) {
+                case 0 -> "AP: 능력치 기반 · 무적 0.45초";
+                case 1 -> "AP 24 · 반경 8블록 · 파티 AP +10";
+                case 2 -> "사거리 16블록 · 표식 5초";
+                default -> "AP 소모 없음 · 좌표 공유";
+            });
+            inventory.setItem(commonSlots[i], glowing(named(Material.NETHER_STAR,
+                    ChatColor.GOLD + common[i][0] + " [장착됨]", lore)));
         }
         List<PrototypeContent.SkillDefinition> skills = compatible(holder.weaponId);
         for (int i = 0; i < skills.size() && i < CATALOGUE.length; i++) {
@@ -124,19 +152,32 @@ public final class SkillLoadoutService implements Listener {
             boolean selected = skill.id().equals(holder.selectedSkillId);
             inventory.setItem(CATALOGUE[i], skillIcon(skill,
                     (selected ? ChatColor.YELLOW + "[선택] " : ChatColor.AQUA.toString()) + skill.name(),
-                    List.of(selected ? ChatColor.YELLOW + "장착할 W 슬롯을 클릭하세요." : ChatColor.GRAY + "클릭하여 선택")));
+                    List.of(selected ? ChatColor.YELLOW + "장착할 W 슬롯을 클릭하세요." : ChatColor.GRAY + "클릭하여 선택"),
+                    state.detailedTooltips, false));
         }
         inventory.setItem(49, named(Material.OAK_DOOR, ChatColor.RED + "닫기", List.of()));
     }
 
-    private ItemStack skillIcon(PrototypeContent.SkillDefinition skill, String name, List<String> tail) {
+    private ItemStack skillIcon(PrototypeContent.SkillDefinition skill, String name, List<String> tail,
+                                boolean detailed, boolean equipped) {
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.WHITE + skill.description());
-        lore.add(ChatColor.GRAY + "AP " + Math.round(skill.apCost()) + " / 피해 x" + skill.damageCoefficient()
-                + " / 브레이크 " + Math.round(skill.breakDamage()));
-        lore.add(ChatColor.DARK_GRAY + "ID: " + skill.id());
+        if (detailed) {
+            lore.add(ChatColor.GRAY + "AP " + Math.round(skill.apCost()) + " / 피해 x" + skill.damageCoefficient()
+                    + " / 브레이크 " + Math.round(skill.breakDamage()));
+            lore.add(ChatColor.DARK_GRAY + "ID: " + skill.id());
+        }
         lore.addAll(tail);
-        return named(Material.ENCHANTED_BOOK, name, lore);
+        ItemStack icon = named(Material.BOOK, name, lore);
+        return equipped ? glowing(icon) : icon;
+    }
+
+    private static ItemStack glowing(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        item.setItemMeta(meta);
+        return item;
     }
 
     private List<PrototypeContent.SkillDefinition> compatible(String weaponId) {

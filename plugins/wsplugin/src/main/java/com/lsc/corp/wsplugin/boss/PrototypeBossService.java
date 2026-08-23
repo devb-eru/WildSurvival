@@ -6,6 +6,7 @@ import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
+import com.lsc.corp.wsplugin.ui.ActionBarService;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -176,7 +177,7 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
         }
         event.setCancelled(true);
         runs.mutate(run -> run.boss.channelParticipants.add(event.getPlayer().getUniqueId().toString()));
-        event.getPlayer().sendActionBar(Component.text("공명 고정 참여 완료", NamedTextColor.GREEN));
+        ActionBarService.notice(event.getPlayer(), Component.text("공명 고정 참여 완료", NamedTextColor.GREEN), 40);
     }
 
     public void forcePhaseTwoForTest() {

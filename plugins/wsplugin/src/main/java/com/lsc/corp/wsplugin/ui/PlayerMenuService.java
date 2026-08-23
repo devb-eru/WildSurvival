@@ -57,11 +57,14 @@ public final class PlayerMenuService implements Listener {
         inventory.setItem(21, named(Material.KNOWLEDGE_BOOK, ChatColor.AQUA + "아이템 도감", List.of(ChatColor.GRAY + "고정 ID 항목 확인")));
         inventory.setItem(23, named(Material.NETHER_STAR, ChatColor.AQUA + "스탯 찍기", List.of(ChatColor.GRAY + "남은 포인트와 효과 확인")));
         inventory.setItem(25, named(Material.IRON_CHESTPLATE, ChatColor.AQUA + "장비 장착", List.of(ChatColor.GRAY + "주무기·보조·Q1~Q4")));
-        inventory.setItem(27, named(Material.BLAZE_POWDER, ChatColor.LIGHT_PURPLE + "무기 스킬", List.of(ChatColor.GRAY + "W1~W3 장착·교체·해제")));
-        inventory.setItem(29, named(Material.AMETHYST_SHARD, ChatColor.LIGHT_PURPLE + "증강", List.of(ChatColor.GRAY + "대기 중인 개인 증강 선택")));
+        inventory.setItem(27, named(Material.BLAZE_POWDER, ChatColor.LIGHT_PURPLE + "스킬",
+                List.of(ChatColor.GRAY + "W1~W3 무기 스킬 · C1~C4 공용 액티브")));
+        inventory.setItem(29, named(Material.AMETHYST_SHARD, ChatColor.LIGHT_PURPLE + "증강",
+                List.of(ChatColor.GRAY + "보유 개인·파티 증강 확인", ChatColor.YELLOW + "미선택 증강이 있으면 선택 화면 표시")));
         inventory.setItem(31, named(Material.BARREL, ChatColor.GREEN + "공용 자원 원장",
-                List.of(run.sharedLedgerUnlocked ? ChatColor.GREEN + "저장소 가동 중" : ChatColor.RED + "공용 보급 저장소 필요")));
-        inventory.setItem(33, named(Material.COMPARATOR, ChatColor.YELLOW + "설정", List.of(ChatColor.GRAY + "피해량 표시·도감 상세")));
+                List.of(run.sharedLedgerUnlocked ? ChatColor.GREEN + "저장소 가동 중" : ChatColor.RED + "공용 보급 저장소 제작·설치 필요")));
+        inventory.setItem(33, named(Material.COMPARATOR, ChatColor.YELLOW + "설정",
+                List.of(ChatColor.GRAY + "피해량 표시·도감/증강/스킬 설명")));
         inventory.setItem(35, named(Material.BOOK, ChatColor.GOLD + "초반 생존 길잡이", List.of(ChatColor.GRAY + "L키 Advancement 탭 안내")));
         inventory.setItem(49, named(Material.BARRIER, ChatColor.RED + "닫기", List.of()));
         player.openInventory(inventory);
@@ -71,7 +74,7 @@ public final class PlayerMenuService implements Listener {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         Inventory inventory = Bukkit.createInventory(new SettingsHolder(player.getUniqueId()), 27, ChatColor.DARK_GRAY + "WildSurvival 설정");
         inventory.setItem(11, toggle(Material.ARMOR_STAND, "피해량 표시", state.damageNumbersEnabled));
-        inventory.setItem(15, toggle(Material.WRITABLE_BOOK, "도감 상세 정보", state.detailedTooltips));
+        inventory.setItem(15, toggle(Material.WRITABLE_BOOK, "상세 설명(도감·증강·스킬)", state.detailedTooltips));
         inventory.setItem(22, named(Material.OAK_DOOR, ChatColor.RED + "뒤로", List.of()));
         player.openInventory(inventory);
     }
@@ -91,7 +94,7 @@ public final class PlayerMenuService implements Listener {
             if (!(event.getWhoClicked() instanceof Player player) || !holder.owner.equals(player.getUniqueId())) return;
             switch (event.getRawSlot()) {
                 case 19 -> economy.openCraft(player); case 21 -> codex.open(player); case 23 -> stats.open(player);
-                case 25 -> equipment.open(player); case 27 -> skills.open(player); case 29 -> growth.openPendingPersonalDraw(player);
+                case 25 -> equipment.open(player); case 27 -> skills.open(player); case 29 -> growth.openAugments(player);
                 case 31 -> economy.openLedger(player); case 33 -> openSettings(player); case 35 -> tutorial.showGuide(player);
                 case 49 -> player.closeInventory();
                 default -> { }

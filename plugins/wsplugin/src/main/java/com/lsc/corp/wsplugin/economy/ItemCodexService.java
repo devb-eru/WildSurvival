@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,6 +25,8 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -44,6 +47,7 @@ public final class ItemCodexService implements Listener {
     private final TelemetryService telemetry;
     private final NamespacedKey itemIdKey;
     private final List<CodexEntry> entries;
+    private final Map<UUID, Long> pendingNoticeAt = new ConcurrentHashMap<>();
 
     public ItemCodexService(JavaPlugin plugin, RunService runs, PrototypeContent content, TelemetryService telemetry) {
         this.plugin = plugin;
@@ -83,13 +87,24 @@ public final class ItemCodexService implements Listener {
         return item;
     }
 
+    public ItemStack tagRegisteredItem(ItemStack item, String rawId) {
+        if (item == null || item.getType().isAir()) throw new IllegalArgumentException("Cannot register an empty item");
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        if (entries.stream().noneMatch(entry -> entry.id.equals(id))) throw new IllegalArgumentException("Unknown codex item " + rawId);
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(itemIdKey, PersistentDataType.STRING, id);
+        item.setItemMeta(meta);
+        return item;
+    }
+
     public void grantItem(Player player, String itemId, int amount) {
         PrototypeContent.ItemDefinition definition = content.item(itemId.toUpperCase(java.util.Locale.ROOT));
         Material material = Material.matchMaterial(definition.material());
         int remaining = amount;
         while (remaining > 0) {
             int stack = Math.min(material == null ? 64 : material.getMaxStackSize(), remaining);
-            addWithoutReservedSlot(player, contentItem(definition.id(), stack));
+            int overflow = addWithoutReservedSlot(player, contentItem(definition.id(), stack));
+            if (overflow > 0) queueRegisteredItem(player, definition.id(), overflow);
             remaining -= stack;
         }
         discover(player, definition.id(), "ACQUIRE_ITEM");
@@ -103,7 +118,8 @@ public final class ItemCodexService implements Listener {
         int remaining = amount;
         while (remaining > 0) {
             int stackAmount = Math.min(64, remaining);
-            addWithoutReservedSlot(player, resourceItem(normalized, stackAmount));
+            int overflow = addWithoutReservedSlot(player, resourceItem(normalized, stackAmount));
+            if (overflow > 0) queueRegisteredItem(player, normalized, overflow);
             remaining -= stackAmount;
         }
         discover(player, normalized, "ACQUIRE_RESOURCE");
@@ -145,6 +161,32 @@ public final class ItemCodexService implements Listener {
         }
         player.getInventory().setStorageContents(contents);
         return true;
+    }
+
+    public int countItem(Player player, String rawId) {
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        int count = 0;
+        for (ItemStack item : player.getInventory().getStorageContents()) {
+            if (id.equals(itemId(item))) count += item.getAmount();
+        }
+        return count;
+    }
+
+    public boolean takeItem(Player player, String rawId, int amount) {
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        if (amount < 0 || countItem(player, id) < amount) return false;
+        int remaining = amount;
+        ItemStack[] contents = player.getInventory().getStorageContents();
+        for (int slot = 1; slot < contents.length && remaining > 0; slot++) {
+            ItemStack item = contents[slot];
+            if (!id.equals(itemId(item))) continue;
+            int removed = Math.min(remaining, item.getAmount());
+            item.setAmount(item.getAmount() - removed);
+            if (item.getAmount() <= 0) contents[slot] = null;
+            remaining -= removed;
+        }
+        player.getInventory().setStorageContents(contents);
+        return remaining == 0;
     }
 
     public boolean isResourceItem(ItemStack item) {
@@ -196,6 +238,36 @@ public final class ItemCodexService implements Listener {
                 discover(player, id, "QUICK_ITEM_RECONCILE");
             }
         });
+        flushPending(player);
+    }
+
+    public void flushPending(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || state.pendingRegisteredItems == null || state.pendingRegisteredItems.isEmpty()) return;
+        Map<String, Integer> remainingById = new LinkedHashMap<>();
+        for (Map.Entry<String, Integer> entry : new LinkedHashMap<>(state.pendingRegisteredItems).entrySet()) {
+            int remaining = Math.max(0, entry.getValue());
+            while (remaining > 0) {
+                ItemStack item = registeredItem(entry.getKey(), remaining);
+                int attempted = item.getAmount();
+                int overflow = addWithoutReservedSlot(player, item);
+                remaining -= attempted - overflow;
+                if (overflow == attempted) break;
+            }
+            if (remaining > 0) remainingById.put(entry.getKey(), remaining);
+        }
+        if (!state.pendingRegisteredItems.equals(remainingById)) {
+            runs.mutate(run -> run.players.get(player.getUniqueId().toString()).pendingRegisteredItems = remainingById);
+        }
+        if (!remainingById.isEmpty()) {
+            long now = System.currentTimeMillis();
+            if (now - pendingNoticeAt.getOrDefault(player.getUniqueId(), 0L) >= 5_000L) {
+                pendingNoticeAt.put(player.getUniqueId(), now);
+                player.sendMessage(ChatColor.YELLOW + "인벤토리 공간이 없어 등록 아이템을 보관 중입니다. 공간을 비우면 자동 지급됩니다.");
+            }
+        } else {
+            pendingNoticeAt.remove(player.getUniqueId());
+        }
     }
 
     public void open(Player player) {
@@ -235,6 +307,25 @@ public final class ItemCodexService implements Listener {
         String id = itemId(item.getItemStack());
         if (id != null && entries.stream().anyMatch(entry -> entry.id.equals(id))) {
             discover(player, id, "PICKUP");
+        }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Bukkit.getScheduler().runTask(plugin, () -> flushPending(event.getPlayer()));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onDrop(PlayerDropItemEvent event) {
+        if (runs.isMember(event.getPlayer())) {
+            Bukkit.getScheduler().runTask(plugin, () -> flushPending(event.getPlayer()));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onAnyInventoryClick(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player player && runs.isMember(player)) {
+            Bukkit.getScheduler().runTask(plugin, () -> flushPending(player));
         }
     }
 
@@ -279,14 +370,18 @@ public final class ItemCodexService implements Listener {
             recipeForOutput(entry.id).ifPresent(recipe -> {
                 lore.add(ChatColor.YELLOW + "조합법: " + recipe.name());
                 recipe.costs().forEach((id, amount) -> lore.add(ChatColor.WHITE + "- " + content.resource(id).name() + " " + amount));
-                lore.add(ChatColor.YELLOW + "3×3 배치:");
-                for (int row = 0; row < 3; row++) {
-                    List<String> cells = new ArrayList<>();
-                    for (int column = 0; column < 3; column++) {
-                        String resourceId = recipe.shape().get(row * 3 + column);
-                        cells.add(resourceId == null ? "빈칸" : content.resource(resourceId).name());
+                if (recipe.shapeless()) {
+                    lore.add(ChatColor.YELLOW + "배치: 위치 무관, 재료마다 서로 다른 칸 사용");
+                } else {
+                    lore.add(ChatColor.YELLOW + "3×3 배치:");
+                    for (int row = 0; row < 3; row++) {
+                        List<String> cells = new ArrayList<>();
+                        for (int column = 0; column < 3; column++) {
+                            String resourceId = recipe.shape().get(row * 3 + column);
+                            cells.add(resourceId == null ? "빈칸" : content.resource(resourceId).name());
+                        }
+                        lore.add(ChatColor.WHITE + "[" + String.join("][", cells) + "]");
                     }
-                    lore.add(ChatColor.WHITE + "[" + String.join("][", cells) + "]");
                 }
             });
             List<PrototypeContent.RecipeDefinition> uses = content.recipes().stream()
@@ -351,11 +446,25 @@ public final class ItemCodexService implements Listener {
             case "WSR-FIBER" -> Material.STRING;
             case "WSR-IRON" -> Material.RAW_IRON;
             case "WSR-TISSUE" -> Material.FERMENTED_SPIDER_EYE;
+            case "WSR-COAL" -> Material.COAL;
             default -> Material.PAPER;
         };
     }
 
-    private void addWithoutReservedSlot(Player player, ItemStack offered) {
+    private ItemStack registeredItem(String id, int amount) {
+        boolean resource = content.resources().stream().anyMatch(value -> value.id().equals(id));
+        return resource ? resourceItem(id, Math.min(64, amount)) : contentItem(id, amount);
+    }
+
+    private void queueRegisteredItem(Player player, String id, int amount) {
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            if (state.pendingRegisteredItems == null) state.pendingRegisteredItems = new LinkedHashMap<>();
+            state.pendingRegisteredItems.merge(id, amount, Integer::sum);
+        });
+    }
+
+    private int addWithoutReservedSlot(Player player, ItemStack offered) {
         ItemStack remaining = offered.clone();
         for (int slot = 1; slot <= 35 && remaining.getAmount() > 0; slot++) {
             ItemStack existing = player.getInventory().getItem(slot);
@@ -373,7 +482,7 @@ public final class ItemCodexService implements Listener {
             player.getInventory().setItem(slot, placed);
             remaining.setAmount(remaining.getAmount() - moved);
         }
-        if (remaining.getAmount() > 0) player.getWorld().dropItemNaturally(player.getLocation(), remaining);
+        return remaining.getAmount();
     }
 
     private static ItemStack named(Material material, String name, List<String> lore) {

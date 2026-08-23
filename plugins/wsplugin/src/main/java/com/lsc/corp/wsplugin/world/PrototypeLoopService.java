@@ -8,6 +8,7 @@ import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
+import com.lsc.corp.wsplugin.ui.ActionBarService;
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -58,6 +59,7 @@ public final class PrototypeLoopService implements Listener {
             player.setGameMode(GameMode.SURVIVAL);
             player.setHealth(player.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue());
             player.setFoodLevel(20);
+            economy.grantPersonalItem(player, "SURVIVAL-CLOCK", 1);
         }
         growth.awardCheckpointTarget(1);
         startDayEvent(1);
@@ -272,8 +274,8 @@ public final class PrototypeLoopService implements Listener {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 30, 0, true, true));
                 if (tickCounter % 40 == 0) {
                     player.playSound(player.getLocation(), Sound.BLOCK_SCULK_SHRIEKER_SHRIEK, 0.25f, 1.5f);
-                    player.sendActionBar(net.kyori.adventure.text.Component.text("☣ 오염 지대 — 이동 둔화",
-                            net.kyori.adventure.text.format.NamedTextColor.LIGHT_PURPLE));
+                    ActionBarService.notice(player, net.kyori.adventure.text.Component.text("☣ 오염 지대 — 이동 둔화",
+                            net.kyori.adventure.text.format.NamedTextColor.LIGHT_PURPLE), 30);
                 }
             }
         }

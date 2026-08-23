@@ -8,6 +8,7 @@ import com.lsc.corp.wsplugin.player.PlayerStatPolicy;
 import com.lsc.corp.wsplugin.player.SkillLoadoutService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
+import com.lsc.corp.wsplugin.ui.ActionBarService;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -183,10 +184,8 @@ public final class CombatService implements Listener {
         processRevives(now);
         processDownedTimeouts(now);
         processTridents(now);
-        if (++hudTick % 2 == 0) {
+        if (++hudTick % 10 == 0) {
             updateHud();
-        }
-        if (hudTick % 10 == 0) {
             refreshBreakBars();
         }
     }
@@ -536,8 +535,7 @@ public final class CombatService implements Listener {
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
             boolean hit = routeLeft(player);
             if (action == Action.LEFT_CLICK_BLOCK) {
-                boolean combatPickaxe = "PICKAXE".equals(equipment.resolveWeaponId(player));
-                if (!combatPickaxe || hit) event.setCancelled(true);
+                if (hit) event.setCancelled(true);
             }
             return;
         }
@@ -553,15 +551,20 @@ public final class CombatService implements Listener {
         if (!runs.isRunningMember(event.getPlayer())) {
             return;
         }
-        event.setCancelled(true);
         Player player = event.getPlayer();
-        if (inCombatStance(player)) {
-            if (player.isSneaking()) menuOpener.accept(player);
-            else executeWeaponActive(player, 3);
+        int originalSlot = player.getInventory().getHeldItemSlot();
+        if (player.isSneaking()) {
+            event.setCancelled(true);
+            menuOpener.accept(player);
+        } else if (inCombatStance(player)) {
+            event.setCancelled(true);
+            executeWeaponActive(player, 3);
+        } else {
+            return;
         }
         Bukkit.getScheduler().runTask(plugin, () -> {
             equipment.syncAuthoritativeEquipment(player);
-            if (inCombatStance(player)) player.getInventory().setHeldItemSlot(0);
+            player.getInventory().setHeldItemSlot(originalSlot);
         });
     }
 
@@ -572,17 +575,18 @@ public final class CombatService implements Listener {
             return;
         }
         int slot = event.getNewSlot();
-        if (event.getPreviousSlot() != 0 || !player.isSneaking()) {
+        if (!player.isSneaking()) {
             return;
         }
+        int originalSlot = event.getPreviousSlot();
         if (slot >= 1 && slot <= 4) {
             event.setCancelled(true);
             executeCommonActive(player, slot);
-            Bukkit.getScheduler().runTask(plugin, () -> player.getInventory().setHeldItemSlot(0));
+            Bukkit.getScheduler().runTask(plugin, () -> player.getInventory().setHeldItemSlot(originalSlot));
         } else if (slot >= 5 && slot <= 8) {
             event.setCancelled(true);
             executeQuickItem(player, slot - 4);
-            Bukkit.getScheduler().runTask(plugin, () -> player.getInventory().setHeldItemSlot(0));
+            Bukkit.getScheduler().runTask(plugin, () -> player.getInventory().setHeldItemSlot(originalSlot));
         }
     }
 
@@ -654,6 +658,8 @@ public final class CombatService implements Listener {
         long duration = Math.max(1000L, Math.round(plugin.getConfig().getInt("prototype.revive-channel-seconds", 3) * 1000L / multiplier));
         reviveChannels.put(target.getUniqueId(), new ReviveChannel(reviver.getUniqueId(), target.getUniqueId(), Instant.now().toEpochMilli() + duration));
         reviver.sendMessage(ChatColor.YELLOW + target.getName() + " 구조 시작 — " + (duration / 1000.0) + "초");
+        ActionBarService.critical(reviver, Component.text(target.getName() + " 구조 시작", NamedTextColor.YELLOW), 30);
+        ActionBarService.critical(target, Component.text(reviver.getName() + "이(가) 구조 중", NamedTextColor.YELLOW), 30);
     }
 
     private boolean routeLeft(Player player) {
@@ -684,7 +690,7 @@ public final class CombatService implements Listener {
         PrototypeContent.WeaponDefinition weapon = contentWeapon(player, weaponId);
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         if ("TRIDENT".equals(weaponId) && !"HELD".equals(state.tridentState)) {
-            player.sendActionBar(Component.text("삼지창을 먼저 회수하세요 (Shift+R)", NamedTextColor.RED));
+            ActionBarService.notice(player, Component.text("삼지창을 먼저 회수하세요 (Shift+R)", NamedTextColor.RED), 40);
             return false;
         }
         long now = System.nanoTime();
@@ -707,7 +713,7 @@ public final class CombatService implements Listener {
         if ("BOW".equals(weaponId)) {
             if (!takeOneMaterial(player, Material.ARROW)) {
                 attackReadyAtNanos.remove(player.getUniqueId());
-                player.sendActionBar(Component.text("화살이 필요합니다", NamedTextColor.RED));
+                ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
                 return false;
             }
             Arrow arrow = player.getWorld().spawnArrow(player.getEyeLocation(), player.getEyeLocation().getDirection(), 2.8f, 0.0f);
@@ -734,7 +740,7 @@ public final class CombatService implements Listener {
         String weaponId = equipment.resolveWeaponId(player);
         PrototypeContent.SkillDefinition skill = skills.resolve(player, slot);
         if (skill == null) {
-            player.sendActionBar(Component.text("W" + slot + " 스킬이 비어 있습니다. Shift+F → 스킬에서 장착하세요.", NamedTextColor.RED));
+            ActionBarService.notice(player, Component.text("W" + slot + " 스킬이 비어 있습니다. Shift+F → 스킬에서 장착하세요.", NamedTextColor.RED), 50);
             return false;
         }
         if ("TRIDENT_THROW".equals(skill.effect())) {
@@ -748,7 +754,7 @@ public final class CombatService implements Listener {
             return success;
         }
         if ("BOW".equals(weaponId) && !hasMaterial(player, Material.ARROW)) {
-            player.sendActionBar(Component.text("화살이 필요합니다", NamedTextColor.RED));
+            ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
             return false;
         }
         if (!runs.consumeAp(player, skill.apCost())) {
@@ -765,7 +771,7 @@ public final class CombatService implements Listener {
         }
         showSkillEffect(player, skill, targets);
         runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tutorialSignals.add("USED_SKILL"));
-        player.sendActionBar(Component.text("W" + slot + " " + skill.name() + " / AP -" + Math.round(skill.apCost()), NamedTextColor.AQUA));
+        ActionBarService.notice(player, Component.text("W" + slot + " " + skill.name() + " / AP -" + Math.round(skill.apCost()), NamedTextColor.AQUA), 30);
         return true;
     }
 
@@ -789,7 +795,7 @@ public final class CombatService implements Listener {
             }
             case 3 -> nearestTarget(player, 16.0).ifPresent(target -> {
                 applyMark(target, 100L);
-                player.sendActionBar(Component.text("C3 전술 표식", NamedTextColor.YELLOW));
+                ActionBarService.notice(player, Component.text("C3 전술 표식", NamedTextColor.YELLOW), 30);
             });
             case 4 -> {
                 player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 0.8f, 1.3f);
@@ -805,7 +811,7 @@ public final class CombatService implements Listener {
     private void executeQuickItem(Player player, int slot) {
         String bound = equipment.quickBinding(player, slot);
         if (bound == null || !equipment.consumeQuickItem(player, bound)) {
-            player.sendActionBar(Component.text("Q" + slot + " 소모품 없음", NamedTextColor.RED));
+            ActionBarService.notice(player, Component.text("Q" + slot + " 소모품 없음", NamedTextColor.RED), 30);
             return;
         }
         double maxHealth = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
@@ -831,10 +837,10 @@ public final class CombatService implements Listener {
                 player.removePotionEffect(PotionEffectType.SLOWNESS);
                 result = "독·위더·약화·둔화 제거";
             }
-            default -> { player.sendActionBar(Component.text("지원하지 않는 Q 아이템 " + bound, NamedTextColor.RED)); return; }
+            default -> { ActionBarService.notice(player, Component.text("지원하지 않는 Q 아이템 " + bound, NamedTextColor.RED), 40); return; }
         }
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EAT, 0.8f, 1.0f);
-        player.sendActionBar(Component.text("Q" + slot + " " + content.item(bound).name() + ": " + result, NamedTextColor.GREEN));
+        ActionBarService.notice(player, Component.text("Q" + slot + " " + content.item(bound).name() + ": " + result, NamedTextColor.GREEN), 40);
     }
 
     private void executeDodge(Player player) {
@@ -851,13 +857,13 @@ public final class CombatService implements Listener {
         player.setVelocity(direction.multiply(0.9 * PlayerStatPolicy.dodgeDistanceMultiplier(state.investedStats)).setY(0.12));
         invulnerableUntilEpochMs.put(player.getUniqueId(), Instant.now().plusMillis(450).toEpochMilli());
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.35f, 1.6f);
-        player.sendActionBar(Component.text("◇ 회피 / AP -" + Math.round(cost), NamedTextColor.AQUA));
+        ActionBarService.notice(player, Component.text("◇ 회피 / AP -" + Math.round(cost), NamedTextColor.AQUA), 24);
     }
 
     private boolean throwTrident(Player player, double cost) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         if (!"HELD".equals(state.tridentState)) {
-            player.sendActionBar(Component.text("이미 투척 상태입니다", NamedTextColor.RED));
+            ActionBarService.notice(player, Component.text("이미 투척 상태입니다", NamedTextColor.RED), 30);
             return false;
         }
         if (!runs.consumeAp(player, cost)) {
@@ -879,14 +885,14 @@ public final class CombatService implements Listener {
             value.tridentThrownAtEpochMs = Instant.now().toEpochMilli();
         });
         runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tutorialSignals.add("USED_SKILL"));
-        player.sendActionBar(Component.text("공명 투창 / AP -" + Math.round(cost), NamedTextColor.AQUA));
+        ActionBarService.notice(player, Component.text("공명 투창 / AP -" + Math.round(cost), NamedTextColor.AQUA), 30);
         return true;
     }
 
     private boolean recallTrident(Player player, double cost) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         if ("HELD".equals(state.tridentState)) {
-            player.sendActionBar(Component.text("삼지창이 손에 있습니다", NamedTextColor.GRAY));
+            ActionBarService.notice(player, Component.text("삼지창이 손에 있습니다", NamedTextColor.GRAY), 24);
             return false;
         }
         if (!"RETURNING".equals(state.tridentState) && !runs.consumeAp(player, cost)) {
@@ -895,7 +901,7 @@ public final class CombatService implements Listener {
         }
         runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tridentState = "RETURNING");
         runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tutorialSignals.add("USED_SKILL"));
-        player.sendActionBar(Component.text("공명 회수 / AP -" + Math.round(cost), NamedTextColor.AQUA));
+        ActionBarService.notice(player, Component.text("공명 회수 / AP -" + Math.round(cost), NamedTextColor.AQUA), 30);
         return true;
     }
 
@@ -981,6 +987,9 @@ public final class CombatService implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 9, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false));
         runs.broadcast(ChatColor.RED + "[빈사] " + player.getName() + " — 우클릭 유지로 구조하세요.");
+        for (Player member : runs.onlineMembers()) {
+            ActionBarService.critical(member, Component.text("[빈사] " + player.getName() + " — 웅크리고 우클릭하여 구조", NamedTextColor.RED), 80);
+        }
         telemetry.event(runs.current().orElseThrow().runId, "PLAYER_STATE_CHANGED", "{\"state\":\"DOWNED\"}");
     }
 
@@ -991,9 +1000,14 @@ public final class CombatService implements Listener {
             Player target = Bukkit.getPlayer(channel.target);
             if (reviver == null || target == null || reviver.getLocation().distanceSquared(target.getLocation()) > 9.0
                     || !reviver.isSneaking()) {
+                if (reviver != null) ActionBarService.critical(reviver, Component.text("구조 취소", NamedTextColor.RED), 30);
                 complete.add(channel.target);
                 continue;
             }
+            long remaining = Math.max(0L, channel.completeAtEpochMs - now);
+            String progress = "구조 " + String.format(java.util.Locale.ROOT, "%.1f", remaining / 1000.0) + "초";
+            ActionBarService.show(reviver, Component.text(progress, NamedTextColor.AQUA), 3, 100);
+            ActionBarService.show(target, Component.text(reviver.getName() + " 구조 중 · " + progress, NamedTextColor.AQUA), 3, 100);
             if (now >= channel.completeAtEpochMs) {
                 revive(target, reviver);
                 complete.add(channel.target);
@@ -1013,6 +1027,8 @@ public final class CombatService implements Listener {
         target.removePotionEffect(PotionEffectType.GLOWING);
         target.setHealth(Math.max(1.0, target.getAttribute(Attribute.MAX_HEALTH).getValue() * 0.25));
         runs.broadcast(ChatColor.GREEN + reviver.getName() + "이(가) " + target.getName() + "을 구조했습니다.");
+        ActionBarService.critical(reviver, Component.text(target.getName() + " 구조 완료", NamedTextColor.GREEN), 60);
+        ActionBarService.critical(target, Component.text("구조 완료 · 전투 복귀", NamedTextColor.GREEN), 60);
         telemetry.event(runs.current().orElseThrow().runId, "PLAYER_STATE_CHANGED", "{\"state\":\"ACTIVE\",\"reason\":\"REVIVED\"}");
     }
 
@@ -1026,6 +1042,9 @@ public final class CombatService implements Listener {
                 player.removePotionEffect(PotionEffectType.SLOWNESS);
                 player.removePotionEffect(PotionEffectType.GLOWING);
                 runs.broadcast(ChatColor.DARK_RED + "[완전 사망] " + player.getName());
+                for (Player member : runs.onlineMembers()) {
+                    ActionBarService.critical(member, Component.text("[완전 사망] " + player.getName(), NamedTextColor.DARK_RED), 80);
+                }
                 telemetry.event(runs.current().orElseThrow().runId, "PLAYER_STATE_CHANGED", "{\"state\":\"DEAD\"}");
             }
         }
@@ -1120,7 +1139,7 @@ public final class CombatService implements Listener {
         for (Player player : runs.onlineMembers()) {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
             NamedTextColor color = state.ap <= 20.0 ? NamedTextColor.RED : NamedTextColor.AQUA;
-            player.sendActionBar(Component.text("Day " + snapshot.day + " | AP " + Math.round(state.ap) + "/" + state.maxAp
+            ActionBarService.renderHud(player, Component.text("Day " + snapshot.day + " | AP " + Math.round(state.ap) + "/" + state.maxAp
                     + " | Lv." + state.level + " | " + equipment.resolveWeaponId(player), color));
         }
     }
@@ -1202,7 +1221,7 @@ public final class CombatService implements Listener {
 
     private void apFailure(Player player, double required) {
         double current = runs.playerState(player.getUniqueId()).map(state -> state.ap).orElse(0.0);
-        player.sendActionBar(Component.text("AP 부족: 필요 " + Math.round(required) + " / 현재 " + Math.round(current), NamedTextColor.RED));
+        ActionBarService.notice(player, Component.text("AP 부족: 필요 " + Math.round(required) + " / 현재 " + Math.round(current), NamedTextColor.RED), 35);
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.5f, 0.7f);
     }
 

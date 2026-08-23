@@ -5,6 +5,7 @@ import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.PlayerStatPolicy;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
+import com.lsc.corp.wsplugin.ui.ActionBarService;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,6 +23,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -69,11 +74,15 @@ public final class GrowthService implements Listener {
         if (state.level > beforeLevel) {
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1.1f);
             player.sendMessage(ChatColor.GREEN + "WildSurvival Lv." + state.level + " 달성");
+            ActionBarService.important(player,
+                    Component.text("레벨 상승! Lv." + state.level + " · EXP +" + committedAmount, NamedTextColor.GREEN), 80);
             for (int milestone : List.of(3, 6, 10)) {
                 if (beforeLevel < milestone && state.level >= milestone) {
                     lockAndOpenPersonalDraw(player, milestone);
                 }
             }
+        } else {
+            ActionBarService.notice(player, Component.text("EXP +" + committedAmount, NamedTextColor.GREEN), 35);
         }
     }
 
@@ -129,6 +138,27 @@ public final class GrowthService implements Listener {
         }
     }
 
+    public void openAugments(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
+        for (int milestone : List.of(3, 6, 10)) {
+            if (state.level >= milestone && !state.resolvedPersonalMilestones.contains(milestone)) {
+                openMilestones.remove(player.getUniqueId());
+                lockAndOpenPersonalDraw(player, milestone);
+                return;
+            }
+        }
+        RunSnapshot run = runs.current().orElseThrow();
+        if (partyVoteOpened && run.partyAugmentId == null
+                && !run.partyAugmentVotes.containsKey(player.getUniqueId().toString())) {
+            List<PrototypeContent.AugmentDefinition> choices = partyChoices(run.seed);
+            player.openInventory(createAugmentInventory(
+                    new AugmentHolder(player.getUniqueId(), 10, true, choices), "파티 증강 투표"));
+            return;
+        }
+        openOwnedAugments(player);
+    }
+
     public void startPartyVote() {
         RunSnapshot snapshot = runs.current().orElseThrow();
         if (snapshot.partyAugmentId != null) {
@@ -164,19 +194,17 @@ public final class GrowthService implements Listener {
     }
 
     public void tick() {
-        if (++tickCounter % 100 != 0) {
-            return;
-        }
-        for (Player player : runs.onlineMembers()) {
-            if (player.getOpenInventory().getTopInventory().getHolder() instanceof AugmentHolder) {
-                continue;
-            }
-            openPendingPersonalDraw(player);
-        }
+        tickCounter++;
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getInventory().getHolder() instanceof AugmentOverviewHolder holder) {
+            event.setCancelled(true);
+            if (event.getWhoClicked() instanceof Player player && player.getUniqueId().equals(holder.playerId)
+                    && event.getRawSlot() == 49) player.closeInventory();
+            return;
+        }
         if (!(event.getInventory().getHolder() instanceof AugmentHolder holder)) {
             return;
         }
@@ -199,6 +227,21 @@ public final class GrowthService implements Listener {
             choosePersonal(player, holder.milestone, holder.choices.get(index));
         }
         player.closeInventory();
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if (!(event.getInventory().getHolder() instanceof AugmentHolder holder) || holder.party) return;
+        RunSnapshot.PlayerState state = runs.playerState(holder.playerId).orElse(null);
+        if (state != null && !state.resolvedPersonalMilestones.contains(holder.milestone)) {
+            openMilestones.remove(holder.playerId);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        if (event.getInventory().getHolder() instanceof AugmentHolder
+                || event.getInventory().getHolder() instanceof AugmentOverviewHolder) event.setCancelled(true);
     }
 
     public void setPersonalAugmentForTest(Player player, String augmentId, boolean present) {
@@ -340,21 +383,83 @@ public final class GrowthService implements Listener {
     private Inventory createAugmentInventory(AugmentHolder holder, String title) {
         Inventory inventory = Bukkit.createInventory(holder, 27, ChatColor.DARK_PURPLE + title);
         int[] slots = {11, 13, 15};
-        Material[] materials = {Material.IRON_NUGGET, Material.GOLD_INGOT, Material.AMETHYST_SHARD};
         for (int i = 0; i < holder.choices.size(); i++) {
             PrototypeContent.AugmentDefinition augment = holder.choices.get(i);
-            ItemStack item = new ItemStack(materials[Math.min(i, materials.length - 1)]);
+            ItemStack item = new ItemStack(augmentMaterial(augment));
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.LIGHT_PURPLE + augment.name());
-            meta.setLore(List.of(
-                    ChatColor.GRAY + "ID: " + augment.id(),
-                    ChatColor.WHITE + "등급: " + augment.tier(),
-                    ChatColor.YELLOW + "클릭하여 " + (holder.party ? "투표" : "선택")
-            ));
+            boolean detailed = runs.playerState(holder.playerId).map(state -> state.detailedTooltips).orElse(false);
+            meta.setLore(augmentLore(augment, detailed, ChatColor.YELLOW + "클릭하여 " + (holder.party ? "투표" : "선택")));
             item.setItemMeta(meta);
             inventory.setItem(slots[i], item);
         }
         return inventory;
+    }
+
+    private void openOwnedAugments(Player player) {
+        RunSnapshot run = runs.current().orElseThrow();
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        Inventory inventory = Bukkit.createInventory(new AugmentOverviewHolder(player.getUniqueId()), 54,
+                ChatColor.DARK_PURPLE + "보유 증강");
+        ItemStack border = named(Material.GRAY_STAINED_GLASS_PANE, " ", List.of());
+        for (int slot = 0; slot < inventory.getSize(); slot++) inventory.setItem(slot, border);
+        inventory.setItem(4, named(Material.AMETHYST_SHARD, ChatColor.LIGHT_PURPLE + "증강 현황",
+                List.of(ChatColor.WHITE + "개인 " + state.personalAugments.size() + "개",
+                        ChatColor.WHITE + "파티 " + (run.partyAugmentId == null ? "미보유" : "1개"),
+                        ChatColor.GRAY + (state.detailedTooltips ? "상세 설명 모드" : "간단 설명 모드"))));
+        int[] personalSlots = {10, 12, 14, 16, 28, 30, 32, 34, 36, 38};
+        for (int i = 0; i < state.personalAugments.size() && i < personalSlots.length; i++) {
+            PrototypeContent.AugmentDefinition augment = findAugment(state.personalAugments.get(i));
+            inventory.setItem(personalSlots[i], augmentIcon(augment, state.detailedTooltips, ChatColor.AQUA + "개인 증강"));
+        }
+        inventory.setItem(22, run.partyAugmentId == null
+                ? named(Material.BARRIER, ChatColor.GRAY + "파티 증강 미보유",
+                List.of(partyVoteOpened ? ChatColor.YELLOW + "파티 투표 진행 중" : ChatColor.DARK_GRAY + "Day 10 보스 이후 결정"))
+                : augmentIcon(findAugment(run.partyAugmentId), state.detailedTooltips, ChatColor.GOLD + "파티 증강"));
+        inventory.setItem(49, named(Material.OAK_DOOR, ChatColor.RED + "닫기", List.of()));
+        player.openInventory(inventory);
+    }
+
+    private ItemStack augmentIcon(PrototypeContent.AugmentDefinition augment, boolean detailed, String scopeLine) {
+        return named(augmentMaterial(augment), ChatColor.LIGHT_PURPLE + augment.name(), augmentLore(augment, detailed, scopeLine));
+    }
+
+    private static Material augmentMaterial(PrototypeContent.AugmentDefinition augment) {
+        return switch (augment.tier()) {
+            case "SILVER" -> Material.IRON_NUGGET;
+            case "GOLD" -> Material.GOLD_INGOT;
+            default -> Material.AMETHYST_SHARD;
+        };
+    }
+
+    private List<String> augmentLore(PrototypeContent.AugmentDefinition augment, boolean detailed, String tail) {
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.WHITE + "등급 " + augment.tier() + " · " + ("PARTY".equals(augment.scope()) ? "파티" : "개인"));
+        if (detailed) {
+            lore.add(ChatColor.GRAY + "공격 배율 x" + augment.attackMultiplier());
+            lore.add(ChatColor.GRAY + "브레이크 배율 x" + augment.breakMultiplier());
+            lore.add(ChatColor.GRAY + "자원 배율 x" + augment.resourceMultiplier());
+            lore.add(ChatColor.GRAY + "최대 AP +" + augment.maxApBonus());
+            lore.add(ChatColor.GRAY + "구조 속도 x" + augment.reviveSpeedMultiplier());
+            lore.add(ChatColor.DARK_GRAY + "ID: " + augment.id());
+        } else {
+            if (augment.attackMultiplier() != 1.0) lore.add(ChatColor.GRAY + "공격 능력을 강화합니다.");
+            if (augment.breakMultiplier() != 1.0) lore.add(ChatColor.GRAY + "브레이크 능력을 강화합니다.");
+            if (augment.resourceMultiplier() != 1.0) lore.add(ChatColor.GRAY + "자원 획득량을 늘립니다.");
+            if (augment.maxApBonus() != 0) lore.add(ChatColor.GRAY + "최대 AP를 늘립니다.");
+            if (augment.reviveSpeedMultiplier() != 1.0) lore.add(ChatColor.GRAY + "아군 구조 속도를 높입니다.");
+        }
+        lore.add(tail);
+        return lore;
+    }
+
+    private static ItemStack named(Material material, String name, List<String> lore) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
     }
 
     private double aggregate(Player player, java.util.function.ToDoubleFunction<PrototypeContent.AugmentDefinition> getter) {
@@ -433,5 +538,11 @@ public final class GrowthService implements Listener {
         public Inventory getInventory() {
             return null;
         }
+    }
+
+    private static final class AugmentOverviewHolder implements InventoryHolder {
+        private final UUID playerId;
+        private AugmentOverviewHolder(UUID playerId) { this.playerId = playerId; }
+        @Override public Inventory getInventory() { return null; }
     }
 }

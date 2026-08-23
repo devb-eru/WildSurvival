@@ -44,11 +44,11 @@ public final class Main extends JavaPlugin {
             runService = new RunService(this, repository, testRepository, content.content(), telemetry);
             tutorial = new TutorialService(this, runService);
 
+            ItemCodexService codex = new ItemCodexService(this, runService, content.content(), telemetry);
             GrowthService growth = new GrowthService(this, runService, content.content(), telemetry);
-            EquipmentService equipment = new EquipmentService(this, runService, content.content(), telemetry);
+            EquipmentService equipment = new EquipmentService(this, runService, content.content(), telemetry, codex);
             SkillLoadoutService skills = new SkillLoadoutService(runService, content.content(), equipment);
             CombatService combat = new CombatService(this, runService, content.content(), equipment, growth, skills, telemetry);
-            ItemCodexService codex = new ItemCodexService(this, runService, content.content(), telemetry);
             EconomyService economy = new EconomyService(this, runService, content.content(), equipment, growth, telemetry, codex);
             PlayerStatService stats = new PlayerStatService(this, runService, growth);
             PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, skills, growth, tutorial);

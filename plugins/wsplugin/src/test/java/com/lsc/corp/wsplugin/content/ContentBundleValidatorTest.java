@@ -22,7 +22,7 @@ class ContentBundleValidatorTest {
         assertEquals("ws-prototype-r1", result.manifest().contentRevision());
         assertTrue(result.manifest().promotionForbidden());
         assertEquals(6, result.content().resources().size());
-        assertEquals(8, result.content().items().size());
+        assertEquals(10, result.content().items().size());
         assertEquals(7, result.content().weapons().size());
         assertEquals(13, result.content().skills().size());
         assertEquals(15, result.content().recipes().size());

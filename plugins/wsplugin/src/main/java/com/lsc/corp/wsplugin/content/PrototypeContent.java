@@ -68,6 +68,7 @@ public record PrototypeContent(
             String name,
             Map<String, Integer> costs,
             List<String> shape,
+            boolean shapeless,
             String rewardType,
             String rewardId,
             int rewardAmount
