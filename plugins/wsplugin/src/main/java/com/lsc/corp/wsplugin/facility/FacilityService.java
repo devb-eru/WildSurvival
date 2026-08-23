@@ -1,6 +1,7 @@
 package com.lsc.corp.wsplugin.facility;
 
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
+import com.lsc.corp.wsplugin.combat.CombatService;
 import com.lsc.corp.wsplugin.economy.ItemCodexService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
@@ -84,6 +85,7 @@ public final class FacilityService implements Listener {
     private Consumer<Player> codexOpener = ignored -> { };
     private Consumer<Player> statsOpener = ignored -> { };
     private Consumer<Player> researchOpener = ignored -> { };
+    private CombatService combat;
     private final Map<UUID, PendingVirtualBuild> pendingVirtualBuilds = new HashMap<>();
     private long lastTrapTick;
 
@@ -108,6 +110,10 @@ public final class FacilityService implements Listener {
         this.codexOpener = Objects.requireNonNull(codexOpener);
         this.statsOpener = Objects.requireNonNull(statsOpener);
         this.researchOpener = Objects.requireNonNull(researchOpener);
+    }
+
+    public void setCombatService(CombatService combat) {
+        this.combat = Objects.requireNonNull(combat);
     }
 
     public void restore() {
@@ -392,7 +398,9 @@ public final class FacilityService implements Listener {
             case "SESSION_RELAY" -> player.sendMessage(ChatColor.AQUA + "안전 중단·체크포인트는 /ws 명령에서 파티 투표로 요청합니다.");
             case "REBUILD_POWER", "REBUILD_LENS", "REBUILD_PURIFY" -> completeReconstructionTest(player, instance);
             case "REBUILD_FINAL" -> activateFinalFacility(player, instance);
-            case "REFORGE", "AUGMENT_MANAGE", "GRAVE_RECOVERY", "PURIFY_RELAY", "ENVIRONMENT_SHIELD",
+            case "PURIFY_RELAY", "ENVIRONMENT_SHIELD" -> player.sendMessage(ChatColor.GREEN
+                    + profile.name() + " 보호 범위가 시설망에 적용 중입니다.");
+            case "REFORGE", "AUGMENT_MANAGE", "GRAVE_RECOVERY",
                     "POWER_DISTRIBUTE", "STORAGE", "BARRICADE", "WALL_REGISTER", "SLOW_TRAP", "IMPACT_TRAP",
                     "TAUNT_BEACON", "REBUILD_FRAME", "REBUILD_STAKES" -> player.sendMessage(ChatColor.GREEN + profile.name() + " 가동 상태 · " + profile.effectText());
             default -> player.sendMessage(ChatColor.RED + "지원하지 않는 시설 기능입니다: " + profile.effectOpcode());
@@ -712,6 +720,7 @@ public final class FacilityService implements Listener {
             else {
                 Vector push = target.getLocation().toVector().subtract(center.toVector()).setY(0.25).normalize().multiply(0.6);
                 target.setVelocity(push);
+                if (combat != null) combat.applyBreak(target, 12.0 * Math.max(1, instance.level));
             }
             runs.mutate(snapshot -> {
                 RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(snapshot).get(instance.instanceId);

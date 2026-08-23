@@ -40,6 +40,31 @@ public final class FacilityStateAccess {
         return run.facilityTypesEverActivated.contains(facilityType);
     }
 
+    public static boolean corruptionProtected(RunSnapshot run, String world, double x, double y, double z) {
+        long now = System.currentTimeMillis();
+        for (RunSnapshot.FacilityInstanceState instance : instances(run).values()) {
+            if (!"ACTIVE".equals(instance.state) || expired(instance, now) || !world.equals(instance.world)) continue;
+            double range = switch (instance.facilityType) {
+                case "FAC-P05" -> 5.0;
+                case "FAC-S13" -> 6.0 + Math.max(1, instance.level) * 2.0;
+                case "FAC-S15" -> 8.0 + Math.max(1, instance.level) * 2.0;
+                case "FAC-S14" -> relayPowered(run, instance) ? 8.0 + Math.max(1, instance.level) * 3.0 : 0.0;
+                default -> 0.0;
+            };
+            if (range > 0.0 && squared(instance.x + 0.5 - x, instance.y + 0.5 - y,
+                    instance.z + 0.5 - z) <= range * range) return true;
+        }
+        return false;
+    }
+
+    private static boolean relayPowered(RunSnapshot run, RunSnapshot.FacilityInstanceState relay) {
+        if (relay.networkId == null || relay.networkId.isBlank()) return false;
+        long now = System.currentTimeMillis();
+        return instances(run).values().stream().anyMatch(instance -> "FAC-S13".equals(instance.facilityType)
+                && "ACTIVE".equals(instance.state) && !expired(instance, now)
+                && relay.networkId.equals(instance.networkId));
+    }
+
     public static boolean expired(RunSnapshot.FacilityInstanceState instance, long now) {
         return instance.expiresAtEpochMs > 0L && instance.expiresAtEpochMs <= now;
     }

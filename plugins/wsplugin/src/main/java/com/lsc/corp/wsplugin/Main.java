@@ -74,6 +74,7 @@ public final class Main extends JavaPlugin {
             combat.setProductionLootHandler(loot::rewardEnemy);
             combat.setDamageNumbers(damageNumbers);
             combat.setFacilityService(facility);
+            facility.setCombatService(combat);
             PrototypeBossService boss = new PrototypeBossService(this, runService, content.productionCatalog(),
                     combat, growth, loot, telemetry);
             finale = new FinalService(this, runService, content.productionCatalog(), codex, combat, discoveries, story);

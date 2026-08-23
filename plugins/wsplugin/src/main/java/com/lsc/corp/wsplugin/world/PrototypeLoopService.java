@@ -4,6 +4,7 @@ import com.lsc.corp.wsplugin.boss.PrototypeBossService;
 import com.lsc.corp.wsplugin.combat.CombatService;
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
 import com.lsc.corp.wsplugin.economy.EconomyService;
+import com.lsc.corp.wsplugin.facility.FacilityStateAccess;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.PlayerStatService;
@@ -314,6 +315,12 @@ public final class PrototypeLoopService implements Listener {
         for (Player player : runs.onlineMembers()) {
             if (player.getWorld().equals(corruptionCenter.getWorld())
                     && player.getLocation().distanceSquared(corruptionCenter) <= radius * radius) {
+                if (FacilityStateAccess.corruptionProtected(snapshot, player.getWorld().getName(),
+                        player.getX(), player.getY(), player.getZ())) {
+                    player.getWorld().spawnParticle(Particle.END_ROD, player.getLocation().add(0, 1, 0),
+                            3, 0.4, 0.7, 0.4, 0.01);
+                    continue;
+                }
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 30, 0, true, true));
                 if (tickCounter % 40 == 0) {
                     player.playSound(player.getLocation(), Sound.BLOCK_SCULK_SHRIEKER_SHRIEK, 0.25f, 1.5f);
