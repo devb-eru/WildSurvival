@@ -29,6 +29,24 @@ class DeathRuntimePolicyTest {
     }
 
     @Test
+    void sharedReviveProgressUsesWeightedContributorsAndSafeTickCaps() {
+        assertEquals(0.032, DeathRuntimePolicy.reviveProgressDelta(1, 100L, 1.60), 0.000001);
+        assertEquals(0.10, DeathRuntimePolicy.reviveProgressDelta(1, 500L, 10.0), 0.000001);
+        assertEquals(0.05, DeathRuntimePolicy.reviveProgressDecay(500L), 0.000001);
+        assertEquals(1.25, DeathRuntimePolicy.reviveApCost(500L), 0.000001);
+        assertEquals(1.0, DeathRuntimePolicy.contributorWeight(0));
+        assertEquals(0.60, DeathRuntimePolicy.contributorWeight(1));
+        assertEquals(0.0, DeathRuntimePolicy.contributorWeight(2));
+    }
+
+    @Test
+    void postReviveProtectionHasFullAndTailWindows() {
+        assertEquals(0.20, DeathRuntimePolicy.recoveryDamageMultiplier(1_000L, 2_000L, 3_000L));
+        assertEquals(0.70, DeathRuntimePolicy.recoveryDamageMultiplier(2_000L, 2_000L, 3_000L));
+        assertEquals(1.0, DeathRuntimePolicy.recoveryDamageMultiplier(3_000L, 2_000L, 3_000L));
+    }
+
+    @Test
     void fourthFatalHitSkipsDowned() {
         assertFalse(DeathRuntimePolicy.fatalInsteadOfDowned(2));
         assertTrue(DeathRuntimePolicy.fatalInsteadOfDowned(3));

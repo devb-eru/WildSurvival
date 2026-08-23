@@ -114,7 +114,7 @@ public final class CombatService implements Listener {
     private final Map<UUID, CombatInputPolicy.LeftDisposition> lastLeftDisposition = new HashMap<>();
     private final Map<UUID, Long> invulnerableUntilEpochMs = new HashMap<>();
     private final Map<UUID, Long> lastSneakAtEpochMs = new HashMap<>();
-    private final Map<UUID, ReviveChannel> reviveChannels = new HashMap<>();
+    private final Map<UUID, ReviveSession> reviveSessions = new HashMap<>();
     private final Map<UUID, BossBar> breakBars = new HashMap<>();
     private final Set<UUID> activeCombatEntities = new HashSet<>();
     private final Map<UUID, Long> tridentHitCooldown = new HashMap<>();
@@ -623,9 +623,13 @@ public final class CombatService implements Listener {
             event.setCancelled(true);
             return;
         }
-        if ("DOWNED".equals(playerState.lifeState)) {
+        if ("DOWNED".equals(playerState.lifeState) || "BEING_REVIVED".equals(playerState.lifeState)) {
             event.setCancelled(true);
             applyDownedDamage(player, event.getFinalDamage(), downedDamageMultiplier(event));
+            return;
+        }
+        if (now < playerState.reviveProtectionUntilEpochMs && isDamageOverTime(event.getCause())) {
+            event.setCancelled(true);
             return;
         }
         if (invulnerableUntilEpochMs.getOrDefault(player.getUniqueId(), 0L) >= now) {
@@ -641,7 +645,10 @@ public final class CombatService implements Listener {
             return;
         }
         event.setDamage(event.getDamage() * growth.reactiveIncomingDamageMultiplier(player));
+        event.setDamage(event.getDamage() * DeathRuntimePolicy.recoveryDamageMultiplier(now,
+                playerState.reviveProtectionUntilEpochMs, playerState.reviveTailProtectionUntilEpochMs));
         if (reviveProtected(player)) event.setDamage(event.getDamage() * 0.50);
+        interruptReviveContributionOnDamage(player, event.getFinalDamage());
         growth.onIncomingDamage(player, event.getFinalDamage());
         switch (PlayerLifePolicy.evaluate(playerState.lifeState, player.getHealth(), event.getFinalDamage())) {
             case BLOCK -> event.setCancelled(true);
@@ -888,20 +895,33 @@ public final class CombatService implements Listener {
             return;
         }
         RunSnapshot.PlayerState targetState = runs.playerState(target.getUniqueId()).orElseThrow();
-        if (!"DOWNED".equals(targetState.lifeState)) {
+        if (!("DOWNED".equals(targetState.lifeState) || "BEING_REVIVED".equals(targetState.lifeState))) {
             return;
         }
-        if (!withinReviveRange(reviver, target)) {
+        if (!reviver.isSneaking() || !validReviveGeometry(reviver, target)) {
             return;
         }
         event.setCancelled(true);
-        double multiplier = growth.reviveSpeedMultiplier(reviver);
-        RunSnapshot run = runs.current().orElseThrow();
-        if (FacilityStateAccess.activeNear(run, "FAC-P07", target.getWorld().getName(),
-                target.getX(), target.getY(), target.getZ(), 12.0)) multiplier *= 1.15;
-        long duration = DeathRuntimePolicy.reviveDurationMillis(Math.max(1, targetState.injuryStacks), multiplier);
-        reviveChannels.put(target.getUniqueId(), new ReviveChannel(reviver.getUniqueId(), target.getUniqueId(), Instant.now().toEpochMilli() + duration));
-        reviver.sendMessage(ChatColor.YELLOW + target.getName() + " 구조 시작 — " + (duration / 1000.0) + "초");
+        if (runs.playerState(reviver.getUniqueId()).map(state -> state.ap < 5.0).orElse(true)) {
+            ActionBarService.notice(reviver, Component.text("구조 시작에는 AP 5 이상이 필요합니다.", NamedTextColor.RED), 40);
+            return;
+        }
+        long now = Instant.now().toEpochMilli();
+        ReviveSession session = reviveSessions.computeIfAbsent(target.getUniqueId(),
+                ignored -> new ReviveSession(target.getUniqueId(), now));
+        if (!session.contributors.containsKey(reviver.getUniqueId()) && session.contributors.size() >= 2) {
+            ActionBarService.notice(reviver, Component.text("이 대상은 이미 2명이 구조 중입니다.", NamedTextColor.RED), 40);
+            return;
+        }
+        session.contributors.computeIfAbsent(reviver.getUniqueId(), ignored ->
+                new ReviveContributor(reviver.getUniqueId(), now, reviver.getLocation().clone()));
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(target.getUniqueId().toString());
+            state.lifeState = "BEING_REVIVED";
+            state.reviveLastContributionAtEpochMs = now;
+            state.reviveContributions.putIfAbsent(reviver.getUniqueId().toString(), 0.0);
+        });
+        reviver.sendMessage(ChatColor.YELLOW + target.getName() + " 구조 참여 — " + session.contributors.size() + "/2명");
         ActionBarService.critical(reviver, Component.text(target.getName() + " 구조 시작", NamedTextColor.YELLOW), 30);
         ActionBarService.critical(target, Component.text(reviver.getName() + "이(가) 구조 중", NamedTextColor.YELLOW), 30);
     }
@@ -1431,10 +1451,16 @@ public final class CombatService implements Listener {
             value.downedMaxHp = downedMaximum;
             value.downedHp = downedMaximum;
             value.injuryStacks = nextInjury;
+            value.reviveProgress = 0.0;
+            value.reviveLastContributionAtEpochMs = 0L;
+            value.reviveContributions.clear();
+            value.reviveProtectionUntilEpochMs = 0L;
+            value.reviveTailProtectionUntilEpochMs = 0L;
             value.ap = 0.0;
         });
         invulnerableUntilEpochMs.remove(player.getUniqueId());
-        reviveChannels.remove(player.getUniqueId());
+        cancelAllReviveParticipation(player.getUniqueId(), "구조자 빈사");
+        reviveSessions.remove(player.getUniqueId());
         statuses.clearControls(player);
         player.setHealth(1.0);
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 4, false, false));
@@ -1448,29 +1474,104 @@ public final class CombatService implements Listener {
     }
 
     private void processRevives(long now) {
-        List<UUID> complete = new ArrayList<>();
-        for (ReviveChannel channel : reviveChannels.values()) {
-            Player reviver = Bukkit.getPlayer(channel.reviver);
-            Player target = Bukkit.getPlayer(channel.target);
-            if (reviver == null || target == null || !withinReviveRange(reviver, target)
-                    || !reviver.isSneaking()) {
-                if (reviver != null) ActionBarService.critical(reviver, Component.text("구조 취소", NamedTextColor.RED), 30);
-                complete.add(channel.target);
-                continue;
-            }
-            long remaining = Math.max(0L, channel.completeAtEpochMs - now);
-            String progress = "구조 " + String.format(java.util.Locale.ROOT, "%.1f", remaining / 1000.0) + "초";
-            ActionBarService.show(reviver, Component.text(progress, NamedTextColor.AQUA), 3, 100);
-            ActionBarService.show(target, Component.text(reviver.getName() + " 구조 중 · " + progress, NamedTextColor.AQUA), 3, 100);
-            if (now >= channel.completeAtEpochMs) {
-                revive(target, reviver);
-                complete.add(channel.target);
+        for (Player target : runs.onlineMembers()) {
+            RunSnapshot.PlayerState state = runs.playerState(target.getUniqueId()).orElseThrow();
+            if ("BEING_REVIVED".equals(state.lifeState)) {
+                reviveSessions.computeIfAbsent(target.getUniqueId(), ignored ->
+                        new ReviveSession(target.getUniqueId(), now));
             }
         }
-        complete.forEach(reviveChannels::remove);
+        List<UUID> removeSessions = new ArrayList<>();
+        for (ReviveSession session : reviveSessions.values()) {
+            Player target = Bukkit.getPlayer(session.target);
+            RunSnapshot.PlayerState targetState = runs.playerState(session.target).orElse(null);
+            if (target == null || targetState == null || !("DOWNED".equals(targetState.lifeState)
+                    || "BEING_REVIVED".equals(targetState.lifeState))) {
+                removeSessions.add(session.target);
+                continue;
+            }
+            long elapsed = Math.max(0L, Math.min(250L, now - session.lastTickAtEpochMs));
+            session.lastTickAtEpochMs = now;
+            List<ReviveContributor> ordered = session.contributors.values().stream()
+                    .sorted(Comparator.comparingLong(value -> value.startedAtEpochMs)).toList();
+            List<UUID> invalid = new ArrayList<>();
+            double weightedSpeed = 0.0;
+            List<Player> activeContributors = new ArrayList<>();
+            Map<UUID, Double> contributionWeights = new HashMap<>();
+            for (int index = 0; index < ordered.size(); index++) {
+                ReviveContributor contributor = ordered.get(index);
+                Player reviver = Bukkit.getPlayer(contributor.playerUuid);
+                if (!validReviveContributor(reviver, target, contributor)) {
+                    invalid.add(contributor.playerUuid);
+                    continue;
+                }
+                double apCost = DeathRuntimePolicy.reviveApCost(elapsed);
+                if (apCost > 0.0 && !runs.consumeAp(reviver, apCost)) {
+                    invalid.add(contributor.playerUuid);
+                    ActionBarService.critical(reviver, Component.text("AP 부족으로 구조 중단", NamedTextColor.RED), 40);
+                    continue;
+                }
+                runs.mutateTransient(run -> run.players.get(reviver.getUniqueId().toString())
+                        .apRegenBlockedUntilEpochMs = now + 1_000L);
+                double speed = growth.reviveSpeedMultiplier(reviver) * DeathRuntimePolicy.contributorWeight(index);
+                RunSnapshot run = runs.current().orElseThrow();
+                if (FacilityStateAccess.activeNear(run, "FAC-P07", target.getWorld().getName(),
+                        target.getX(), target.getY(), target.getZ(), 12.0)) speed *= 1.15;
+                weightedSpeed += speed;
+                activeContributors.add(reviver);
+                contributionWeights.put(reviver.getUniqueId(), speed);
+            }
+            invalid.forEach(session.contributors::remove);
+            double previousProgress = targetState.reviveProgress;
+            double nextProgress = previousProgress;
+            if (!activeContributors.isEmpty()) {
+                double delta = DeathRuntimePolicy.reviveProgressDelta(
+                        Math.max(1, targetState.injuryStacks), elapsed, weightedSpeed);
+                nextProgress = Math.min(1.0, previousProgress + delta);
+                double creditedProgress = nextProgress - previousProgress;
+                double totalWeight = weightedSpeed;
+                double persistedProgress = nextProgress;
+                runs.mutateTransient(run -> {
+                    RunSnapshot.PlayerState value = run.players.get(session.target.toString());
+                    value.lifeState = "BEING_REVIVED";
+                    value.reviveProgress = persistedProgress;
+                    value.reviveLastContributionAtEpochMs = now;
+                    for (Player contributor : activeContributors) {
+                        double share = contributionWeights.getOrDefault(contributor.getUniqueId(), 0.0) / totalWeight;
+                        value.reviveContributions.merge(contributor.getUniqueId().toString(),
+                                creditedProgress * share, Double::sum);
+                    }
+                });
+            } else if (now - targetState.reviveLastContributionAtEpochMs > 500L) {
+                nextProgress = Math.max(0.0, previousProgress - DeathRuntimePolicy.reviveProgressDecay(elapsed));
+                double persistedProgress = nextProgress;
+                runs.mutateTransient(run -> run.players.get(session.target.toString()).reviveProgress = persistedProgress);
+                if (nextProgress <= 0.0) {
+                    runs.mutate(run -> run.players.get(session.target.toString()).lifeState = "DOWNED");
+                    removeSessions.add(session.target);
+                    continue;
+                }
+            }
+            int percent = (int) Math.round(nextProgress * 100.0);
+            String progressText = "구조 " + percent + "% · " + activeContributors.size() + "/2명";
+            ActionBarService.show(target, Component.text(progressText, NamedTextColor.AQUA), 3, 100);
+            for (Player contributor : activeContributors) {
+                ActionBarService.show(contributor, Component.text(target.getName() + " " + progressText,
+                        NamedTextColor.AQUA), 3, 100);
+            }
+            if (nextProgress >= 1.0) {
+                revive(target, activeContributors);
+                removeSessions.add(session.target);
+            }
+        }
+        removeSessions.forEach(reviveSessions::remove);
     }
 
-    private void revive(Player target, Player reviver) {
+    private void revive(Player target, List<Player> contributors) {
+        RunSnapshot.PlayerState before = runs.playerState(target.getUniqueId()).orElseThrow();
+        Player primary = contributors.stream().max(Comparator.comparingDouble(player ->
+                before.reviveContributions.getOrDefault(player.getUniqueId().toString(), 0.0))).orElse(null);
+        long now = Instant.now().toEpochMilli();
         runs.mutate(run -> {
             RunSnapshot.PlayerState state = run.players.get(target.getUniqueId().toString());
             state.lifeState = "ACTIVE";
@@ -1478,20 +1579,35 @@ public final class CombatService implements Listener {
             state.downedGraceUntilEpochMs = 0L;
             state.downedHp = 0.0;
             state.downedMaxHp = 0.0;
+            state.reviveProgress = 0.0;
+            state.reviveLastContributionAtEpochMs = 0L;
+            state.reviveProtectionUntilEpochMs = now + 2_000L;
+            state.reviveTailProtectionUntilEpochMs = now + 3_000L;
             state.ap = state.maxAp * 0.20;
         });
         target.removePotionEffect(PotionEffectType.SLOWNESS);
         target.removePotionEffect(PotionEffectType.GLOWING);
+        statuses.remove(target, "BURN", 64);
+        statuses.remove(target, "POISON", 64);
+        statuses.remove(target, "BLEED", 64);
+        target.removePotionEffect(PotionEffectType.POISON);
+        target.removePotionEffect(PotionEffectType.WITHER);
+        target.setFireTicks(0);
         RunSnapshot.PlayerState revived = runs.playerState(target.getUniqueId()).orElseThrow();
         double maximum = target.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
                 : target.getAttribute(Attribute.MAX_HEALTH).getValue();
         target.setHealth(Math.max(1.0, maximum * DeathRuntimePolicy.reviveHealthFraction(
                 Math.max(1, revived.injuryStacks))));
-        growth.onReviveCompleted(reviver, target);
-        runs.broadcast(ChatColor.GREEN + reviver.getName() + "이(가) " + target.getName() + "을 구조했습니다.");
-        ActionBarService.critical(reviver, Component.text(target.getName() + " 구조 완료", NamedTextColor.GREEN), 60);
+        if (primary != null) growth.onReviveCompleted(primary, target);
+        String rescuerNames = contributors.isEmpty() ? "파티" : contributors.stream().map(Player::getName)
+                .collect(java.util.stream.Collectors.joining(", "));
+        runs.broadcast(ChatColor.GREEN + rescuerNames + "이(가) " + target.getName() + "을 구조했습니다.");
+        for (Player contributor : contributors) {
+            ActionBarService.critical(contributor, Component.text(target.getName() + " 구조 완료", NamedTextColor.GREEN), 60);
+        }
         ActionBarService.critical(target, Component.text("구조 완료 · 전투 복귀", NamedTextColor.GREEN), 60);
-        telemetry.event(runs.current().orElseThrow().runId, "PLAYER_STATE_CHANGED", "{\"state\":\"ACTIVE\",\"reason\":\"REVIVED\"}");
+        telemetry.event(runs.current().orElseThrow().runId, "PLAYER_STATE_CHANGED", "{\"state\":\"ACTIVE\",\"reason\":\"REVIVED\",\"contributors\":"
+                + contributors.size() + "}");
     }
 
     private boolean withinReviveRange(Player reviver, Player target) {
@@ -1499,13 +1615,73 @@ public final class CombatService implements Listener {
                 && reviver.getLocation().distanceSquared(target.getLocation()) <= REVIVE_RANGE_SQUARED;
     }
 
+    private boolean validReviveGeometry(Player reviver, Player target) {
+        if (!withinReviveRange(reviver, target) || !reviver.hasLineOfSight(target)) return false;
+        Vector direction = reviver.getEyeLocation().getDirection().normalize();
+        Vector towardTarget = target.getEyeLocation().toVector().subtract(reviver.getEyeLocation().toVector());
+        return towardTarget.lengthSquared() > 0.0001 && direction.dot(towardTarget.normalize()) >= 0.35;
+    }
+
+    private boolean validReviveContributor(Player reviver, Player target, ReviveContributor contributor) {
+        if (reviver == null || !reviver.isOnline() || !runs.isRunningMember(reviver) || !reviver.isSneaking()) return false;
+        if (!runs.playerState(reviver.getUniqueId()).map(state -> "ACTIVE".equals(state.lifeState)).orElse(false)
+                || statuses.blocksAllActions(reviver)) return false;
+        if (!validReviveGeometry(reviver, target)) return false;
+        return contributor.anchor.getWorld() != null && contributor.anchor.getWorld().equals(reviver.getWorld())
+                && contributor.anchor.distanceSquared(reviver.getLocation()) <= 0.75 * 0.75;
+    }
+
+    private void interruptReviveContributionOnDamage(Player player, double finalDamage) {
+        if (!isReviving(player) || !Double.isFinite(finalDamage) || finalDamage <= 0.0) return;
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
+        double maximum = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
+                : player.getAttribute(Attribute.MAX_HEALTH).getValue();
+        double threshold = 0.05 + (state.rescueBraceCharges > 0
+                ? Math.max(0.0, state.rescueInterruptThresholdBonus) : 0.0);
+        if (finalDamage + 1.0e-6 < maximum * threshold) return;
+        if (state.rescueBraceCharges > 0) {
+            runs.mutate(run -> {
+                RunSnapshot.PlayerState current = run.players.get(player.getUniqueId().toString());
+                current.rescueBraceCharges--;
+                current.rescueInterruptThresholdBonus = 0.0;
+            });
+            ActionBarService.critical(player, Component.text("구조 보호대가 중단을 막았습니다.", NamedTextColor.YELLOW), 40);
+            return;
+        }
+        cancelAllReviveParticipation(player.getUniqueId(), "강한 피해로 구조 중단");
+    }
+
+    private void cancelAllReviveParticipation(UUID contributorId, String reason) {
+        Player contributor = Bukkit.getPlayer(contributorId);
+        for (ReviveSession session : reviveSessions.values()) {
+            if (session.contributors.remove(contributorId) != null && contributor != null) {
+                ActionBarService.critical(contributor, Component.text(reason, NamedTextColor.RED), 40);
+            }
+        }
+    }
+
+    private boolean isReviving(Player player) {
+        return reviveSessions.values().stream()
+                .anyMatch(session -> session.contributors.containsKey(player.getUniqueId()));
+    }
+
     private boolean reviveProtected(Player player) {
-        for (ReviveChannel channel : reviveChannels.values()) {
-            if (!channel.reviver.equals(player.getUniqueId()) && !channel.target.equals(player.getUniqueId())) continue;
-            Player reviver = Bukkit.getPlayer(channel.reviver);
-            if (reviver != null && growth.hasAugment(reviver, "AUG-P-014")) return true;
+        for (ReviveSession session : reviveSessions.values()) {
+            if (!session.target.equals(player.getUniqueId())
+                    && !session.contributors.containsKey(player.getUniqueId())) continue;
+            for (UUID contributorId : session.contributors.keySet()) {
+                Player reviver = Bukkit.getPlayer(contributorId);
+                if (reviver != null && growth.hasAugment(reviver, "AUG-P-014")) return true;
+            }
         }
         return false;
+    }
+
+    private boolean isDamageOverTime(EntityDamageEvent.DamageCause cause) {
+        return cause == EntityDamageEvent.DamageCause.FIRE_TICK
+                || cause == EntityDamageEvent.DamageCause.POISON
+                || cause == EntityDamageEvent.DamageCause.WITHER;
     }
 
     private void processLifeStates(long now) {
@@ -1558,7 +1734,8 @@ public final class CombatService implements Listener {
     private void completeDeath(Player player, String reason) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null || "DEAD".equals(state.lifeState)) return;
-        reviveChannels.remove(player.getUniqueId());
+        cancelAllReviveParticipation(player.getUniqueId(), "구조자 완전 사망");
+        reviveSessions.remove(player.getUniqueId());
         if (!"DEAD_PENDING".equals(state.lifeState)) {
             runs.mutate(run -> run.players.get(player.getUniqueId().toString()).lifeState = "DEAD_PENDING");
         }
@@ -1680,10 +1857,13 @@ public final class CombatService implements Listener {
         }
         for (Player player : runs.onlineMembers()) {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
-            if ("DOWNED".equals(state.lifeState) || "DOWNED_GRACE".equals(state.lifeState)) {
+            if ("DOWNED".equals(state.lifeState) || "DOWNED_GRACE".equals(state.lifeState)
+                    || "BEING_REVIVED".equals(state.lifeState)) {
                 ActionBarService.renderHud(player, Component.text("빈사 체력 " + Math.round(state.downedHp) + "/"
                         + Math.round(state.downedMaxHp) + " | 부상 " + state.injuryStacks + "/3"
-                        + ("DOWNED_GRACE".equals(state.lifeState) ? " | 보호" : " | 웅크리기+우클릭 구조"),
+                        + ("DOWNED_GRACE".equals(state.lifeState) ? " | 보호"
+                        : "BEING_REVIVED".equals(state.lifeState) ? " | 구조 " + Math.round(state.reviveProgress * 100.0) + "%"
+                        : " | 웅크리기+우클릭 구조"),
                         NamedTextColor.RED));
                 continue;
             }
@@ -1922,12 +2102,17 @@ public final class CombatService implements Listener {
 
     private boolean isActionRestricted(Player player) {
         return runs.playerState(player.getUniqueId())
-                .map(state -> !"ACTIVE".equals(state.lifeState)).orElse(true)
-                || statuses.blocksAllActions(player);
+                .map(state -> !"ACTIVE".equals(state.lifeState)
+                        || Instant.now().toEpochMilli() < state.reviveProtectionUntilEpochMs).orElse(true)
+                || statuses.blocksAllActions(player) || isReviving(player);
     }
 
     private void showRestrictedAction(Player player) {
-        String message = statuses.blocksAllActions(player)
+        long now = Instant.now().toEpochMilli();
+        String message = isReviving(player) ? "구조 중에는 전투·아이템·블록 행동을 할 수 없습니다."
+                : runs.playerState(player.getUniqueId()).map(state -> now < state.reviveProtectionUntilEpochMs).orElse(false)
+                ? "구조 직후 회복 보호 중에는 공격·아이템·시설 행동을 할 수 없습니다."
+                : statuses.blocksAllActions(player)
                 ? "강한 제어 상태에서는 행동할 수 없습니다."
                 : "빈사·사망 상태에서는 이동과 도움 요청 외 행동을 할 수 없습니다.";
         ActionBarService.notice(player, Component.text(message, NamedTextColor.RED), 30);
@@ -2263,7 +2448,28 @@ public final class CombatService implements Listener {
         private long lastAttackAtEpochMs;
     }
 
-    private record ReviveChannel(UUID reviver, UUID target, long completeAtEpochMs) {}
+    private static final class ReviveSession {
+        private final UUID target;
+        private final Map<UUID, ReviveContributor> contributors = new HashMap<>();
+        private long lastTickAtEpochMs;
+
+        private ReviveSession(UUID target, long lastTickAtEpochMs) {
+            this.target = target;
+            this.lastTickAtEpochMs = lastTickAtEpochMs;
+        }
+    }
+
+    private static final class ReviveContributor {
+        private final UUID playerUuid;
+        private final long startedAtEpochMs;
+        private final Location anchor;
+
+        private ReviveContributor(UUID playerUuid, long startedAtEpochMs, Location anchor) {
+            this.playerUuid = playerUuid;
+            this.startedAtEpochMs = startedAtEpochMs;
+            this.anchor = anchor;
+        }
+    }
 
     public interface BossDamageHandler {
         void damage(Player attacker, LivingEntity boss, double damage, double breakDamage, String executionId);

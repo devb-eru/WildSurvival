@@ -86,6 +86,14 @@ public final class StatusService implements Listener {
         TargetState state = state(target);
         expire(target, state, now);
         if (state.allStatusImmunityUntilEpochMs > now) return ApplyResult.rejected("ALL_STATUS_IMMUNE");
+        if (target instanceof Player player) {
+            long protectedUntil = runs.playerState(player.getUniqueId())
+                    .map(value -> value.reviveProtectionUntilEpochMs).orElse(0L);
+            if (protectedUntil > now && (definition.tags().contains("HARD_CC")
+                    || definition.tags().contains("ACTION_LOCK") || definition.tags().contains("DOT"))) {
+                return ApplyResult.rejected("REVIVE_PROTECTION");
+            }
+        }
 
         if ("TAUNT".equals(definition.id()) && sourceEntityId != null) {
             Entity source = Bukkit.getEntity(sourceEntityId);

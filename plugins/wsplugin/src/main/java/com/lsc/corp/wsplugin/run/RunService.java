@@ -483,7 +483,8 @@ public final class RunService {
                 player.setExp(levelProgress(state));
                 if ("DEAD".equals(state.lifeState) || "DEAD_PENDING".equals(state.lifeState)) {
                     player.setGameMode(GameMode.SPECTATOR);
-                } else if ("DOWNED".equals(state.lifeState) || "DOWNED_GRACE".equals(state.lifeState)) {
+                } else if ("DOWNED".equals(state.lifeState) || "DOWNED_GRACE".equals(state.lifeState)
+                        || "BEING_REVIVED".equals(state.lifeState)) {
                     player.setGameMode(GameMode.SURVIVAL);
                     player.setHealth(Math.max(1.0, Math.min(player.getHealth(), 1.0)));
                     if (state.injuryStacks <= 0) state.injuryStacks = 1;

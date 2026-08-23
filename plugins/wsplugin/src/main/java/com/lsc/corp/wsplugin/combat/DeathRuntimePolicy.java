@@ -25,13 +25,47 @@ public final class DeathRuntimePolicy {
     }
 
     public static long reviveDurationMillis(int injuryStacks, double speedMultiplier) {
-        double baseSeconds = switch (requireInjury(injuryStacks)) {
-            case 1 -> 5.0;
-            case 2 -> 7.0;
-            default -> 9.0;
-        };
+        double baseSeconds = baseReviveDurationMillis(injuryStacks) / 1000.0;
         double safeSpeed = Double.isFinite(speedMultiplier) ? Math.max(0.05, speedMultiplier) : 1.0;
         return Math.max(2_500L, Math.round(baseSeconds * 1000.0 / safeSpeed));
+    }
+
+    public static long baseReviveDurationMillis(int injuryStacks) {
+        return switch (requireInjury(injuryStacks)) {
+            case 1 -> 5_000L;
+            case 2 -> 7_000L;
+            default -> 9_000L;
+        };
+    }
+
+    public static double reviveProgressDelta(int injuryStacks, long elapsedMillis, double weightedSpeed) {
+        if (elapsedMillis <= 0L || !Double.isFinite(weightedSpeed) || weightedSpeed <= 0.0) return 0.0;
+        double elapsed = Math.min(250L, elapsedMillis);
+        double calculated = elapsed / baseReviveDurationMillis(injuryStacks) * weightedSpeed;
+        return Math.min(calculated, elapsed / 2_500.0);
+    }
+
+    public static double reviveProgressDecay(long elapsedMillis) {
+        if (elapsedMillis <= 0L) return 0.0;
+        return Math.min(250L, elapsedMillis) / 1000.0 * 0.20;
+    }
+
+    public static double reviveApCost(long elapsedMillis) {
+        if (elapsedMillis <= 0L) return 0.0;
+        return Math.min(250L, elapsedMillis) / 1000.0 * 5.0;
+    }
+
+    public static double contributorWeight(int joinedOrder) {
+        if (joinedOrder == 0) return 1.0;
+        if (joinedOrder == 1) return 0.60;
+        return 0.0;
+    }
+
+    public static double recoveryDamageMultiplier(long nowEpochMs, long fullUntilEpochMs,
+                                                   long tailUntilEpochMs) {
+        if (nowEpochMs < fullUntilEpochMs) return 0.20;
+        if (nowEpochMs < tailUntilEpochMs) return 0.70;
+        return 1.0;
     }
 
     public static double downedDamage(double finalDamage, double typeMultiplier, double downedMaximum) {

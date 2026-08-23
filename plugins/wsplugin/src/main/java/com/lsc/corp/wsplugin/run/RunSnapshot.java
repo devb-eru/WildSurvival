@@ -104,6 +104,11 @@ public final class RunSnapshot {
         public double downedHp;
         public double downedMaxHp;
         public int injuryStacks;
+        public double reviveProgress;
+        public long reviveLastContributionAtEpochMs;
+        public Map<String, Double> reviveContributions = new LinkedHashMap<>();
+        public long reviveProtectionUntilEpochMs;
+        public long reviveTailProtectionUntilEpochMs;
         public double testDamageDealtMultiplier = 1.0;
         public double testBreakMultiplier = 1.0;
         public double testDamageTakenMultiplier = 1.0;
