@@ -31,4 +31,17 @@ class EquipmentDurabilityPolicyTest {
         assertEquals(249, EquipmentDurabilityPolicy.mirrorDamage(0, 250, 250));
         assertThrows(IllegalArgumentException.class, () -> EquipmentDurabilityPolicy.spend(11, 10, 1));
     }
+
+    @Test
+    void nativeDamageEventRemainsObservableButCannotDeleteManagedItem() {
+        var decision = EquipmentDurabilityPolicy.interceptNativeDamage(3);
+        assertEquals(3, decision.ledgerCost());
+        assertEquals(0, decision.nativeDamage());
+
+        var zeroDamageDecision = EquipmentDurabilityPolicy.interceptNativeDamage(0);
+        assertEquals(1, zeroDamageDecision.ledgerCost());
+        assertEquals(0, zeroDamageDecision.nativeDamage());
+        assertThrows(IllegalArgumentException.class,
+                () -> EquipmentDurabilityPolicy.interceptNativeDamage(-1));
+    }
 }

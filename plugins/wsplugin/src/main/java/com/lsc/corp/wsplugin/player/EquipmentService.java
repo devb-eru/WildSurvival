@@ -593,14 +593,17 @@ public final class EquipmentService implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemDamage(PlayerItemDamageEvent event) {
         if (!runs.isRunningMember(event.getPlayer()) || weaponId(event.getItem()) == null) return;
-        event.setCancelled(true);
+        EquipmentDurabilityPolicy.NativeDamageDecision decision =
+                EquipmentDurabilityPolicy.interceptNativeDamage(event.getDamage());
+        // Preserve the Bukkit event for observers, but never let native durability delete a managed ItemStack.
+        event.setDamage(decision.nativeDamage());
         String instanceId = equipmentInstanceId(event.getItem());
         if (instanceId == null) {
             syncAuthoritativeEquipment(event.getPlayer());
             instanceId = equipmentInstanceId(event.getPlayer().getInventory().getItemInMainHand());
         }
         if (instanceId != null) {
-            consumeDurability(event.getPlayer(), instanceId, Math.max(1, event.getDamage()), "VANILLA_ITEM_DAMAGE");
+            consumeDurability(event.getPlayer(), instanceId, decision.ledgerCost(), "VANILLA_ITEM_DAMAGE");
         }
     }
     @EventHandler public void onJoin(PlayerJoinEvent event) {
@@ -936,12 +939,23 @@ public final class EquipmentService implements Listener {
 
     private boolean consumeDurability(Player player, String instanceId, int amount, String reason) {
         if (amount < 0) throw new IllegalArgumentException("Durability amount cannot be negative");
+        RunSnapshot.PlayerState beforeState = runs.playerState(player.getUniqueId()).orElse(null);
+        RunSnapshot.EquipmentInstanceState before = beforeState == null
+                ? null : equipmentInstances(beforeState).get(instanceId);
+        if (before == null || before.currentDurability == 0 || amount == 0) return false;
+        int expectedCurrent = Math.max(0, before.currentDurability - amount);
+        boolean expectedBreak = !"BROKEN".equals(before.condition) && expectedCurrent == 0;
+        String payload = "{\"instanceId\":\"" + instanceId + "\",\"templateId\":\"" + before.templateId
+                + "\",\"amount\":" + amount + ",\"current\":" + expectedCurrent
+                + ",\"reason\":\"" + reason + "\"}";
         boolean[] changed = {false};
         boolean[] broke = {false};
-        runs.mutate(run -> {
+        String[] templateId = {before.templateId};
+        java.util.function.Consumer<RunSnapshot> mutation = run -> {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
             RunSnapshot.EquipmentInstanceState instance = equipmentInstances(state).get(instanceId);
             if (instance == null) return;
+            templateId[0] = instance.templateId;
             boolean wasBroken = "BROKEN".equals(instance.condition);
             EquipmentDurabilityPolicy.SpendResult result = EquipmentDurabilityPolicy.spend(
                     instance.currentDurability, instance.maxDurability, amount);
@@ -949,12 +963,18 @@ public final class EquipmentService implements Listener {
             instance.condition = result.condition().name();
             changed[0] = result.changed();
             broke[0] = !wasBroken && result.condition() == EquipmentDurabilityPolicy.Condition.BROKEN;
-        });
+        };
+        if (expectedBreak) {
+            String key = "equipment-broken:" + instanceId + ":" + UUID.randomUUID();
+            if (!runs.commitOnce(key, "EQUIPMENT_BROKEN", payload, mutation)) return false;
+        } else {
+            runs.mutate(mutation);
+        }
         syncAuthoritativeEquipment(player);
         if (broke[0]) {
             player.sendMessage(ChatColor.RED + "장비가 파손되었습니다. 장비는 보존되며 수리 전까지 사용할 수 없습니다.");
-            telemetry.event(runs.current().orElseThrow().runId, "EQUIPMENT_BROKEN",
-                    "{\"instanceId\":\"" + instanceId + "\",\"reason\":\"" + reason + "\"}");
+            Bukkit.getPluginManager().callEvent(new EquipmentBrokenEvent(
+                    player, templateId[0], instanceId, reason));
         }
         return changed[0];
     }

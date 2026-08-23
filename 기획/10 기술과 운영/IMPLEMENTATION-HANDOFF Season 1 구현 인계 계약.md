@@ -131,7 +131,7 @@ domain command
 | HUD | ActionBar·BossBar·Title·Scoreboard 채널 우선순위 |
 | 커스텀 몹 | 바닐라 EntityType+속성+AI 목표+PDC, 서버 패턴 실행기 |
 | 커스텀 외형 | 선택 리소스 팩 CustomModelData, 로직 폴백 필수 |
-| 장비 내구도 | `PlayerItemDamageEvent` 취소 후 서버 원장 1회 차감, 미러 Damageable 수동 갱신, 0이면 아이템 보존 `BROKEN` |
+| 장비 내구도 | `PlayerItemDamageEvent`는 관찰 가능하게 유지하고 적용 damage만 0으로 중화한 뒤 서버 원장 1회 차감, 미러 Damageable 수동 갱신, 0이면 아이템 보존 `BROKEN`과 `EquipmentBrokenEvent` 발행 |
 | 삼지창 | 발사 이벤트 취소, 표시 엔티티/투사체 추적, 서버 충돌·회수 |
 | 상태·브레이크 | 서버 틱 상태 컨테이너와 전용 BossBar |
 | 오염 | 청크 메타데이터·블록 변경 큐, 월드 손상 제한 |
