@@ -93,5 +93,8 @@ class ProductionBundleValidatorTest {
         assertEquals(25, result.counts().get("research"));
         assertEquals(73, result.counts().get("storyScenes"));
         assertEquals(9, result.counts().get("storyLogs"));
+        assertEquals(34, result.counts().get("eventsD10"));
+        assertEquals(18, result.counts().get("eventsD20"));
+        assertEquals(55, result.counts().get("eventsD50"));
     }
 }

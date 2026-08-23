@@ -85,13 +85,17 @@ public final class ProductionBundleValidator {
             counts.put("research", count(reader, "research/season1-research.json"));
             counts.put("storyScenes", count(reader, "story/season1-scenes.json"));
             counts.put("storyLogs", count(reader, "story/season1-logs.json"));
+            counts.put("eventsD10", count(reader, "events/day01-10.json"));
+            counts.put("eventsD20", count(reader, "events/day11-20.json"));
+            counts.put("eventsD50", count(reader, "events/day21-50.json"));
             Map<String, Integer> expected = Map.ofEntries(
                     Map.entry("materials", 59), Map.entry("items", 61), Map.entry("tools", 214),
                     Map.entry("recipes", 315), Map.entry("codex", 334), Map.entry("skills", 64),
                     Map.entry("personalAugments", 50), Map.entry("partyAugments", 16),
                     Map.entry("enemies", 53), Map.entry("bosses", 4), Map.entry("support", 34),
                     Map.entry("facilities", 46), Map.entry("loot", 62), Map.entry("days", 50),
-                    Map.entry("research", 25), Map.entry("storyScenes", 73), Map.entry("storyLogs", 9));
+                    Map.entry("research", 25), Map.entry("storyScenes", 73), Map.entry("storyLogs", 9),
+                    Map.entry("eventsD10", 34), Map.entry("eventsD20", 18), Map.entry("eventsD50", 55));
             for (Map.Entry<String, Integer> entry : expected.entrySet()) {
                 if (!entry.getValue().equals(counts.get(entry.getKey()))) {
                     throw new ContentValidationException("Cardinality mismatch " + entry.getKey()
@@ -101,6 +105,7 @@ public final class ProductionBundleValidator {
 
             ProductionContentCatalog catalog = loadCatalog(reader, counts);
             validateStructuredAuthorityData(reader);
+            validateEventData(reader);
             validateReferences(reader, catalog);
             validateEquipmentCatalog(catalog);
             validateSkillCatalog(catalog);
@@ -898,6 +903,98 @@ public final class ProductionBundleValidator {
     private static void rejectAuthorityStub(JsonObject record) throws ContentValidationException {
         if (record.toString().contains("AUTHORITY_DATA")) {
             throw new ContentValidationException("Authority stub is forbidden: " + optionalString(record, "id", "unknown"));
+        }
+    }
+
+    private void validateEventData(ResourceReader reader) throws Exception {
+        Map<String, Integer> expectedByKind = Map.of(
+                "RESOURCE_NODE", 9, "NATURAL_ACTIVITY", 25, "MAIN_EVENT", 37, "PRESSURE_PROFILE", 36);
+        Map<String, Integer> actualByKind = new HashMap<>();
+        Set<String> eventIds = new HashSet<>();
+        for (String path : List.of("events/day01-10.json", "events/day11-20.json", "events/day21-50.json")) {
+            for (JsonObject record : records(reader, path)) {
+                rejectAuthorityStub(record);
+                String id = requiredString(record, "id");
+                String kind = requiredString(record, "eventKind");
+                int firstDay = requiredInt(record, "firstDay");
+                actualByKind.merge(kind, 1, Integer::sum);
+                if (!eventIds.add(id) || firstDay < 1 || firstDay > 50 || !record.get("enabled").getAsBoolean()
+                        || record.getAsJsonArray("raw") == null || record.getAsJsonArray("raw").isEmpty()) {
+                    throw new ContentValidationException("Invalid event authority record " + id);
+                }
+                switch (kind) {
+                    case "RESOURCE_NODE" -> {
+                        requireOpcode(record, "SPAWN_RESOURCE_NODE");
+                        if (!id.startsWith("NODE-D10-") || requiredString(record, "displayName").isBlank()
+                                || requiredString(record, "candidateEnvironment").isBlank()
+                                || requiredString(record, "representation").isBlank()
+                                || requiredString(record, "capacityText").isBlank()
+                                || requiredString(record, "interactionText").isBlank()
+                                || requiredString(record, "expirationText").isBlank()) {
+                            throw new ContentValidationException("Invalid resource-node event " + id);
+                        }
+                    }
+                    case "NATURAL_ACTIVITY" -> {
+                        requireOpcode(record, "RUN_ACTIVITY_OBJECTIVE");
+                        if (!id.startsWith("ACT-D") || requiredString(record, "originalEventId").isBlank()
+                                || requiredString(record, "objectiveText").isBlank()
+                                || requiredInt(record, "activityExp") < 0
+                                || requiredString(record, "resourceBudgetText").isBlank()
+                                || requiredString(record, "failureAlternativeText").isBlank()) {
+                            throw new ContentValidationException("Invalid natural-activity event " + id);
+                        }
+                    }
+                    case "MAIN_EVENT" -> {
+                        requireOpcode(record, "RUN_EVENT_OBJECTIVE");
+                        if (!(id.startsWith("EV20-") || id.startsWith("EV50-"))
+                                || requiredString(record, "objectiveText").isBlank()
+                                || requiredString(record, "telegraphSpaceText").isBlank()
+                                || requiredString(record, "rewardText").isBlank()
+                                || requiredString(record, "failureAlternativeText").isBlank()
+                                || requiredString(record, "pressureProfileId").isBlank()
+                                || integerArray(record, "partyThreat").size() != 3) {
+                            throw new ContentValidationException("Invalid main event " + id);
+                        }
+                    }
+                    case "PRESSURE_PROFILE" -> {
+                        requireOpcode(record, "RUN_PRESSURE_WAVES");
+                        if (id.startsWith("PR20-")) {
+                            if (stringArray(record, "wavePlans").size() != 3
+                                    || integerArray(record, "partyThreat").size() != 3
+                                    || requiredInt(record, "activeCap") < 1) {
+                                throw new ContentValidationException("Invalid Day 11-20 pressure profile " + id);
+                            }
+                        } else if (id.startsWith("PR50-")) {
+                            JsonArray assignments = record.getAsJsonArray("dayAssignments");
+                            if (requiredString(record, "enemyPoolText").isBlank()
+                                    || requiredInt(record, "waveCount") < 3 || requiredInt(record, "waveCount") > 5
+                                    || requiredString(record, "limitText").isBlank()
+                                    || assignments == null || assignments.isEmpty()) {
+                                throw new ContentValidationException("Invalid Day 21-50 pressure profile " + id);
+                            }
+                            for (JsonElement assignmentValue : assignments) {
+                                JsonObject assignment = assignmentValue.getAsJsonObject();
+                                if (requiredInt(assignment, "day") < 21
+                                        || integerArray(assignment, "partyThreat").size() != 3) {
+                                    throw new ContentValidationException("Invalid pressure Day assignment " + id);
+                                }
+                            }
+                        } else {
+                            throw new ContentValidationException("Unknown pressure profile " + id);
+                        }
+                    }
+                    default -> throw new ContentValidationException("Unknown event kind " + kind);
+                }
+            }
+        }
+        if (!expectedByKind.equals(actualByKind)) {
+            throw new ContentValidationException("Event kind cardinality mismatch " + actualByKind);
+        }
+    }
+
+    private static void requireOpcode(JsonObject record, String expected) throws ContentValidationException {
+        if (!expected.equals(requiredString(record, "executionOpcode"))) {
+            throw new ContentValidationException("Invalid event opcode " + requiredString(record, "id"));
         }
     }
 

@@ -30,7 +30,7 @@
       "path": "schemas/event.schema.json",
       "domain": "schema",
       "schema": "common.schema.json",
-      "sha256": "11618c7119ac4443a2a8ce6341ce2d7d50b16378c6b1457e2214940024b80e27"
+      "sha256": "88b5ea0151971536776ec8741ce09910b567cc4dc6d2b19f25ee08057de5756f"
     },
     {
       "path": "schemas/enemy.schema.json",
@@ -162,19 +162,19 @@
       "path": "events/day01-10.json",
       "domain": "events",
       "schema": "event.schema.json",
-      "sha256": "65bb2da7da1875f04ce2c1b3c9d4b8e5cdc59ca8f5527fcfd5415f0f65d6333e"
+      "sha256": "421ba1def6e21d874c478f2204b8a6905b65b65c200cbe477fdf68cabcd26e15"
     },
     {
       "path": "events/day11-20.json",
       "domain": "events",
       "schema": "event.schema.json",
-      "sha256": "81faa25448fdcd15f753c3e32b14be1c96718b38c0c03c0e9052035fa9900dff"
+      "sha256": "68718b6e8d256cd69f113b1669d4752d735f065bf2bcdfe9cedeab294fd3c35e"
     },
     {
       "path": "events/day21-50.json",
       "domain": "events",
       "schema": "event.schema.json",
-      "sha256": "2b7b2259da8fcf37bad790777f34fea8d07b4eb259b8197bfa63e851517fd7b5"
+      "sha256": "9a7b9c18924483b8368046096601f2fdae8748a5261b62bcd05b30f8f6062119"
     },
     {
       "path": "enemies/day01-10.json",
@@ -360,7 +360,7 @@
       "path": "fixtures/cardinality.json",
       "domain": "fixture-cardinality",
       "schema": "common.schema.json",
-      "sha256": "5b480efe46d180ef13b73f45f01aefac6736bd8a6a7d4af1bd853b386ffbbeaa"
+      "sha256": "f5dc12c2b0942174bac0b89a57c5764e04f8d70fee8c0668173116e433c6101f"
     },
     {
       "path": "fixtures/reference-graph.json",

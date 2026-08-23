@@ -470,6 +470,9 @@ $facilityDataRows = Read-TableRows '기획\05 세계와 생존\FACILITY-DATA Day
 $lootRows = Read-TableRows '기획\04 장비와 경제\LOOT-LIST Season 1 획득·드롭 목록 기획서.md'
 $researchRows = Read-TableRows '기획\05 세계와 생존\RESEARCH 연구·분석·대응책 시스템 상세 기획서.md'
 $storyRows = Read-TableRows '기획\08 스토리\STORY-DATA Season 1 런타임 데이터 기획서.md'
+$eventD10Rows = Read-TableRows '기획\06 사건과 적\EVENT-DATA Day 1-10 사건·공세·자원 데이터 기획서.md'
+$eventD20Rows = Read-TableRows '기획\06 사건과 적\EVENT-DATA Day 11-20 사건 실행 데이터 기획서.md'
+$eventD50Rows = Read-TableRows '기획\06 사건과 적\EVENT-DATA Day 21-50 사건 실행 데이터 기획서.md'
 
 $materialCodex = [ordered]@{}
 foreach ($cells in $materialRows) {
@@ -1020,8 +1023,102 @@ $storyLogs = foreach ($cells in $storyRows) {
     }
 }
 
-$expected = [ordered]@{ materials=59; items=61; tools=214; recipes=315; codex=334; skills=64; personalAugments=50; partyAugments=16; enemies=53; bosses=4; support=34; facilities=46; loot=62; research=25; storyScenes=73; storyLogs=9 }
-$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; facilities=@($facilities).Count; loot=@($loot).Count; research=@($research).Count; storyScenes=@($storyScenes).Count; storyLogs=@($storyLogs).Count }
+function Threat-Values([string]$Text) {
+    $values = @($Text.Split('/') | ForEach-Object { if ($_ -match '(\d+)') {[int]$Matches[1]} })
+    return [int[]]$values
+}
+$eventsD10 = @()
+$eventsD10 += @($eventD10Rows | ForEach-Object {
+    $cells = $_
+    if ($cells.Count -eq 8 -and $cells[0] -match '^NODE-D10-[A-Z0-9-]+$') {
+        if ($cells[2] -notmatch '^(\d+)') { throw "Resource node day range malformed: $($cells[0])" }
+        [ordered]@{
+            id=$cells[0];sourceDocumentId='EVENT-DATA-001';enabled=$true;eventKind='RESOURCE_NODE';firstDay=[int]$Matches[1];executionOpcode='SPAWN_RESOURCE_NODE'
+            displayName=$cells[1];dayRange=$cells[2];candidateEnvironment=$cells[3];representation=$cells[4];capacityText=$cells[5];interactionText=$cells[6];expirationText=$cells[7];raw=@($cells)
+        }
+    }
+})
+$eventsD10 += @($eventD10Rows | ForEach-Object {
+    $cells = $_
+    if ($cells.Count -eq 7 -and $cells[0] -match '^\d{1,2}$' -and $cells[1] -match '^ACT-D[0-9]+-[A-Z0-9_]+$') {
+        [ordered]@{
+            id=$cells[1];sourceDocumentId='EVENT-DATA-001';enabled=$true;eventKind='NATURAL_ACTIVITY';firstDay=[int]$cells[0];executionOpcode='RUN_ACTIVITY_OBJECTIVE'
+            originalEventId=$cells[2];objectiveText=$cells[3];activityExp=[int]$cells[4];resourceBudgetText=$cells[5];failureAlternativeText=$cells[6];raw=@($cells)
+        }
+    }
+})
+
+$eventD20DayByEvent = [ordered]@{}
+$eventD20DayByProfile = [ordered]@{}
+foreach ($cells in $eventD20Rows) {
+    if ($cells.Count -ge 6 -and $cells[0] -match '^1[1-9]$' -and $cells[1] -match '(EV20-[A-Z0-9-]+)') {
+        $eventD20DayByEvent[$Matches[1]]=$cells
+        if ($cells[3] -match '(PR20-[A-Z0-9-]+)') {$eventD20DayByProfile[$Matches[1]]=$cells}
+    }
+}
+$eventsD20 = @($eventD20Rows | ForEach-Object {
+    $cells = $_
+    if ($cells.Count -eq 5 -and $cells[0] -match '^EV20-(\d{2})-') {
+        $dayRow=$eventD20DayByEvent[$cells[0]]
+        [ordered]@{
+            id=$cells[0];sourceDocumentId='EVENT-DATA-D20-001';enabled=$true;eventKind='MAIN_EVENT';firstDay=[int]$Matches[1];executionOpcode='RUN_EVENT_OBJECTIVE'
+            telegraphSpaceText=$cells[1];objectiveText=$cells[2];rewardText=$cells[3];failureAlternativeText=$cells[4]
+            pressureProfileId=$dayRow[3];partyThreat=Threat-Values $dayRow[4];requiredConnectionText=$dayRow[5];raw=@($cells)
+        }
+    }
+})
+$eventsD20 += @($eventD20Rows | ForEach-Object {
+    $cells = $_
+    if ($cells.Count -eq 6 -and $cells[0] -match '^PR20-') {
+        $dayRow=$eventD20DayByProfile[$cells[0]]
+        [ordered]@{
+            id=$cells[0];sourceDocumentId='EVENT-DATA-D20-001';enabled=$true;eventKind='PRESSURE_PROFILE';firstDay=[int]$dayRow[0];executionOpcode='RUN_PRESSURE_WAVES'
+            wavePlans=@($cells[1],$cells[2],$cells[3]);waveBudgetAuthority=$cells[4];partyThreat=Threat-Values $dayRow[4];activeCap=[int]$cells[5];raw=@($cells)
+        }
+    }
+})
+
+$eventD50DayByEvent = [ordered]@{}
+$eventD50DayByProfile = [ordered]@{}
+foreach ($cells in $eventD50Rows) {
+    if ($cells.Count -ge 6 -and $cells[0] -match '^(2[1-9]|3[1-9]|4[1-9]|50)$' -and $cells[1] -match '(EV50-D\d{2}-[A-Z0-9-]+)') {
+        $eventD50DayByEvent[$Matches[1]]=$cells
+        if ($cells[2] -match '(PR50-[A-Z0-9-]+)') {
+            $profileId=$Matches[1]
+            if (-not $eventD50DayByProfile.Contains($profileId)) {$eventD50DayByProfile[$profileId]=[Collections.Generic.List[object]]::new()}
+            $eventD50DayByProfile[$profileId].Add($cells)
+        }
+    }
+}
+$eventsD50 = @($eventD50Rows | ForEach-Object {
+    $cells = $_
+    if ($cells.Count -eq 4 -and $cells[0] -match '^EV50-D(\d{2})-') {
+        $eventDay=[int]$Matches[1]
+        $dayRow=$eventD50DayByEvent[$cells[0]]
+        $profileId=''
+        if ($dayRow[2] -match '(PR50-[A-Z0-9-]+)') {$profileId=$Matches[1]}
+        [ordered]@{
+            id=$cells[0];sourceDocumentId='EVENT-DATA-D50-001';enabled=$true;eventKind='MAIN_EVENT';firstDay=$eventDay;executionOpcode='RUN_EVENT_OBJECTIVE'
+            objectiveText=$cells[1];telegraphSpaceText=$cells[2];failureAlternativeText=$cells[3]
+            pressureProfileId=$profileId;partyThreat=Threat-Values $dayRow[3];requiredConnectionText=$dayRow[4];rewardText=$dayRow[5];raw=@($cells)
+        }
+    }
+})
+$eventsD50 += @($eventD50Rows | ForEach-Object {
+    $cells = $_
+    if ($cells.Count -eq 4 -and $cells[0] -match '^PR50-') {
+        $dayRows=@($eventD50DayByProfile[$cells[0]])
+        if (-not $dayRows.Count) { throw "Pressure profile has no Day assignment: $($cells[0])" }
+        $assignments=@($dayRows | ForEach-Object {[ordered]@{day=[int]$_[0];partyThreat=Threat-Values $_[3]}})
+        [ordered]@{
+            id=$cells[0];sourceDocumentId='EVENT-DATA-D50-001';enabled=$true;eventKind='PRESSURE_PROFILE';firstDay=[int](($assignments.day | Measure-Object -Minimum).Minimum);executionOpcode='RUN_PRESSURE_WAVES'
+            enemyPoolText=$cells[1];waveCount=[int]$cells[2];limitText=$cells[3];dayAssignments=$assignments;raw=@($cells)
+        }
+    }
+})
+
+$expected = [ordered]@{ materials=59; items=61; tools=214; recipes=315; codex=334; skills=64; personalAugments=50; partyAugments=16; enemies=53; bosses=4; support=34; facilities=46; loot=62; research=25; storyScenes=73; storyLogs=9; eventsD10=34; eventsD20=18; eventsD50=55 }
+$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; facilities=@($facilities).Count; loot=@($loot).Count; research=@($research).Count; storyScenes=@($storyScenes).Count; storyLogs=@($storyLogs).Count; eventsD10=@($eventsD10).Count; eventsD20=@($eventsD20).Count; eventsD50=@($eventsD50).Count }
 foreach ($key in $expected.Keys) {
     if ($actual[$key] -ne $expected[$key]) { throw "Cardinality mismatch $key expected=$($expected[$key]) actual=$($actual[$key])" }
 }
@@ -1100,8 +1197,19 @@ $storySchema = [ordered]@{
         records=[ordered]@{type='array';minItems=9;maxItems=73;items=[ordered]@{type='object';required=@('id','sourceDocumentId','enabled','raw');properties=[ordered]@{id=[ordered]@{type='string';pattern='^(ST[0-9]-|LOG-O)'};sourceDocumentId=[ordered]@{const='STORY-DATA-S1-001'};enabled=[ordered]@{const=$true};raw=[ordered]@{type='array';minItems=4;maxItems=4;items=[ordered]@{type='string'}}}}}
     }
 }
+$eventSchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{const='events'}
+        records=[ordered]@{type='array';minItems=18;maxItems=55;items=[ordered]@{
+            type='object';required=@('id','sourceDocumentId','enabled','eventKind','firstDay','executionOpcode','raw')
+            properties=[ordered]@{id=[ordered]@{type='string';minLength=1};sourceDocumentId=[ordered]@{enum=@('EVENT-DATA-001','EVENT-DATA-D20-001','EVENT-DATA-D50-001')};enabled=[ordered]@{const=$true};eventKind=[ordered]@{enum=@('RESOURCE_NODE','NATURAL_ACTIVITY','MAIN_EVENT','PRESSURE_PROFILE')};firstDay=[ordered]@{type='integer';minimum=1;maximum=50};executionOpcode=[ordered]@{enum=@('SPAWN_RESOURCE_NODE','RUN_ACTIVITY_OBJECTIVE','RUN_EVENT_OBJECTIVE','RUN_PRESSURE_WAVES')};raw=[ordered]@{type='array';minItems=4;maxItems=8;items=[ordered]@{type='string'}}}
+        }}
+    }
+}
 foreach ($name in $schemaNames) {
-    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'story') { $storySchema } else { $genericSchema }
+    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } else { $genericSchema }
     Write-Json "schemas/$name.schema.json" $schema
 }
 
@@ -1109,9 +1217,9 @@ $eventStub = { param($id,$source) Raw-Record $id $source @('AUTHORITY_DATA') }
 $data = [ordered]@{}
 $data['days/season1-days-01-50.json'] = Domain 'days' $days
 $data['days/endless-days-51-plus.json'] = Domain 'days-endless' $endless
-$data['events/day01-10.json'] = Domain 'events' @(&$eventStub 'EVENTS-D01-10' 'EVENT-DATA-001')
-$data['events/day11-20.json'] = Domain 'events' @(&$eventStub 'EVENTS-D11-20' 'EVENT-DATA-D20-001')
-$data['events/day21-50.json'] = Domain 'events' @(&$eventStub 'EVENTS-D21-50' 'EVENT-DATA-D50-001')
+$data['events/day01-10.json'] = Domain 'events' $eventsD10
+$data['events/day11-20.json'] = Domain 'events' $eventsD20
+$data['events/day21-50.json'] = Domain 'events' $eventsD50
 $data['enemies/day01-10.json'] = Domain 'enemies' $enemyD10
 $data['enemies/day11-20.json'] = Domain 'enemies' $enemyD20
 $data['enemies/day21-50.json'] = Domain 'enemies' $enemyD50

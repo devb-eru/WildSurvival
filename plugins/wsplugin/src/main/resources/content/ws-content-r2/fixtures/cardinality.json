@@ -66,6 +66,18 @@
     {
       "id": "storyLogs",
       "expected": 9
+    },
+    {
+      "id": "eventsD10",
+      "expected": 34
+    },
+    {
+      "id": "eventsD20",
+      "expected": 18
+    },
+    {
+      "id": "eventsD50",
+      "expected": 55
     }
   ]
 }
