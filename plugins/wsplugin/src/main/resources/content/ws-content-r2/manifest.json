@@ -150,7 +150,7 @@
       "path": "days/season1-days-01-50.json",
       "domain": "days",
       "schema": "day.schema.json",
-      "sha256": "7a1773191c1b65a0056738d1fc0f41cada5d78134a1b5cf552729fde3d38338b"
+      "sha256": "396565f75cfcde78f9233898ba929c5bc2ad580d1e72647f79c4fbc81a40f21d"
     },
     {
       "path": "days/endless-days-51-plus.json",

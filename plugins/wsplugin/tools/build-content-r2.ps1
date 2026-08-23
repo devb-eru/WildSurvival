@@ -1301,7 +1301,7 @@ $days = foreach($day in 1..50) {
     $mainEvent=@($eventsD20 + $eventsD50 | Where-Object {$_.firstDay -eq $day -and $_.eventKind -eq 'MAIN_EVENT'} | Select-Object -First 1)
     if($mainEvent.Count){$eventsForDay += $mainEvent[0].id}
     $bossId = if($day -in @(10,20,30,40)){"BOSS-D$day"}else{''}
-    $threat = if($bossId){-1}else{$threatBudgetByDay[$day.ToString()]}
+    $threat = if($bossId){-1}elseif($mainEvent.Count -and $mainEvent[0].partyThreat.Count -eq 3){[int]$mainEvent[0].partyThreat[1]}else{$threatBudgetByDay[$day.ToString()]}
     if($null -eq $threat) { throw "Day threat authority missing: $day" }
     $resourceAuthority = [string[]]$resourceBudgetByDay[$day.ToString()]
     if($resourceAuthority.Count -ne 5) { throw "Day resource authority must contain five groups: $day" }

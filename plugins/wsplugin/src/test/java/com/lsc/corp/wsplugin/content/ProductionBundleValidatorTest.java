@@ -117,7 +117,7 @@ class ProductionBundleValidatorTest {
         assertTrue(day40.bossDay());
         assertEquals("BOSS-D40", day40.bossId());
         var day50 = result.catalog().daysByNumber().get(50);
-        assertEquals(100, day50.threatBudget3());
+        assertEquals(130, day50.threatBudget3());
         assertEquals(224_420, day50.cumulativeExp());
         assertEquals(50, day50.expectedEndLevel());
         assertTrue(day50.finalAvailable());
