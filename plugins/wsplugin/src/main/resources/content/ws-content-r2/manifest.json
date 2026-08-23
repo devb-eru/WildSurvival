@@ -72,7 +72,7 @@
       "path": "schemas/research.schema.json",
       "domain": "schema",
       "schema": "common.schema.json",
-      "sha256": "11618c7119ac4443a2a8ce6341ce2d7d50b16378c6b1457e2214940024b80e27"
+      "sha256": "58fb9931bb71696a150300a714c37c27c661f066f19c6883e186443c367cef6a"
     },
     {
       "path": "schemas/augment.schema.json",
@@ -132,7 +132,7 @@
       "path": "schemas/story.schema.json",
       "domain": "schema",
       "schema": "common.schema.json",
-      "sha256": "11618c7119ac4443a2a8ce6341ce2d7d50b16378c6b1457e2214940024b80e27"
+      "sha256": "24d969b2ac7ae1ff60bb1a6f3e742cbe61b739439fec48b322090608b55ae8bf"
     },
     {
       "path": "schemas/budget.schema.json",
@@ -264,7 +264,7 @@
       "path": "research/season1-research.json",
       "domain": "research",
       "schema": "research.schema.json",
-      "sha256": "6b2ab247ec03144a5030772c11169cf73338ff15e6be55c1e270932a5afd069b"
+      "sha256": "4389c63e3fe57ef68db9bd153e9fa4139c9f7119919087c25224c4e075389f5b"
     },
     {
       "path": "augments/personal-augments.json",
@@ -336,13 +336,13 @@
       "path": "story/season1-scenes.json",
       "domain": "story-scenes",
       "schema": "story.schema.json",
-      "sha256": "39bf167257257d5f360683dd5b7f0a3ac10e02bf4ac7f7eea4eefb029bca61f6"
+      "sha256": "838fce4cd78f8bd467090273fdd46bb1376a710e487b897fcfae7eb6f141797f"
     },
     {
       "path": "story/season1-logs.json",
       "domain": "story-logs",
       "schema": "story.schema.json",
-      "sha256": "66f6df0aa352a2705cbaf962990f7254fdec069515800b8dca340ac8809e019c"
+      "sha256": "237eaa61bb64c770d2622429eb1c9d77ca8e99da1c8b5bc8241d31eeec6956f8"
     },
     {
       "path": "budget/live-profiles.json",
@@ -360,7 +360,7 @@
       "path": "fixtures/cardinality.json",
       "domain": "fixture-cardinality",
       "schema": "common.schema.json",
-      "sha256": "bb286314df9f4b46ec9f9029104f6a45507278802a47bb252620a64f275ece62"
+      "sha256": "5b480efe46d180ef13b73f45f01aefac6736bd8a6a7d4af1bd853b386ffbbeaa"
     },
     {
       "path": "fixtures/reference-graph.json",

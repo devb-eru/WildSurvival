@@ -468,6 +468,8 @@ $enemyDetailById = Find-IdRows @($enemyBaseRows + $enemyD20Rows + $enemyD50Rows)
 $facilityRows = Read-TableRows '기획\05 세계와 생존\FACILITY 플레이어 시설 목록 기획서.md'
 $facilityDataRows = Read-TableRows '기획\05 세계와 생존\FACILITY-DATA Day 11-50 시설 실행 데이터 기획서.md'
 $lootRows = Read-TableRows '기획\04 장비와 경제\LOOT-LIST Season 1 획득·드롭 목록 기획서.md'
+$researchRows = Read-TableRows '기획\05 세계와 생존\RESEARCH 연구·분석·대응책 시스템 상세 기획서.md'
+$storyRows = Read-TableRows '기획\08 스토리\STORY-DATA Season 1 런타임 데이터 기획서.md'
 
 $materialCodex = [ordered]@{}
 foreach ($cells in $materialRows) {
@@ -977,8 +979,49 @@ $codex = @($materials | ForEach-Object { [ordered]@{ id=$_.id; codexIndex=$_.cod
 $codex += @($items | ForEach-Object { [ordered]@{ id=$_.id; codexIndex=$_.codexIndex; domain='ITEM'; displayMaterial=$_.displayMaterial } })
 $codex += @($tools | ForEach-Object { [ordered]@{ id=$_.id; codexIndex=$_.codexIndex; domain='EQUIPMENT'; displayMaterial=$_.displayMaterial } })
 
-$expected = [ordered]@{ materials=59; items=61; tools=214; recipes=315; codex=334; skills=64; personalAugments=50; partyAugments=16; enemies=53; bosses=4; support=34; facilities=46; loot=62 }
-$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; facilities=@($facilities).Count; loot=@($loot).Count }
+$research = foreach ($cells in $researchRows) {
+    if ($cells.Count -lt 5 -or $cells[0] -notmatch '^RS-[A-Z0-9-]+$') { continue }
+    if ($cells[1] -notmatch '(?:^|,\s*)D(\d{1,2})(?:,|$)') { throw "Research minimum day missing: $($cells[0])" }
+    $minimumDay = [int]$Matches[1]
+    if ($cells[3] -notmatch '^(\d+)/(\d+)/(\d+)/(\d+),\s*(\d+)초$') { throw "Research cost/time malformed: $($cells[0])" }
+    [ordered]@{
+        id=$cells[0];sourceDocumentId='RESEARCH-001';enabled=$true;minimumDay=$minimumDay
+        prerequisiteText=$cells[1];comparisonInput=$cells[2]
+        cost=[ordered]@{general=[int]$Matches[1];metal=[int]$Matches[2];signal=[int]$Matches[3];specialist=[int]$Matches[4]}
+        durationSeconds=[int]$Matches[5];unlockText=$cells[4];stateMachine=@('LOCKED','AVAILABLE','READY_LOCKED','RUNNING','COMPLETED','MASTERED');raw=@($cells)
+    }
+}
+
+$finalStorySceneIds = @(
+    'ST5-FINAL-ACTIVATE','ST5-FINAL-STAGE1-START','ST5-FINAL-STAGE1-COMPLETE','ST5-FINAL-CORE-ARRIVAL',
+    'ST5-FINAL-FIRST-BREAK','ST5-FINAL-CORE-60','ST5-FINAL-CORE-30','ST5-FINAL-CORE-SUBDUED',
+    'ST5-FINAL-PURIFY-000','ST5-FINAL-PURIFY-060','ST5-FINAL-PURIFY-120','ST5-FINAL-PURIFY-180',
+    'ST5-FINAL-CONFIRM','ST5-FINAL-COMPLETE','ST5-EPILOGUE-FIRST-EMBER')
+$storyScenes = foreach ($cells in $storyRows) {
+    if ($cells.Count -lt 4 -or $cells[0] -notmatch '^ST[0-9]-[A-Z0-9-]+$') { continue }
+    $triggerParts = $cells[1].Split(':', 2)
+    $group = if ($cells[0].StartsWith('ST0-PROLOGUE-')) {'PROLOGUE'} elseif ($cells[0] -in $finalStorySceneIds) {'FINAL'} else {'CHAPTER'}
+    $payloadKey = if ($cells[2] -match '^story\.') {$cells[2]} else {''}
+    $priority = 'STORY'
+    if ($group -eq 'FINAL' -and $cells[2] -match '^(SYSTEM|STORY_MAJOR),') { $priority = $Matches[1] }
+    [ordered]@{
+        id=$cells[0];sourceDocumentId='STORY-DATA-S1-001';enabled=$true;sceneGroup=$group
+        triggerKey=$cells[1];triggerEvent=$triggerParts[0];triggerRef=$(if ($triggerParts.Count -gt 1) {$triggerParts[1]} else {''})
+        audience='PARTY';priority=$priority;blocking=$false;payloadKey=$payloadKey
+        payloadText=$(if ($payloadKey) {''} else {$cells[2]});fallbackOrReplayPolicy=$cells[3]
+        replayableText=$true;worldEffectReplayable=$false;idempotencyScope='RUN';raw=@($cells)
+    }
+}
+$storyLogs = foreach ($cells in $storyRows) {
+    if ($cells.Count -lt 4 -or $cells[0] -notmatch '^LOG-O\d{2}$') { continue }
+    [ordered]@{
+        id=$cells[0];sourceDocumentId='STORY-DATA-S1-001';enabled=$true
+        triggerText=$cells[1];payloadKey=$cells[2];progressionEffect=$cells[3];progressionRequired=$false;raw=@($cells)
+    }
+}
+
+$expected = [ordered]@{ materials=59; items=61; tools=214; recipes=315; codex=334; skills=64; personalAugments=50; partyAugments=16; enemies=53; bosses=4; support=34; facilities=46; loot=62; research=25; storyScenes=73; storyLogs=9 }
+$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; facilities=@($facilities).Count; loot=@($loot).Count; research=@($research).Count; storyScenes=@($storyScenes).Count; storyLogs=@($storyLogs).Count }
 foreach ($key in $expected.Keys) {
     if ($actual[$key] -ne $expected[$key]) { throw "Cardinality mismatch $key expected=$($expected[$key]) actual=$($actual[$key])" }
 }
@@ -1033,8 +1076,32 @@ $recipeSchema = [ordered]@{
         }}
     }
 }
+$researchSchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{const='research'}
+        records=[ordered]@{type='array';minItems=25;maxItems=25;items=[ordered]@{
+            type='object';additionalProperties=$false;required=@('id','sourceDocumentId','enabled','minimumDay','prerequisiteText','comparisonInput','cost','durationSeconds','unlockText','stateMachine','raw')
+            properties=[ordered]@{
+                id=[ordered]@{type='string';pattern='^RS-'};sourceDocumentId=[ordered]@{const='RESEARCH-001'};enabled=[ordered]@{const=$true};minimumDay=[ordered]@{type='integer';minimum=1;maximum=50}
+                prerequisiteText=[ordered]@{type='string';minLength=1};comparisonInput=[ordered]@{type='string';minLength=1};durationSeconds=[ordered]@{type='integer';minimum=1};unlockText=[ordered]@{type='string';minLength=1}
+                cost=[ordered]@{type='object';additionalProperties=$false;required=@('general','metal','signal','specialist');properties=[ordered]@{general=[ordered]@{type='integer';minimum=0};metal=[ordered]@{type='integer';minimum=0};signal=[ordered]@{type='integer';minimum=0};specialist=[ordered]@{type='integer';minimum=0}}}
+                stateMachine=[ordered]@{type='array';minItems=6;maxItems=6;items=[ordered]@{type='string'}};raw=[ordered]@{type='array';minItems=5;maxItems=5;items=[ordered]@{type='string'}}
+            }
+        }}
+    }
+}
+$storySchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{enum=@('story-scenes','story-logs')}
+        records=[ordered]@{type='array';minItems=9;maxItems=73;items=[ordered]@{type='object';required=@('id','sourceDocumentId','enabled','raw');properties=[ordered]@{id=[ordered]@{type='string';pattern='^(ST[0-9]-|LOG-O)'};sourceDocumentId=[ordered]@{const='STORY-DATA-S1-001'};enabled=[ordered]@{const=$true};raw=[ordered]@{type='array';minItems=4;maxItems=4;items=[ordered]@{type='string'}}}}}
+    }
+}
 foreach ($name in $schemaNames) {
-    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'recipe') { $recipeSchema } else { $genericSchema }
+    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'story') { $storySchema } else { $genericSchema }
     Write-Json "schemas/$name.schema.json" $schema
 }
 
@@ -1059,7 +1126,7 @@ $data['equipment/day01-10.json'] = Domain 'equipment' $equipmentEarly
 $data['equipment/day11-20.json'] = Domain 'equipment' $equipmentD20
 $data['equipment/day21-50.json'] = Domain 'equipment' $equipmentD50
 $data['facilities/season1-facilities.json'] = Domain 'facilities' $facilities
-$data['research/season1-research.json'] = Domain 'research' @(&$eventStub 'RESEARCH-S1' 'RESEARCH-001')
+$data['research/season1-research.json'] = Domain 'research' $research
 $data['augments/personal-augments.json'] = Domain 'personal-augments' $personalAugments
 $data['augments/party-augments.json'] = Domain 'party-augments' $partyAugments
 $data['skills/player-skills.json'] = Domain 'player-skills' $skills
@@ -1068,8 +1135,8 @@ $data['entities/support-entities.json'] = Domain 'support-entities' $supportEnti
 $data['loot/season1-loot.json'] = Domain 'loot' $loot
 for ($index = 0; $index -lt 4; $index++) { $day = @(10,20,30,40)[$index]; $data["bosses/day$day.json"] = Domain 'bosses' @($bosses[$index]) }
 $data['final/day50-reconstruction-signal.json'] = Domain 'final' @(&$eventStub 'FINAL-D50-RECONSTRUCTION-SIGNAL' 'FINAL-DATA-001')
-$data['story/season1-scenes.json'] = Domain 'story-scenes' @(&$eventStub 'STORY-S1-SCENES' 'STORY-DATA-S1-001')
-$data['story/season1-logs.json'] = Domain 'story-logs' @(&$eventStub 'STORY-S1-LOGS' 'STORY-DATA-S1-001')
+$data['story/season1-scenes.json'] = Domain 'story-scenes' $storyScenes
+$data['story/season1-logs.json'] = Domain 'story-logs' $storyLogs
 $data['budget/live-profiles.json'] = Domain 'budget' @(&$eventStub 'BUDGET-LIVE-R2' 'BUDGET-PROFILE-001')
 $data['migrations/id-aliases.json'] = Domain 'migrations' @(
     [ordered]@{id='EQL-W10';sourceDocumentId='TOOL-LIST-001';targetId='UNARMED_COMBAT';enabled=$true},

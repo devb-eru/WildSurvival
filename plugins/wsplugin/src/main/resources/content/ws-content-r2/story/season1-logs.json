@@ -4,11 +4,138 @@
   "domain": "story-logs",
   "records": [
     {
-      "id": "STORY-S1-LOGS",
+      "id": "LOG-O01",
       "sourceDocumentId": "STORY-DATA-S1-001",
       "enabled": true,
+      "triggerText": "첫 씨앗·농작물 보관",
+      "payloadKey": "story.s1.log.o01",
+      "progressionEffect": "없음, 소량 기존 활동 EXP",
+      "progressionRequired": false,
       "raw": [
-        "AUTHORITY_DATA"
+        "LOG-O01",
+        "첫 씨앗·농작물 보관",
+        "story.s1.log.o01",
+        "없음, 소량 기존 활동 EXP"
+      ]
+    },
+    {
+      "id": "LOG-O02",
+      "sourceDocumentId": "STORY-DATA-S1-001",
+      "enabled": true,
+      "triggerText": "FAC-S11 첫 열람",
+      "payloadKey": "story.s1.log.o02",
+      "progressionEffect": "없음",
+      "progressionRequired": false,
+      "raw": [
+        "LOG-O02",
+        "FAC-S11 첫 열람",
+        "story.s1.log.o02",
+        "없음"
+      ]
+    },
+    {
+      "id": "LOG-O03",
+      "sourceDocumentId": "STORY-DATA-S1-001",
+      "enabled": true,
+      "triggerText": "FAC-S17/중계 기록",
+      "payloadKey": "story.s1.log.o03",
+      "progressionEffect": "S2 권역 복선만",
+      "progressionRequired": false,
+      "raw": [
+        "LOG-O03",
+        "FAC-S17/중계 기록",
+        "story.s1.log.o03",
+        "S2 권역 복선만"
+      ]
+    },
+    {
+      "id": "LOG-O04",
+      "sourceDocumentId": "STORY-DATA-S1-001",
+      "enabled": true,
+      "triggerText": "제작 롤백 1회",
+      "payloadKey": "story.s1.log.o04",
+      "progressionEffect": "도움말",
+      "progressionRequired": false,
+      "raw": [
+        "LOG-O04",
+        "제작 롤백 1회",
+        "story.s1.log.o04",
+        "도움말"
+      ]
+    },
+    {
+      "id": "LOG-O05",
+      "sourceDocumentId": "STORY-DATA-S1-001",
+      "enabled": true,
+      "triggerText": "자연 관측 5종",
+      "payloadKey": "story.s1.log.o05",
+      "progressionEffect": "도감",
+      "progressionRequired": false,
+      "raw": [
+        "LOG-O05",
+        "자연 관측 5종",
+        "story.s1.log.o05",
+        "도감"
+      ]
+    },
+    {
+      "id": "LOG-O06",
+      "sourceDocumentId": "STORY-DATA-S1-001",
+      "enabled": true,
+      "triggerText": "접합 잔류물 분석",
+      "payloadKey": "story.s1.log.o06",
+      "progressionEffect": "없음",
+      "progressionRequired": false,
+      "raw": [
+        "LOG-O06",
+        "접합 잔류물 분석",
+        "story.s1.log.o06",
+        "없음"
+      ]
+    },
+    {
+      "id": "LOG-O07",
+      "sourceDocumentId": "STORY-DATA-S1-001",
+      "enabled": true,
+      "triggerText": "FAC-R01 설계 열람",
+      "payloadKey": "story.s1.log.o07",
+      "progressionEffect": "S2 기관 복선만",
+      "progressionRequired": false,
+      "raw": [
+        "LOG-O07",
+        "FAC-R01 설계 열람",
+        "story.s1.log.o07",
+        "S2 기관 복선만"
+      ]
+    },
+    {
+      "id": "LOG-O08",
+      "sourceDocumentId": "STORY-DATA-S1-001",
+      "enabled": true,
+      "triggerText": "고오염 비적대 식생",
+      "payloadKey": "story.s1.log.o08",
+      "progressionEffect": "정화 힌트",
+      "progressionRequired": false,
+      "raw": [
+        "LOG-O08",
+        "고오염 비적대 식생",
+        "story.s1.log.o08",
+        "정화 힌트"
+      ]
+    },
+    {
+      "id": "LOG-O09",
+      "sourceDocumentId": "STORY-DATA-S1-001",
+      "enabled": true,
+      "triggerText": "C29 교정 기록",
+      "payloadKey": "story.s1.log.o09",
+      "progressionEffect": "엔딩 책 여백",
+      "progressionRequired": false,
+      "raw": [
+        "LOG-O09",
+        "C29 교정 기록",
+        "story.s1.log.o09",
+        "엔딩 책 여백"
       ]
     }
   ]

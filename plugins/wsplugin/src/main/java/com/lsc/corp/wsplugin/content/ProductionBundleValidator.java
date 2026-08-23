@@ -82,12 +82,16 @@ public final class ProductionBundleValidator {
             counts.put("facilities", count(reader, "facilities/season1-facilities.json"));
             counts.put("loot", count(reader, "loot/season1-loot.json"));
             counts.put("days", count(reader, "days/season1-days-01-50.json"));
+            counts.put("research", count(reader, "research/season1-research.json"));
+            counts.put("storyScenes", count(reader, "story/season1-scenes.json"));
+            counts.put("storyLogs", count(reader, "story/season1-logs.json"));
             Map<String, Integer> expected = Map.ofEntries(
                     Map.entry("materials", 59), Map.entry("items", 61), Map.entry("tools", 214),
                     Map.entry("recipes", 315), Map.entry("codex", 334), Map.entry("skills", 64),
                     Map.entry("personalAugments", 50), Map.entry("partyAugments", 16),
                     Map.entry("enemies", 53), Map.entry("bosses", 4), Map.entry("support", 34),
-                    Map.entry("facilities", 46), Map.entry("loot", 62), Map.entry("days", 50));
+                    Map.entry("facilities", 46), Map.entry("loot", 62), Map.entry("days", 50),
+                    Map.entry("research", 25), Map.entry("storyScenes", 73), Map.entry("storyLogs", 9));
             for (Map.Entry<String, Integer> entry : expected.entrySet()) {
                 if (!entry.getValue().equals(counts.get(entry.getKey()))) {
                     throw new ContentValidationException("Cardinality mismatch " + entry.getKey()
@@ -96,6 +100,7 @@ public final class ProductionBundleValidator {
             }
 
             ProductionContentCatalog catalog = loadCatalog(reader, counts);
+            validateStructuredAuthorityData(reader);
             validateReferences(reader, catalog);
             validateEquipmentCatalog(catalog);
             validateSkillCatalog(catalog);
@@ -824,6 +829,75 @@ public final class ProductionBundleValidator {
             if (!catalog.lootById().containsKey(support.lootTableId())) {
                 throw new ContentValidationException("Support typed loot reference missing " + support.id());
             }
+        }
+    }
+
+    private void validateStructuredAuthorityData(ResourceReader reader) throws Exception {
+        Set<String> researchIds = new HashSet<>();
+        List<String> researchStates = List.of("LOCKED", "AVAILABLE", "READY_LOCKED", "RUNNING", "COMPLETED", "MASTERED");
+        for (JsonObject record : records(reader, "research/season1-research.json")) {
+            rejectAuthorityStub(record);
+            String id = requiredString(record, "id");
+            JsonObject cost = record.getAsJsonObject("cost");
+            if (!id.matches("^RS-[A-Z0-9-]+$") || !researchIds.add(id)
+                    || !"RESEARCH-001".equals(requiredString(record, "sourceDocumentId"))
+                    || !record.get("enabled").getAsBoolean()
+                    || requiredInt(record, "minimumDay") < 1 || requiredInt(record, "minimumDay") > 50
+                    || requiredString(record, "prerequisiteText").isBlank()
+                    || requiredString(record, "comparisonInput").isBlank()
+                    || cost == null || requiredInt(cost, "general") < 0 || requiredInt(cost, "metal") < 0
+                    || requiredInt(cost, "signal") < 0 || requiredInt(cost, "specialist") < 0
+                    || requiredInt(record, "durationSeconds") <= 0
+                    || requiredString(record, "unlockText").isBlank()
+                    || !stringArray(record, "stateMachine").equals(researchStates)
+                    || record.getAsJsonArray("raw") == null || record.getAsJsonArray("raw").size() != 5) {
+                throw new ContentValidationException("Invalid research authority record " + id);
+            }
+        }
+
+        Set<String> sceneIds = new HashSet<>();
+        Set<String> sceneGroups = Set.of("PROLOGUE", "CHAPTER", "FINAL");
+        Set<String> priorities = Set.of("STORY", "STORY_MAJOR", "SYSTEM");
+        for (JsonObject record : records(reader, "story/season1-scenes.json")) {
+            rejectAuthorityStub(record);
+            String id = requiredString(record, "id");
+            if (!id.matches("^ST[0-9]-[A-Z0-9-]+$") || !sceneIds.add(id)
+                    || !"STORY-DATA-S1-001".equals(requiredString(record, "sourceDocumentId"))
+                    || !record.get("enabled").getAsBoolean()
+                    || !sceneGroups.contains(requiredString(record, "sceneGroup"))
+                    || requiredString(record, "triggerKey").isBlank()
+                    || requiredString(record, "triggerEvent").isBlank()
+                    || !"PARTY".equals(requiredString(record, "audience"))
+                    || !priorities.contains(requiredString(record, "priority"))
+                    || record.get("blocking").getAsBoolean()
+                    || !record.get("replayableText").getAsBoolean()
+                    || record.get("worldEffectReplayable").getAsBoolean()
+                    || !"RUN".equals(requiredString(record, "idempotencyScope"))
+                    || record.getAsJsonArray("raw") == null || record.getAsJsonArray("raw").size() != 4) {
+                throw new ContentValidationException("Invalid Story scene authority record " + id);
+            }
+        }
+
+        Set<String> logIds = new HashSet<>();
+        for (JsonObject record : records(reader, "story/season1-logs.json")) {
+            rejectAuthorityStub(record);
+            String id = requiredString(record, "id");
+            if (!id.matches("^LOG-O\\d{2}$") || !logIds.add(id)
+                    || !"STORY-DATA-S1-001".equals(requiredString(record, "sourceDocumentId"))
+                    || !record.get("enabled").getAsBoolean()
+                    || requiredString(record, "triggerText").isBlank()
+                    || requiredString(record, "payloadKey").isBlank()
+                    || requiredString(record, "progressionEffect").isBlank()
+                    || record.get("progressionRequired").getAsBoolean()
+                    || record.getAsJsonArray("raw") == null || record.getAsJsonArray("raw").size() != 4) {
+                throw new ContentValidationException("Invalid Story log authority record " + id);
+            }
+        }
+    }
+
+    private static void rejectAuthorityStub(JsonObject record) throws ContentValidationException {
+        if (record.toString().contains("AUTHORITY_DATA")) {
+            throw new ContentValidationException("Authority stub is forbidden: " + optionalString(record, "id", "unknown"));
         }
     }
 

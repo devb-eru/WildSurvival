@@ -54,6 +54,18 @@
     {
       "id": "loot",
       "expected": 62
+    },
+    {
+      "id": "research",
+      "expected": 25
+    },
+    {
+      "id": "storyScenes",
+      "expected": 73
+    },
+    {
+      "id": "storyLogs",
+      "expected": 9
     }
   ]
 }

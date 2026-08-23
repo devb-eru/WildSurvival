@@ -90,5 +90,8 @@ class ProductionBundleValidatorTest {
         assertEquals(12, boss30Loot.fixedEntries().get(1).amountForPartySize(4));
         assertTrue(result.catalog().lootById().get("LOOT-NONE").noReward());
         assertEquals(91, result.counts().get("enemies") + result.counts().get("bosses") + result.counts().get("support"));
+        assertEquals(25, result.counts().get("research"));
+        assertEquals(73, result.counts().get("storyScenes"));
+        assertEquals(9, result.counts().get("storyLogs"));
     }
 }
