@@ -100,5 +100,14 @@ class ProductionBundleValidatorTest {
         assertEquals(19, result.counts().get("budget"));
         assertEquals(14, result.counts().get("drawLocks"));
         assertEquals(7, result.counts().get("softlocks"));
+        assertEquals(107, result.catalog().eventsById().size());
+        assertEquals("PR50-FINAL-WAIT", result.catalog().mainEventsByDay().get(50).getFirst().pressureProfileId());
+        assertEquals(25, result.catalog().researchById().size());
+        assertEquals(73, result.catalog().storyScenesById().size());
+        assertEquals(9, result.catalog().storyLogsById().size());
+        assertEquals(32, result.catalog().finalRecordsById().size());
+        assertEquals(12, result.catalog().budgetProfilesById().size());
+        assertEquals(14, result.catalog().drawLocksById().size());
+        assertEquals(10.0, result.catalog().budgetProfilesById().get("CH-BOSS-LAB").multiplier("bossPattern"));
     }
 }

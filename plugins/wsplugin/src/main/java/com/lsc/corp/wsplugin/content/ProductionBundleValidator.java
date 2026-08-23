@@ -373,12 +373,95 @@ public final class ProductionBundleValidator {
                 throw new ContentValidationException("Duplicate loot profile " + loot.id());
             }
         }
+        Map<String, ProductionContentCatalog.EventEntry> eventsById = new LinkedHashMap<>();
+        Map<Integer, List<ProductionContentCatalog.EventEntry>> mainEventsByDay = new LinkedHashMap<>();
+        for (String path : List.of("events/day01-10.json", "events/day11-20.json", "events/day21-50.json")) {
+            for (JsonObject record : records(reader, path)) {
+                ProductionContentCatalog.EventEntry event = new ProductionContentCatalog.EventEntry(
+                        requiredString(record, "id"), requiredString(record, "eventKind"),
+                        requiredInt(record, "firstDay"), requiredString(record, "executionOpcode"),
+                        optionalString(record, "pressureProfileId", ""),
+                        record.has("partyThreat") ? integerArray(record, "partyThreat") : List.of(),
+                        optionalString(record, "objectiveText", ""), optionalString(record, "telegraphSpaceText", ""),
+                        optionalString(record, "rewardText", ""), optionalString(record, "failureAlternativeText", ""),
+                        record.deepCopy());
+                if (eventsById.putIfAbsent(event.id(), event) != null) {
+                    throw new ContentValidationException("Duplicate runtime event " + event.id());
+                }
+                if (event.mainEvent()) mainEventsByDay.computeIfAbsent(event.firstDay(), ignored -> new ArrayList<>()).add(event);
+            }
+        }
+        mainEventsByDay.replaceAll((ignored, values) -> List.copyOf(values));
+
+        Map<String, ProductionContentCatalog.ResearchEntry> researchById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "research/season1-research.json")) {
+            JsonObject costObject = record.getAsJsonObject("cost");
+            Map<String, Integer> cost = new LinkedHashMap<>();
+            for (String key : List.of("general", "metal", "signal", "specialist")) {
+                cost.put(key, requiredInt(costObject, key));
+            }
+            ProductionContentCatalog.ResearchEntry research = new ProductionContentCatalog.ResearchEntry(
+                    requiredString(record, "id"), requiredInt(record, "minimumDay"),
+                    requiredString(record, "prerequisiteText"), requiredString(record, "comparisonInput"),
+                    Map.copyOf(cost), requiredInt(record, "durationSeconds"),
+                    requiredString(record, "unlockText"), stringArray(record, "stateMachine"));
+            researchById.put(research.id(), research);
+        }
+
+        Map<String, ProductionContentCatalog.StorySceneEntry> storyScenesById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "story/season1-scenes.json")) {
+            ProductionContentCatalog.StorySceneEntry scene = new ProductionContentCatalog.StorySceneEntry(
+                    requiredString(record, "id"), requiredString(record, "sceneGroup"),
+                    requiredString(record, "triggerKey"), requiredString(record, "triggerEvent"),
+                    optionalString(record, "triggerRef", ""), requiredString(record, "priority"),
+                    optionalString(record, "payloadKey", ""), optionalString(record, "payloadText", ""),
+                    requiredString(record, "fallbackOrReplayPolicy"), record.get("replayableText").getAsBoolean(),
+                    record.get("worldEffectReplayable").getAsBoolean());
+            storyScenesById.put(scene.id(), scene);
+        }
+        Map<String, ProductionContentCatalog.StoryLogEntry> storyLogsById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "story/season1-logs.json")) {
+            ProductionContentCatalog.StoryLogEntry log = new ProductionContentCatalog.StoryLogEntry(
+                    requiredString(record, "id"), requiredString(record, "triggerText"),
+                    requiredString(record, "payloadKey"), requiredString(record, "progressionEffect"),
+                    record.get("progressionRequired").getAsBoolean());
+            storyLogsById.put(log.id(), log);
+        }
+        Map<String, ProductionContentCatalog.FinalRecordEntry> finalRecordsById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "final/day50-reconstruction-signal.json")) {
+            ProductionContentCatalog.FinalRecordEntry finalRecord = new ProductionContentCatalog.FinalRecordEntry(
+                    requiredString(record, "id"), requiredString(record, "recordKind"),
+                    requiredString(record, "executionOpcode"), record.deepCopy());
+            finalRecordsById.put(finalRecord.id(), finalRecord);
+        }
+        Map<String, ProductionContentCatalog.BudgetProfileEntry> budgetProfilesById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "budget/live-profiles.json")) {
+            if (!"PROFILE".equals(requiredString(record, "recordKind"))) continue;
+            ProductionContentCatalog.BudgetProfileEntry profile = new ProductionContentCatalog.BudgetProfileEntry(
+                    requiredString(record, "id"), requiredString(record, "mode"),
+                    requiredString(record, "intent"), numberMap(record, "multipliers"),
+                    record.getAsJsonObject("selectionWeights").deepCopy());
+            budgetProfilesById.put(profile.id(), profile);
+        }
+        Map<String, ProductionContentCatalog.DrawLockEntry> drawLocksById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "fixtures/draw-locks.json")) {
+            ProductionContentCatalog.DrawLockEntry draw = new ProductionContentCatalog.DrawLockEntry(
+                    requiredString(record, "id"), requiredString(record, "scope"),
+                    requiredInt(record, "milestone"), requiredString(record, "trigger"),
+                    requiredString(record, "tierPolicy"), requiredInt(record, "choiceCount"),
+                    requiredInt(record, "selectionCount"), record.get("returnToSlotZero").getAsBoolean(),
+                    record.get("sharedTierLock").getAsBoolean());
+            drawLocksById.put(draw.id(), draw);
+        }
         return new ProductionContentCatalog(List.copyOf(codex), Map.copyOf(byId), Map.copyOf(materialsById),
                 Map.copyOf(nonEquipmentItemsById), Map.copyOf(equipmentById), Map.copyOf(facilitiesById), List.copyOf(recipes),
                 Map.copyOf(byOutput), List.copyOf(skills), Map.copyOf(skillsById),
                 List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById),
                 Map.copyOf(enemiesById), Map.copyOf(bossesById), Map.copyOf(supportEntitiesById),
-                Map.copyOf(actionBundlesById), Map.copyOf(lootById), Map.copyOf(counts));
+                Map.copyOf(actionBundlesById), Map.copyOf(lootById), Map.copyOf(eventsById),
+                Map.copyOf(mainEventsByDay), Map.copyOf(researchById), Map.copyOf(storyScenesById),
+                Map.copyOf(storyLogsById), Map.copyOf(finalRecordsById), Map.copyOf(budgetProfilesById),
+                Map.copyOf(drawLocksById), Map.copyOf(counts));
     }
 
     private List<ProductionContentCatalog.AugmentEntry> loadAugments(ResourceReader reader, String path) throws Exception {

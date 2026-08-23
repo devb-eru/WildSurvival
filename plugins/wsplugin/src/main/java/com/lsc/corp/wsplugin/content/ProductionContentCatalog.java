@@ -1,5 +1,6 @@
 package com.lsc.corp.wsplugin.content;
 
+import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,14 @@ public record ProductionContentCatalog(
         Map<String, SupportEntityEntry> supportEntitiesById,
         Map<String, ActionBundleEntry> actionBundlesById,
         Map<String, LootEntry> lootById,
+        Map<String, EventEntry> eventsById,
+        Map<Integer, List<EventEntry>> mainEventsByDay,
+        Map<String, ResearchEntry> researchById,
+        Map<String, StorySceneEntry> storyScenesById,
+        Map<String, StoryLogEntry> storyLogsById,
+        Map<String, FinalRecordEntry> finalRecordsById,
+        Map<String, BudgetProfileEntry> budgetProfilesById,
+        Map<String, DrawLockEntry> drawLocksById,
         Map<String, Integer> counts
 ) {
     public CatalogEntry item(String id) {
@@ -149,4 +158,39 @@ public record ProductionContentCatalog(
             return amounts.get(index);
         }
     }
+
+    public record EventEntry(String id, String kind, int firstDay, String executionOpcode,
+                             String pressureProfileId, List<Integer> partyThreat,
+                             String objectiveText, String telegraphText, String rewardText,
+                             String failureText, JsonObject payload) {
+        public boolean mainEvent() {
+            return "MAIN_EVENT".equals(kind);
+        }
+    }
+
+    public record ResearchEntry(String id, int minimumDay, String prerequisiteText,
+                                String comparisonInput, Map<String, Integer> cost,
+                                int durationSeconds, String unlockText, List<String> stateMachine) { }
+
+    public record StorySceneEntry(String id, String sceneGroup, String triggerKey,
+                                  String triggerEvent, String triggerRef, String priority,
+                                  String payloadKey, String payloadText, String fallbackPolicy,
+                                  boolean replayableText, boolean worldEffectReplayable) { }
+
+    public record StoryLogEntry(String id, String triggerText, String payloadKey,
+                                String progressionEffect, boolean progressionRequired) { }
+
+    public record FinalRecordEntry(String id, String recordKind, String executionOpcode,
+                                   JsonObject payload) { }
+
+    public record BudgetProfileEntry(String id, String mode, String intent,
+                                     Map<String, Double> multipliers, JsonObject selectionWeights) {
+        public double multiplier(String domain) {
+            return multipliers.getOrDefault(domain, 1.0);
+        }
+    }
+
+    public record DrawLockEntry(String id, String scope, int milestone, String trigger,
+                                String tierPolicy, int choiceCount, int selectionCount,
+                                boolean returnToSlotZero, boolean sharedTierLock) { }
 }
