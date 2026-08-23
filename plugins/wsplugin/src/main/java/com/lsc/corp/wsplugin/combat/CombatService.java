@@ -257,12 +257,15 @@ public final class CombatService implements Listener {
                 ? clamp(attackerState.testDamageDealtMultiplier, 0.0, 100.0) : 1.0;
         double testBreakMultiplier = runs.isTestRun() && attackerState != null
                 ? clamp(attackerState.testBreakMultiplier, 0.0, 100.0) : 1.0;
+        EquipmentService.ActiveEquipmentStats equipmentStats = equipment.activeStats(attacker);
+        double equipmentAttack = equipmentStats.value("ATK");
+        double effectiveDefence = Math.max(0.0, defence - equipmentStats.value("PEN"));
         double vulnerableMultiplier = statusActive(target, "vulnerable") ? 1.12 : 1.0;
-        double finalDamage = CombatMath.outgoingDamage(rawAttack, Math.max(0.0, defence),
+        double finalDamage = CombatMath.outgoingDamage(rawAttack + equipmentAttack, effectiveDefence,
                 growth.attackMultiplier(attacker), groggyMultiplier * vulnerableMultiplier, testDamageMultiplier);
         double breakCallMultiplier = statusActive(target, "break_call") ? 1.06 : 1.0;
         double finalBreak = Math.max(0.0, breakDamage * growth.breakMultiplier(attacker)
-                * testBreakMultiplier * breakCallMultiplier);
+                * testBreakMultiplier * breakCallMultiplier * (1.0 + equipmentStats.value("BREAK_DAMAGE") / 100.0));
         if (pdc.getOrDefault(testInvulnerableKey, PersistentDataType.BYTE, (byte) 0) == (byte) 1) {
             finalDamage = 0.0;
             finalBreak = 0.0;
@@ -441,14 +444,18 @@ public final class CombatService implements Listener {
     public DamagePreview previewDamage(Player attacker, LivingEntity target, double rawDamage, double rawBreak) {
         CombatEntityView view = inspectCombatEntity(target);
         RunSnapshot.PlayerState state = runs.playerState(attacker.getUniqueId()).orElseThrow();
-        double defenceFactor = 100.0 / (100.0 + Math.max(0.0, view.defence()));
+        EquipmentService.ActiveEquipmentStats equipmentStats = equipment.activeStats(attacker);
+        double effectiveDefence = Math.max(0.0, view.defence() - equipmentStats.value("PEN"));
+        double defenceFactor = 100.0 / (100.0 + effectiveDefence);
         double augmentDamage = growth.attackMultiplier(attacker);
         double augmentBreak = growth.breakMultiplier(attacker);
         double testDamage = runs.isTestRun() ? clamp(state.testDamageDealtMultiplier, 0.0, 100.0) : 1.0;
         double testBreak = runs.isTestRun() ? clamp(state.testBreakMultiplier, 0.0, 100.0) : 1.0;
         return new DamagePreview(rawDamage, defenceFactor, augmentDamage, testDamage,
-                Math.max(0.0, rawDamage * defenceFactor * augmentDamage * testDamage), rawBreak,
-                augmentBreak, testBreak, Math.max(0.0, rawBreak * augmentBreak * testBreak));
+                Math.max(0.0, (rawDamage + equipmentStats.value("ATK")) * defenceFactor
+                        * augmentDamage * testDamage), rawBreak,
+                augmentBreak, testBreak, Math.max(0.0, rawBreak * augmentBreak * testBreak
+                        * (1.0 + equipmentStats.value("BREAK_DAMAGE") / 100.0)));
     }
 
     private void syncBossNumber(LivingEntity target, String stat, double value) {
@@ -515,7 +522,9 @@ public final class CombatService implements Listener {
             double reduction = clamp(playerState.testDamageReductionRate, 0.0, 0.95);
             event.setDamage(CombatMath.incomingDamage(event.getDamage(), multiplier, reduction));
         }
-        event.setDamage(event.getDamage() * PlayerStatPolicy.incomingDamageMultiplier(playerState.investedStats));
+        double equipmentDefence = equipment.activeStat(player, "DEF");
+        event.setDamage(event.getDamage() * PlayerStatPolicy.incomingDamageMultiplier(playerState.investedStats)
+                * (100.0 / (100.0 + Math.max(0.0, equipmentDefence))));
         long now = Instant.now().toEpochMilli();
         if (invulnerableUntilEpochMs.getOrDefault(player.getUniqueId(), 0L) >= now) {
             event.setCancelled(true);
@@ -1136,7 +1145,10 @@ public final class CombatService implements Listener {
 
     private void executeDodge(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
-        double cost = growth.dodgeCost(player, PlayerStatPolicy.dodgeCost(state.investedStats));
+        double equipmentEvasion = Math.max(0.0, equipment.activeStat(player, "EVA"));
+        double equipmentAdjustedCost = Math.max(10.0,
+                PlayerStatPolicy.dodgeCost(state.investedStats) - Math.floor(equipmentEvasion / 3.0));
+        double cost = growth.dodgeCost(player, equipmentAdjustedCost);
         if (!runs.consumeAp(player, cost)) {
             apFailure(player, cost);
             return;
@@ -1145,7 +1157,9 @@ public final class CombatService implements Listener {
         if (player.isSneaking()) {
             direction.multiply(-1.0);
         }
-        player.setVelocity(direction.multiply(0.9 * PlayerStatPolicy.dodgeDistanceMultiplier(state.investedStats)).setY(0.12));
+        double equipmentDistance = 1.0 + Math.min(0.30, equipmentEvasion * 0.01);
+        player.setVelocity(direction.multiply(0.9 * PlayerStatPolicy.dodgeDistanceMultiplier(state.investedStats)
+                * equipmentDistance).setY(0.12));
         invulnerableUntilEpochMs.put(player.getUniqueId(), Instant.now().plusMillis(450).toEpochMilli());
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.35f, 1.6f);
         ActionBarService.notice(player, Component.text("◇ 회피 / AP -" + Math.round(cost), NamedTextColor.AQUA), 24);
@@ -1377,7 +1391,8 @@ public final class CombatService implements Listener {
                                    String executionId) {
         double roll = Math.floorMod((executionId + ":" + target.getUniqueId()).hashCode(), 10_000) / 10_000.0;
         RunSnapshot.PlayerState state = runs.playerState(attacker.getUniqueId()).orElse(null);
-        double chance = weapon.statusChance() + (state == null ? 0.0 : PlayerStatPolicy.statusChanceBonus(state.investedStats));
+        double chance = weapon.statusChance() + (state == null ? 0.0 : PlayerStatPolicy.statusChanceBonus(state.investedStats))
+                + Math.max(0.0, equipment.activeStat(attacker, "HIT")) / 100.0;
         if (stage != weapon.attackCoefficients().size() - 1 || roll > chance) {
             return;
         }

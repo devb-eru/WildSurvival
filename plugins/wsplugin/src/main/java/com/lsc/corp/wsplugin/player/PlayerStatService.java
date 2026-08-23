@@ -29,11 +29,13 @@ public final class PlayerStatService implements Listener {
     private final JavaPlugin plugin;
     private final RunService runs;
     private final GrowthService growth;
+    private final EquipmentService equipment;
 
-    public PlayerStatService(JavaPlugin plugin, RunService runs, GrowthService growth) {
+    public PlayerStatService(JavaPlugin plugin, RunService runs, GrowthService growth, EquipmentService equipment) {
         this.plugin = plugin;
         this.runs = runs;
         this.growth = growth;
+        this.equipment = equipment;
     }
 
     public void open(Player player) {
@@ -49,14 +51,16 @@ public final class PlayerStatService implements Listener {
     public void apply(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null) return;
+        EquipmentService.ActiveEquipmentStats equipmentStats = equipment.activeStats(player);
         var hp = player.getAttribute(Attribute.MAX_HEALTH);
         if (hp != null) {
             double ratio = player.getHealth() / Math.max(1.0, hp.getValue());
-            hp.setBaseValue(PlayerStatPolicy.maxHealth(state.investedStats));
+            hp.setBaseValue(PlayerStatPolicy.maxHealth(state.investedStats) + equipmentStats.value("HP") / 5.0);
             player.setHealth(Math.max(1.0, Math.min(hp.getValue(), hp.getValue() * ratio)));
         }
         var speed = player.getAttribute(Attribute.MOVEMENT_SPEED);
-        if (speed != null) speed.setBaseValue(PlayerStatPolicy.movementSpeed(state.investedStats));
+        if (speed != null) speed.setBaseValue(Math.min(0.16, PlayerStatPolicy.movementSpeed(state.investedStats)
+                * (1.0 + equipmentStats.value("SPD") / 100.0)));
         var blockRange = player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE);
         if (blockRange != null) blockRange.setBaseValue(PlayerStatPolicy.blockInteractionRange());
         var entityRange = player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE);

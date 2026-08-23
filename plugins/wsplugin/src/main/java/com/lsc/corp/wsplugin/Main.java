@@ -53,7 +53,8 @@ public final class Main extends JavaPlugin {
                     equipment, growth, skills, telemetry);
             EconomyService economy = new EconomyService(this, runService, content.content(),
                     content.productionCatalog(), equipment, growth, telemetry, codex);
-            PlayerStatService stats = new PlayerStatService(this, runService, growth);
+            PlayerStatService stats = new PlayerStatService(this, runService, growth, equipment);
+            equipment.setStatRefresher(stats::apply);
             PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, skills, growth, tutorial);
             damageNumbers = new DamageNumberService(this, runService);
             combat.setMenuOpener(menu::open);

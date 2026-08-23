@@ -576,7 +576,8 @@ public final class GrowthService implements Listener {
         int base = "TEST".equals(run.runType)
                 ? state.testBaseMaxAp + Math.min(25, PlayerStatPolicy.points(state.investedStats, "AP"))
                 : PlayerStatPolicy.baseMaxAp(state.investedStats);
-        state.maxAp = Math.min("TEST".equals(run.runType) ? 10_000 : 200, Math.max(1, base + bonus));
+        state.maxAp = Math.min("TEST".equals(run.runType) ? 10_000 : 200,
+                Math.max(1, base + bonus + Math.max(0, state.equipmentMaxApBonus)));
         state.ap = Math.min(state.maxAp, state.ap);
     }
 

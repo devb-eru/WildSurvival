@@ -8,6 +8,7 @@ public record ProductionContentCatalog(
         Map<String, CatalogEntry> itemsById,
         Map<String, MaterialEntry> materialsById,
         Map<String, ItemEntry> nonEquipmentItemsById,
+        Map<String, EquipmentEntry> equipmentById,
         List<RecipeEntry> recipes,
         Map<String, List<RecipeEntry>> recipesByOutput,
         List<SkillEntry> skills,
@@ -38,6 +39,19 @@ public record ProductionContentCatalog(
                             int stackLimit, String effectText, String recipeId) {
         public boolean quickConsumable() {
             return "CONS".equals(category);
+        }
+    }
+
+    public record EquipmentEntry(String id, String name, String equipmentType, String equipmentSlot,
+                                 String weaponClass, String displayMaterial, String rarity, int itemLevel,
+                                 int firstDay, int maxDurability, int toolTier, String setId,
+                                 List<String> tags, Map<String, Double> stats, String effectText) {
+        public double stat(String id) {
+            return stats.getOrDefault(id, 0.0);
+        }
+
+        public boolean utility() {
+            return "UTILITY".equals(equipmentType);
         }
     }
 

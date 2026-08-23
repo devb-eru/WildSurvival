@@ -228,7 +228,7 @@
       "path": "items/codex-index.json",
       "domain": "codex",
       "schema": "codex.schema.json",
-      "sha256": "805c1bb0c7cb1cebb263ab2c72af560944c7e10902dc9d23ab83f9da6cfa2578"
+      "sha256": "5798e5868e66ca6fd5fac325f4993ff9eb5c2c7c9dd9bb7e95ae037e89f16ac4"
     },
     {
       "path": "recipes/season1-recipes.json",
@@ -240,19 +240,19 @@
       "path": "equipment/day01-10.json",
       "domain": "equipment",
       "schema": "equipment.schema.json",
-      "sha256": "9b1e92a4acf603b5dec2437cc863e9bbafe358debc22c2ec885e74cd17d94cfd"
+      "sha256": "c9fc550245e3e6fe52682fb35f0a0a3daa95bfc22c65c97c1176a34982b2a139"
     },
     {
       "path": "equipment/day11-20.json",
       "domain": "equipment",
       "schema": "equipment.schema.json",
-      "sha256": "c7863a6135b13c9036b4cbf7e4989dc26fde2f38d22b80909f047f0c95e259f4"
+      "sha256": "a3a37e0b861c7cdf0c6e24ba76057a3dc9fb5d0b45e29adc83b63cc90be3c0ce"
     },
     {
       "path": "equipment/day21-50.json",
       "domain": "equipment",
       "schema": "equipment.schema.json",
-      "sha256": "cfa187ba9af5e047066fee0ca0d2e9c5acf813580a8209a888d9aca78c019262"
+      "sha256": "88465cbb9626c938ca0d968d7c4b53ab068bdd1ccbac6ea28b7f0eaa02300262"
     },
     {
       "path": "facilities/season1-facilities.json",

@@ -52,7 +52,8 @@ function First-Material([object[]]$Cells, [string]$Slot) {
     $excluded = @('ACTIVE','HOSTILE','UTILITY','ACCESSORY','ARMOR','OFF','CHARM','PARTY_BOUND',
         'PARTY_RESOURCE','BOUND_PROOF','CRAFT','PROCESS','BOSS_CALL','FACILITY_KIT','EQUIPMENT_FORGE',
         'UTILITY_FORGE','VIRTUAL_BUILD','MAIN_WEAPON','OFF_WEAPON','INVENTORY','ARMOR_HEAD','ARMOR_CHEST',
-        'ARMOR_LEGS','ARMOR_FEET','ACCESSORY/CHARM','UNARMED_SUPPORT')
+        'ARMOR_LEGS','ARMOR_FEET','ACCESSORY/CHARM','UNARMED_SUPPORT',
+        'SW','AX','BO','CB','DG','BL','ST','PK','TR','UA')
     $candidate = $Cells | Where-Object { $_ -match '^[A-Z][A-Z0-9_]+$' -and $_ -notin $excluded } | Select-Object -First 1
     if ($candidate -eq 'IRON_ARMOR') {
         if ($Slot -match 'HEAD') { return 'IRON_HELMET' }
@@ -105,6 +106,130 @@ function Equipment-ClassCode([string]$Id) {
         if ($Id -match "(^|-)$code(-|$)") { return $code }
     }
     return ''
+}
+function Equipment-WeaponClass([string]$Code) {
+    return @{SW='SWORD';AX='AXE';BO='BOW';CB='CROSSBOW';DG='DAGGER';BL='MACE';ST='STAFF';PK='PICKAXE';TR='TRIDENT'}[$Code]
+}
+function Equipment-ClassName([string]$Code) {
+    return @{SW='검';AX='도끼';BO='활';CB='석궁';DG='단검';BL='둔기';ST='지팡이';PK='곡괭이';TR='삼지창'}[$Code]
+}
+function Equipment-Rarity([string]$Id) {
+    if ($Id -match '^EQL-UT-RI-') { return 'RARE' }
+    if ($Id -match '^EQL-UT-RS-') { return 'EPIC' }
+    if ($Id -match '^EQL-UT-HD-') { return 'LEGENDARY' }
+    if ($Id -match '^EQL-UT-RC-') { return 'ABYSSAL' }
+    if ($Id -match '^EQL-D10-') { return 'EPIC' }
+    if ($Id -match '^EQD20-LG-') { return 'LEGENDARY' }
+    if ($Id -match '^EQD20-EP-') { return 'EPIC' }
+    if ($Id -match '^EQD20-') { return 'RARE' }
+    if ($Id -match '^EQD50-(B30|B40)-') { return 'ABYSSAL' }
+    if ($Id -match '^EQD50-.*-A41$' -or $Id -match '^EQD50-(AC-CALIBRATE|CH-RELAY|OH-INTERRUPT)$' -or $Id -match '^EQD50-AR-REBUILD-') { return 'ABYSSAL' }
+    if ($Id -match '^EQD50-.*-L31$' -or $Id -match '^EQD50-AR-INTERRUPT-' -or $Id -eq 'EQD50-OH-PURIFY') { return 'LEGENDARY' }
+    if ($Id -match '^EQD50-') { return 'EPIC' }
+    if ($Id -match '(^|-)R\d+' -or $Id -match '-R-') { return 'RARE' }
+    if ($Id -match '(^|-)U\d+' -or $Id -match '-U-') { return 'UNCOMMON' }
+    return 'COMMON'
+}
+function Equipment-FirstDay([string]$Id) {
+    if ($Id -match '^EQL-UT-RI-') { return 11 }
+    if ($Id -match '^EQL-UT-RS-') { return 21 }
+    if ($Id -match '^EQL-UT-HD-') { return 31 }
+    if ($Id -match '^EQL-UT-RC-') { return 41 }
+    if ($Id -match '^EQL-D10-') { return 10 }
+    if ($Id -match '^EQD20-LG-') { return 20 }
+    if ($Id -match '^EQD20-EP-') { return 18 }
+    if ($Id -match '^EQD20-') { return 11 }
+    if ($Id -match '^EQD50-B30-') { return 30 }
+    if ($Id -match '^EQD50-B40-') { return 40 }
+    if ($Id -match '^EQD50-.*-A41$' -or $Id -match '^EQD50-(AC-CALIBRATE|CH-RELAY)$' -or $Id -match '^EQD50-AR-REBUILD-') { return 41 }
+    if ($Id -match '^EQD50-.*-L31$' -or $Id -match '^EQD50-AR-INTERRUPT-') { return 31 }
+    if ($Id -eq 'EQD50-OH-INTERRUPT') { return 35 }
+    if ($Id -eq 'EQD50-OH-PURIFY') { return 25 }
+    if ($Id -match '^EQD50-') { return 21 }
+    if ((Equipment-Rarity $Id) -eq 'RARE') { return 5 }
+    if ((Equipment-Rarity $Id) -eq 'UNCOMMON') { return 3 }
+    return 1
+}
+function Equipment-ItemLevel([string]$Id) {
+    if ($Id -match '^EQL-UT-') { return Equipment-FirstDay $Id }
+    if ($Id -match '^EQL-D10-') { return 10 }
+    if ($Id -match '^EQD20-LG-') { return 20 }
+    if ($Id -match '^EQD20-EP-') { return 19 }
+    if ($Id -match '^EQD20-') { return 14 }
+    if ($Id -match '^EQD50-B30-') { return 30 }
+    if ($Id -match '^EQD50-B40-') { return 40 }
+    if ($Id -match '^EQD50-.*-A41$' -or $Id -match '^EQD50-(AC-CALIBRATE|CH-RELAY)$' -or $Id -match '^EQD50-AR-REBUILD-') { return 44 }
+    if ($Id -match '^EQD50-.*-L31$' -or $Id -match '^EQD50-AR-INTERRUPT-') { return 34 }
+    if ($Id -eq 'EQD50-OH-INTERRUPT') { return 37 }
+    if ($Id -eq 'EQD50-OH-PURIFY') { return 27 }
+    if ($Id -match '^EQD50-') { return 24 }
+    switch (Equipment-Rarity $Id) { 'RARE' {return 6}; 'UNCOMMON' {return 3}; default {return 1} }
+}
+function Equipment-Durability([string]$Id, [string]$Type, [string]$Rarity) {
+    if ($Id -match '^EQL-UT-RI-') { return 720 }
+    if ($Id -match '^EQL-UT-RS-') { return 1100 }
+    if ($Id -match '^EQL-UT-HD-') { return 1550 }
+    if ($Id -match '^EQL-UT-RC-') { return 2100 }
+    $base = @{COMMON=320;UNCOMMON=450;RARE=600;EPIC=800;LEGENDARY=1100;ABYSSAL=1500}[$Rarity]
+    if ($Type -eq 'ARMOR') { return [int][Math]::Ceiling($base * 1.25) }
+    return $base
+}
+function Equipment-ToolTier([string]$Id) {
+    if ($Id -match '^EQL-UT-RI-') { return 3 }
+    if ($Id -match '^EQL-UT-RS-') { return 4 }
+    if ($Id -match '^EQL-UT-HD-') { return 5 }
+    if ($Id -match '^EQL-UT-RC-') { return 6 }
+    if ((Equipment-ClassCode $Id) -eq 'PK') {
+        $day = Equipment-FirstDay $Id
+        if ($day -ge 41) { return 6 }; if ($day -ge 31) { return 5 }; if ($day -ge 21) { return 4 }
+        if ($day -ge 11) { return 3 }; return 2
+    }
+    return -1
+}
+function Equipment-SetId([string]$Id) {
+    if ($Id -match '^EQL-AR-C0') { return 'EQL-SET-PIONEER' }
+    foreach ($set in @('SCOUT','VANGUARD','OBSERVER')) { if ($Id -match "^EQL-AR-.*-$set-") { return "EQL-SET-$set" } }
+    foreach ($set in @('MED','CTRL','GUARD')) { if ($Id -match "^EQD20-AR-$set-") { return "EQD20-SET-$set" } }
+    foreach ($set in @('PURIFIER','INTERRUPT','REBUILD')) { if ($Id -match "^EQD50-AR-$set-") { return "EQD50-SET-$set" } }
+    return ''
+}
+function Add-EquipmentStat([Collections.Specialized.OrderedDictionary]$Stats, [string]$Key, [double]$Value) {
+    if ($Stats.Contains($Key)) { $Stats[$Key] = [double]$Stats[$Key] + $Value } else { $Stats[$Key] = $Value }
+}
+function Equipment-Stats([string]$Id) {
+    $stats = [ordered]@{}
+    $baseWeapons = @{
+        'EQL-W01'=@{ATK=8;DEF=2};'EQL-W02'=@{ATK=12};'EQL-W03'=@{ATK=8;HIT=4};'EQL-W04'=@{ATK=14}
+        'EQL-W05'=@{ATK=5;EVA=4};'EQL-W06'=@{ATK=10;BREAK_DAMAGE=4};'EQL-W07'=@{ATK=8;AP=4}
+        'EQL-W08'=@{ATK=10;PEN=6};'EQL-W09'=@{ATK=9;HIT=4}
+    }
+    if ($baseWeapons.ContainsKey($Id)) { foreach ($key in $baseWeapons[$Id].Keys) { Add-EquipmentStat $stats $key $baseWeapons[$Id][$key] } }
+    $armorBase = @{
+        HEAD=@{DEF=5;HP=20};CHEST=@{DEF=10;HP=40};LEGS=@{DEF=8;HP=30};FEET=@{DEF=4;EVA=2}
+    }
+    $part = @('HEAD','CHEST','LEGS','FEET') | Where-Object { $Id.EndsWith("-$_") } | Select-Object -First 1
+    if (-not $part -and $Id -match '^EQL-AR-C0([1-4])$') { $part = @('HEAD','CHEST','LEGS','FEET')[[int]$Matches[1]-1] }
+    if ($Id -match '^EQL-AR-(C0|U-|R-)' -and $part) {
+        foreach ($key in $armorBase[$part].Keys) { Add-EquipmentStat $stats $key $armorBase[$part][$key] }
+    }
+    $partIndex = @{HEAD=0;CHEST=1;LEGS=2;FEET=3}
+    if ($Id -match '^EQL-AR-U-VANGUARD-' -and $part) { Add-EquipmentStat $stats 'DEF' @(4,8,6,4)[$partIndex[$part]] }
+    if ($Id -match '^EQL-AR-R-OBSERVER-' -and $part) { Add-EquipmentStat $stats 'RES' @(4,8,6,4)[$partIndex[$part]] }
+    if ($Id -match '^EQD20-AR-(MED|CTRL|GUARD)-' -and $part) {
+        $scale = @(0.7,1.4,1.1,0.6)[$partIndex[$part]]
+        if ($Matches[1] -eq 'MED') { Add-EquipmentStat $stats 'RES' ([Math]::Ceiling(4*$scale)) }
+        elseif ($Matches[1] -eq 'CTRL') {
+            Add-EquipmentStat $stats 'TENACITY' ([Math]::Ceiling(4*$scale)); Add-EquipmentStat $stats 'STAGGER_RES' ([Math]::Ceiling(4*$scale))
+        } else {
+            Add-EquipmentStat $stats 'DEF' ([Math]::Ceiling(6*$scale)); Add-EquipmentStat $stats 'HP' ([Math]::Ceiling(30*$scale))
+        }
+    }
+    $exact = @{
+        'EQL-SW-U01'=@{DEF=6};'EQL-BO-U01'=@{HIT=4};'EQL-UA-U01'=@{DEF=4};'EQL-AC-C01'=@{RES=2}
+        'EQL-AC-U01'=@{HIT=4};'EQL-CH-C01'=@{HP=40};'EQL-CH-U02'=@{BREAK_DAMAGE=4}
+    }
+    if ($exact.ContainsKey($Id)) { foreach ($key in $exact[$Id].Keys) { Add-EquipmentStat $stats $key $exact[$Id][$key] } }
+    return $stats
 }
 function Base-WeaponId([string]$Code) {
     return @{SW='EQL-W01';AX='EQL-W02';BO='EQL-W03';CB='EQL-W04';DG='EQL-W05';BL='EQL-W06';ST='EQL-W07';PK='EQL-W08';TR='EQL-W09'}[$Code]
@@ -217,6 +342,10 @@ $recipeAmounts = @{
 $materialRows = Read-TableRows '기획\04 장비와 경제\MATERIAL-LIST Season 1 재료 목록 기획서.md'
 $itemRows = Read-TableRows '기획\04 장비와 경제\ITEM-LIST Season 1 아이템 목록 기획서.md'
 $toolRows = Read-TableRows '기획\04 장비와 경제\TOOL-LIST Season 1 도구·방어구 목록 기획서.md'
+$equipmentListRows = Read-TableRows '기획\04 장비와 경제\EQUIP-LIST 장비 목록 기획서.md'
+$equipmentD20Rows = Read-TableRows '기획\04 장비와 경제\EQUIP-DATA Day 11-20 장비 목록 기획서.md'
+$equipmentD50Rows = Read-TableRows '기획\04 장비와 경제\EQUIP-DATA Day 21-50 장비 실행 데이터 기획서.md'
+$equipmentDetailById = Find-IdRows @($equipmentListRows + $equipmentD20Rows + $equipmentD50Rows) '(?:EQL|EQD20|EQD50)-[A-Z0-9{}*_-]+'
 $recipeRows = Read-TableRows '기획\04 장비와 경제\RECIPE-LIST Season 1 조합법 목록 기획서.md'
 $skillRows = Read-TableRows '기획\02 플레이어 성장\SKILL-LIST 스킬 목록 기획서.md'
 $personalAugmentRows = Read-TableRows '기획\02 플레이어 성장\AUGMENT-PERSONAL-LIST Season 1 개인 증강 목록 기획서.md'
@@ -278,6 +407,57 @@ $items = foreach ($cells in $itemRows) {
     }
 }
 
+function Equipment-DetailKey([string]$Id) {
+    if ($equipmentDetailById.Contains($Id)) { return $Id }
+    if ($Id -match '^EQL-D10-W-[A-Z]{2}$') { return 'EQL-D10-W-{class}' }
+    if ($Id -match '^EQD20-(EP|LG)-W01-[A-Z]{2}$') { return "EQD20-$($Matches[1])-W01" }
+    if ($Id -match '^EQD50-(B30|B40)-W01-[A-Z]{2}$') { return "EQD50-$($Matches[1])-W01" }
+    foreach ($set in @('SCOUT','VANGUARD','OBSERVER')) {
+        if ($Id -match "^EQL-AR-.*-$set-") { return "EQL-AR-$($(if ($set -eq 'OBSERVER') {'R'} else {'U'}))-$set-*" }
+    }
+    foreach ($set in @('MED','CTRL','GUARD')) { if ($Id -match "^EQD20-AR-$set-") { return "EQD20-SET-$set" } }
+    foreach ($set in @('PURIFIER','INTERRUPT','REBUILD')) { if ($Id -match "^EQD50-AR-$set-") { return "EQD50-SET-$set" } }
+    return ''
+}
+function Equipment-PartName([string]$Id) {
+    if ($Id -match '-HEAD$') { return '투구' }; if ($Id -match '-CHEST$' -or $Id -match '-C02$') { return '흉갑' }
+    if ($Id -match '-LEGS$' -or $Id -match '-C03$') { return '각반' }; if ($Id -match '-FEET$' -or $Id -match '-C04$') { return '장화' }
+    if ($Id -match '-C01$') { return '투구' }; return ''
+}
+function Equipment-DisplayName([string]$Id, [string]$DetailKey, [object[]]$DetailCells) {
+    if ($Id -match '^EQL-UT-(RI|RS|HD|RC)-(PICKAXE|AXE|SHOVEL|HOE)$') {
+        $tierName = @{RI='강화 철';RS='공명';HD='경화';RC='재건'}[$Matches[1]]
+        $toolName = @{PICKAXE='곡괭이';AXE='도끼';SHOVEL='삽';HOE='괭이'}[$Matches[2]]
+        return "$tierName $toolName"
+    }
+    $setNames = @{PIONEER='개척자';SCOUT='수색자';VANGUARD='선봉대';OBSERVER='오염 관측자'
+        MED='멸균 구조복';CTRL='신경 차폐복';GUARD='격리 방호복'
+        PURIFIER='경계 정화복';INTERRUPT='중단 작업복';REBUILD='첫불씨 방호복'}
+    if ($Id -match '^EQL-AR-C0') { return "$($setNames.PIONEER) $(Equipment-PartName $Id)" }
+    foreach ($set in $setNames.Keys) {
+        if ($Id -match "-$set-") { return "$($setNames[$set]) $(Equipment-PartName $Id)" }
+    }
+    $candidate = $(if ($DetailCells -and $DetailCells.Count) { Korean-Name $DetailCells $Id } else { $Id })
+    if ($DetailKey) { $candidate = ($candidate -replace [regex]::Escape($DetailKey), '').Trim() }
+    $candidate = $candidate.Trim([char[]]@([char]96,[char]32))
+    if ($candidate -eq $Id -or [string]::IsNullOrWhiteSpace($candidate)) { $candidate = $Id }
+    $code = Equipment-ClassCode $Id
+    if ($Id -match 'W01-[A-Z]{2}$' -and $code) { return "$candidate ($(Equipment-ClassName $code))" }
+    return $candidate
+}
+function Equipment-Tags([string]$Id, [object[]]$DetailCells) {
+    $result = [Collections.Generic.List[string]]::new()
+    $code = Equipment-ClassCode $Id
+    if ($code) { $result.Add((Equipment-WeaponClass $code)) }
+    if ($DetailCells -and $DetailCells.Count) {
+        $clean = ($DetailCells[$DetailCells.Count - 1] -replace '[^A-Z0-9_,]','')
+        foreach ($tag in $clean.Split(',', [StringSplitOptions]::RemoveEmptyEntries)) {
+            if ($tag.Length -ge 3 -and $tag -notmatch '^(WSRCP|EQUIP|DATA)') { $result.Add($tag) }
+        }
+    }
+    return @($result | Select-Object -Unique)
+}
+
 $tools = foreach ($cells in $toolRows) {
     if ($cells.Count -lt 6 -or $cells[0] -notmatch '^\d{4}$' -or $cells[1] -notmatch '^(EQL-|EQD(20|50)-)') { continue }
     $equipmentSlot = $cells[3]
@@ -290,10 +470,33 @@ $tools = foreach ($cells in $toolRows) {
     } elseif ($cells[2] -in @('ACCESSORY','UNARMED_SUPPORT')) {
         $equipmentSlot = 'ACCESSORY'
     }
+    $id = $cells[1]
+    $detailKey = Equipment-DetailKey $id
+    $detailCells = $(if ($detailKey -and $equipmentDetailById.Contains($detailKey)) { @($equipmentDetailById[$detailKey]) } else { @() })
+    $rarity = Equipment-Rarity $id
+    $code = Equipment-ClassCode $id
+    if (-not $code -and $cells[2] -in @('SW','AX','BO','CB','DG','BL','ST','PK','TR')) { $code = $cells[2] }
+    $compiledTags = [string[]]@(Equipment-Tags $id $detailCells)
+    if ($code -and $compiledTags -notcontains (Equipment-WeaponClass $code)) {
+        $compiledTags = [string[]]@((Equipment-WeaponClass $code)) + $compiledTags
+    }
+    $toolTier = Equipment-ToolTier $id
+    if ($toolTier -lt 0 -and $code -eq 'PK') {
+        $day = Equipment-FirstDay $id
+        $toolTier = $(if ($day -ge 41) {6} elseif ($day -ge 31) {5} elseif ($day -ge 21) {4} elseif ($day -ge 11) {3} else {2})
+    }
     [ordered]@{
-        id = $cells[1]; sourceDocumentId = 'TOOL-LIST-001'; enabled = $true
-        codexIndex = [int]$cells[0]; name = $cells[1]; equipmentType = $cells[2]; equipmentSlot = $equipmentSlot
-        displayMaterial = First-Material $cells $equipmentSlot; definition = $cells[5]; raw = @($cells)
+        id = $id; sourceDocumentId = 'TOOL-LIST-001'; enabled = $true
+        codexIndex = [int]$cells[0]; name = Equipment-DisplayName $id $detailKey $detailCells
+        equipmentType = $cells[2]; equipmentSlot = $equipmentSlot
+        weaponClass = $(if ($code) { Equipment-WeaponClass $code } else { '' })
+        displayMaterial = First-Material $cells $equipmentSlot; definition = $cells[5]
+        rarity = $rarity; itemLevel = Equipment-ItemLevel $id; firstDay = Equipment-FirstDay $id
+        maxDurability = Equipment-Durability $id $cells[2] $rarity; toolTier = $toolTier
+        setId = Equipment-SetId $id; tags = [string[]]@($compiledTags)
+        stats = Equipment-Stats $id
+        effectText = $(if ($detailCells.Count) { $detailCells -join ' | ' } else { $cells[5] })
+        raw = @($cells)
     }
 }
 

@@ -53,6 +53,8 @@ public final class EquipmentService implements Listener {
     private final ItemCodexService codex;
     private final NamespacedKey weaponIdKey;
     private final NamespacedKey equipmentInstanceIdKey;
+    private final java.util.Map<UUID, String> statSignatures = new java.util.HashMap<>();
+    private java.util.function.Consumer<Player> statRefresher = ignored -> { };
     private int tickCounter;
 
     public EquipmentService(JavaPlugin plugin, RunService runs, PrototypeContent content,
@@ -66,6 +68,10 @@ public final class EquipmentService implements Listener {
         this.codex = codex;
         this.weaponIdKey = new NamespacedKey(plugin, "weapon_id");
         this.equipmentInstanceIdKey = new NamespacedKey(plugin, "equipment_instance_id");
+    }
+
+    public void setStatRefresher(java.util.function.Consumer<Player> statRefresher) {
+        this.statRefresher = Objects.requireNonNull(statRefresher);
     }
 
     public void open(Player player) {
@@ -358,6 +364,30 @@ public final class EquipmentService implements Listener {
         return weaponId(item);
     }
 
+    public ActiveEquipmentStats activeStats(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return new ActiveEquipmentStats(java.util.Map.of(), java.util.Map.of());
+        java.util.Set<String> instanceIds = new java.util.LinkedHashSet<>();
+        if (state.mainWeaponInstanceId != null) instanceIds.add(state.mainWeaponInstanceId);
+        if (state.offhandInstanceId != null) instanceIds.add(state.offhandInstanceId);
+        instanceIds.addAll(equippedInstancesBySlot(state).values());
+        java.util.Map<String, Double> stats = new java.util.LinkedHashMap<>();
+        java.util.Map<String, Integer> sets = new java.util.LinkedHashMap<>();
+        for (String instanceId : instanceIds) {
+            RunSnapshot.EquipmentInstanceState instance = equipmentInstances(state).get(instanceId);
+            if (instance == null || "BROKEN".equals(instance.condition)) continue;
+            ProductionContentCatalog.EquipmentEntry profile = production.equipmentById().get(instance.templateId);
+            if (profile == null || profile.utility()) continue;
+            profile.stats().forEach((id, value) -> stats.merge(id, value, Double::sum));
+            if (!profile.setId().isBlank()) sets.merge(profile.setId(), 1, Integer::sum);
+        }
+        return new ActiveEquipmentStats(java.util.Map.copyOf(stats), java.util.Map.copyOf(sets));
+    }
+
+    public double activeStat(Player player, String id) {
+        return activeStats(player).value(id);
+    }
+
     public boolean isMainWeaponUsable(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null || state.mainWeaponId == null) return true;
@@ -386,6 +416,7 @@ public final class EquipmentService implements Listener {
             state = runs.playerState(player.getUniqueId()).orElseThrow();
             repairAuxiliarySlot(player, slot, equippedTemplates(state).get(slot), equippedInstancesBySlot(state).get(slot));
         }
+        refreshStatsIfChanged(player);
     }
 
     public void tick() {
@@ -408,11 +439,24 @@ public final class EquipmentService implements Listener {
         meta.setDisplayName(ChatColor.GOLD + "[WS] " + templateName(instance.templateId));
         String combatLine = weapon == null ? "장비 슬롯 " + equipmentSlot(instance.templateId)
                 : "무기군 " + weapon.id() + " · 간격 " + weapon.intervalTicks() + "틱 / 사거리 " + weapon.range();
-        meta.setLore(List.of(ChatColor.GRAY + "등록 장비 · 장비 GUI에서 장착",
-                ChatColor.WHITE + combatLine,
-                ("BROKEN".equals(instance.condition) ? ChatColor.RED + "BROKEN · 수리가 필요합니다."
-                        : ChatColor.GREEN + "내구 " + instance.currentDurability + "/" + instance.maxDurability),
-                ChatColor.DARK_GRAY + "ID: " + instance.templateId));
+        ProductionContentCatalog.EquipmentEntry profile = production.equipmentById().get(instance.templateId);
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY + "등록 장비 · 장비 GUI에서 장착");
+        lore.add(ChatColor.WHITE + combatLine);
+        if (profile != null) {
+            lore.add(ChatColor.LIGHT_PURPLE + profile.rarity() + " · iLv " + profile.itemLevel()
+                    + (profile.toolTier() >= 0 ? " · 채집 T" + profile.toolTier() : ""));
+            if (!profile.stats().isEmpty()) lore.add(ChatColor.AQUA + "스탯 " + profile.stats().entrySet().stream()
+                    .map(entry -> entry.getKey() + " +" + roundStat(entry.getValue()))
+                    .collect(java.util.stream.Collectors.joining(", ")));
+            String effect = profile.effectText().replace(" | ", " · ");
+            lore.add(ChatColor.GRAY + (effect.length() > 180 ? effect.substring(0, 177) + "..." : effect));
+            if (!profile.tags().isEmpty()) lore.add(ChatColor.DARK_AQUA + "태그 " + String.join(", ", profile.tags()));
+        }
+        lore.add("BROKEN".equals(instance.condition) ? ChatColor.RED + "BROKEN · 수리가 필요합니다."
+                : ChatColor.GREEN + "내구 " + instance.currentDurability + "/" + instance.maxDurability);
+        lore.add(ChatColor.DARK_GRAY + "ID: " + instance.templateId);
+        meta.setLore(lore);
         meta.setUnbreakable(false);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.getPersistentDataContainer().set(weaponIdKey, PersistentDataType.STRING, instance.templateId);
@@ -520,6 +564,7 @@ public final class EquipmentService implements Listener {
     }
     @EventHandler public void onQuit(PlayerQuitEvent event) {
         if (runs.isMember(event.getPlayer())) runs.savePlayer(event.getPlayer());
+        statSignatures.remove(event.getPlayer().getUniqueId());
         ActionBarService.clear(event.getPlayer());
     }
     @EventHandler public void onRespawn(PlayerRespawnEvent event) {
@@ -870,8 +915,11 @@ public final class EquipmentService implements Listener {
     private RunSnapshot.EquipmentInstanceState newEquipmentInstance(String rawWeaponId) {
         String weaponId = rawWeaponId.toUpperCase(java.util.Locale.ROOT);
         requireEquipmentTemplate(weaponId);
+        ProductionContentCatalog.EquipmentEntry profile = production.equipmentById().get(weaponId);
         Material material = templateMaterial(weaponId);
-        int maximum = material == null || material.getMaxDurability() < 1 ? 100 : material.getMaxDurability();
+        int maximum = profile == null
+                ? (material == null || material.getMaxDurability() < 1 ? 100 : material.getMaxDurability())
+                : profile.maxDurability();
         RunSnapshot.EquipmentInstanceState state = new RunSnapshot.EquipmentInstanceState();
         state.instanceId = UUID.randomUUID().toString();
         state.templateId = weaponId;
@@ -897,6 +945,8 @@ public final class EquipmentService implements Listener {
 
     private String equipmentSlot(String id) {
         if (content.weapons().stream().anyMatch(weapon -> weapon.id().equals(id))) return "MAIN_WEAPON";
+        ProductionContentCatalog.EquipmentEntry profile = production.equipmentById().get(id);
+        if (profile != null) return profile.equipmentSlot();
         ProductionContentCatalog.CatalogEntry entry = production.item(id);
         if ("ARMOR".equals(entry.equipmentType())) {
             for (String slot : List.of("HEAD", "CHEST", "LEGS", "FEET")) {
@@ -920,6 +970,8 @@ public final class EquipmentService implements Listener {
 
     private String weaponClassOrNull(String id) {
         if (content.weapons().stream().anyMatch(weapon -> weapon.id().equals(id))) return id;
+        ProductionContentCatalog.EquipmentEntry profile = production.equipmentById().get(id);
+        if (profile != null && !profile.weaponClass().isBlank()) return profile.weaponClass();
         ProductionContentCatalog.CatalogEntry entry = production.itemsById().get(id);
         if (entry == null) return null;
         return switch (entry.equipmentType()) {
@@ -940,7 +992,12 @@ public final class EquipmentService implements Listener {
         PrototypeContent.WeaponDefinition prototype = content.weapons().stream()
                 .filter(weapon -> weapon.id().equals(id)).findFirst().orElse(null);
         if (prototype != null) return Material.matchMaterial(prototype.material());
+        ProductionContentCatalog.EquipmentEntry profile = production.equipmentById().get(id);
         ProductionContentCatalog.CatalogEntry entry = production.item(id);
+        if (profile != null) {
+            Material configured = Material.matchMaterial(profile.displayMaterial());
+            if (configured != null && !configured.isAir()) return configured;
+        }
         Material direct = Material.matchMaterial(entry.displayMaterial());
         if (direct != null && !direct.isAir()) return direct;
         String weaponClass = weaponClassOrNull(id);
@@ -954,6 +1011,40 @@ public final class EquipmentService implements Listener {
             case "ACCESSORY/CHARM" -> Material.AMETHYST_SHARD;
             default -> Material.IRON_PICKAXE;
         };
+    }
+
+    private void refreshStatsIfChanged(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
+        int equipmentAp = Math.max(0, (int) Math.round(activeStats(player).value("AP")));
+        if (state.equipmentMaxApBonus != equipmentAp) {
+            runs.mutate(run -> run.players.get(player.getUniqueId().toString()).equipmentMaxApBonus = equipmentAp);
+            state = runs.playerState(player.getUniqueId()).orElseThrow();
+        }
+        List<String> parts = new ArrayList<>();
+        java.util.Set<String> ids = new java.util.LinkedHashSet<>();
+        if (state.mainWeaponInstanceId != null) ids.add(state.mainWeaponInstanceId);
+        if (state.offhandInstanceId != null) ids.add(state.offhandInstanceId);
+        ids.addAll(equippedInstancesBySlot(state).values());
+        RunSnapshot.PlayerState currentState = state;
+        ids.stream().sorted().forEach(id -> {
+            RunSnapshot.EquipmentInstanceState instance = equipmentInstances(currentState).get(id);
+            if (instance != null) parts.add(id + ":" + instance.templateId + ":" + instance.condition);
+        });
+        String signature = String.join("|", parts);
+        if (!signature.equals(statSignatures.put(player.getUniqueId(), signature))) statRefresher.accept(player);
+    }
+
+    private static String roundStat(double value) {
+        return value == Math.rint(value) ? Long.toString(Math.round(value))
+                : String.format(java.util.Locale.ROOT, "%.2f", value);
+    }
+
+    public record ActiveEquipmentStats(java.util.Map<String, Double> values,
+                                       java.util.Map<String, Integer> setPieces) {
+        public double value(String id) {
+            return values.getOrDefault(id, 0.0);
+        }
     }
 
     private static java.util.Map<String, String> equippedTemplates(RunSnapshot.PlayerState state) {

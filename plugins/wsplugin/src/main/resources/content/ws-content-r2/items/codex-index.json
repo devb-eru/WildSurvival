@@ -877,49 +877,49 @@
       "id": "EQL-AX-R01",
       "codexIndex": 1025,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQL-AX-U01",
       "codexIndex": 1026,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQL-BL-R01",
       "codexIndex": 1027,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQL-BL-U01",
       "codexIndex": 1028,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQL-BO-R01",
       "codexIndex": 1029,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQL-BO-U01",
       "codexIndex": 1030,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQL-CB-R01",
       "codexIndex": 1031,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQL-CB-U01",
       "codexIndex": 1032,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQL-CH-C01",
@@ -979,13 +979,13 @@
       "id": "EQL-DG-R01",
       "codexIndex": 1042,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQL-DG-U01",
       "codexIndex": 1043,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQL-OH-C01",
@@ -1009,49 +1009,49 @@
       "id": "EQL-PK-R01",
       "codexIndex": 1047,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQL-PK-U01",
       "codexIndex": 1048,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQL-ST-R01",
       "codexIndex": 1049,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQL-ST-U01",
       "codexIndex": 1050,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQL-SW-R01",
       "codexIndex": 1051,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQL-SW-U01",
       "codexIndex": 1052,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQL-TR-R01",
       "codexIndex": 1053,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQL-TR-U01",
       "codexIndex": 1054,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQL-UA-R01",
@@ -1069,55 +1069,55 @@
       "id": "EQL-W01",
       "codexIndex": 1057,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQL-W02",
       "codexIndex": 1058,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQL-W03",
       "codexIndex": 1059,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQL-W04",
       "codexIndex": 1060,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQL-W05",
       "codexIndex": 1061,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQL-W06",
       "codexIndex": 1062,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQL-W07",
       "codexIndex": 1063,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQL-W08",
       "codexIndex": 1064,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQL-W09",
       "codexIndex": 1065,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQL-AR-U-SCOUT-HEAD",
@@ -1195,55 +1195,55 @@
       "id": "EQL-D10-W-SW",
       "codexIndex": 1078,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQL-D10-W-AX",
       "codexIndex": 1079,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQL-D10-W-BO",
       "codexIndex": 1080,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQL-D10-W-CB",
       "codexIndex": 1081,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQL-D10-W-DG",
       "codexIndex": 1082,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQL-D10-W-BL",
       "codexIndex": 1083,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQL-D10-W-ST",
       "codexIndex": 1084,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQL-D10-W-PK",
       "codexIndex": 1085,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQL-D10-W-TR",
       "codexIndex": 1086,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQD20-AC-R01",
@@ -1261,25 +1261,25 @@
       "id": "EQD20-AX-R01",
       "codexIndex": 1089,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQD20-BL-R01",
       "codexIndex": 1090,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQD20-BO-R01",
       "codexIndex": 1091,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQD20-CB-R01",
       "codexIndex": 1092,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQD20-CH-R01",
@@ -1297,7 +1297,7 @@
       "id": "EQD20-DG-R01",
       "codexIndex": 1095,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD20-EP-AC01",
@@ -1369,25 +1369,25 @@
       "id": "EQD20-PK-R01",
       "codexIndex": 1107,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQD20-ST-R01",
       "codexIndex": 1108,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQD20-SW-R01",
       "codexIndex": 1109,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD20-TR-R01",
       "codexIndex": 1110,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQD20-UA-R01",
@@ -1399,109 +1399,109 @@
       "id": "EQD20-EP-W01-SW",
       "codexIndex": 1112,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD20-EP-W01-AX",
       "codexIndex": 1113,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQD20-EP-W01-BO",
       "codexIndex": 1114,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQD20-EP-W01-CB",
       "codexIndex": 1115,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQD20-EP-W01-DG",
       "codexIndex": 1116,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD20-EP-W01-BL",
       "codexIndex": 1117,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQD20-EP-W01-ST",
       "codexIndex": 1118,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQD20-EP-W01-PK",
       "codexIndex": 1119,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQD20-EP-W01-TR",
       "codexIndex": 1120,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQD20-LG-W01-SW",
       "codexIndex": 1121,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD20-LG-W01-AX",
       "codexIndex": 1122,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQD20-LG-W01-BO",
       "codexIndex": 1123,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQD20-LG-W01-CB",
       "codexIndex": 1124,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQD20-LG-W01-DG",
       "codexIndex": 1125,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD20-LG-W01-BL",
       "codexIndex": 1126,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQD20-LG-W01-ST",
       "codexIndex": 1127,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQD20-LG-W01-PK",
       "codexIndex": 1128,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQD20-LG-W01-TR",
       "codexIndex": 1129,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQD20-AR-MED-HEAD",
@@ -1585,19 +1585,19 @@
       "id": "EQD50-AX-A41",
       "codexIndex": 1143,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQD50-AX-E21",
       "codexIndex": 1144,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQD50-AX-L31",
       "codexIndex": 1145,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQD50-B30-AC01",
@@ -1651,55 +1651,55 @@
       "id": "EQD50-BL-A41",
       "codexIndex": 1154,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQD50-BL-E21",
       "codexIndex": 1155,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQD50-BL-L31",
       "codexIndex": 1156,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQD50-BO-A41",
       "codexIndex": 1157,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQD50-BO-E21",
       "codexIndex": 1158,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQD50-BO-L31",
       "codexIndex": 1159,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQD50-CB-A41",
       "codexIndex": 1160,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQD50-CB-E21",
       "codexIndex": 1161,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQD50-CB-L31",
       "codexIndex": 1162,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQD50-CH-RELAY",
@@ -1711,19 +1711,19 @@
       "id": "EQD50-DG-A41",
       "codexIndex": 1164,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD50-DG-E21",
       "codexIndex": 1165,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD50-DG-L31",
       "codexIndex": 1166,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD50-OH-INTERRUPT",
@@ -1741,73 +1741,73 @@
       "id": "EQD50-PK-A41",
       "codexIndex": 1169,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQD50-PK-E21",
       "codexIndex": 1170,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQD50-PK-L31",
       "codexIndex": 1171,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQD50-ST-A41",
       "codexIndex": 1172,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQD50-ST-E21",
       "codexIndex": 1173,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQD50-ST-L31",
       "codexIndex": 1174,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQD50-SW-A41",
       "codexIndex": 1175,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD50-SW-E21",
       "codexIndex": 1176,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD50-SW-L31",
       "codexIndex": 1177,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD50-TR-A41",
       "codexIndex": 1178,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQD50-TR-E21",
       "codexIndex": 1179,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQD50-TR-L31",
       "codexIndex": 1180,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQD50-UA-A41",
@@ -1831,109 +1831,109 @@
       "id": "EQD50-B30-W01-SW",
       "codexIndex": 1184,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD50-B30-W01-AX",
       "codexIndex": 1185,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQD50-B30-W01-BO",
       "codexIndex": 1186,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQD50-B30-W01-CB",
       "codexIndex": 1187,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQD50-B30-W01-DG",
       "codexIndex": 1188,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD50-B30-W01-BL",
       "codexIndex": 1189,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQD50-B30-W01-ST",
       "codexIndex": 1190,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQD50-B30-W01-PK",
       "codexIndex": 1191,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQD50-B30-W01-TR",
       "codexIndex": 1192,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQD50-B40-W01-SW",
       "codexIndex": 1193,
       "domain": "EQUIPMENT",
-      "displayMaterial": "SW"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD50-B40-W01-AX",
       "codexIndex": 1194,
       "domain": "EQUIPMENT",
-      "displayMaterial": "AX"
+      "displayMaterial": "IRON_AXE"
     },
     {
       "id": "EQD50-B40-W01-BO",
       "codexIndex": 1195,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BO"
+      "displayMaterial": "BOW"
     },
     {
       "id": "EQD50-B40-W01-CB",
       "codexIndex": 1196,
       "domain": "EQUIPMENT",
-      "displayMaterial": "CB"
+      "displayMaterial": "CROSSBOW"
     },
     {
       "id": "EQD50-B40-W01-DG",
       "codexIndex": 1197,
       "domain": "EQUIPMENT",
-      "displayMaterial": "DG"
+      "displayMaterial": "IRON_SWORD"
     },
     {
       "id": "EQD50-B40-W01-BL",
       "codexIndex": 1198,
       "domain": "EQUIPMENT",
-      "displayMaterial": "BL"
+      "displayMaterial": "MACE"
     },
     {
       "id": "EQD50-B40-W01-ST",
       "codexIndex": 1199,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ST"
+      "displayMaterial": "BLAZE_ROD"
     },
     {
       "id": "EQD50-B40-W01-PK",
       "codexIndex": 1200,
       "domain": "EQUIPMENT",
-      "displayMaterial": "PK"
+      "displayMaterial": "IRON_PICKAXE"
     },
     {
       "id": "EQD50-B40-W01-TR",
       "codexIndex": 1201,
       "domain": "EQUIPMENT",
-      "displayMaterial": "TR"
+      "displayMaterial": "TRIDENT"
     },
     {
       "id": "EQD50-AR-PURIFIER-HEAD",

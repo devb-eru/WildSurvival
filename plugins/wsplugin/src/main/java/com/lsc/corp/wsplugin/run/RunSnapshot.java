@@ -45,6 +45,7 @@ public final class RunSnapshot {
         public int exp = 0;
         public double ap = 100.0;
         public int maxAp = 100;
+        public int equipmentMaxApBonus;
         public long apRegenBlockedUntilEpochMs;
         public long lastDamageAtEpochMs;
         public String mainWeaponId;

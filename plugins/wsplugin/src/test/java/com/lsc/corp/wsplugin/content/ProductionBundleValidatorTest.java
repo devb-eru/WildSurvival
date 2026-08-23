@@ -33,7 +33,20 @@ class ProductionBundleValidatorTest {
         assertTrue(result.catalog().recipes().stream().flatMap(recipe -> recipe.ingredients().stream())
                 .filter(ingredient -> "PROOF".equals(ingredient.kind())).allMatch(ingredient -> !ingredient.consume()));
         assertEquals(214, result.catalog().codexEntries().stream().filter(ProductionContentCatalog.CatalogEntry::equipment).count());
+        assertEquals(214, result.catalog().equipmentById().size());
         assertEquals(108, result.catalog().codexEntries().stream().filter(entry -> "MAIN_WEAPON".equals(entry.equipmentSlot())).count());
+        var utilityPickaxe = result.catalog().equipmentById().get("EQL-UT-RI-PICKAXE");
+        assertEquals(3, utilityPickaxe.toolTier());
+        assertEquals(720, utilityPickaxe.maxDurability());
+        var pioneerSword = result.catalog().equipmentById().get("EQL-W01");
+        assertEquals("SWORD", pioneerSword.weaponClass());
+        assertEquals("IRON_SWORD", pioneerSword.displayMaterial());
+        assertEquals(8.0, pioneerSword.stat("ATK"));
+        var pioneerChest = result.catalog().equipmentById().get("EQL-AR-C02");
+        assertEquals(400, pioneerChest.maxDurability());
+        assertEquals(40.0, pioneerChest.stat("HP"));
+        assertEquals(10.0, pioneerChest.stat("DEF"));
+        assertEquals("ABYSSAL", result.catalog().equipmentById().get("EQD50-AX-A41").rarity());
         assertEquals(91, result.counts().get("enemies") + result.counts().get("bosses") + result.counts().get("support"));
     }
 }

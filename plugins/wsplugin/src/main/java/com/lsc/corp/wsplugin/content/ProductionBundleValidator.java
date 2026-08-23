@@ -101,6 +101,7 @@ public final class ProductionBundleValidator {
             validateSkillCatalog(catalog);
             validateAugmentCatalog(catalog);
             validateItemCatalog(catalog);
+            validateEquipmentProfiles(catalog);
             return new ValidationResult(catalog, Map.copyOf(counts), paths.size() + 2,
                     ContentBundleValidator.sha256(manifestBytes));
         } catch (ContentValidationException exception) {
@@ -128,6 +129,23 @@ public final class ProductionBundleValidator {
                     requiredString(record, "displayMaterial"), requiredInt(record, "stackLimit"),
                     requiredString(record, "effectText"), optionalString(record, "recipeId", ""));
             nonEquipmentItemsById.put(item.id(), item);
+        }
+        Map<String, ProductionContentCatalog.EquipmentEntry> equipmentById = new LinkedHashMap<>();
+        for (String path : List.of("equipment/day01-10.json", "equipment/day11-20.json", "equipment/day21-50.json")) {
+            for (JsonObject record : records(reader, path)) {
+                ProductionContentCatalog.EquipmentEntry equipment = new ProductionContentCatalog.EquipmentEntry(
+                        requiredString(record, "id"), requiredString(record, "name"),
+                        requiredString(record, "equipmentType"), requiredString(record, "equipmentSlot"),
+                        optionalString(record, "weaponClass", ""), requiredString(record, "displayMaterial"),
+                        requiredString(record, "rarity"), requiredInt(record, "itemLevel"),
+                        requiredInt(record, "firstDay"), requiredInt(record, "maxDurability"),
+                        requiredInt(record, "toolTier"), optionalString(record, "setId", ""),
+                        stringArray(record, "tags"), numberMap(record, "stats"),
+                        requiredString(record, "effectText"));
+                if (equipmentById.putIfAbsent(equipment.id(), equipment) != null) {
+                    throw new ContentValidationException("Duplicate equipment profile " + equipment.id());
+                }
+            }
         }
         Map<String, JsonObject> details = new HashMap<>();
         for (String path : List.of("items/materials.json", "items/non-equipment-items.json",
@@ -211,7 +229,7 @@ public final class ProductionBundleValidator {
             }
         }
         return new ProductionContentCatalog(List.copyOf(codex), Map.copyOf(byId), Map.copyOf(materialsById),
-                Map.copyOf(nonEquipmentItemsById), List.copyOf(recipes),
+                Map.copyOf(nonEquipmentItemsById), Map.copyOf(equipmentById), List.copyOf(recipes),
                 Map.copyOf(byOutput), List.copyOf(skills), Map.copyOf(skillsById),
                 List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById), Map.copyOf(counts));
     }
@@ -241,6 +259,20 @@ public final class ProductionBundleValidator {
         List<String> result = new ArrayList<>();
         array.forEach(element -> result.add(element.getAsString()));
         return List.copyOf(result);
+    }
+
+    private static Map<String, Double> numberMap(JsonObject object, String key) throws ContentValidationException {
+        JsonElement value = object.get(key);
+        if (value == null || value.isJsonNull()) return Map.of();
+        if (!value.isJsonObject()) throw new ContentValidationException(key + " must be an object");
+        Map<String, Double> result = new LinkedHashMap<>();
+        for (Map.Entry<String, JsonElement> entry : value.getAsJsonObject().entrySet()) {
+            if (!entry.getValue().isJsonPrimitive() || !entry.getValue().getAsJsonPrimitive().isNumber()) {
+                throw new ContentValidationException(key + "." + entry.getKey() + " must be numeric");
+            }
+            result.put(entry.getKey(), entry.getValue().getAsDouble());
+        }
+        return Map.copyOf(result);
     }
 
     private void validateReferences(ResourceReader reader, ProductionContentCatalog catalog) throws Exception {
@@ -418,6 +450,43 @@ public final class ProductionBundleValidator {
             }
             if (!item.recipeId().isBlank() && !recipeIds.contains(item.recipeId())) {
                 throw new ContentValidationException("Unknown item recipe " + item.id() + " -> " + item.recipeId());
+            }
+        }
+    }
+
+    private void validateEquipmentProfiles(ProductionContentCatalog catalog) throws ContentValidationException {
+        if (catalog.equipmentById().size() != 214) {
+            throw new ContentValidationException("Equipment profile cardinality mismatch");
+        }
+        Set<String> rarities = Set.of("COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY", "ABYSSAL");
+        Set<String> slots = Set.of("INVENTORY", "MAIN_WEAPON", "OFF_WEAPON", "ARMOR_HEAD", "ARMOR_CHEST",
+                "ARMOR_LEGS", "ARMOR_FEET", "ACCESSORY", "CHARM");
+        Set<String> weaponClasses = Set.of("", "SWORD", "AXE", "BOW", "CROSSBOW", "DAGGER",
+                "MACE", "STAFF", "PICKAXE", "TRIDENT");
+        Set<String> statIds = Set.of("ATK", "DEF", "HP", "AP", "HIT", "EVA", "PEN", "RES",
+                "TENACITY", "STAGGER_RES", "SPD", "BREAK_DAMAGE");
+        Map<Integer, Long> utilityTiers = catalog.equipmentById().values().stream()
+                .filter(ProductionContentCatalog.EquipmentEntry::utility)
+                .collect(java.util.stream.Collectors.groupingBy(ProductionContentCatalog.EquipmentEntry::toolTier,
+                        java.util.stream.Collectors.counting()));
+        if (!utilityTiers.equals(Map.of(3, 4L, 4, 4L, 5, 4L, 6, 4L))) {
+            throw new ContentValidationException("Utility tool tier mismatch " + utilityTiers);
+        }
+        for (ProductionContentCatalog.EquipmentEntry equipment : catalog.equipmentById().values()) {
+            if (!catalog.itemsById().containsKey(equipment.id()) || !rarities.contains(equipment.rarity())
+                    || !slots.contains(equipment.equipmentSlot()) || !weaponClasses.contains(equipment.weaponClass())
+                    || equipment.itemLevel() < 1 || equipment.itemLevel() > 50 || equipment.firstDay() < 1
+                    || equipment.firstDay() > 50 || equipment.maxDurability() < 1 || equipment.effectText().isBlank()) {
+                throw new ContentValidationException("Invalid equipment profile " + equipment.id());
+            }
+            if (!statIds.containsAll(equipment.stats().keySet())
+                    || equipment.stats().values().stream().anyMatch(value -> !Double.isFinite(value)
+                    || value < -1000 || value > 10000)) {
+                throw new ContentValidationException("Invalid equipment stats " + equipment.id());
+            }
+            if (equipment.utility() && (!"INVENTORY".equals(equipment.equipmentSlot())
+                    || equipment.toolTier() < 3 || equipment.toolTier() > 6)) {
+                throw new ContentValidationException("Invalid utility profile " + equipment.id());
             }
         }
     }
