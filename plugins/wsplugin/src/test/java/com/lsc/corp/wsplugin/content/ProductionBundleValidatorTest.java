@@ -61,6 +61,13 @@ class ProductionBundleValidatorTest {
         assertEquals(4, result.catalog().bossesById().size());
         assertEquals(34, result.catalog().supportEntitiesById().size());
         assertEquals(57, result.catalog().actionBundlesById().size());
+        assertEquals(101, result.catalog().actionBundlesById().values().stream()
+                .mapToLong(bundle -> bundle.actions().size()).sum());
+        assertEquals(List.of("B10-SWIPE", "B10-CHARGE", "B10-PULSE_MARK", "B10-SHARD_VOLLEY"),
+                result.catalog().actionBundlesById().get("ACTSET-BOSS-D10").actions().stream()
+                        .limit(4).map(ProductionContentCatalog.ActionEntry::id).toList());
+        assertTrue(result.catalog().bossesById().values().stream().allMatch(boss ->
+                result.catalog().actionBundlesById().get(boss.actionBundleId()).actions().size() == 12));
         var day21Carrier = result.catalog().enemiesById().get("EN-D21-01");
         assertEquals("HUSK", day21Carrier.bukkitType());
         assertEquals(1200.0, day21Carrier.baseHp());

@@ -464,6 +464,12 @@ $entityRows = Read-TableRows '기획\06 사건과 적\ENTITY-LIST Season 1 엔�
 $enemyBaseRows = Read-TableRows '기획\06 사건과 적\ENEMY 적 역할 및 템플릿 기획서.md'
 $enemyD20Rows = Read-TableRows '기획\06 사건과 적\ENEMY-DATA Day 11-20 적 목록 기획서.md'
 $enemyD50Rows = Read-TableRows '기획\06 사건과 적\ENEMY-DATA Day 21-50 적 실행 데이터 기획서.md'
+$bossPatternRowsById = [ordered]@{
+    'BOSS-D10' = @(Read-TableRows '기획\07 보스\BOSS Day 10 공명 추적체 기획서.md')
+    'BOSS-D20' = @(Read-TableRows '기획\07 보스\BOSS Day 20 신경 접합체 기획서.md')
+    'BOSS-D30' = @(Read-TableRows '기획\07 보스\BOSS Day 30 오염 섭식핵 기획서.md')
+    'BOSS-D40' = @(Read-TableRows '기획\07 보스\BOSS Day 40 공진 파괴자 기획서.md')
+}
 $enemyDetailById = Find-IdRows @($enemyBaseRows + $enemyD20Rows + $enemyD50Rows) 'EN-(?:D\d+|F50)-[A-Z0-9]+'
 $facilityRows = Read-TableRows '기획\05 세계와 생존\FACILITY 플레이어 시설 목록 기획서.md'
 $facilityDataRows = Read-TableRows '기획\05 세계와 생존\FACILITY-DATA Day 11-50 시설 실행 데이터 기획서.md'
@@ -855,11 +861,34 @@ $actions = foreach ($enemy in $enemies) {
     }
 }
 foreach ($boss in $bosses) {
+    $prefix = 'B' + $boss.firstDay + '-'
+    $patternRows = @($bossPatternRowsById[$boss.id] | Where-Object { $_[0] -match ('^' + [regex]::Escape($prefix)) })
+    if ($patternRows.Count -ne 12) { throw "Expected 12 patterns for $($boss.id), got $($patternRows.Count)" }
+    $compiledPatterns = foreach ($cells in $patternRows) {
+        $id = $cells[0]
+        $joined = $cells -join ' · '
+        $executionCell = if ($id -like 'B40-*') { $cells[2] } else { $cells[1] }
+        $telegraphTicks = $boss.telegraphTicks
+        if ($executionCell -match '(\d+(?:\.\d+)?)초') {
+            $telegraphTicks = [Math]::Max(5, [int][Math]::Round(([double]$Matches[1]) * 20.0))
+        }
+        $damageCell = if ($id -like 'B40-*') { $cells[3] } else { $cells[2] }
+        $damage = Max-Number $damageCell $boss.attackDamage
+        if ($damage -lt 50) { $damage = $boss.attackDamage }
+        $range = $boss.attackRange
+        if ($joined -match '(\d+(?:\.\d+)?)블록') { $range = [double]$Matches[1] }
+        $status = if ($joined -match 'POISON|독') {'POISON'} elseif ($id -match 'THERMAL|MULTI_REACTION' -or $joined -match 'BURN|화상') {'BURN'}
+            elseif ($id -match 'HEMATIC' -or $joined -match 'BLEED|출혈') {'BLEED'} elseif ($joined -match 'SILENCE|침묵') {'SILENCE'}
+            elseif ($joined -match '오염') {'CORRUPTION'} else {''}
+        [ordered]@{
+            id=$id;name=$id;telegraphTicks=$telegraphTicks;startupTicks=4;activeTicks=6;recoveryTicks=16
+            cooldownTicks=[Math]::Max($boss.cooldownTicks, $telegraphTicks + 40);range=$range;damage=$damage
+            penetration=$boss.penetration;breakDamage=[Math]::Round($boss.breakMax * 0.03);statusId=$status
+        }
+    }
     $actions += [ordered]@{
         id=$boss.actionBundleId;sourceDocumentId=$boss.sourceDocumentId;enabled=$true;ownerId=$boss.id;kind='BOSS_ACTION_SET'
-        actions=@([ordered]@{id=($boss.actionBundleId + '-PRIMARY');name='보스 기본 패턴';telegraphTicks=$boss.telegraphTicks;startupTicks=6
-            activeTicks=6;recoveryTicks=16;cooldownTicks=$boss.cooldownTicks;range=$boss.attackRange;damage=$boss.attackDamage
-            penetration=$boss.penetration;breakDamage=[Math]::Round($boss.breakMax * 0.05);statusId=''})
+        actions=@($compiledPatterns)
         stateMachine=@('READY','TELEGRAPH','STARTUP','ACTIVE','RECOVERY');raw=@($boss.raw)
     }
 }

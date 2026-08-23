@@ -300,7 +300,7 @@
       "path": "skills/entity-actions.json",
       "domain": "entity-actions",
       "schema": "action.schema.json",
-      "sha256": "a4868cc499caae3f8323befe053f5eafd67ab0737eb85b8e239cad22a38211e0"
+      "sha256": "0456b7d4d663aae87a87de86f5f9267986ed6bd88cf742a303088eb5336649d8"
     },
     {
       "path": "entities/support-entities.json",

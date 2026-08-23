@@ -973,6 +973,9 @@ public final class ProductionBundleValidator {
                     || !catalog.actionBundlesById().containsKey(boss.actionBundleId())) {
                 throw new ContentValidationException("Invalid boss profile " + boss.id());
             }
+            if (catalog.actionBundlesById().get(boss.actionBundleId()).actions().size() != 12) {
+                throw new ContentValidationException("Boss must contain 12 authority patterns " + boss.id());
+            }
         }
         Set<String> supportKinds = Set.of("PROJECTILE", "DEPLOYABLE", "UI_TRANSIENT", "RESOURCE_NODE",
                 "SUMMON", "OBJECTIVE", "TELEGRAPH", "AREA", "FINAL_BOSS");
@@ -998,6 +1001,11 @@ public final class ProductionBundleValidator {
                     throw new ContentValidationException("Invalid entity action " + bundle.id() + " -> " + action.id());
                 }
             }
+        }
+        long actionCount = catalog.actionBundlesById().values().stream()
+                .mapToLong(bundle -> bundle.actions().size()).sum();
+        if (actionCount != 101) {
+            throw new ContentValidationException("Entity action count must be 101, got " + actionCount);
         }
     }
 

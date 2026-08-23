@@ -108,6 +108,7 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
         Entity existing = findEntity(snapshot.boss.entityUuid);
         if (existing instanceof LivingEntity living) {
             createHealthBar(living, definition);
+            restoreCooperationChannel(living, snapshot.boss);
             return;
         }
         org.bukkit.World world = Bukkit.getWorld(snapshot.boss.world);
@@ -118,6 +119,7 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
         initializeVanillaHealth(entity);
         runs.mutate(run -> run.boss.entityUuid = entity.getUniqueId().toString());
         createHealthBar(entity, definition);
+        restoreCooperationChannel(entity, runs.current().orElseThrow().boss);
         nextPatternAtTick = runs.clockTick() + Math.max(40L, definition.telegraphTicks() + 20L);
     }
 
@@ -155,8 +157,10 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
         RunSnapshot.BossState state = runs.current().orElseThrow().boss;
         if (state.hp <= 0.0) {
             defeat(entity);
-        } else if (state.phase == 1 && state.hp / state.maxHp <= 0.65) {
+        } else if (state.phase == 1 && state.hp / state.maxHp <= 0.70) {
             enterPhaseTwo(entity, definition(state.bossId));
+        } else if (state.phase == 2 && state.hp / state.maxHp <= 0.35) {
+            enterPhaseThree(entity, definition(state.bossId));
         }
     }
 
@@ -259,19 +263,45 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
         nextPatternAtTick = runs.clockTick() + 80L;
     }
 
+    private void enterPhaseThree(LivingEntity entity, ProductionContentCatalog.BossEntry definition) {
+        cooperationChannelActive = false;
+        entity.setAI(false);
+        combat.setCombatEntityNumber(entity, "break", 0.0);
+        runs.mutate(run -> {
+            run.boss.phase = 3;
+            run.boss.breakCurrent = 0.0;
+        });
+        entity.setCustomName(ChatColor.DARK_RED + definition.name() + ChatColor.GRAY + " [P3 과부하]");
+        runs.broadcast(ChatColor.DARK_RED + "[보스 P3] 최종 패턴 풀 진입 — 위치 교대와 브레이크 집중");
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (entity.isValid()) entity.setAI(true);
+        }, 50L);
+        nextPatternAtTick = runs.clockTick() + 50L;
+    }
+
+    private void restoreCooperationChannel(LivingEntity entity, RunSnapshot.BossState state) {
+        if (state.phase != 2 || state.phaseTwoChannelResolved) return;
+        entity.setAI(false);
+        cooperationChannelActive = true;
+        channelEndsAtTick = runs.clockTick() + 120L;
+        runs.broadcast(ChatColor.LIGHT_PURPLE + "[복구] 중단된 협동 공명 고정을 6초 상태로 재개합니다.");
+    }
+
     private void executeNextPattern(LivingEntity entity, ProductionContentCatalog.BossEntry definition,
                                     RunSnapshot.BossState state) {
         ProductionContentCatalog.ActionBundleEntry bundle = production.actionBundlesById().get(definition.actionBundleId());
         if (bundle == null || bundle.actions().isEmpty()) throw new IllegalStateException("Missing boss actions " + definition.id());
-        ProductionContentCatalog.ActionEntry action = bundle.actions().get((int) Math.floorMod(state.patternSequence,
-                bundle.actions().size()));
+        int phaseOffset = Math.max(0, Math.min(2, state.phase - 1)) * 4;
+        int phaseSize = Math.min(4, bundle.actions().size() - phaseOffset);
+        ProductionContentCatalog.ActionEntry action = bundle.actions().get(phaseOffset
+                + (int) Math.floorMod(state.patternSequence, phaseSize));
         runs.mutate(run -> run.boss.patternSequence++);
         runs.broadcast(ChatColor.RED + "⚠ " + action.name() + " — 전조 후 범위 이탈");
         entity.getWorld().spawnParticle(Particle.DUST_PLUME, entity.getLocation(), 18,
                 action.range(), 0.15, action.range(), 0.0);
         for (Player player : activePlayers()) {
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f,
-                    state.phase == 1 ? 0.8f : 0.55f);
+                    state.phase == 1 ? 0.8f : state.phase == 2 ? 0.65f : 0.5f);
         }
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (!entity.isValid()) return;
