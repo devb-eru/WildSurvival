@@ -7,8 +7,45 @@
       "id": "REFERENCE-GRAPH-S1",
       "sourceDocumentId": "CONTENT-GRAPH-AUDIT-001",
       "enabled": true,
-      "raw": [
-        "AUTHORITY_DATA"
+      "progressionSteps": [
+        "START_CANDIDATE_VALIDATED",
+        "CRAFT_UNLOCKED_WITH_ANY_LOG_4",
+        "PERSONAL_LEDGER_3X3_CRAFT",
+        "BASIC_LOADOUT",
+        "DISCOVERY_C01_C07",
+        "BOSS_D10_PART_A",
+        "DAY11_SETTLEMENT_AND_OPTIONAL_FAC_S16",
+        "STATUS_SAMPLE_AND_D20_CALL",
+        "BOSS_D20_PART_B",
+        "MUTATION_PURIFY_AND_D30_CALL",
+        "BOSS_D30_PART_C",
+        "INTERRUPT_RESONANCE_AND_D40_CALL",
+        "BOSS_D40_PART_D",
+        "R01_R05_TESTED",
+        "FINAL_KEY_AND_R06_READY_LOCKED",
+        "DAY50_FINAL_THREE_STAGES",
+        "FIRST_SIGNAL_SENT_DAY51_PLUS"
+      ],
+      "cardinalities": {
+        "materials": 59,
+        "items": 61,
+        "equipment": 214,
+        "codex": 334,
+        "recipes": 315,
+        "skills": 64,
+        "personalAugments": 50,
+        "partyAugments": 16,
+        "enemies": 53,
+        "bosses": 4,
+        "supportEntities": 34,
+        "facilities": 46,
+        "loot": 62
+      },
+      "invariants": [
+        "CRAFT_BEFORE_SHARED_LEDGER",
+        "PARTS_A_D_EXISTENCE_ONLY",
+        "R06_READY_LOCKED_BEFORE_DAY50",
+        "FINAL_KEY_CONSUMED_AFTER_STAGE1_MANIFEST"
       ]
     }
   ]

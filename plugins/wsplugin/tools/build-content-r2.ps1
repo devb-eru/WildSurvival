@@ -1185,8 +1185,73 @@ $finalRecords += @($finalRows | ForEach-Object {
     }
 })
 
-$expected = [ordered]@{ materials=59; items=61; tools=214; recipes=315; codex=334; skills=64; personalAugments=50; partyAugments=16; enemies=53; bosses=4; support=34; facilities=46; loot=62; research=25; storyScenes=73; storyLogs=9; eventsD10=34; eventsD20=18; eventsD50=55; final=32 }
-$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; facilities=@($facilities).Count; loot=@($loot).Count; research=@($research).Count; storyScenes=@($storyScenes).Count; storyLogs=@($storyLogs).Count; eventsD10=@($eventsD10).Count; eventsD20=@($eventsD20).Count; eventsD50=@($eventsD50).Count; final=@($finalRecords).Count }
+function Budget-Multipliers([double[]]$Values) {
+    if ($Values.Count -ne 10) { throw 'Budget multiplier vector must contain 10 values' }
+    return [ordered]@{progressExp=$Values[0];activityExp=$Values[1];commonResource=$Values[2];criticalPathSupply=$Values[3];personalSupply=$Values[4];encounterThreat=$Values[5];eliteMutation=$Values[6];environmentPressure=$Values[7];facilityPressure=$Values[8];bossPattern=$Values[9]}
+}
+$budgetProfiles = @(
+    [ordered]@{id='STD-BALANCED';mode='STANDARD';intent='기준';multipliers=Budget-Multipliers @(1,1,1,1,1,1,1,1,1,1)},
+    [ordered]@{id='STD-LEAN';mode='STANDARD';intent='낮은 활동 보상, 낮은 공세';multipliers=Budget-Multipliers @(1,.75,.85,.75,.85,.90,.90,1,.90,1)},
+    [ordered]@{id='STD-FRONTIER';mode='STANDARD';intent='고수익·고압';multipliers=Budget-Multipliers @(1,1.25,1.15,1,1.10,1.25,1.15,1.20,1.10,1.10)},
+    [ordered]@{id='STD-TACTICAL';mode='STANDARD';intent='변이·보스 패턴 중심';multipliers=Budget-Multipliers @(1,1,.90,.90,1,1.15,1.35,1.10,1.15,1.25)},
+    [ordered]@{id='STD-RECOVERY';mode='STANDARD';intent='최근 소프트락 위험 복구';multipliers=Budget-Multipliers @(1,.75,1.25,1.25,1.10,.80,.80,.85,.80,.90)},
+    [ordered]@{id='CH-SURGE';mode='CHAOS';intent='고보상 다단 공세';multipliers=Budget-Multipliers @(1.50,3,2,1,2,3,2,2,2,2)},
+    [ordered]@{id='CH-FAMINE';mode='CHAOS';intent='선택 소비 압박, 필수 경로 유지';multipliers=Budget-Multipliers @(1,1,.50,.75,.75,2,2,3,2,1.50)},
+    [ordered]@{id='CH-HUNT';mode='CHAOS';intent='적·변이 극대화';multipliers=Budget-Multipliers @(1,2,1.25,1,1.50,5,5,2,3,3)},
+    [ordered]@{id='CH-STORM';mode='CHAOS';intent='환경·시설 방어';multipliers=Budget-Multipliers @(1,1.50,1.50,1,1.25,2,3,8,5,2)},
+    [ordered]@{id='CH-BOSS-LAB';mode='CHAOS';intent='순차 패턴 극단 시험';multipliers=Budget-Multipliers @(1,1,1,1,1,1.50,2,1.50,1.50,10)},
+    [ordered]@{id='CH-OVERFLOW';mode='CHAOS';intent='최고 부하, 5% 희귀 후보';multipliers=Budget-Multipliers @(3,10,10,1.50,5,10,8,5,5,6)},
+    [ordered]@{id='CH-SAFE-FALLBACK';mode='CHAOS';intent='상관 검사 전부 실패 시 안전 폴백';multipliers=Budget-Multipliers @(1.50,3,2,1,2,2,2,2,2,2)})
+$standardWeights = [ordered]@{
+    STORY_EASY=[ordered]@{'STD-BALANCED'=100;'STD-LEAN'=0;'STD-FRONTIER'=0;'STD-TACTICAL'=0;'STD-RECOVERY'=0}
+    NORMAL=[ordered]@{'STD-BALANCED'=35;'STD-LEAN'=15;'STD-FRONTIER'=25;'STD-TACTICAL'=15;'STD-RECOVERY'=10}
+    HARD=[ordered]@{'STD-BALANCED'=20;'STD-LEAN'=20;'STD-FRONTIER'=30;'STD-TACTICAL'=20;'STD-RECOVERY'=10}
+    UNKNOWN=[ordered]@{'STD-BALANCED'=10;'STD-LEAN'=20;'STD-FRONTIER'=30;'STD-TACTICAL'=30;'STD-RECOVERY'=10}}
+$chaosWeights = [ordered]@{'CH-SURGE'=25;'CH-FAMINE'=20;'CH-HUNT'=20;'CH-STORM'=20;'CH-BOSS-LAB'=10;'CH-OVERFLOW'=5;'CH-SAFE-FALLBACK'=0}
+$budgetRecords = @($budgetProfiles | ForEach-Object {
+    [ordered]@{id=$_.id;sourceDocumentId='BUDGET-PROFILE-001';enabled=$true;recordKind='PROFILE';mode=$_.mode;intent=$_.intent;multipliers=$_.multipliers;selectionWeights=$(if($_.mode -eq 'STANDARD'){$standardWeights}else{$chaosWeights});lockPolicy='DAY_SNAPSHOT_BEFORE_START';raw=@($_.id,$_.mode,$_.intent)}
+})
+$budgetConstraints = [ordered]@{
+    'BP-C01'='criticalPathSupply < 0.50 거부';'BP-C02'='commonResource < 0.75 && encounterThreat > 3.00이면 personalSupply >= 1.50 필요';
+    'BP-C03'='environmentPressure > 5.00이면 정화 대체 사건 1개 예약';'BP-C04'='facilityPressure > 3.00이면 같은 Day 영구 파괴·철거 잠금';
+    'BP-C05'='bossPattern > 6.00이면 보스 HP·피해 난이도 배율 외 추가 증가 금지';'BP-C06'='남은 Day 필수 진행 불가능 시 RECOVERY 강제';
+    'BP-C07'='활성 개체 p95 상한 초과 시 단계 수 증가·동시량 감소'}
+foreach($entry in $budgetConstraints.GetEnumerator()){$budgetRecords += [ordered]@{id=$entry.Key;sourceDocumentId='BUDGET-PROFILE-001';enabled=$true;recordKind='CONSTRAINT';expressionText=$entry.Value;failureOpcode='REJECT_OR_SAFE_FALLBACK';raw=@($entry.Key,$entry.Value)}}
+
+$drawLocks = @()
+foreach($level in @(3,6,10,15,20,25,30,35,40,45)){
+    $tier=if($level -eq 3){'SILVER'}elseif($level -eq 6){'GOLD'}elseif($level -eq 10){'PRISM'}else{'FIRST_ACHIEVER_RANDOM_50_30_20'}
+    $drawLocks += [ordered]@{id=("DRAW-PERSONAL-L$level");sourceDocumentId='AUG-LIST-001';enabled=$true;scope='PERSONAL';milestone=$level;trigger='LEVEL_REACHED';tierPolicy=$tier;choiceCount=3;selectionCount=1;returnToSlotZero=$true;sharedTierLock=($level -gt 10)}
+}
+foreach($day in @(10,20,30,40)){$drawLocks += [ordered]@{id=("DRAW-PARTY-D$day");sourceDocumentId='AUG-LIST-002';enabled=$true;scope='PARTY';milestone=$day;trigger=("BOSS-D$day-DEFEATED");tierPolicy='PARTY_POOL';choiceCount=3;selectionCount=1;returnToSlotZero=$false;sharedTierLock=$true}}
+
+$softlockRecords = @(
+    [ordered]@{id='GRAPH-FIX-001';finding='RI 도구가 Day14 강화 합금을 요구해 Day11 T3 채집 잠금';correction='Day5 정련 합금 기반'},
+    [ordered]@{id='GRAPH-FIX-002';finding='RS 도구가 Day25 정제 변이를 요구해 Day21 T4 채집 잠금';correction='Day21 촉매+기존 강화 합금 기반'},
+    [ordered]@{id='GRAPH-FIX-003';finding='HD 도구가 Day37 고밀도 합금을 요구해 Day31 T5 진입 잠금';correction='Day31 골재+이전 세션 재료 기반'},
+    [ordered]@{id='GRAPH-FIX-004';finding='RC 도구가 Day44 안정 프레임을 요구해 Day41 T6 진입 잠금';correction='시설 가공 가능한 Day41 동력 행렬 기반'},
+    [ordered]@{id='GRAPH-FIX-005';finding='R06 조합 ID 부재';correction='WSRCP-R06→FAC-R06@READY_LOCKED'},
+    [ordered]@{id='GRAPH-FIX-006';finding='자원 노드 entity가 LOOT-NONE 참조';correction='노드 6종을 LOOT-NODE 6종에 연결'},
+    [ordered]@{id='GRAPH-FIX-007';finding='Craft 해금 원목 없는 spawn seed 가능';correction='시작 후보 12회 검증+회차당 원목4 폴백 Manifest'}) | ForEach-Object {[ordered]@{id=$_.id;sourceDocumentId='CONTENT-GRAPH-AUDIT-001';enabled=$true;finding=$_.finding;correction=$_.correction;mustRemainSatisfied=$true}}
+$referenceGraph = @([ordered]@{
+    id='REFERENCE-GRAPH-S1';sourceDocumentId='CONTENT-GRAPH-AUDIT-001';enabled=$true
+    progressionSteps=@('START_CANDIDATE_VALIDATED','CRAFT_UNLOCKED_WITH_ANY_LOG_4','PERSONAL_LEDGER_3X3_CRAFT','BASIC_LOADOUT','DISCOVERY_C01_C07','BOSS_D10_PART_A','DAY11_SETTLEMENT_AND_OPTIONAL_FAC_S16','STATUS_SAMPLE_AND_D20_CALL','BOSS_D20_PART_B','MUTATION_PURIFY_AND_D30_CALL','BOSS_D30_PART_C','INTERRUPT_RESONANCE_AND_D40_CALL','BOSS_D40_PART_D','R01_R05_TESTED','FINAL_KEY_AND_R06_READY_LOCKED','DAY50_FINAL_THREE_STAGES','FIRST_SIGNAL_SENT_DAY51_PLUS')
+    cardinalities=[ordered]@{materials=59;items=61;equipment=214;codex=334;recipes=315;skills=64;personalAugments=50;partyAugments=16;enemies=53;bosses=4;supportEntities=34;facilities=46;loot=62}
+    invariants=@('CRAFT_BEFORE_SHARED_LEDGER','PARTS_A_D_EXISTENCE_ONLY','R06_READY_LOCKED_BEFORE_DAY50','FINAL_KEY_CONSUMED_AFTER_STAGE1_MANIFEST')})
+
+$opsAdmin = @([ordered]@{
+    id='OPS-ADMIN-COMMANDS';sourceDocumentId='OPS-001';enabled=$true;dryRunRequiredForMutation=$true;confirmTokenTtlSeconds=60;reasonMinLength=10;reasonMaxLength=200
+    permissionNodes=@('wildsurvival.admin.inspect','wildsurvival.admin.validate','wildsurvival.admin.audit','wildsurvival.admin.snapshot','wildsurvival.admin.recover.transaction','wildsurvival.admin.recover.item','wildsurvival.admin.recover.encounter','wildsurvival.admin.recover.reward','wildsurvival.admin.recover.run','wildsurvival.admin.content.reload','wildsurvival.admin.migrate','wildsurvival.admin.root.day')
+    queryCommands=@('/ws admin content validate','/ws admin inspect run','/ws admin inspect player','/ws admin inspect item','/ws admin inspect facility','/ws admin inspect day','/ws admin inspect encounter','/ws admin inspect reward','/ws admin inspect augment-lock','/ws admin inspect story','/ws admin snapshot list','/ws admin audit query')
+    mutationCommands=@('/ws admin content reload','/ws admin snapshot create','/ws admin recover transaction','/ws admin recover item','/ws admin recover encounter','/ws admin recover reward','/ws admin recover run','/ws admin override day','/ws admin migrate plan','/ws admin migrate apply')
+    forbiddenCapabilities=@('GENERIC_SET','GENERIC_GIVE','FINAL_GATE_BYPASS','ACTIVE_RUN_REVISION_SWAP')})
+$opsTelemetry = @([ordered]@{
+    id='OPS-TELEMETRY';sourceDocumentId='QA-BALANCE-001';enabled=$true;rawRetentionDays=30;aggregateRetentionDays=180;anonymousRunStatsPermanent=$true
+    eventTypes=@('RUN_CREATED','DAY_BUDGET_LOCKED','DAY_COMPLETED','ENCOUNTER_STARTED','ENCOUNTER_ENDED','BOSS_PHASE','COMBAT_ACTION','AUGMENT_TRIGGER','PLAYER_DOWN','PLAYER_DEATH','PLAYER_REVIVE','FACILITY_STATE_CHANGED','SOFTLOCK_RECOVERY','PERFORMANCE_STATE','FINAL_TRANSACTION','RUN_ENDED')
+    kpiIds=@('KPI-01','KPI-02','KPI-03','KPI-04','KPI-05','KPI-06','KPI-07','KPI-08','KPI-09','KPI-10','KPI-11','KPI-12');testLevels=@('L0','L1','L2','L3','L4','L5');activeRunHotTuning=$false;activationPolicy='NEW_RUN_ONLY'})
+
+$expected = [ordered]@{ materials=59; items=61; tools=214; recipes=315; codex=334; skills=64; personalAugments=50; partyAugments=16; enemies=53; bosses=4; support=34; facilities=46; loot=62; research=25; storyScenes=73; storyLogs=9; eventsD10=34; eventsD20=18; eventsD50=55; final=32; budget=19; drawLocks=14; softlocks=7 }
+$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; facilities=@($facilities).Count; loot=@($loot).Count; research=@($research).Count; storyScenes=@($storyScenes).Count; storyLogs=@($storyLogs).Count; eventsD10=@($eventsD10).Count; eventsD20=@($eventsD20).Count; eventsD50=@($eventsD50).Count; final=@($finalRecords).Count; budget=@($budgetRecords).Count; drawLocks=@($drawLocks).Count; softlocks=@($softlockRecords).Count }
 foreach ($key in $expected.Keys) {
     if ($actual[$key] -ne $expected[$key]) { throw "Cardinality mismatch $key expected=$($expected[$key]) actual=$($actual[$key])" }
 }
@@ -1289,7 +1354,6 @@ foreach ($name in $schemaNames) {
     Write-Json "schemas/$name.schema.json" $schema
 }
 
-$eventStub = { param($id,$source) Raw-Record $id $source @('AUTHORITY_DATA') }
 $data = [ordered]@{}
 $data['days/season1-days-01-50.json'] = Domain 'days' $days
 $data['days/endless-days-51-plus.json'] = Domain 'days-endless' $endless
@@ -1321,16 +1385,16 @@ for ($index = 0; $index -lt 4; $index++) { $day = @(10,20,30,40)[$index]; $data[
 $data['final/day50-reconstruction-signal.json'] = Domain 'final' $finalRecords
 $data['story/season1-scenes.json'] = Domain 'story-scenes' $storyScenes
 $data['story/season1-logs.json'] = Domain 'story-logs' $storyLogs
-$data['budget/live-profiles.json'] = Domain 'budget' @(&$eventStub 'BUDGET-LIVE-R2' 'BUDGET-PROFILE-001')
+$data['budget/live-profiles.json'] = Domain 'budget' $budgetRecords
 $data['migrations/id-aliases.json'] = Domain 'migrations' @(
     [ordered]@{id='EQL-W10';sourceDocumentId='TOOL-LIST-001';targetId='UNARMED_COMBAT';enabled=$true},
     [ordered]@{id='COMMON_RESOURCE_DEPOT';sourceDocumentId='ITEM-LIST-001';targetId='WSI-FAC-S16-KIT';enabled=$true})
 $data['fixtures/cardinality.json'] = Domain 'fixture-cardinality' @($actual.GetEnumerator() | ForEach-Object { [ordered]@{id=$_.Key;expected=$_.Value} })
-$data['fixtures/reference-graph.json'] = Domain 'fixture-reference-graph' @(&$eventStub 'REFERENCE-GRAPH-S1' 'CONTENT-GRAPH-AUDIT-001')
-$data['fixtures/draw-locks.json'] = Domain 'fixture-draw-locks' @(&$eventStub 'DRAW-LOCKS-S1' 'AUG-LIST-001')
-$data['fixtures/softlock-scenarios.json'] = Domain 'fixture-softlocks' @(&$eventStub 'SOFTLOCK-SCENARIOS-S1' 'CONTENT-GRAPH-AUDIT-001')
-$data['ops/admin-commands.json'] = Domain 'ops-admin' @(&$eventStub 'OPS-ADMIN-COMMANDS' 'OPS-001')
-$data['ops/telemetry-contract.json'] = Domain 'ops-telemetry' @(&$eventStub 'OPS-TELEMETRY' 'QA-BALANCE-001')
+$data['fixtures/reference-graph.json'] = Domain 'fixture-reference-graph' $referenceGraph
+$data['fixtures/draw-locks.json'] = Domain 'fixture-draw-locks' $drawLocks
+$data['fixtures/softlock-scenarios.json'] = Domain 'fixture-softlocks' $softlockRecords
+$data['ops/admin-commands.json'] = Domain 'ops-admin' $opsAdmin
+$data['ops/telemetry-contract.json'] = Domain 'ops-telemetry' $opsTelemetry
 if ($data.Count -ne 41) { throw "Expected 41 data files, got $($data.Count)" }
 foreach ($entry in $data.GetEnumerator()) { Write-Json $entry.Key $entry.Value }
 

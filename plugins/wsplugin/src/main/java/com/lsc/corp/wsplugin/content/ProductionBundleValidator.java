@@ -89,6 +89,9 @@ public final class ProductionBundleValidator {
             counts.put("eventsD20", count(reader, "events/day11-20.json"));
             counts.put("eventsD50", count(reader, "events/day21-50.json"));
             counts.put("final", count(reader, "final/day50-reconstruction-signal.json"));
+            counts.put("budget", count(reader, "budget/live-profiles.json"));
+            counts.put("drawLocks", count(reader, "fixtures/draw-locks.json"));
+            counts.put("softlocks", count(reader, "fixtures/softlock-scenarios.json"));
             Map<String, Integer> expected = Map.ofEntries(
                     Map.entry("materials", 59), Map.entry("items", 61), Map.entry("tools", 214),
                     Map.entry("recipes", 315), Map.entry("codex", 334), Map.entry("skills", 64),
@@ -97,7 +100,8 @@ public final class ProductionBundleValidator {
                     Map.entry("facilities", 46), Map.entry("loot", 62), Map.entry("days", 50),
                     Map.entry("research", 25), Map.entry("storyScenes", 73), Map.entry("storyLogs", 9),
                     Map.entry("eventsD10", 34), Map.entry("eventsD20", 18), Map.entry("eventsD50", 55),
-                    Map.entry("final", 32));
+                    Map.entry("final", 32), Map.entry("budget", 19), Map.entry("drawLocks", 14),
+                    Map.entry("softlocks", 7));
             for (Map.Entry<String, Integer> entry : expected.entrySet()) {
                 if (!entry.getValue().equals(counts.get(entry.getKey()))) {
                     throw new ContentValidationException("Cardinality mismatch " + entry.getKey()
@@ -109,6 +113,7 @@ public final class ProductionBundleValidator {
             validateStructuredAuthorityData(reader);
             validateEventData(reader);
             validateFinalData(reader);
+            validateOperationalData(reader);
             validateReferences(reader, catalog);
             validateEquipmentCatalog(catalog);
             validateSkillCatalog(catalog);
@@ -1109,6 +1114,130 @@ public final class ProductionBundleValidator {
         if (!expectedByKind.equals(actualByKind) || completionOrdinals.size() != 6) {
             throw new ContentValidationException("Final cardinality mismatch " + actualByKind);
         }
+    }
+
+    private void validateOperationalData(ResourceReader reader) throws Exception {
+        int profileCount = 0;
+        int constraintCount = 0;
+        Set<String> budgetIds = new HashSet<>();
+        Set<String> multiplierFields = Set.of("progressExp", "activityExp", "commonResource",
+                "criticalPathSupply", "personalSupply", "encounterThreat", "eliteMutation",
+                "environmentPressure", "facilityPressure", "bossPattern");
+        for (JsonObject record : records(reader, "budget/live-profiles.json")) {
+            rejectAuthorityStub(record);
+            String id = requiredString(record, "id");
+            String kind = requiredString(record, "recordKind");
+            if (!budgetIds.add(id) || !"BUDGET-PROFILE-001".equals(requiredString(record, "sourceDocumentId"))) {
+                throw new ContentValidationException("Invalid budget record " + id);
+            }
+            if ("PROFILE".equals(kind)) {
+                profileCount++;
+                JsonObject multipliers = record.getAsJsonObject("multipliers");
+                if (!Set.of("STANDARD", "CHAOS").contains(requiredString(record, "mode"))
+                        || requiredString(record, "intent").isBlank() || multipliers == null
+                        || !multipliers.keySet().equals(multiplierFields)
+                        || multiplierFields.stream().map(multipliers::get).mapToDouble(JsonElement::getAsDouble)
+                        .anyMatch(value -> value < 0 || value > 10)
+                        || requiredDouble(multipliers, "criticalPathSupply") <= 0
+                        || !"DAY_SNAPSHOT_BEFORE_START".equals(requiredString(record, "lockPolicy"))) {
+                    throw new ContentValidationException("Invalid budget profile " + id);
+                }
+            } else if ("CONSTRAINT".equals(kind)) {
+                constraintCount++;
+                if (!id.matches("BP-C0[1-7]") || requiredString(record, "expressionText").isBlank()
+                        || !"REJECT_OR_SAFE_FALLBACK".equals(requiredString(record, "failureOpcode"))) {
+                    throw new ContentValidationException("Invalid budget constraint " + id);
+                }
+            } else {
+                throw new ContentValidationException("Unknown budget record kind " + kind);
+            }
+        }
+        if (profileCount != 12 || constraintCount != 7 || !budgetIds.contains("CH-SAFE-FALLBACK")) {
+            throw new ContentValidationException("Budget profile/constraint cardinality mismatch");
+        }
+
+        int personalLocks = 0;
+        int partyLocks = 0;
+        Set<Integer> personalMilestones = new HashSet<>();
+        Set<Integer> partyMilestones = new HashSet<>();
+        for (JsonObject record : records(reader, "fixtures/draw-locks.json")) {
+            rejectAuthorityStub(record);
+            String scope = requiredString(record, "scope");
+            int milestone = requiredInt(record, "milestone");
+            if (requiredInt(record, "choiceCount") != 3 || requiredInt(record, "selectionCount") != 1) {
+                throw new ContentValidationException("Invalid draw lock " + requiredString(record, "id"));
+            }
+            if ("PERSONAL".equals(scope)) {
+                personalLocks++;
+                personalMilestones.add(milestone);
+                String expectedTier = milestone == 3 ? "SILVER" : milestone == 6 ? "GOLD"
+                        : milestone == 10 ? "PRISM" : "FIRST_ACHIEVER_RANDOM_50_30_20";
+                if (!expectedTier.equals(requiredString(record, "tierPolicy"))
+                        || !record.get("returnToSlotZero").getAsBoolean()
+                        || record.get("sharedTierLock").getAsBoolean() != (milestone > 10)) {
+                    throw new ContentValidationException("Invalid personal draw lock " + milestone);
+                }
+            } else if ("PARTY".equals(scope)) {
+                partyLocks++;
+                partyMilestones.add(milestone);
+                if (!"PARTY_POOL".equals(requiredString(record, "tierPolicy"))) {
+                    throw new ContentValidationException("Invalid party draw lock " + milestone);
+                }
+            } else {
+                throw new ContentValidationException("Unknown draw scope " + scope);
+            }
+        }
+        if (personalLocks != 10 || partyLocks != 4
+                || !personalMilestones.equals(Set.of(3, 6, 10, 15, 20, 25, 30, 35, 40, 45))
+                || !partyMilestones.equals(Set.of(10, 20, 30, 40))) {
+            throw new ContentValidationException("Draw milestone authority mismatch");
+        }
+
+        Set<String> softlockIds = new HashSet<>();
+        for (JsonObject record : records(reader, "fixtures/softlock-scenarios.json")) {
+            rejectAuthorityStub(record);
+            if (!softlockIds.add(requiredString(record, "id"))
+                    || requiredString(record, "finding").isBlank()
+                    || requiredString(record, "correction").isBlank()
+                    || !record.get("mustRemainSatisfied").getAsBoolean()) {
+                throw new ContentValidationException("Invalid softlock fixture " + requiredString(record, "id"));
+            }
+        }
+
+        JsonObject graph = onlyRecord(reader, "fixtures/reference-graph.json");
+        rejectAuthorityStub(graph);
+        if (stringArray(graph, "progressionSteps").size() != 17
+                || graph.getAsJsonObject("cardinalities").size() != 13
+                || stringArray(graph, "invariants").size() != 4) {
+            throw new ContentValidationException("Invalid production reference graph fixture");
+        }
+        JsonObject admin = onlyRecord(reader, "ops/admin-commands.json");
+        rejectAuthorityStub(admin);
+        if (stringArray(admin, "permissionNodes").size() != 12
+                || stringArray(admin, "queryCommands").size() != 12
+                || stringArray(admin, "mutationCommands").size() != 10
+                || !admin.get("dryRunRequiredForMutation").getAsBoolean()
+                || requiredInt(admin, "confirmTokenTtlSeconds") != 60
+                || stringArray(admin, "forbiddenCapabilities").size() != 4) {
+            throw new ContentValidationException("Invalid administrator command contract");
+        }
+        JsonObject telemetry = onlyRecord(reader, "ops/telemetry-contract.json");
+        rejectAuthorityStub(telemetry);
+        if (requiredInt(telemetry, "rawRetentionDays") != 30
+                || requiredInt(telemetry, "aggregateRetentionDays") != 180
+                || stringArray(telemetry, "eventTypes").size() != 16
+                || stringArray(telemetry, "kpiIds").size() != 12
+                || stringArray(telemetry, "testLevels").size() != 6
+                || telemetry.get("activeRunHotTuning").getAsBoolean()
+                || !"NEW_RUN_ONLY".equals(requiredString(telemetry, "activationPolicy"))) {
+            throw new ContentValidationException("Invalid telemetry operating contract");
+        }
+    }
+
+    private JsonObject onlyRecord(ResourceReader reader, String path) throws Exception {
+        List<JsonObject> values = records(reader, path);
+        if (values.size() != 1) throw new ContentValidationException("Expected one record in " + path);
+        return values.getFirst();
     }
 
     private int count(ResourceReader reader, String path) throws Exception { return records(reader, path).size(); }

@@ -348,7 +348,7 @@
       "path": "budget/live-profiles.json",
       "domain": "budget",
       "schema": "budget.schema.json",
-      "sha256": "c6e3ff797008f3dccf8d705c59f977d570842ef42193a4c611462660ddc02538"
+      "sha256": "fe2a39b13d241997479e5392c63378658a6633aa482fc38875b84701225cb800"
     },
     {
       "path": "migrations/id-aliases.json",
@@ -360,37 +360,37 @@
       "path": "fixtures/cardinality.json",
       "domain": "fixture-cardinality",
       "schema": "common.schema.json",
-      "sha256": "5d2ed833caae54922480489bcec80b07388119959ca5ad6bfee219e7c5ad0a38"
+      "sha256": "f13d14c58c57984c978920d0ef8ff1bfb942988372b26786dbf4196c31382318"
     },
     {
       "path": "fixtures/reference-graph.json",
       "domain": "fixture-reference-graph",
       "schema": "common.schema.json",
-      "sha256": "362a03074761f06f32ab551c9c73c783e901d63e14d163b8e267076a3dfb980b"
+      "sha256": "069e2cd2f8e7d9c1a4cb4512ba344457ec19b121ceab792c3def6f95eb31cee7"
     },
     {
       "path": "fixtures/draw-locks.json",
       "domain": "fixture-draw-locks",
       "schema": "common.schema.json",
-      "sha256": "e8ca95065fcb56b994f144e1244b2965db18eac4b01844da2bb33357ae8c938d"
+      "sha256": "ced3183d46e31183619883b3aeacc1488ed05bd5cfffe0a2286cc7158ecc24b8"
     },
     {
       "path": "fixtures/softlock-scenarios.json",
       "domain": "fixture-softlocks",
       "schema": "common.schema.json",
-      "sha256": "32ce654d40be7d61b14f0f2dd5f5fe57784883481a6b4de38fec9ac769f621e3"
+      "sha256": "4085c0b9156e61b0994bc65768efea56c383c39a2accd7928d5c8955b579f1e0"
     },
     {
       "path": "ops/admin-commands.json",
       "domain": "ops-admin",
       "schema": "ops.schema.json",
-      "sha256": "3440c403171fea3d804376272f7e5bbe2bdd9a6bfe601f1ea1c0dedb867a3ba2"
+      "sha256": "59323a72dcb59726ceed09a1eb80062c61dfc7eb97a2a8b4a99f4424ab9f004d"
     },
     {
       "path": "ops/telemetry-contract.json",
       "domain": "ops-telemetry",
       "schema": "ops.schema.json",
-      "sha256": "095ec350dc8197f0e221576f360bf138ad2da9ae5798d47c8fc9f57072bb5cb3"
+      "sha256": "08c17cd09cd6139770e8a7bb5c52be197b66c85b2bf22e138f855a565bd95a69"
     }
   ]
 }

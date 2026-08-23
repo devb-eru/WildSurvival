@@ -82,6 +82,18 @@
     {
       "id": "final",
       "expected": 32
+    },
+    {
+      "id": "budget",
+      "expected": 19
+    },
+    {
+      "id": "drawLocks",
+      "expected": 14
+    },
+    {
+      "id": "softlocks",
+      "expected": 7
     }
   ]
 }

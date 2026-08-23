@@ -97,5 +97,8 @@ class ProductionBundleValidatorTest {
         assertEquals(18, result.counts().get("eventsD20"));
         assertEquals(55, result.counts().get("eventsD50"));
         assertEquals(32, result.counts().get("final"));
+        assertEquals(19, result.counts().get("budget"));
+        assertEquals(14, result.counts().get("drawLocks"));
+        assertEquals(7, result.counts().get("softlocks"));
     }
 }
