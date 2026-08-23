@@ -68,7 +68,8 @@ public final class Main extends JavaPlugin {
             combat.setProductionLootHandler(loot::rewardEnemy);
             combat.setDamageNumbers(damageNumbers);
             combat.setFacilityService(facility);
-            PrototypeBossService boss = new PrototypeBossService(this, runService, content.content(), combat, growth, telemetry);
+            PrototypeBossService boss = new PrototypeBossService(this, runService, content.productionCatalog(),
+                    combat, growth, loot, telemetry);
             combat.setBossDamageHandler(boss);
             PrototypeLoopService loop = new PrototypeLoopService(this, runService, content.content(), economy, combat,
                     boss, growth, stats, telemetry);

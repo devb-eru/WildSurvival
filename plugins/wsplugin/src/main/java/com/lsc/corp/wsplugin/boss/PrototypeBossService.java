@@ -1,13 +1,13 @@
 package com.lsc.corp.wsplugin.boss;
 
 import com.lsc.corp.wsplugin.combat.CombatService;
-import com.lsc.corp.wsplugin.content.PrototypeContent;
+import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
+import com.lsc.corp.wsplugin.economy.LootService;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import com.lsc.corp.wsplugin.ui.ActionBarService;
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
@@ -15,6 +15,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
@@ -33,148 +34,139 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class PrototypeBossService implements Listener, CombatService.BossDamageHandler {
     private final JavaPlugin plugin;
     private final RunService runs;
-    private final PrototypeContent content;
+    private final ProductionContentCatalog production;
     private final CombatService combat;
     private final GrowthService growth;
+    private final LootService loot;
     private final TelemetryService telemetry;
     private BossBar healthBar;
     private long nextPatternAtTick;
     private long channelEndsAtTick;
     private boolean cooperationChannelActive;
 
-    public PrototypeBossService(JavaPlugin plugin, RunService runs, PrototypeContent content, CombatService combat,
-                                GrowthService growth, TelemetryService telemetry) {
+    public PrototypeBossService(JavaPlugin plugin, RunService runs, ProductionContentCatalog production,
+                                CombatService combat, GrowthService growth, LootService loot,
+                                TelemetryService telemetry) {
         this.plugin = plugin;
         this.runs = runs;
-        this.content = content;
+        this.production = production;
         this.combat = combat;
         this.growth = growth;
+        this.loot = loot;
         this.telemetry = telemetry;
     }
 
     public LivingEntity spawn() {
         RunSnapshot snapshot = runs.current().orElseThrow();
-        if (!"RUNNING".equals(snapshot.state) || snapshot.day != 10) {
-            throw new IllegalStateException("Day 10 running state is required");
+        ProductionContentCatalog.DayEntry day = production.daysByNumber().get(snapshot.day);
+        if (!"RUNNING".equals(snapshot.state) || day == null || !day.bossDay()) {
+            throw new IllegalStateException("An active Season 1 boss Day is required");
         }
         if (snapshot.boss != null && ("ACTIVE".equals(snapshot.boss.state) || snapshot.boss.rewardCommitted)) {
-            throw new IllegalStateException("Day 10 boss is already active or completed");
+            throw new IllegalStateException("The Day boss is already active or completed");
         }
-        Player anchor = runs.onlineMembers().stream().findFirst().orElseThrow(() -> new IllegalStateException("No online member"));
-        Location location = safeSpawn(anchor.getLocation().add(anchor.getLocation().getDirection().setY(0).normalize().multiply(10)));
-        PrototypeContent.BossDefinition definition = content.boss();
+        ProductionContentCatalog.BossEntry definition = definition(day.bossId());
+        Player anchor = runs.onlineMembers().stream().findFirst()
+                .orElseThrow(() -> new IllegalStateException("No online member"));
+        Location location = safeSpawn(anchor.getLocation().clone()
+                .add(anchor.getLocation().getDirection().setY(0).normalize().multiply(10)));
         int players = Math.max(1, runs.effectivePartySize());
         double hpMultiplier = switch (players) { case 1 -> 0.72; case 3 -> 1.32; case 4 -> 1.60; default -> 1.0; };
         double breakMultiplier = switch (players) { case 1 -> 0.75; case 3 -> 1.25; case 4 -> 1.50; default -> 1.0; };
-        double maxHp = definition.hp() * hpMultiplier;
+        double maxHp = definition.baseHp() * hpMultiplier;
         double maxBreak = definition.breakMax() * breakMultiplier;
-        LivingEntity boss = (LivingEntity) location.getWorld().spawnEntity(location, EntityType.RAVAGER);
-        boss.setCustomName(ChatColor.DARK_RED + "공명 추적체" + ChatColor.GRAY + " [P1 추적]");
-        boss.setCustomNameVisible(true);
-        combat.tagCombatEntity(boss, definition.id(), maxHp, 70.0, maxBreak);
-        if (boss.getAttribute(Attribute.MAX_HEALTH) != null) {
-            boss.getAttribute(Attribute.MAX_HEALTH).setBaseValue(40.0);
-            boss.setHealth(40.0);
-        }
-        runs.commitOnce("boss-spawn:day10", "BOSS_ACTIVATED", "{\"bossId\":\"" + definition.id() + "\",\"players\":" + players + "}", run -> {
-            RunSnapshot.BossState state = new RunSnapshot.BossState();
-            state.bossId = definition.id();
-            state.entityUuid = boss.getUniqueId().toString();
-            state.world = location.getWorld().getName();
-            state.x = location.getX();
-            state.y = location.getY();
-            state.z = location.getZ();
-            state.hp = maxHp;
-            state.maxHp = maxHp;
-            state.breakMax = maxBreak;
-            run.boss = state;
-        });
-        createHealthBar(boss);
-        nextPatternAtTick = runs.clockTick() + 80L;
-        runs.broadcast(ChatColor.DARK_RED + "[Day 10] 공명 추적체가 출현했습니다. 2페이즈 협동 중단에 대비하세요.");
-        return boss;
+        LivingEntity entity = spawnEntity(definition, location);
+        combat.tagCombatEntity(entity, definition.id(), maxHp, definition.defence(), maxBreak);
+        initializeVanillaHealth(entity);
+        runs.commitOnce("boss-spawn:day" + snapshot.day, "BOSS_ACTIVATED",
+                "{\"bossId\":\"" + definition.id() + "\",\"players\":" + players + "}", run -> {
+                    RunSnapshot.BossState state = new RunSnapshot.BossState();
+                    state.bossId = definition.id();
+                    state.entityUuid = entity.getUniqueId().toString();
+                    state.world = location.getWorld().getName();
+                    state.x = location.getX();
+                    state.y = location.getY();
+                    state.z = location.getZ();
+                    state.hp = maxHp;
+                    state.maxHp = maxHp;
+                    state.breakMax = maxBreak;
+                    run.boss = state;
+                    run.seasonDay.state = "PRESSURE";
+                    run.seasonDay.pressureStartedAtEpochMs = runs.clockNowMillis();
+                });
+        createHealthBar(entity, definition);
+        nextPatternAtTick = runs.clockTick() + Math.max(40L, definition.telegraphTicks() + 20L);
+        runs.broadcast(ChatColor.DARK_RED + "[Day " + snapshot.day + "] " + definition.name()
+                + " 출현 — 전조, 브레이크, 협동 중단을 준비하세요.");
+        return entity;
     }
 
     public void restore() {
         RunSnapshot snapshot = runs.current().orElse(null);
-        if (snapshot == null || snapshot.boss == null || !"ACTIVE".equals(snapshot.boss.state)) {
-            return;
-        }
+        if (snapshot == null || snapshot.boss == null || !"ACTIVE".equals(snapshot.boss.state)) return;
+        ProductionContentCatalog.BossEntry definition = definition(snapshot.boss.bossId);
         Entity existing = findEntity(snapshot.boss.entityUuid);
         if (existing instanceof LivingEntity living) {
-            createHealthBar(living);
+            createHealthBar(living, definition);
             return;
         }
         org.bukkit.World world = Bukkit.getWorld(snapshot.boss.world);
-        if (world == null) {
-            throw new IllegalStateException("Cannot restore boss world " + snapshot.boss.world);
-        }
-        LivingEntity boss = (LivingEntity) world.spawnEntity(new Location(world, snapshot.boss.x, snapshot.boss.y, snapshot.boss.z), EntityType.RAVAGER);
-        boss.customName(Component.text(ChatColor.DARK_RED + "공명 추적체" + ChatColor.GRAY + " [복구]"));
-        boss.setCustomNameVisible(true);
-        combat.tagCombatEntity(boss, snapshot.boss.bossId, snapshot.boss.hp, 70.0, snapshot.boss.breakMax);
-        runs.mutate(run -> run.boss.entityUuid = boss.getUniqueId().toString());
-        createHealthBar(boss);
+        if (world == null) throw new IllegalStateException("Cannot restore boss world " + snapshot.boss.world);
+        LivingEntity entity = spawnEntity(definition,
+                new Location(world, snapshot.boss.x, snapshot.boss.y, snapshot.boss.z));
+        combat.tagCombatEntity(entity, definition.id(), snapshot.boss.hp, definition.defence(), snapshot.boss.breakMax);
+        initializeVanillaHealth(entity);
+        runs.mutate(run -> run.boss.entityUuid = entity.getUniqueId().toString());
+        createHealthBar(entity, definition);
+        nextPatternAtTick = runs.clockTick() + Math.max(40L, definition.telegraphTicks() + 20L);
     }
 
     public void tick() {
         RunSnapshot snapshot = runs.current().orElse(null);
-        if (snapshot == null || snapshot.boss == null || !"ACTIVE".equals(snapshot.boss.state)) {
-            return;
-        }
+        if (snapshot == null || snapshot.boss == null || !"ACTIVE".equals(snapshot.boss.state)) return;
         Entity found = findEntity(snapshot.boss.entityUuid);
-        if (!(found instanceof LivingEntity boss) || !boss.isValid()) {
+        if (!(found instanceof LivingEntity entity) || !entity.isValid()) {
             restore();
             return;
         }
-        updateHealthBar(snapshot.boss);
+        ProductionContentCatalog.BossEntry definition = definition(snapshot.boss.bossId);
+        updateHealthBar(snapshot.boss, definition);
         if (cooperationChannelActive) {
-            resolveCooperationChannel(boss);
+            resolveCooperationChannel(entity, definition);
             return;
         }
-        long tick = runs.clockTick();
-        if (tick >= nextPatternAtTick) {
-            telegraphPulse(boss, snapshot.boss.phase);
-            nextPatternAtTick = tick + (snapshot.boss.phase == 1 ? 180L : 140L);
-        }
+        if (runs.clockTick() >= nextPatternAtTick) executeNextPattern(entity, definition, snapshot.boss);
     }
 
     @Override
-    public void damage(Player attacker, LivingEntity boss, double damage, double breakDamage, String executionId) {
+    public void damage(Player attacker, LivingEntity entity, double damage, double breakDamage, String executionId) {
         RunSnapshot snapshot = runs.current().orElseThrow();
-        if (snapshot.boss == null || !boss.getUniqueId().toString().equals(snapshot.boss.entityUuid)) {
-            return;
-        }
+        if (snapshot.boss == null || !entity.getUniqueId().toString().equals(snapshot.boss.entityUuid)) return;
         boolean committed = runs.commitOnce("boss-hit:" + executionId, "BOSS_DAMAGE_COMMITTED",
                 "{\"damage\":" + round(damage) + ",\"break\":" + round(breakDamage) + "}", run -> {
                     run.boss.hp = Math.max(0.0, run.boss.hp - damage);
-                    run.boss.x = boss.getLocation().getX();
-                    run.boss.y = boss.getLocation().getY();
-                    run.boss.z = boss.getLocation().getZ();
+                    run.boss.x = entity.getLocation().getX();
+                    run.boss.y = entity.getLocation().getY();
+                    run.boss.z = entity.getLocation().getZ();
                 });
-        if (!committed) {
-            return;
-        }
-        combat.applyBreak(boss, breakDamage);
-        runs.mutate(run -> run.boss.breakCurrent = combat.currentBreak(boss));
+        if (!committed) return;
+        combat.applyBreak(entity, breakDamage);
+        runs.mutate(run -> run.boss.breakCurrent = combat.currentBreak(entity));
         RunSnapshot.BossState state = runs.current().orElseThrow().boss;
-        if (state.phase == 1 && state.hp / state.maxHp <= content.boss().phaseTwoHpPercent() / 100.0) {
-            enterPhaseTwo(boss);
-        }
         if (state.hp <= 0.0) {
-            defeat(boss);
+            defeat(entity);
+        } else if (state.phase == 1 && state.hp / state.maxHp <= 0.65) {
+            enterPhaseTwo(entity, definition(state.bossId));
         }
     }
 
     @EventHandler
     public void onBossInteract(PlayerInteractEntityEvent event) {
-        if (event.getHand() != EquipmentSlot.HAND || !cooperationChannelActive || !runs.isRunningMember(event.getPlayer())) {
-            return;
-        }
+        if (event.getHand() != EquipmentSlot.HAND || !cooperationChannelActive
+                || !runs.isRunningMember(event.getPlayer())) return;
         RunSnapshot snapshot = runs.current().orElse(null);
-        if (snapshot == null || snapshot.boss == null || !event.getRightClicked().getUniqueId().toString().equals(snapshot.boss.entityUuid)) {
-            return;
-        }
+        if (snapshot == null || snapshot.boss == null
+                || !event.getRightClicked().getUniqueId().toString().equals(snapshot.boss.entityUuid)) return;
         event.setCancelled(true);
         runs.mutate(run -> run.boss.channelParticipants.add(event.getPlayer().getUniqueId().toString()));
         ActionBarService.notice(event.getPlayer(), Component.text("공명 고정 참여 완료", NamedTextColor.GREEN), 40);
@@ -186,12 +178,8 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
             throw new IllegalStateException("An active Test Lab boss is required");
         }
         Entity found = findEntity(snapshot.boss.entityUuid);
-        if (!(found instanceof LivingEntity boss)) {
-            throw new IllegalStateException("Test boss entity is not loaded");
-        }
-        if (snapshot.boss.phase < 2) {
-            enterPhaseTwo(boss);
-        }
+        if (!(found instanceof LivingEntity entity)) throw new IllegalStateException("Test boss entity is not loaded");
+        if (snapshot.boss.phase < 2) enterPhaseTwo(entity, definition(snapshot.boss.bossId));
     }
 
     public void simulateCooperationForTest(int contributors) {
@@ -215,121 +203,154 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
             throw new IllegalStateException("An active Test Lab boss is required");
         }
         Entity found = findEntity(snapshot.boss.entityUuid);
-        if (!(found instanceof LivingEntity boss)) {
-            throw new IllegalStateException("Test boss entity is not loaded");
-        }
-        telegraphPulse(boss, snapshot.boss.phase);
+        if (!(found instanceof LivingEntity entity)) throw new IllegalStateException("Test boss entity is not loaded");
+        executeNextPattern(entity, definition(snapshot.boss.bossId), snapshot.boss);
     }
 
-    private void enterPhaseTwo(LivingEntity boss) {
-        runs.mutate(run -> {
-            run.boss.phase = 2;
-            run.boss.channelParticipants.clear();
-        });
-        boss.setCustomName(ChatColor.DARK_PURPLE + "공명 추적체" + ChatColor.GRAY + " [P2 적응]");
-        boss.setAI(false);
-        cooperationChannelActive = true;
-        channelEndsAtTick = runs.clockTick() + content.boss().cooperationChannelTicks();
-        int required = Math.min(2, Math.max(1, runs.effectivePartySize()));
-        runs.broadcast(ChatColor.LIGHT_PURPLE + "[협동 중단] " + required + "명이 보스를 우클릭해 공명을 고정하세요. 6초");
-        for (Player player : runs.onlineMembers()) {
-            player.sendTitle(ChatColor.LIGHT_PURPLE + "공명 고정", ChatColor.WHITE + "보스 우클릭 — " + required + "명 필요", 5, 80, 10);
-            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0f, 0.65f);
-        }
-    }
-
-    private void resolveCooperationChannel(LivingEntity boss) {
-        RunSnapshot.BossState state = runs.current().orElseThrow().boss;
-        int required = Math.min(2, Math.max(1, runs.effectivePartySize()));
-        if (state.channelParticipants.size() >= required) {
-            cooperationChannelActive = false;
-            boss.setAI(true);
-            combat.applyBreak(boss, content.boss().cooperationBreak());
-            runs.mutate(run -> {
-                run.boss.phaseTwoChannelResolved = true;
-                run.boss.breakCurrent = combat.currentBreak(boss);
-            });
-            runs.broadcast(ChatColor.GREEN + "협동 중단 성공 — 고정 브레이크 +" + (int) content.boss().cooperationBreak());
-            nextPatternAtTick = runs.clockTick() + 80L;
-            return;
-        }
-        if (runs.clockTick() < channelEndsAtTick) {
-            return;
-        }
+    public void cleanup() {
         cooperationChannelActive = false;
-        boss.setAI(true);
-        runs.mutate(run -> run.boss.phaseTwoChannelResolved = true);
-        runs.broadcast(ChatColor.RED + "협동 중단 실패 — 공명 파동");
-        for (Player player : runs.onlineMembers()) {
-            if (runs.playerState(player.getUniqueId()).map(value -> "ACTIVE".equals(value.lifeState)).orElse(false)) {
-                player.damage(8.0);
-                player.playSound(player.getLocation(), Sound.ENTITY_WARDEN_SONIC_BOOM, 0.8f, 0.8f);
-            }
-        }
-        nextPatternAtTick = runs.clockTick() + 80L;
-    }
-
-    private void telegraphPulse(LivingEntity boss, int phase) {
-        String label = phase == 1 ? "추적 돌진" : "붕괴 고리";
-        runs.broadcast(ChatColor.RED + "⚠ " + label + " — 흰 입자와 경고음 뒤 회피");
-        for (Player player : runs.onlineMembers()) {
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, phase == 1 ? 0.8f : 0.55f);
-            player.sendTitle(ChatColor.RED + "⚠ " + label, ChatColor.WHITE + "회피 준비", 0, 25, 5);
-        }
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (!boss.isValid()) {
-                return;
-            }
-            double radius = phase == 1 ? 4.5 : 7.0;
-            for (Player player : runs.onlineMembers()) {
-                if (player.getLocation().getWorld().equals(boss.getWorld())
-                        && player.getLocation().distanceSquared(boss.getLocation()) <= radius * radius) {
-                    player.damage(phase == 1 ? 6.0 : 8.0);
-                }
-            }
-            boss.getWorld().playSound(boss.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 0.8f, 0.7f);
-        }, 24L);
-    }
-
-    private void defeat(LivingEntity boss) {
-        boss.remove();
         if (healthBar != null) {
             healthBar.removeAll();
             healthBar = null;
         }
-        boolean committed = runs.commitOnce("boss-reward:day10", "BOSS_DEFEATED", "{\"bossId\":\"" + content.boss().id() + "\"}", run -> {
-            run.boss.state = "DEFEATED";
-            run.boss.rewardCommitted = true;
-        });
-        if (!committed) {
-            return;
-        }
-        for (Player player : runs.onlineMembers()) {
-            growth.awardExp(player, content.boss().rewardExp(), "boss-exp:day10:" + player.getUniqueId());
-        }
-        runs.broadcast(ChatColor.GOLD + "공명 추적체 격파. 개인 프리즘 선택 후 파티 증강 투표가 열립니다.");
-        telemetry.event(runs.current().orElseThrow().runId, "BOSS_REWARD_COMMITTED", "{\"step\":1}");
     }
 
-    private void createHealthBar(LivingEntity boss) {
-        if (healthBar != null) {
-            healthBar.removeAll();
+    private void enterPhaseTwo(LivingEntity entity, ProductionContentCatalog.BossEntry definition) {
+        runs.mutate(run -> {
+            run.boss.phase = 2;
+            run.boss.channelParticipants.clear();
+        });
+        entity.setCustomName(ChatColor.DARK_PURPLE + definition.name() + ChatColor.GRAY + " [P2 적응]");
+        entity.setAI(false);
+        cooperationChannelActive = true;
+        channelEndsAtTick = runs.clockTick() + 120L;
+        int required = Math.min(2, Math.max(1, runs.effectivePartySize()));
+        runs.broadcast(ChatColor.LIGHT_PURPLE + "[협동 중단] " + required
+                + "명이 보스를 우클릭해 공명을 고정하세요. 6초");
+        for (Player player : runs.onlineMembers()) {
+            player.sendTitle(ChatColor.LIGHT_PURPLE + "공명 고정",
+                    ChatColor.WHITE + "보스 우클릭 — " + required + "명 필요", 5, 80, 10);
+            player.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0f, 0.65f);
         }
-        healthBar = Bukkit.createBossBar("Day 10 — 공명 추적체", BarColor.RED, BarStyle.SEGMENTED_10);
+    }
+
+    private void resolveCooperationChannel(LivingEntity entity, ProductionContentCatalog.BossEntry definition) {
+        RunSnapshot.BossState state = runs.current().orElseThrow().boss;
+        int required = Math.min(2, Math.max(1, runs.effectivePartySize()));
+        double cooperationBreak = Math.max(300.0, definition.breakMax() * 0.03);
+        if (state.channelParticipants.size() >= required) {
+            cooperationChannelActive = false;
+            entity.setAI(true);
+            combat.applyBreak(entity, cooperationBreak);
+            runs.mutate(run -> {
+                run.boss.phaseTwoChannelResolved = true;
+                run.boss.breakCurrent = combat.currentBreak(entity);
+            });
+            runs.broadcast(ChatColor.GREEN + "협동 중단 성공 — 고정 브레이크 +" + (int) cooperationBreak);
+            nextPatternAtTick = runs.clockTick() + 80L;
+            return;
+        }
+        if (runs.clockTick() < channelEndsAtTick) return;
+        cooperationChannelActive = false;
+        entity.setAI(true);
+        runs.mutate(run -> run.boss.phaseTwoChannelResolved = true);
+        runs.broadcast(ChatColor.RED + "협동 중단 실패 — 공명 파동");
+        for (Player player : activePlayers()) player.damage(Math.max(1.0, definition.attackDamage() / 100.0), entity);
+        nextPatternAtTick = runs.clockTick() + 80L;
+    }
+
+    private void executeNextPattern(LivingEntity entity, ProductionContentCatalog.BossEntry definition,
+                                    RunSnapshot.BossState state) {
+        ProductionContentCatalog.ActionBundleEntry bundle = production.actionBundlesById().get(definition.actionBundleId());
+        if (bundle == null || bundle.actions().isEmpty()) throw new IllegalStateException("Missing boss actions " + definition.id());
+        ProductionContentCatalog.ActionEntry action = bundle.actions().get((int) Math.floorMod(state.patternSequence,
+                bundle.actions().size()));
+        runs.mutate(run -> run.boss.patternSequence++);
+        runs.broadcast(ChatColor.RED + "⚠ " + action.name() + " — 전조 후 범위 이탈");
+        entity.getWorld().spawnParticle(Particle.DUST_PLUME, entity.getLocation(), 18,
+                action.range(), 0.15, action.range(), 0.0);
+        for (Player player : activePlayers()) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f,
+                    state.phase == 1 ? 0.8f : 0.55f);
+        }
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (!entity.isValid()) return;
+            for (Player player : activePlayers()) {
+                if (player.getWorld().equals(entity.getWorld())
+                        && player.getLocation().distanceSquared(entity.getLocation()) <= action.range() * action.range()) {
+                    player.damage(Math.max(0.1, action.damage() / 100.0), entity);
+                }
+            }
+            entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 0.8f, 0.7f);
+        }, Math.max(1L, action.telegraphTicks()));
+        nextPatternAtTick = runs.clockTick() + Math.max(40L, action.cooldownTicks());
+    }
+
+    private void defeat(LivingEntity entity) {
+        RunSnapshot snapshot = runs.current().orElseThrow();
+        int dayNumber = snapshot.day;
+        ProductionContentCatalog.BossEntry definition = definition(snapshot.boss.bossId);
+        entity.remove();
+        cleanup();
+        boolean committed = runs.commitOnce("boss-reward:day" + dayNumber, "BOSS_DEFEATED",
+                "{\"bossId\":\"" + definition.id() + "\"}", run -> {
+                    run.boss.state = "DEFEATED";
+                    run.boss.rewardCommitted = true;
+                    run.defeatedBossIds.add(definition.id());
+                    run.seasonDay.activityExpCommitted = true;
+                });
+        if (!committed) return;
+        ProductionContentCatalog.DayEntry day = production.daysByNumber().get(dayNumber);
+        for (Player player : runs.onlineMembers()) {
+            growth.awardExp(player, day.activityExp(), "day-activity:" + dayNumber + ":" + player.getUniqueId());
+        }
+        loot.rewardBoss("boss-day-" + dayNumber, definition, runs.onlineMembers());
+        runs.broadcast(ChatColor.GOLD + definition.name() + " 격파. 재건 증명과 부품이 정산되었습니다.");
+        telemetry.event(snapshot.runId, "BOSS_REWARD_COMMITTED", "{\"day\":" + dayNumber + "}");
+    }
+
+    private void createHealthBar(LivingEntity entity, ProductionContentCatalog.BossEntry definition) {
+        cleanup();
+        healthBar = Bukkit.createBossBar("Day " + definition.firstDay() + " — " + definition.name(),
+                BarColor.RED, BarStyle.SEGMENTED_10);
         runs.onlineMembers().forEach(healthBar::addPlayer);
         healthBar.setVisible(true);
         RunSnapshot snapshot = runs.current().orElse(null);
-        if (snapshot != null && snapshot.boss != null) {
-            updateHealthBar(snapshot.boss);
-        }
+        if (snapshot != null && snapshot.boss != null) updateHealthBar(snapshot.boss, definition);
     }
 
-    private void updateHealthBar(RunSnapshot.BossState state) {
-        if (healthBar == null) {
-            return;
-        }
+    private void updateHealthBar(RunSnapshot.BossState state, ProductionContentCatalog.BossEntry definition) {
+        if (healthBar == null) return;
         healthBar.setProgress(Math.max(0.0, Math.min(1.0, state.hp / state.maxHp)));
-        healthBar.setTitle("Day 10 — 공명 추적체 P" + state.phase + "  " + Math.round(state.hp) + "/" + Math.round(state.maxHp));
+        healthBar.setTitle("Day " + definition.firstDay() + " — " + definition.name() + " P" + state.phase
+                + "  " + Math.round(state.hp) + "/" + Math.round(state.maxHp));
+    }
+
+    private LivingEntity spawnEntity(ProductionContentCatalog.BossEntry definition, Location location) {
+        EntityType type = EntityType.valueOf(definition.bukkitType());
+        if (!type.isAlive()) throw new IllegalArgumentException("Boss entity type is not living " + type);
+        LivingEntity entity = (LivingEntity) location.getWorld().spawnEntity(location, type);
+        entity.setCustomName(ChatColor.DARK_RED + definition.name() + ChatColor.GRAY + " [P1]");
+        entity.setCustomNameVisible(true);
+        entity.setRemoveWhenFarAway(false);
+        return entity;
+    }
+
+    private void initializeVanillaHealth(LivingEntity entity) {
+        if (entity.getAttribute(Attribute.MAX_HEALTH) == null) return;
+        entity.getAttribute(Attribute.MAX_HEALTH).setBaseValue(40.0);
+        entity.setHealth(40.0);
+    }
+
+    private ProductionContentCatalog.BossEntry definition(String id) {
+        ProductionContentCatalog.BossEntry result = production.bossesById().get(id);
+        if (result == null) throw new IllegalArgumentException("Unknown Season 1 boss " + id);
+        return result;
+    }
+
+    private List<Player> activePlayers() {
+        return runs.onlineMembers().stream().filter(player -> runs.playerState(player.getUniqueId())
+                .map(state -> "ACTIVE".equals(state.lifeState)).orElse(false)).toList();
     }
 
     private Location safeSpawn(Location requested) {
@@ -339,15 +360,11 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
     }
 
     private Entity findEntity(String uuid) {
-        if (uuid == null) {
-            return null;
-        }
+        if (uuid == null) return null;
         UUID id = UUID.fromString(uuid);
         for (org.bukkit.World world : Bukkit.getWorlds()) {
             Entity entity = world.getEntity(id);
-            if (entity != null) {
-                return entity;
-            }
+            if (entity != null) return entity;
         }
         return null;
     }

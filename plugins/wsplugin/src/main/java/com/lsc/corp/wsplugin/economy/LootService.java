@@ -84,6 +84,62 @@ public final class LootService {
         return true;
     }
 
+    public boolean rewardBoss(String transactionId, ProductionContentCatalog.BossEntry boss,
+                              Collection<Player> contributors) {
+        ProductionContentCatalog.LootEntry table = requireTable(boss.lootTableId());
+        if (table.noReward()) return false;
+        RunSnapshot before = runs.current().orElseThrow();
+        List<String> eligible = eligibleContributors(before, contributors);
+        if (eligible.isEmpty()) return false;
+        List<String> owners = eligible.stream().sorted(Comparator
+                .comparingInt((String id) -> before.players.get(id).lootValueReceived)
+                .thenComparing(Comparator.naturalOrder())).toList();
+        int partySize = Math.max(1, runs.effectivePartySize());
+        List<PendingRoll> awards = new ArrayList<>();
+        int cursor = 0;
+        for (ProductionContentCatalog.LootFixedEntry fixed : table.fixedEntries()) {
+            int amount = fixed.amountForPartySize(partySize);
+            if ("RUN_PROOF".equals(fixed.scope())) {
+                awards.add(new PendingRoll("ITEM", fixed.itemId(), amount, owners.getFirst(), 100));
+            } else {
+                for (int index = 0; index < amount; index++) {
+                    awards.add(new PendingRoll("RESOURCE", fixed.itemId(), 1,
+                            owners.get(cursor++ % owners.size()), 1));
+                }
+            }
+        }
+        String equipmentId = chooseBossEquipment(table.equipmentSelectionProfile(), before.day,
+                LootRollPolicy.transactionSeed(before.seed, transactionId));
+        if (equipmentId != null) {
+            awards.add(new PendingRoll("EQUIPMENT", equipmentId, 1, owners.get(cursor % owners.size()), 50));
+        }
+        boolean committed = runs.commitOnce("loot-roll:" + transactionId, "BOSS_LOOT_ROLLED",
+                "{\"transactionId\":\"" + transactionId + "\",\"lootTableId\":\""
+                        + table.id() + "\",\"entries\":" + awards.size() + "}", run -> {
+                    RunSnapshot.LootTransactionState transaction = new RunSnapshot.LootTransactionState();
+                    transaction.transactionId = transactionId;
+                    transaction.sourceId = boss.id();
+                    transaction.lootTableId = table.id();
+                    transaction.eligibleContributors.addAll(eligible);
+                    transaction.rolledAtEpochMs = System.currentTimeMillis();
+                    for (ProductionContentCatalog.LootFixedEntry fixed : table.fixedEntries()) {
+                        if (!"RUN_PROOF".equals(fixed.scope())) continue;
+                        run.committedKeys.add("proof:" + fixed.itemId());
+                        if (fixed.itemId().matches("WSP-REBUILD-PART-[A-D]")) {
+                            run.reconstructionPartIds.add(fixed.itemId().substring(fixed.itemId().length() - 1));
+                        }
+                    }
+                    for (PendingRoll award : awards) queueRoll(run, transaction, award);
+                    transaction.claimed = transaction.rolledEntries.stream().allMatch(entry -> entry.queued);
+                    run.lootTransactions.put(transactionId, transaction);
+                });
+        if (!committed) return false;
+        deliverOnline(eligible);
+        telemetry.event(before.runId, "BOSS_LOOT_CLAIM_QUEUED", "{\"transactionId\":\""
+                + transactionId + "\",\"owners\":" + eligible.size() + "}");
+        return true;
+    }
+
     public void deliverPending(Player player) {
         codex.flushPending(player);
         equipment.reconcilePendingRewards(player);
@@ -146,6 +202,16 @@ public final class LootService {
             }
         }
         return null;
+    }
+
+    private String chooseBossEquipment(String profile, int day, long seed) {
+        if (profile == null || profile.isBlank()) return null;
+        List<String> candidates = content.equipmentById().values().stream()
+                .filter(entry -> entry.firstDay() <= day)
+                .filter(entry -> entry.id().startsWith(profile))
+                .map(ProductionContentCatalog.EquipmentEntry::id).sorted().toList();
+        if (candidates.isEmpty()) return null;
+        return candidates.get(new SplittableRandom(seed ^ profile.hashCode()).nextInt(candidates.size()));
     }
 
     private ProductionContentCatalog.LootEntry representativeDayTable(int day) {
