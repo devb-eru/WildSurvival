@@ -26,6 +26,7 @@ import com.lsc.corp.wsplugin.tutorial.TutorialService;
 import com.lsc.corp.wsplugin.world.PrototypeLoopService;
 import com.lsc.corp.wsplugin.world.DiscoveryService;
 import com.lsc.corp.wsplugin.story.StoryService;
+import com.lsc.corp.wsplugin.finale.FinalService;
 import com.lsc.corp.wsplugin.ui.PlayerMenuService;
 import java.util.Objects;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,6 +36,7 @@ public final class Main extends JavaPlugin {
     private TelemetryService telemetry;
     private DamageNumberService damageNumbers;
     private TutorialService tutorial;
+    private FinalService finale;
 
     @Override
     public void onEnable() {
@@ -65,17 +67,21 @@ public final class Main extends JavaPlugin {
             economy.setVirtualFacilityHandler(facility::canAssembleVirtual, facility::assembleVirtual);
             DiscoveryService discoveries = new DiscoveryService(runService, content.productionCatalog());
             StoryService story = new StoryService(runService, content.productionCatalog());
-            PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, skills,
-                    growth, tutorial, discoveries, story);
             damageNumbers = new DamageNumberService(this, runService);
-            combat.setMenuOpener(menu::open);
             combat.setItemRewardHandler((player, resourceId, amount) -> codex.grantResource(player, resourceId, amount));
             combat.setProductionLootHandler(loot::rewardEnemy);
             combat.setDamageNumbers(damageNumbers);
             combat.setFacilityService(facility);
             PrototypeBossService boss = new PrototypeBossService(this, runService, content.productionCatalog(),
                     combat, growth, loot, telemetry);
-            combat.setBossDamageHandler(boss);
+            finale = new FinalService(this, runService, content.productionCatalog(), codex, combat, discoveries, story);
+            PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, skills,
+                    growth, tutorial, discoveries, story, finale);
+            combat.setMenuOpener(menu::open);
+            combat.setBossDamageHandler((attacker, entity, damage, breakDamage, executionId) -> {
+                if (finale.handles(entity)) finale.damage(attacker, entity, damage, breakDamage, executionId);
+                else boss.damage(attacker, entity, damage, breakDamage, executionId);
+            });
             PrototypeLoopService loop = new PrototypeLoopService(this, runService,
                     content.productionCatalog(), economy, combat, boss, growth, stats, telemetry);
 
@@ -88,7 +94,7 @@ public final class Main extends JavaPlugin {
             TestLabCommand testLabCommand = new TestLabCommand(testLab, testLabGui, scenarios, virtualParty, combat, runService);
 
             runService.attach(loop, equipment, growth);
-            registerListeners(equipment, skills, combat, economy, facility, codex, stats, menu, discoveries, story,
+            registerListeners(equipment, skills, combat, economy, facility, codex, stats, menu, discoveries, story, finale,
                     tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
 
             PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand, menu);
@@ -97,9 +103,11 @@ public final class Main extends JavaPlugin {
 
             runService.restore();
             facility.restore();
+            finale.restore();
             getServer().getScheduler().runTaskTimer(this, facility::tick, 20L, 20L);
             getServer().getScheduler().runTaskTimer(this, discoveries::tick, 20L, 20L);
             getServer().getScheduler().runTaskTimer(this, story::tick, 30L, 20L);
+            getServer().getScheduler().runTaskTimer(this, finale::tick, 40L, 1L);
             tutorial.start();
             for (org.bukkit.entity.Player player : runService.onlineMembers()) {
                 codex.reconcile(player);
@@ -123,6 +131,9 @@ public final class Main extends JavaPlugin {
         }
         if (damageNumbers != null) {
             damageNumbers.cleanup();
+        }
+        if (finale != null) {
+            finale.cleanup();
         }
         if (runService != null) {
             runService.shutdown();

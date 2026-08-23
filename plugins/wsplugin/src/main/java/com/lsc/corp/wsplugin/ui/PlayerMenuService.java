@@ -11,6 +11,7 @@ import com.lsc.corp.wsplugin.run.RunSnapshot;
 import com.lsc.corp.wsplugin.tutorial.TutorialService;
 import com.lsc.corp.wsplugin.world.DiscoveryService;
 import com.lsc.corp.wsplugin.story.StoryService;
+import com.lsc.corp.wsplugin.finale.FinalService;
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -37,17 +38,19 @@ public final class PlayerMenuService implements Listener {
     private final TutorialService tutorial;
     private final DiscoveryService discoveries;
     private final StoryService story;
+    private final FinalService finale;
 
     public PlayerMenuService(RunService runs, EconomyService economy, ItemCodexService codex,
                              PlayerStatService stats, EquipmentService equipment, SkillLoadoutService skills,
                              GrowthService growth, TutorialService tutorial, DiscoveryService discoveries,
-                             StoryService story) {
+                             StoryService story, FinalService finale) {
         this.runs = runs; this.economy = economy; this.codex = codex;
         this.stats = stats; this.equipment = equipment; this.growth = growth;
         this.skills = skills;
         this.tutorial = tutorial;
         this.discoveries = discoveries;
         this.story = story;
+        this.finale = finale;
     }
 
     public void open(Player player) {
@@ -78,6 +81,8 @@ public final class PlayerMenuService implements Listener {
                 List.of(ChatColor.GRAY + "파티 공유 단서·가설·실험·해금 확인")));
         inventory.setItem(39, named(Material.WRITTEN_BOOK, ChatColor.GOLD + "Story 기록",
                 List.of(ChatColor.GRAY + "재생된 장면·선택 기록 확인")));
+        inventory.setItem(41, named(Material.BEACON, ChatColor.GOLD + "첫 재건 신호",
+                List.of(ChatColor.GRAY + "Day 50 Final 조건·단계·확정 확인")));
         inventory.setItem(49, named(Material.BARRIER, ChatColor.RED + "닫기", List.of()));
         player.openInventory(inventory);
     }
@@ -110,6 +115,7 @@ public final class PlayerMenuService implements Listener {
                 case 31 -> economy.openLedger(player); case 33 -> openSettings(player); case 35 -> tutorial.showGuide(player);
                 case 37 -> discoveries.open(player);
                 case 39 -> story.open(player);
+                case 41 -> finale.open(player);
                 case 49 -> player.closeInventory();
                 default -> { }
             }

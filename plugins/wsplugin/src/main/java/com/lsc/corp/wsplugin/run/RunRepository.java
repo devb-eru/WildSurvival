@@ -119,6 +119,9 @@ public final class RunRepository {
         if (snapshot.finalObjective.completedTransactionSteps == null) {
             snapshot.finalObjective.completedTransactionSteps = new LinkedHashSet<>();
         }
+        if (snapshot.finalObjective.activationVotes == null) snapshot.finalObjective.activationVotes = new LinkedHashSet<>();
+        if (snapshot.finalObjective.stage1WaveBudgets == null) snapshot.finalObjective.stage1WaveBudgets = new ArrayList<>();
+        if (snapshot.finalObjective.confirmationUuids == null) snapshot.finalObjective.confirmationUuids = new LinkedHashSet<>();
         for (RunSnapshot.EncounterState encounter : snapshot.encounters.values()) {
             if (encounter.plannedEnemyIds == null) encounter.plannedEnemyIds = new ArrayList<>();
             if (encounter.spawnedEntityUuids == null) encounter.spawnedEntityUuids = new LinkedHashSet<>();

@@ -237,6 +237,17 @@ public final class CombatService implements Listener {
         activeCombatEntities.add(entity.getUniqueId());
     }
 
+    public void damagePlayerFromPattern(LivingEntity attacker, Player target, double rawDamage) {
+        if (!isCombatEntity(attacker) || rawDamage <= 0.0 || !runs.isRunningMember(target)) return;
+        EnemyHitPermit permit = new EnemyHitPermit(attacker.getUniqueId(), target.getUniqueId());
+        permittedEnemyHits.put(permit, rawDamage);
+        try {
+            target.damage(Math.max(0.1, rawDamage / PLAYER_HP_SCALE), attacker);
+        } finally {
+            permittedEnemyHits.remove(permit);
+        }
+    }
+
     public void tick() {
         long now = Instant.now().toEpochMilli();
         processProductionEnemyActions();
@@ -559,15 +570,14 @@ public final class CombatService implements Listener {
             }
             LivingEntity attacker = combatAttacker(byEntity);
             if (attacker != null) {
+                EnemyHitPermit permit = new EnemyHitPermit(attacker.getUniqueId(), player.getUniqueId());
+                Double permittedDamage = permittedEnemyHits.remove(permit);
                 ProductionContentCatalog.EnemyEntry productionEnemy = production.enemiesById().get(enemyId(attacker));
-                if (productionEnemy != null) {
-                    EnemyHitPermit permit = new EnemyHitPermit(attacker.getUniqueId(), player.getUniqueId());
-                    Double actionDamage = permittedEnemyHits.remove(permit);
-                    if (actionDamage == null) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                    event.setDamage(actionDamage / PLAYER_HP_SCALE);
+                if (permittedDamage != null) {
+                    event.setDamage(permittedDamage / PLAYER_HP_SCALE);
+                } else if (productionEnemy != null) {
+                    event.setCancelled(true);
+                    return;
                 } else {
                     event.setDamage(enemyAttackDamage(attacker) / PLAYER_HP_SCALE);
                 }
@@ -1667,13 +1677,7 @@ public final class CombatService implements Listener {
         if (target == null || !target.isOnline() || !target.getWorld().equals(enemy.getWorld())
                 || target.getLocation().distanceSquared(enemy.getLocation()) > action.range() * action.range()
                 || !enemy.hasLineOfSight(target)) return;
-        EnemyHitPermit permit = new EnemyHitPermit(enemy.getUniqueId(), target.getUniqueId());
-        permittedEnemyHits.put(permit, action.damage());
-        try {
-            target.damage(Math.max(0.1, action.damage() / PLAYER_HP_SCALE), enemy);
-        } finally {
-            permittedEnemyHits.remove(permit);
-        }
+        damagePlayerFromPattern(enemy, target, action.damage());
         if (!action.statusId().isBlank()
                 && invulnerableUntilEpochMs.getOrDefault(target.getUniqueId(), 0L) < Instant.now().toEpochMilli()) {
             applyEnemyStatus(target, action.statusId());

@@ -305,6 +305,29 @@ public final class RunSnapshot {
         public boolean uniqueInputReserved;
         public boolean completionCommitted;
         public String failureReason;
+        public int lockedPartySize;
+        public Set<String> activationVotes = new LinkedHashSet<>();
+        public long activationVoteStartedAtEpochMs;
+        public String uniqueInputOwnerUuid;
+        public String arenaManifestId;
+        public String arenaWorld;
+        public double arenaX;
+        public double arenaY;
+        public double arenaZ;
+        public List<Integer> stage1WaveBudgets = new ArrayList<>();
+        public int stage1WaveIndex;
+        public String finalBossEntityUuid;
+        public double finalBossHp;
+        public double finalBossMaxHp;
+        public double finalBossBreakMax;
+        public int finalBossPhase;
+        public long finalBossPatternSequence;
+        public long nextPatternAtTick;
+        public boolean coreSubdued;
+        public double purificationTicks;
+        public int purificationCheckpointSeconds;
+        public Set<String> confirmationUuids = new LinkedHashSet<>();
+        public long confirmationOpenedAtEpochMs;
     }
 
     public static final class TestState {

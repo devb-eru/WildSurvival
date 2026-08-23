@@ -255,7 +255,7 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
         entity.setAI(true);
         runs.mutate(run -> run.boss.phaseTwoChannelResolved = true);
         runs.broadcast(ChatColor.RED + "협동 중단 실패 — 공명 파동");
-        for (Player player : activePlayers()) player.damage(Math.max(1.0, definition.attackDamage() / 100.0), entity);
+        for (Player player : activePlayers()) combat.damagePlayerFromPattern(entity, player, definition.attackDamage());
         nextPatternAtTick = runs.clockTick() + 80L;
     }
 
@@ -278,7 +278,7 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
             for (Player player : activePlayers()) {
                 if (player.getWorld().equals(entity.getWorld())
                         && player.getLocation().distanceSquared(entity.getLocation()) <= action.range() * action.range()) {
-                    player.damage(Math.max(0.1, action.damage() / 100.0), entity);
+                    combat.damagePlayerFromPattern(entity, player, action.damage());
                 }
             }
             entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 0.8f, 0.7f);
