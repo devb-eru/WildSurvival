@@ -1,0 +1,855 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "player-skills",
+  "records": [
+    {
+      "id": "ws.basic.sword.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.basic.sword.v1",
+        "SWORD",
+        "6",
+        "0.62초",
+        "ATK 0.90",
+        "35",
+        "내구 1, 3타 콤보",
+        "블록 손상 취소"
+      ]
+    },
+    {
+      "id": "ws.basic.axe.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.basic.axe.v1",
+        "AXE",
+        "10",
+        "0.92초",
+        "ATK 1.25",
+        "80",
+        "내구 1, 강공 태그",
+        "블록 손상 취소"
+      ]
+    },
+    {
+      "id": "ws.basic.bow.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.basic.bow.v1",
+        "BOW",
+        "8",
+        "0.72초",
+        "ATK 0.65~1.10",
+        "25",
+        "화살 1, 내구 1, 0.35~1.0초 차지",
+        "탄약 없으면 미실행"
+      ]
+    },
+    {
+      "id": "ws.basic.crossbow.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.basic.crossbow.v1",
+        "CROSSBOW",
+        "9",
+        "0.90초",
+        "ATK 1.15",
+        "65",
+        "선택 볼트 1, 내구 1, 탄창 상태",
+        "탄약·장전 없으면 미실행"
+      ]
+    },
+    {
+      "id": "ws.basic.dagger.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.basic.dagger.v1",
+        "DAGGER",
+        "4",
+        "0.34초",
+        "ATK 0.55",
+        "18",
+        "내구 1, 4타 콤보",
+        "블록 손상 취소"
+      ]
+    },
+    {
+      "id": "ws.basic.blunt.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.basic.blunt.v1",
+        "BLUNT",
+        "9",
+        "0.82초",
+        "ATK 1.10",
+        "120",
+        "내구 1, IMPACT",
+        "블록 손상 취소"
+      ]
+    },
+    {
+      "id": "ws.basic.staff.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.basic.staff.v1",
+        "STAFF",
+        "7",
+        "0.68초",
+        "ATK 0.95",
+        "40",
+        "내구 1, 직선 구체",
+        "블록·장식 충돌 시 소멸"
+      ]
+    },
+    {
+      "id": "ws.basic.pickaxe.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.basic.pickaxe.v1",
+        "PICKAXE",
+        "8",
+        "0.74초",
+        "ATK 1.05",
+        "95",
+        "내구 1",
+        "대상 없음+허용 블록이면 AP 없이 채굴"
+      ]
+    },
+    {
+      "id": "ws.basic.trident.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.basic.trident.v1",
+        "TRIDENT",
+        "7",
+        "0.70초",
+        "ATK 0.95",
+        "50",
+        "내구 1, 근접 찌르기",
+        "바닐라 투척 없음"
+      ]
+    },
+    {
+      "id": "ws.basic.unarmed.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.basic.unarmed.v1",
+        "UNARMED",
+        "3",
+        "0.32초",
+        "ATK 0.45",
+        "22",
+        "내구 없음, 4타 콤보",
+        "대상 없음+허용 블록이면 손 파괴"
+      ]
+    },
+    {
+      "id": "ws.sword.guard_cut.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.sword.guard_cut.v1",
+        "받아치기 베기",
+        "22, 5초",
+        "ATK 1.40, 브레이크 80; 패링 후 피해 +20%",
+        "SWORD`, `PARRY`, `COUNTER",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.sword.rally_lunge.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.sword.rally_lunge.v1",
+        "집결 돌진",
+        "34, 8초",
+        "5블록 돌진, ATK 1.80, MARK 5초",
+        "SWORD`, `MOBILITY`, `MARK",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.sword.turning_guard.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.sword.turning_guard.v1",
+        "선회 방벽",
+        "28, 7초",
+        "반경 3블록 ATK 1.10, 브레이크 70; 1초간 투사체 피해 -40%",
+        "SWORD`, `AREA`, `GUARD",
+        "레벨 3"
+      ]
+    },
+    {
+      "id": "ws.sword.focused_duel.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.sword.focused_duel.v1",
+        "결투 표식",
+        "32, 9초",
+        "단일 대상 MARK 8초, 자신이 주는 피해 +10%; 다른 대상 공격 시 종료",
+        "SWORD`, `MARK`, `SINGLE_TARGET",
+        "레벨 6"
+      ]
+    },
+    {
+      "id": "ws.axe.cleaving_charge.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.axe.cleaving_charge.v1",
+        "쪼개는 축력",
+        "36, 6초",
+        "ATK 2.20, 브레이크 180, DEF -16",
+        "AXE`, `HEAVY`, `ARMOR_BREAK",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.axe.execution_arc.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.axe.execution_arc.v1",
+        "처형 호",
+        "48, 10초",
+        "ATK 2.80, 낮은 HP 추가 계수",
+        "AXE`, `EXECUTE`, `BURST",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.axe.hook_sweep.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.axe.hook_sweep.v1",
+        "갈고리 휩쓸기",
+        "30, 7초",
+        "120도 ATK 1.35, 일반 적 2블록 끌기, 브레이크 110",
+        "AXE`, `AREA`, `PULL",
+        "레벨 3"
+      ]
+    },
+    {
+      "id": "ws.axe.resolute_hew.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.axe.resolute_hew.v1",
+        "버티는 참격",
+        "42, 11초",
+        "ATK 2.40, STARTUP 중 경직 면역; 받은 피해 최대 HP 12% 상한",
+        "AXE`, `TENACITY`, `HEAVY",
+        "레벨 6"
+      ]
+    },
+    {
+      "id": "ws.bow.pin_shot.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.bow.pin_shot.v1",
+        "고정 사격",
+        "22, 4초",
+        "ATK 1.25, ROOT 또는 보스 브레이크 변환",
+        "BOW`, `ROOT`, `CONTROL",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.bow.barbed_rain.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.bow.barbed_rain.v1",
+        "가시비",
+        "38, 9초",
+        "5발 영역, 대상당 최대 2발, BLEED",
+        "BOW`, `AREA`, `BLEED",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.bow.piercing_lane.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.bow.piercing_lane.v1",
+        "관통선",
+        "30, 6초",
+        "28블록 직선 ATK 1.55, 최대 3대상, 대상마다 피해 15% 감소",
+        "BOW`, `PIERCE`, `RANGED",
+        "레벨 3"
+      ]
+    },
+    {
+      "id": "ws.bow.rescue_flare.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.bow.rescue_flare.v1",
+        "구조 신호 화살",
+        "35, 12초",
+        "착탄 4블록 파티 SPD +8, 구조속도 +15%, 6초",
+        "BOW`, `SUPPORT`, `RESCUE",
+        "레벨 6"
+      ]
+    },
+    {
+      "id": "ws.crossbow.breach_bolt.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.crossbow.breach_bolt.v1",
+        "파쇄 볼트",
+        "32, 6초",
+        "ATK 1.80, 브레이크 160, DEF -20",
+        "CROSSBOW`, `BREACH`, `ARMOR_BREAK",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.crossbow.magazine_volley.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.crossbow.magazine_volley.v1",
+        "탄창 일제사",
+        "46, 10초",
+        "3발 연사, 같은 대상 피해 감쇠, SLOW",
+        "CROSSBOW`, `MULTIHIT`, `MAGAZINE",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.crossbow.suppressive_bolt.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.crossbow.suppressive_bolt.v1",
+        "제압 볼트",
+        "28, 7초",
+        "ATK 1.20, 5초 영역; 적 Damage Dealt -12%",
+        "CROSSBOW`, `AREA`, `WEAKEN",
+        "레벨 3"
+      ]
+    },
+    {
+      "id": "ws.crossbow.snap_reload.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.crossbow.snap_reload.v1",
+        "순간 장전",
+        "24, 14초",
+        "현재 선택 탄약 2발 장전, 탄약 실제 소비; 발사 피해 없음",
+        "CROSSBOW`, `RELOAD`, `UTILITY",
+        "레벨 6"
+      ]
+    },
+    {
+      "id": "ws.dagger.shadowstep.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.dagger.shadowstep.v1",
+        "그림자 걸음 베기",
+        "18, 4초",
+        "측후방 이동, ATK 1.35; 정확 회피 후 AP -4",
+        "DAGGER`, `DODGE`, `MOBILITY",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.dagger.venom_flurry.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.dagger.venom_flurry.v1",
+        "맹독 난무",
+        "30, 8초",
+        "5타, POISON 최대 2회",
+        "DAGGER`, `MULTIHIT`, `POISON",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.dagger.hemorrhage_cut.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.dagger.hemorrhage_cut.v1",
+        "개방 상처",
+        "24, 6초",
+        "ATK 1.20; BLEED 중첩당 +6%, 최대 +30%, 중첩 갱신 없음",
+        "DAGGER`, `BLEED`, `CONSUME",
+        "레벨 3"
+      ]
+    },
+    {
+      "id": "ws.dagger.fading_feint.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.dagger.fading_feint.v1",
+        "이탈 기만",
+        "26, 10초",
+        "4블록 후퇴, 2초간 적 우선순위 감소, 다음 공격 ATK 0.90 추가",
+        "DAGGER`, `DODGE`, `UTILITY",
+        "레벨 6"
+      ]
+    },
+    {
+      "id": "ws.blunt.quake_break.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.blunt.quake_break.v1",
+        "지진 파쇄",
+        "42, 8초",
+        "ATK 2.00, 브레이크 350, AIRBORNE 변환",
+        "BLUNT`, `BREAK`, `CONTROL",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.blunt.shattering_guard.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.blunt.shattering_guard.v1",
+        "분쇄 강타",
+        "52, 12초",
+        "ATK 2.60, 브레이크 480, VULNERABLE",
+        "BLUNT`, `BREAK`, `VULNERABLE",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.blunt.bulwark_strike.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.blunt.bulwark_strike.v1",
+        "버팀 타격",
+        "34, 8초",
+        "ATK 1.50, 브레이크 180; 2초간 자신 Damage Taken -15%",
+        "BLUNT`, `GUARD`, `IMPACT",
+        "레벨 3"
+      ]
+    },
+    {
+      "id": "ws.blunt.resonance_bell.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.blunt.resonance_bell.v1",
+        "공명 종타",
+        "46, 13초",
+        "반경 5블록 브레이크 260, 피해 ATK 0.80; BREAK 80% 이상이면 +25%",
+        "BLUNT`, `AREA`, `BREAK",
+        "레벨 6"
+      ]
+    },
+    {
+      "id": "ws.staff.ember_orb.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.staff.ember_orb.v1",
+        "잔불 구체",
+        "26, 5초",
+        "ATK 1.40 폭발, BURN 2중첩",
+        "STAFF`, `MAGIC`, `BURN",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.staff.purifying_field.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.staff.purifying_field.v1",
+        "정화장",
+        "50, 14초",
+        "5초 영역 회복·오염 획득 감소·약한 해제",
+        "STAFF`, `AREA`, `SUPPORT",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.staff.frost_ring.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.staff.frost_ring.v1",
+        "냉각 고리",
+        "32, 8초",
+        "반경 4블록 ATK 0.90, SLOW 35% 4초; 일반 적 중심부 ROOT 0.8초",
+        "STAFF`, `AREA`, `SLOW",
+        "레벨 3"
+      ]
+    },
+    {
+      "id": "ws.staff.chain_spark.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.staff.chain_spark.v1",
+        "연쇄 전류",
+        "40, 10초",
+        "최대 4대상 ATK 1.10/0.90/0.75/0.60, 대상당 브레이크 55",
+        "STAFF`, `CHAIN`, `MULTITARGET",
+        "레벨 6"
+      ]
+    },
+    {
+      "id": "ws.pickaxe.armor_drill.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.pickaxe.armor_drill.v1",
+        "장갑 천공",
+        "28, 6초",
+        "2타, 브레이크 220, DEF -24",
+        "PICKAXE`, `PENETRATE`, `ARMOR_BREAK",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.pickaxe.fault_line.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.pickaxe.fault_line.v1",
+        "단층선",
+        "44, 11초",
+        "8블록 직선, ATK 2.20, 브레이크 320",
+        "PICKAXE`, `LINE`, `BREAK",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.pickaxe.expose_seam.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.pickaxe.expose_seam.v1",
+        "약층 노출",
+        "25, 7초",
+        "ATK 1.00, MARK 6초; 표식 대상 파티 PEN +6",
+        "PICKAXE`, `MARK`, `COOP",
+        "레벨 3"
+      ]
+    },
+    {
+      "id": "ws.pickaxe.anchor_breaker.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.pickaxe.anchor_breaker.v1",
+        "고정점 파쇄",
+        "48, 12초",
+        "구조물·장갑 대상 ATK 2.50, 브레이크 420; 일반 대상 피해 70%",
+        "PICKAXE`, `OBJECTIVE`, `BREAK",
+        "레벨 6"
+      ]
+    },
+    {
+      "id": "ws.trident.cast_recall.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.trident.cast_recall.v1",
+        "공명 투창/회수 전류",
+        "34·20, 6·4초",
+        "HELD면 투척, THROWN이면 피해 경로 회수",
+        "TRIDENT`, `THROW`, `RECALL",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.trident.anchor_thrust.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.trident.anchor_thrust.v1",
+        "정박 찌르기",
+        "30, 6초",
+        "ATK 1.65, 브레이크 130, MARK 대상 ROOT 0.8초",
+        "TRIDENT`, `ROOT`, `MARK",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.trident.returning_crescent.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.trident.returning_crescent.v1",
+        "회귀 초승달",
+        "38, 9초",
+        "전방·귀환 2회 ATK 0.90, 대상별 최대 2회",
+        "TRIDENT`, `RECALL`, `MULTIHIT",
+        "레벨 3"
+      ]
+    },
+    {
+      "id": "ws.trident.current_cage.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.trident.current_cage.v1",
+        "전류 우리",
+        "46, 13초",
+        "반경 4블록 4초, SLOW 25%; 경계 통과 시 ATK 0.60 1회",
+        "TRIDENT`, `AREA`, `CONTROL",
+        "레벨 6"
+      ]
+    },
+    {
+      "id": "ws.unarmed.slip_counter.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.unarmed.slip_counter.v1",
+        "흘리기 반격",
+        "14, 3초",
+        "정확 회피·패링 후 ATK 1.50, 적중 AP 8 환급",
+        "UNARMED`, `COUNTER`, `DODGE",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.unarmed.breaker_rush.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.unarmed.breaker_rush.v1",
+        "파쇄 연타",
+        "26, 7초",
+        "4타, 총 ATK 1.20, 총 브레이크 112",
+        "UNARMED`, `MULTIHIT`, `BREAK",
+        "기본"
+      ]
+    },
+    {
+      "id": "ws.unarmed.guard_intercept.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.unarmed.guard_intercept.v1",
+        "가로막기",
+        "20, 8초",
+        "3블록 내 파티를 향한 다음 직접 공격 피해 25% 분담, 2초",
+        "UNARMED`, `COOP`, `GUARD",
+        "레벨 3"
+      ]
+    },
+    {
+      "id": "ws.unarmed.centered_stance.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.unarmed.centered_stance.v1",
+        "중심 자세",
+        "32, 12초",
+        "5초간 DEF +16, 권투 4타 완주 시 남은 시간 0.5초 증가, 최대 7초",
+        "UNARMED`, `STANCE`, `COMBO",
+        "레벨 6"
+      ]
+    },
+    {
+      "id": "ws.common.field_bandage.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.common.field_bandage.v1",
+        "전투 붕대",
+        "18, 12초",
+        "붕대 1",
+        "1.25초 채널, HP 8%+40 회복, BLEED 1중첩 제거",
+        "COMMON`, `HEALING`, `BLEED"
+      ]
+    },
+    {
+      "id": "ws.common.quick_purify.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.common.quick_purify.v1",
+        "신속 정화",
+        "22, 15초",
+        "정화 앰풀 1",
+        "1초 채널, 개인 오염 8%p 감소, 약한 DEBUFF 1개 제거",
+        "COMMON`, `CLEANSE`, `CORRUPTION"
+      ]
+    },
+    {
+      "id": "ws.common.ap_stim.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.common.ap_stim.v1",
+        "행동 자극",
+        "10, 30초",
+        "AP 자극제 1",
+        "즉시 AP 10, 5초간 초당 AP 3; 피격 시 지속 유지",
+        "COMMON`, `AP`, `CONSUMABLE"
+      ]
+    },
+    {
+      "id": "ws.common.threat_ping.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.common.threat_ping.v1",
+        "위협 지목",
+        "15, 12초",
+        "없음",
+        "24블록 대상 MARK 6초, 파티 브레이크 +4%",
+        "COMMON`, `MARK`, `COOP"
+      ]
+    },
+    {
+      "id": "ws.common.guard_step.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.common.guard_step.v1",
+        "방어 보법",
+        "20, 8초",
+        "없음",
+        "0.8초 Damage Taken -20%, 무적 아님, 이동 거리 1.5블록",
+        "COMMON`, `GUARD`, `MOBILITY"
+      ]
+    },
+    {
+      "id": "ws.common.break_call.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.common.break_call.v1",
+        "파쇄 지시",
+        "25, 15초",
+        "없음",
+        "대상 4초간 파티 BREAK_DAMAGE +6%, 보스 전체 상한 적용",
+        "COMMON`, `BREAK`, `COOP"
+      ]
+    },
+    {
+      "id": "ws.common.rescue_line.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.common.rescue_line.v1",
+        "구조 견인선",
+        "24, 16초",
+        "구조 고정대 1",
+        "8블록 내 빈사 파티원을 안전 방향으로 최대 3블록 이동",
+        "COMMON`, `RESCUE`, `UTILITY"
+      ]
+    },
+    {
+      "id": "ws.common.emergency_cover.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.common.emergency_cover.v1",
+        "임시 엄폐",
+        "30, 20초",
+        "야전 수리 키트 1",
+        "12초, 폭 3블록 투사체 엄폐 오브젝트; HP 600",
+        "COMMON`, `FACILITY`, `DEFENSE"
+      ]
+    },
+    {
+      "id": "ws.common.shared_breath.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.common.shared_breath.v1",
+        "함께 숨쉬기",
+        "28, 18초",
+        "없음",
+        "5블록 파티 AP 8 회복, 사용자 제외; 전투당 대상 1회",
+        "COMMON`, `AP`, `SUPPORT"
+      ]
+    },
+    {
+      "id": "ws.common.control_break.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.common.control_break.v1",
+        "억제 해제",
+        "35, 25초",
+        "정화 앰풀 1",
+        "자신 ROOT·SLOW·SILENCE 중 1개 해제, STUN 중 사용 불가",
+        "COMMON`, `CONTROL_BREAK`, `CLEANSE"
+      ]
+    },
+    {
+      "id": "ws.context.rescue.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.context.rescue.v1",
+        "빈사 구조",
+        "웅크리기+대상 우클릭",
+        "부상에 따라 AP 25~45, 채널",
+        "DEATH 구조 규칙 실행"
+      ]
+    },
+    {
+      "id": "ws.context.field_repair.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.context.field_repair.v1",
+        "야전 수리",
+        "수리 키트 우클릭",
+        "키트 1, 2초",
+        "선택 장비 내구 복구"
+      ]
+    },
+    {
+      "id": "ws.context.sample.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.context.sample.v1",
+        "표본 채취",
+        "채취기+대상 우클릭",
+        "2~4초",
+        "RES 표본 원장 등록"
+      ]
+    },
+    {
+      "id": "ws.context.ammo_share.v1",
+      "sourceDocumentId": "SKILL-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ws.context.ammo_share.v1",
+        "탄약 전달",
+        "파티 GUI",
+        "AP 0, 비전투",
+        "탄약 소유권을 원자적으로 이전"
+      ]
+    }
+  ]
+}

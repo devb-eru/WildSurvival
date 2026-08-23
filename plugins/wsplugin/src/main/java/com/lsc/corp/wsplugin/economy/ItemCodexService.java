@@ -1,6 +1,7 @@
 package com.lsc.corp.wsplugin.economy;
 
 import com.lsc.corp.wsplugin.content.PrototypeContent;
+import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
@@ -44,23 +45,40 @@ public final class ItemCodexService implements Listener {
     private final JavaPlugin plugin;
     private final RunService runs;
     private final PrototypeContent content;
+    private final ProductionContentCatalog production;
     private final TelemetryService telemetry;
     private final NamespacedKey itemIdKey;
     private final List<CodexEntry> entries;
     private final Map<UUID, Long> pendingNoticeAt = new ConcurrentHashMap<>();
 
-    public ItemCodexService(JavaPlugin plugin, RunService runs, PrototypeContent content, TelemetryService telemetry) {
+    private static final Map<String, String> PROTOTYPE_ALIASES = Map.ofEntries(
+            Map.entry("SWORD", "EQL-W01"), Map.entry("AXE", "EQL-W02"), Map.entry("BOW", "EQL-W03"),
+            Map.entry("PICKAXE", "EQL-W08"), Map.entry("MACE", "EQL-W06"), Map.entry("TRIDENT", "EQL-W09"),
+            Map.entry("RATION", "WSI-CONS-RATION_PACK"), Map.entry("BANDAGE", "WSI-CONS-BANDAGE"),
+            Map.entry("ANTIDOTE", "WSI-CONS-ANTIDOTE_INJECTION"),
+            Map.entry("COMMON_RESOURCE_DEPOT", "WSI-FAC-S16-KIT"),
+            Map.entry("TOOL-CRUDE-PICKAXE", "EQL-UT-RI-PICKAXE"),
+            Map.entry("TOOL-STONE-PICKAXE", "EQL-UT-RI-PICKAXE"),
+            Map.entry("TOOL-IRON-PICKAXE", "EQL-UT-RI-PICKAXE"));
+
+    public ItemCodexService(JavaPlugin plugin, RunService runs, PrototypeContent content,
+                            ProductionContentCatalog production, TelemetryService telemetry) {
         this.plugin = plugin;
         this.runs = runs;
         this.content = content;
+        this.production = production;
         this.telemetry = telemetry;
         this.itemIdKey = new NamespacedKey(plugin, "item_id");
-        this.entries = buildEntries(content);
+        this.entries = buildEntries(production);
     }
 
     public ItemStack resourceItem(String rawId, int amount) {
-        PrototypeContent.ResourceDefinition resource = content.resource(rawId.toUpperCase(java.util.Locale.ROOT));
-        ItemStack item = new ItemStack(resourceMaterial(resource.id()), Math.max(1, Math.min(64, amount)));
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        ProductionContentCatalog.CatalogEntry resource = production.item(id);
+        if (!"MATERIAL".equals(resource.domain()) || !id.startsWith("WSR-")) throw new IllegalArgumentException("Not a countable resource " + rawId);
+        Material display = Material.matchMaterial(resource.displayMaterial());
+        if (display == null || display.isAir()) display = resourceMaterial(id);
+        ItemStack item = new ItemStack(display, Math.max(1, Math.min(display.getMaxStackSize(), amount)));
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.GOLD + "[WS] " + resource.name());
         meta.setLore(List.of(
@@ -74,15 +92,21 @@ public final class ItemCodexService implements Listener {
     }
 
     public ItemStack contentItem(String rawId, int amount) {
-        PrototypeContent.ItemDefinition definition = content.item(rawId.toUpperCase(java.util.Locale.ROOT));
-        Material material = Material.matchMaterial(definition.material());
-        if (material == null || material.isAir()) throw new IllegalArgumentException("Invalid item material " + definition.material());
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        PrototypeContent.ItemDefinition prototype = content.items().stream().filter(value -> value.id().equals(id)).findFirst().orElse(null);
+        ProductionContentCatalog.CatalogEntry productionEntry = prototype == null ? production.item(id) : null;
+        String materialName = prototype == null ? productionEntry.displayMaterial() : prototype.material();
+        Material material = Material.matchMaterial(materialName);
+        if (material == null || material.isAir()) throw new IllegalArgumentException("Invalid item material " + materialName);
         ItemStack item = new ItemStack(material, Math.max(1, Math.min(material.getMaxStackSize(), amount)));
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.GOLD + "[WS] " + definition.name());
-        meta.setLore(List.of(ChatColor.WHITE + definition.description(), ChatColor.GRAY + "분류: " + definition.category(),
-                ChatColor.DARK_GRAY + "ID: " + definition.id()));
-        meta.getPersistentDataContainer().set(itemIdKey, PersistentDataType.STRING, definition.id());
+        String name = prototype == null ? productionEntry.name() : prototype.name();
+        String category = prototype == null ? productionEntry.domain() : prototype.category();
+        String description = prototype == null ? "ws-content-r2 등록 아이템" : prototype.description();
+        meta.setDisplayName(ChatColor.GOLD + "[WS] " + name);
+        meta.setLore(List.of(ChatColor.WHITE + description, ChatColor.GRAY + "분류: " + category,
+                ChatColor.DARK_GRAY + "ID: " + id));
+        meta.getPersistentDataContainer().set(itemIdKey, PersistentDataType.STRING, id);
         item.setItemMeta(meta);
         return item;
     }
@@ -90,7 +114,7 @@ public final class ItemCodexService implements Listener {
     public ItemStack tagRegisteredItem(ItemStack item, String rawId) {
         if (item == null || item.getType().isAir()) throw new IllegalArgumentException("Cannot register an empty item");
         String id = rawId.toUpperCase(java.util.Locale.ROOT);
-        if (entries.stream().noneMatch(entry -> entry.id.equals(id))) throw new IllegalArgumentException("Unknown codex item " + rawId);
+        if (!hasEntry(id)) throw new IllegalArgumentException("Unknown codex item " + rawId);
         ItemMeta meta = item.getItemMeta();
         meta.getPersistentDataContainer().set(itemIdKey, PersistentDataType.STRING, id);
         item.setItemMeta(meta);
@@ -98,23 +122,24 @@ public final class ItemCodexService implements Listener {
     }
 
     public void grantItem(Player player, String itemId, int amount) {
-        PrototypeContent.ItemDefinition definition = content.item(itemId.toUpperCase(java.util.Locale.ROOT));
-        Material material = Material.matchMaterial(definition.material());
+        String id = itemId.toUpperCase(java.util.Locale.ROOT);
+        ItemStack example = contentItem(id, 1);
+        Material material = example.getType();
         int remaining = amount;
         while (remaining > 0) {
             int stack = Math.min(material == null ? 64 : material.getMaxStackSize(), remaining);
-            int overflow = addWithoutReservedSlot(player, contentItem(definition.id(), stack));
-            if (overflow > 0) queueRegisteredItem(player, definition.id(), overflow);
+            int overflow = addWithoutReservedSlot(player, contentItem(id, stack));
+            if (overflow > 0) queueRegisteredItem(player, id, overflow);
             remaining -= stack;
         }
-        discover(player, definition.id(), "ACQUIRE_ITEM");
+        discover(player, id, "ACQUIRE_ITEM");
     }
 
     public int grantResource(Player player, String resourceId, int amount) {
         if (amount <= 0) {
             return 0;
         }
-        String normalized = content.resource(resourceId.toUpperCase(java.util.Locale.ROOT)).id();
+        String normalized = production.item(resourceId.toUpperCase(java.util.Locale.ROOT)).id();
         int remaining = amount;
         while (remaining > 0) {
             int stackAmount = Math.min(64, remaining);
@@ -141,7 +166,7 @@ public final class ItemCodexService implements Listener {
         if (amount < 0) {
             throw new IllegalArgumentException("Resource amount cannot be negative");
         }
-        String normalized = content.resource(resourceId.toUpperCase(java.util.Locale.ROOT)).id();
+        String normalized = production.item(resourceId.toUpperCase(java.util.Locale.ROOT)).id();
         if (countResource(player, normalized) < amount) {
             return false;
         }
@@ -191,7 +216,8 @@ public final class ItemCodexService implements Listener {
 
     public boolean isResourceItem(ItemStack item) {
         String id = itemId(item);
-        return id != null && content.resources().stream().anyMatch(resource -> resource.id().equals(id));
+        ProductionContentCatalog.CatalogEntry entry = id == null ? null : production.itemsById().get(id);
+        return entry != null && "MATERIAL".equals(entry.domain()) && id.startsWith("WSR-");
     }
 
     public String itemId(ItemStack item) {
@@ -205,8 +231,8 @@ public final class ItemCodexService implements Listener {
         if (!runs.isMember(player)) {
             return;
         }
-        String id = rawId.toUpperCase(java.util.Locale.ROOT);
-        if (entries.stream().noneMatch(entry -> entry.id.equals(id))) {
+        String id = normalizeCodexId(rawId);
+        if (!hasEntry(id)) {
             throw new IllegalArgumentException("Unknown codex item " + rawId);
         }
         boolean added = runs.commitOnce("codex:" + player.getUniqueId() + ":" + id, "ITEM_CODEX_UNLOCKED",
@@ -224,17 +250,17 @@ public final class ItemCodexService implements Listener {
         }
         for (ItemStack item : player.getInventory().getStorageContents()) {
             String id = itemId(item);
-            if (id != null && entries.stream().anyMatch(entry -> entry.id.equals(id))) {
+            if (id != null && hasEntry(id)) {
                 discover(player, id, "INVENTORY_RECONCILE");
             }
         }
         for (String equipment : state.ownedEquipment) {
-            if (entries.stream().anyMatch(entry -> entry.id.equals(equipment))) {
+            if (hasEntry(equipment)) {
                 discover(player, equipment, "OWNED_EQUIPMENT_RECONCILE");
             }
         }
         state.quickItems.forEach((id, amount) -> {
-            if (amount > 0 && entries.stream().anyMatch(entry -> entry.id.equals(id))) {
+            if (amount > 0 && hasEntry(id)) {
                 discover(player, id, "QUICK_ITEM_RECONCILE");
             }
         });
@@ -271,26 +297,32 @@ public final class ItemCodexService implements Listener {
     }
 
     public void open(Player player) {
+        open(player, 0);
+    }
+
+    private void open(Player player, int requestedPage) {
         if (!runs.isMember(player)) {
             player.sendMessage(ChatColor.RED + "현재 회차 멤버가 아닙니다.");
             return;
         }
         reconcile(player);
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
-        CodexHolder holder = new CodexHolder(player.getUniqueId());
+        int pageCount = Math.max(1, (entries.size() + ENTRY_SLOTS.length - 1) / ENTRY_SLOTS.length);
+        int page = Math.max(0, Math.min(pageCount - 1, requestedPage));
+        CodexHolder holder = new CodexHolder(player.getUniqueId(), page);
         Inventory inventory = Bukkit.createInventory(holder, 54, ChatColor.DARK_AQUA + "아이템 도감");
-        int unlocked = 0;
-        for (int index = 0; index < entries.size() && index < ENTRY_SLOTS.length; index++) {
-            CodexEntry entry = entries.get(index);
+        int unlocked = (int) entries.stream().filter(entry -> state.discoveredItemIds.contains(entry.id)).count();
+        int start = page * ENTRY_SLOTS.length;
+        for (int localIndex = 0; localIndex < ENTRY_SLOTS.length && start + localIndex < entries.size(); localIndex++) {
+            CodexEntry entry = entries.get(start + localIndex);
             boolean known = state.discoveredItemIds.contains(entry.id);
-            inventory.setItem(ENTRY_SLOTS[index], known ? knownItem(entry, state.detailedTooltips) : unknownItem(entry.id));
-            if (known) {
-                unlocked++;
-            }
+            inventory.setItem(ENTRY_SLOTS[localIndex], known ? knownItem(entry, state.detailedTooltips) : unknownItem(entry));
         }
         inventory.setItem(4, named(Material.KNOWLEDGE_BOOK, ChatColor.AQUA + "아이템 도감 " + unlocked + "/" + entries.size(),
-                List.of(ChatColor.GRAY + "항목 위치와 ID는 고정됩니다.")));
+                List.of(ChatColor.GRAY + "항목 위치와 ID는 고정됩니다.", ChatColor.WHITE + "페이지 " + (page + 1) + "/" + pageCount)));
+        if (page > 0) inventory.setItem(45, named(Material.ARROW, ChatColor.YELLOW + "이전 페이지", List.of()));
         inventory.setItem(49, named(Material.OAK_DOOR, ChatColor.RED + "닫기", List.of()));
+        if (page + 1 < pageCount) inventory.setItem(53, named(Material.ARROW, ChatColor.YELLOW + "다음 페이지", List.of()));
         player.openInventory(inventory);
     }
 
@@ -305,7 +337,7 @@ public final class ItemCodexService implements Listener {
         }
         Item item = event.getItem();
         String id = itemId(item.getItemStack());
-        if (id != null && entries.stream().anyMatch(entry -> entry.id.equals(id))) {
+        if (id != null && hasEntry(id)) {
             discover(player, id, "PICKUP");
         }
     }
@@ -345,9 +377,10 @@ public final class ItemCodexService implements Listener {
             return;
         }
         event.setCancelled(true);
-        if (event.getWhoClicked() instanceof Player player && player.getUniqueId().equals(holder.owner)
-                && event.getRawSlot() == 49) {
-            player.closeInventory();
+        if (event.getWhoClicked() instanceof Player player && player.getUniqueId().equals(holder.owner)) {
+            if (event.getRawSlot() == 45) open(player, holder.page - 1);
+            else if (event.getRawSlot() == 53) open(player, holder.page + 1);
+            else if (event.getRawSlot() == 49) player.closeInventory();
         }
     }
 
@@ -363,32 +396,20 @@ public final class ItemCodexService implements Listener {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.GOLD + entry.name);
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.DARK_GRAY + "ID: " + entry.id);
+        lore.add(ChatColor.DARK_GRAY + "도감 " + String.format(java.util.Locale.ROOT, "%04d", entry.codexIndex) + " · ID: " + entry.id);
         lore.add(ChatColor.WHITE + "분류: " + entry.category);
         lore.addAll(entry.details.stream().map(line -> ChatColor.GRAY + line).toList());
         if (detailed) {
-            recipeForOutput(entry.id).ifPresent(recipe -> {
-                lore.add(ChatColor.YELLOW + "조합법: " + recipe.name());
-                recipe.costs().forEach((id, amount) -> lore.add(ChatColor.WHITE + "- " + content.resource(id).name() + " " + amount));
-                if (recipe.shapeless()) {
-                    lore.add(ChatColor.YELLOW + "배치: 위치 무관, 재료마다 서로 다른 칸 사용");
-                } else {
-                    lore.add(ChatColor.YELLOW + "3×3 배치:");
-                    for (int row = 0; row < 3; row++) {
-                        List<String> cells = new ArrayList<>();
-                        for (int column = 0; column < 3; column++) {
-                            String resourceId = recipe.shape().get(row * 3 + column);
-                            cells.add(resourceId == null ? "빈칸" : content.resource(resourceId).name());
-                        }
-                        lore.add(ChatColor.WHITE + "[" + String.join("][", cells) + "]");
-                    }
+            List<ProductionContentCatalog.RecipeEntry> recipes = production.recipesByOutput()
+                    .getOrDefault(entry.id, List.of());
+            if (recipes.isEmpty()) {
+                lore.add(ChatColor.GRAY + "획득 전용 · 등록 조합법 없음");
+            } else {
+                lore.add(ChatColor.YELLOW + "등록 조합법 " + recipes.size() + "개:");
+                for (ProductionContentCatalog.RecipeEntry recipe : recipes) {
+                    lore.add(ChatColor.WHITE + "- " + recipe.id() + " [" + recipe.recipeType() + "]");
+                    lore.add(ChatColor.GRAY + "  입력 권위: " + recipe.inputAuthority());
                 }
-            });
-            List<PrototypeContent.RecipeDefinition> uses = content.recipes().stream()
-                    .filter(recipe -> recipe.costs().containsKey(entry.id)).toList();
-            if (!uses.isEmpty()) {
-                lore.add(ChatColor.YELLOW + "사용처:");
-                uses.forEach(recipe -> lore.add(ChatColor.WHITE + "- " + recipe.name()));
             }
         }
         meta.setLore(lore);
@@ -396,47 +417,35 @@ public final class ItemCodexService implements Listener {
         return item;
     }
 
-    private ItemStack unknownItem(String id) {
+    private ItemStack unknownItem(CodexEntry entry) {
         return named(Material.BLACK_DYE, ChatColor.BLACK + "???", List.of(
-                ChatColor.DARK_GRAY + "ID: " + id,
+                ChatColor.DARK_GRAY + "도감 " + String.format(java.util.Locale.ROOT, "%04d", entry.codexIndex),
                 ChatColor.GRAY + "처음 획득하면 정보가 해금됩니다."
         ));
     }
 
-    private java.util.Optional<PrototypeContent.RecipeDefinition> recipeForOutput(String id) {
-        return content.recipes().stream().filter(recipe -> recipe.rewardId().equals(id)).findFirst();
-    }
-
     private CodexEntry entry(String id) {
-        return entries.stream().filter(entry -> entry.id.equals(id)).findFirst().orElseThrow();
+        String normalized = normalizeCodexId(id);
+        return entries.stream().filter(entry -> entry.id.equals(normalized)).findFirst().orElseThrow();
     }
 
-    private static List<CodexEntry> buildEntries(PrototypeContent content) {
-        Map<String, CodexEntry> result = new LinkedHashMap<>();
-        for (PrototypeContent.ResourceDefinition resource : content.resources()) {
-            List<String> details = resource.sourceMaterials().isEmpty()
-                    ? List.of("전투·오염 개체에서 획득")
-                    : List.of("채집: " + String.join(", ", resource.sourceMaterials()));
-            result.put(resource.id(), new CodexEntry(resource.id(), resource.name(), "RESOURCE",
-                    resourceMaterial(resource.id()), details));
-        }
-        for (PrototypeContent.ItemDefinition definition : content.items()) {
-            Material material = Material.matchMaterial(definition.material());
-            result.put(definition.id(), new CodexEntry(definition.id(), definition.name(), definition.category(),
-                    material == null || material.isAir() ? Material.PAPER : material, List.of(definition.description())));
-        }
-        for (PrototypeContent.RecipeDefinition recipe : content.recipes()) {
-            Material material = switch (recipe.rewardType()) {
-                case "EQUIPMENT" -> Material.matchMaterial(content.weapon(recipe.rewardId()).material());
-                case "ITEM", "QUICK_ITEM" -> Material.matchMaterial(content.item(recipe.rewardId()).material());
-                case "FACILITY" -> Material.BARREL;
-                default -> Material.PAPER;
-            };
-            result.putIfAbsent(recipe.rewardId(), new CodexEntry(recipe.rewardId(), recipe.name(), recipe.rewardType(),
+    private static List<CodexEntry> buildEntries(ProductionContentCatalog production) {
+        return production.codexEntries().stream().map(entry -> {
+            Material material = Material.matchMaterial(entry.displayMaterial());
+            return new CodexEntry(entry.id(), entry.codexIndex(), entry.name(), entry.domain(),
                     material == null || material.isAir() ? Material.PAPER : material,
-                    List.of("WildSurvival Craft GUI 전용 제작")));
-        }
-        return List.copyOf(result.values());
+                    List.of("최초 Day " + entry.firstDay(), "고정 도감 위치 · ws-content-r2"));
+        }).toList();
+    }
+
+    private String normalizeCodexId(String rawId) {
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        return PROTOTYPE_ALIASES.getOrDefault(id, id);
+    }
+
+    private boolean hasEntry(String rawId) {
+        String id = normalizeCodexId(rawId);
+        return entries.stream().anyMatch(entry -> entry.id.equals(id));
     }
 
     private static Material resourceMaterial(String id) {
@@ -452,7 +461,8 @@ public final class ItemCodexService implements Listener {
     }
 
     private ItemStack registeredItem(String id, int amount) {
-        boolean resource = content.resources().stream().anyMatch(value -> value.id().equals(id));
+        ProductionContentCatalog.CatalogEntry entry = production.itemsById().get(id);
+        boolean resource = entry != null && "MATERIAL".equals(entry.domain()) && id.startsWith("WSR-");
         return resource ? resourceItem(id, Math.min(64, amount)) : contentItem(id, amount);
     }
 
@@ -494,14 +504,16 @@ public final class ItemCodexService implements Listener {
         return item;
     }
 
-    private record CodexEntry(String id, String name, String category, Material material, List<String> details) {
+    private record CodexEntry(String id, int codexIndex, String name, String category, Material material, List<String> details) {
     }
 
     private static final class CodexHolder implements InventoryHolder {
         private final UUID owner;
+        private final int page;
 
-        private CodexHolder(UUID owner) {
+        private CodexHolder(UUID owner, int page) {
             this.owner = owner;
+            this.page = page;
         }
 
         @Override

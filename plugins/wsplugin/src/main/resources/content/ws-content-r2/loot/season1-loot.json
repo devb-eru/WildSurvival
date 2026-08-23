@@ -1,0 +1,730 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "loot",
+  "records": [
+    {
+      "id": "LOOT-EN-D1-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D1-01",
+        "EN-D1-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D1-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D1-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D1-02",
+        "EN-D1-02",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D1-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D11-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D11-01",
+        "EN-D11-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D11-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D11-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D11-02",
+        "EN-D11-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D11-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D12-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D12-01",
+        "EN-D12-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D12-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D12-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D12-02",
+        "EN-D12-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D12-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D13-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D13-01",
+        "EN-D13-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D13-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D13-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D13-02",
+        "EN-D13-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D13-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D14-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D14-01",
+        "EN-D14-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D14-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D14-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D14-02",
+        "EN-D14-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D14-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D15-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D15-01",
+        "EN-D15-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D15-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D15-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D15-02",
+        "EN-D15-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D15-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D16-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D16-01",
+        "EN-D16-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D16-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D16-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D16-02",
+        "EN-D16-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D16-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D17-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D17-01",
+        "EN-D17-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D17-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D17-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D17-02",
+        "EN-D17-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D17-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D18-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D18-E01",
+        "EN-D18-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D18-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D18-E02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D18-E02",
+        "EN-D18-E02",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D18-E02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D19-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D19-E01",
+        "EN-D19-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D19-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D2-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D2-01",
+        "EN-D2-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D2-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D21-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D21-01",
+        "EN-D21-01",
+        "COMBAT-D30",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D21-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D22-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D22-01",
+        "EN-D22-01",
+        "COMBAT-D30",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D22-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D23-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D23-01",
+        "EN-D23-01",
+        "COMBAT-D30",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D23-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D24-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D24-01",
+        "EN-D24-01",
+        "COMBAT-D30",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D24-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D27-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D27-01",
+        "EN-D27-01",
+        "COMBAT-D30",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D27-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D28-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D28-E01",
+        "EN-D28-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D28-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D31-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D31-01",
+        "EN-D31-01",
+        "COMBAT-D40",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D31-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D33-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D33-01",
+        "EN-D33-01",
+        "COMBAT-D40",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D33-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D34-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D34-01",
+        "EN-D34-01",
+        "COMBAT-D40",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D34-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D37-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D37-01",
+        "EN-D37-01",
+        "COMBAT-D40",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D37-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D38-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D38-E01",
+        "EN-D38-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D38-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D4-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D4-01",
+        "EN-D4-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D4-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D4-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D4-02",
+        "EN-D4-02",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D4-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D41-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D41-01",
+        "EN-D41-01",
+        "COMBAT-D50",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D41-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D44-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D44-01",
+        "EN-D44-01",
+        "COMBAT-D50",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D44-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D46-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D46-E01",
+        "EN-D46-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D46-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D47-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D47-01",
+        "EN-D47-01",
+        "COMBAT-D50",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D47-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D49-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D49-E01",
+        "EN-D49-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D49-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D5-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D5-01",
+        "EN-D5-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D5-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D6-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D6-01",
+        "EN-D6-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D6-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D6-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D6-02",
+        "EN-D6-02",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D6-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D7-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D7-01",
+        "EN-D7-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D7-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D7-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D7-02",
+        "EN-D7-02",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D7-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D8-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D8-E01",
+        "EN-D8-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D8-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D9-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-EN-D9-E01",
+        "EN-D9-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D9-E01"
+      ]
+    },
+    {
+      "id": "LOOT-BOSS-D10",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-BOSS-D10",
+        "BOSS-D10",
+        "WSP-BOSS-D10-CORE, WSP-REBUILD-PART-A",
+        "EQL-D10 후보 3→1, PAUG 1회차",
+        "WSR-RESONANT_RESIDUE 6/7/8"
+      ]
+    },
+    {
+      "id": "LOOT-BOSS-D20",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-BOSS-D20",
+        "BOSS-D20",
+        "WSP-REBUILD-PART-B",
+        "EQD20-LG 후보 3→1, PAUG 2회차",
+        "WSR-NEURAL_RESIDUE 8/10/12"
+      ]
+    },
+    {
+      "id": "LOOT-BOSS-D30",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-BOSS-D30",
+        "BOSS-D30",
+        "WSP-REBUILD-PART-C",
+        "EQD50-B30 후보 3→1, PAUG 3회차",
+        "WSR-REFINED_MUTATION 8/10/12, WSR-PURIFY_MEDIUM 6/8/10"
+      ]
+    },
+    {
+      "id": "LOOT-BOSS-D40",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-BOSS-D40",
+        "BOSS-D40",
+        "WSP-REBUILD-PART-D",
+        "EQD50-B40 후보 3→1, PAUG 4회차",
+        "WSR-PATTERN_RESIDUE 10/13/16, WSR-HIGH_DENSITY_ALLOY 7/9/11"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-BASIC",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-NODE-BASIC",
+        "ENT-NODE-BASIC",
+        "WSR-WOOD/STONE/FIBER/LEATHER/RATION/COAL",
+        "T0~T1, 채집자 개인"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-INDUSTRIAL",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-NODE-INDUSTRIAL",
+        "ENT-NODE-INDUSTRIAL",
+        "WSR-IRON/COPPER/GOLD/REDSTONE/AMETHYST",
+        "T1~T2, 채집자 개인"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-MEDICAL",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-NODE-MEDICAL",
+        "ENT-NODE-MEDICAL",
+        "WSR-HERB/ELASTIC_FIBER/상태 표본",
+        "T3, 채집자 개인"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-CORRUPTED",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-NODE-CORRUPTED",
+        "ENT-NODE-CORRUPTED",
+        "WSR-TISSUE/MUTATION_SHARD/VITAL_TISSUE",
+        "T2~T4, 채집자 개인"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-RIFT",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-NODE-RIFT",
+        "ENT-NODE-RIFT",
+        "WSR-PURIFY_CATALYST/RIFT_POWDER/REFINED_MUTATION",
+        "T4~T5, 사건 contributor 분배"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-RECONSTRUCTION",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-NODE-RECONSTRUCTION",
+        "ENT-NODE-RECONSTRUCTION",
+        "WSR-HARD_AGGREGATE/RESONANCE_COIL/PATTERN_RESIDUE/HIGH_DENSITY_ALLOY",
+        "T5~T6, contributor 분배"
+      ]
+    },
+    {
+      "id": "LOOT-ENCOUNTER-COMMON",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-ENCOUNTER-COMMON",
+        "일반 사건",
+        "Day profile 일반 자원, contributor 분배"
+      ]
+    },
+    {
+      "id": "LOOT-ENCOUNTER-ELITE",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-ENCOUNTER-ELITE",
+        "정예 사건",
+        "ELITE profile, 전투 묶음당 1회"
+      ]
+    },
+    {
+      "id": "LOOT-ENCOUNTER-ASSAULT",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-ENCOUNTER-ASSAULT",
+        "시설/추적 공세",
+        "방어 성공 가치, 자동 시설 피해만으로 claim 불가"
+      ]
+    },
+    {
+      "id": "LOOT-DISCOVERY",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-DISCOVERY",
+        "발견·연구",
+        "recipe/도감/Story 해금, 자원 복제 없음"
+      ]
+    },
+    {
+      "id": "LOOT-SALVAGE-EQUIPMENT",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-SALVAGE-EQUIPMENT",
+        "FAC-S04 분해",
+        "일반 50%, 가공 70%, 강화 35%, 고유 분해 금지"
+      ]
+    },
+    {
+      "id": "LOOT-RECOVERY",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-RECOVERY",
+        "사망·시설·관리자 복구",
+        "새 roll 없음, 원 transaction 결과만 반환"
+      ]
+    },
+    {
+      "id": "LOOT-NONE",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "raw": [
+        "LOOT-NONE",
+        "1"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1052 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "equipment",
+  "records": [
+    {
+      "id": "EQD20-AC-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1087,
+      "name": "EQD20-AC-R01",
+      "equipmentType": "ACCESSORY",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "RECOVERY_COMPASS",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1087",
+        "EQD20-AC-R01",
+        "ACCESSORY",
+        "ACCESSORY/CHARM",
+        "RECOVERY_COMPASS",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AC-R02",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1088,
+      "name": "EQD20-AC-R02",
+      "equipmentType": "ACCESSORY",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "RECOVERY_COMPASS",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1088",
+        "EQD20-AC-R02",
+        "ACCESSORY",
+        "ACCESSORY/CHARM",
+        "RECOVERY_COMPASS",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AX-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1089,
+      "name": "EQD20-AX-R01",
+      "equipmentType": "AX",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "AX",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1089",
+        "EQD20-AX-R01",
+        "AX",
+        "MAIN_WEAPON",
+        "IRON_AXE",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-BL-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1090,
+      "name": "EQD20-BL-R01",
+      "equipmentType": "BL",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "BL",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1090",
+        "EQD20-BL-R01",
+        "BL",
+        "MAIN_WEAPON",
+        "MACE",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-BO-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1091,
+      "name": "EQD20-BO-R01",
+      "equipmentType": "BO",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "BO",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1091",
+        "EQD20-BO-R01",
+        "BO",
+        "MAIN_WEAPON",
+        "BOW",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-CB-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1092,
+      "name": "EQD20-CB-R01",
+      "equipmentType": "CB",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "CB",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1092",
+        "EQD20-CB-R01",
+        "CB",
+        "MAIN_WEAPON",
+        "CROSSBOW",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-CH-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1093,
+      "name": "EQD20-CH-R01",
+      "equipmentType": "CHARM",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "AMETHYST_SHARD",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1093",
+        "EQD20-CH-R01",
+        "CHARM",
+        "ACCESSORY/CHARM",
+        "AMETHYST_SHARD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-CH-R02",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1094,
+      "name": "EQD20-CH-R02",
+      "equipmentType": "CHARM",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "AMETHYST_SHARD",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1094",
+        "EQD20-CH-R02",
+        "CHARM",
+        "ACCESSORY/CHARM",
+        "AMETHYST_SHARD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-DG-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1095,
+      "name": "EQD20-DG-R01",
+      "equipmentType": "DG",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "DG",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1095",
+        "EQD20-DG-R01",
+        "DG",
+        "MAIN_WEAPON",
+        "IRON_SWORD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-AC01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1096,
+      "name": "EQD20-EP-AC01",
+      "equipmentType": "ACCESSORY",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "RECOVERY_COMPASS",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1096",
+        "EQD20-EP-AC01",
+        "ACCESSORY",
+        "ACCESSORY/CHARM",
+        "RECOVERY_COMPASS",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-AR01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1097,
+      "name": "EQD20-EP-AR01",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ARMOR_CHEST",
+      "displayMaterial": "ARMOR_CHEST",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1097",
+        "EQD20-EP-AR01",
+        "ARMOR",
+        "ARMOR_CHEST",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-CH01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1098,
+      "name": "EQD20-EP-CH01",
+      "equipmentType": "CHARM",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "AMETHYST_SHARD",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1098",
+        "EQD20-EP-CH01",
+        "CHARM",
+        "ACCESSORY/CHARM",
+        "AMETHYST_SHARD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-OH01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1099,
+      "name": "EQD20-EP-OH01",
+      "equipmentType": "OFF",
+      "equipmentSlot": "OFF_WEAPON",
+      "displayMaterial": "SHIELD",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1099",
+        "EQD20-EP-OH01",
+        "OFF",
+        "OFF_WEAPON",
+        "SHIELD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-UA01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1100,
+      "name": "EQD20-EP-UA01",
+      "equipmentType": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "UNARMED_SUPPORT",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1100",
+        "EQD20-EP-UA01",
+        "UNARMED_SUPPORT",
+        "ACCESSORY/CHARM",
+        "TRIPWIRE_HOOK",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-AC01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1101,
+      "name": "EQD20-LG-AC01",
+      "equipmentType": "ACCESSORY",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "RECOVERY_COMPASS",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1101",
+        "EQD20-LG-AC01",
+        "ACCESSORY",
+        "ACCESSORY/CHARM",
+        "RECOVERY_COMPASS",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-AR01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1102,
+      "name": "EQD20-LG-AR01",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ARMOR_CHEST",
+      "displayMaterial": "ARMOR_CHEST",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1102",
+        "EQD20-LG-AR01",
+        "ARMOR",
+        "ARMOR_CHEST",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-CH01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1103,
+      "name": "EQD20-LG-CH01",
+      "equipmentType": "CHARM",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "AMETHYST_SHARD",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1103",
+        "EQD20-LG-CH01",
+        "CHARM",
+        "ACCESSORY/CHARM",
+        "AMETHYST_SHARD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-OH01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1104,
+      "name": "EQD20-LG-OH01",
+      "equipmentType": "OFF",
+      "equipmentSlot": "OFF_WEAPON",
+      "displayMaterial": "SHIELD",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1104",
+        "EQD20-LG-OH01",
+        "OFF",
+        "OFF_WEAPON",
+        "SHIELD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-UA01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1105,
+      "name": "EQD20-LG-UA01",
+      "equipmentType": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "UNARMED_SUPPORT",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1105",
+        "EQD20-LG-UA01",
+        "UNARMED_SUPPORT",
+        "ACCESSORY/CHARM",
+        "TRIPWIRE_HOOK",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-OH-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1106,
+      "name": "EQD20-OH-R01",
+      "equipmentType": "OFF",
+      "equipmentSlot": "OFF_WEAPON",
+      "displayMaterial": "SHIELD",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1106",
+        "EQD20-OH-R01",
+        "OFF",
+        "OFF_WEAPON",
+        "SHIELD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-PK-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1107,
+      "name": "EQD20-PK-R01",
+      "equipmentType": "PK",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "PK",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1107",
+        "EQD20-PK-R01",
+        "PK",
+        "MAIN_WEAPON",
+        "IRON_PICKAXE",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-ST-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1108,
+      "name": "EQD20-ST-R01",
+      "equipmentType": "ST",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "ST",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1108",
+        "EQD20-ST-R01",
+        "ST",
+        "MAIN_WEAPON",
+        "BLAZE_ROD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-SW-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1109,
+      "name": "EQD20-SW-R01",
+      "equipmentType": "SW",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "SW",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1109",
+        "EQD20-SW-R01",
+        "SW",
+        "MAIN_WEAPON",
+        "IRON_SWORD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-TR-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1110,
+      "name": "EQD20-TR-R01",
+      "equipmentType": "TR",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "TR",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1110",
+        "EQD20-TR-R01",
+        "TR",
+        "MAIN_WEAPON",
+        "TRIDENT",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-UA-R01",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1111,
+      "name": "EQD20-UA-R01",
+      "equipmentType": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "UNARMED_SUPPORT",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1111",
+        "EQD20-UA-R01",
+        "UNARMED_SUPPORT",
+        "ACCESSORY/CHARM",
+        "TRIPWIRE_HOOK",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-W01-SW",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1112,
+      "name": "EQD20-EP-W01-SW",
+      "equipmentType": "SW",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "SW",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1112",
+        "EQD20-EP-W01-SW",
+        "SW",
+        "MAIN_WEAPON",
+        "IRON_SWORD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-W01-AX",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1113,
+      "name": "EQD20-EP-W01-AX",
+      "equipmentType": "AX",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "AX",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1113",
+        "EQD20-EP-W01-AX",
+        "AX",
+        "MAIN_WEAPON",
+        "IRON_AXE",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-W01-BO",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1114,
+      "name": "EQD20-EP-W01-BO",
+      "equipmentType": "BO",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "BO",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1114",
+        "EQD20-EP-W01-BO",
+        "BO",
+        "MAIN_WEAPON",
+        "BOW",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-W01-CB",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1115,
+      "name": "EQD20-EP-W01-CB",
+      "equipmentType": "CB",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "CB",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1115",
+        "EQD20-EP-W01-CB",
+        "CB",
+        "MAIN_WEAPON",
+        "CROSSBOW",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-W01-DG",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1116,
+      "name": "EQD20-EP-W01-DG",
+      "equipmentType": "DG",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "DG",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1116",
+        "EQD20-EP-W01-DG",
+        "DG",
+        "MAIN_WEAPON",
+        "IRON_SWORD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-W01-BL",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1117,
+      "name": "EQD20-EP-W01-BL",
+      "equipmentType": "BL",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "BL",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1117",
+        "EQD20-EP-W01-BL",
+        "BL",
+        "MAIN_WEAPON",
+        "MACE",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-W01-ST",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1118,
+      "name": "EQD20-EP-W01-ST",
+      "equipmentType": "ST",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "ST",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1118",
+        "EQD20-EP-W01-ST",
+        "ST",
+        "MAIN_WEAPON",
+        "BLAZE_ROD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-W01-PK",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1119,
+      "name": "EQD20-EP-W01-PK",
+      "equipmentType": "PK",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "PK",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1119",
+        "EQD20-EP-W01-PK",
+        "PK",
+        "MAIN_WEAPON",
+        "IRON_PICKAXE",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-EP-W01-TR",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1120,
+      "name": "EQD20-EP-W01-TR",
+      "equipmentType": "TR",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "TR",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1120",
+        "EQD20-EP-W01-TR",
+        "TR",
+        "MAIN_WEAPON",
+        "TRIDENT",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-W01-SW",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1121,
+      "name": "EQD20-LG-W01-SW",
+      "equipmentType": "SW",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "SW",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1121",
+        "EQD20-LG-W01-SW",
+        "SW",
+        "MAIN_WEAPON",
+        "IRON_SWORD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-W01-AX",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1122,
+      "name": "EQD20-LG-W01-AX",
+      "equipmentType": "AX",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "AX",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1122",
+        "EQD20-LG-W01-AX",
+        "AX",
+        "MAIN_WEAPON",
+        "IRON_AXE",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-W01-BO",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1123,
+      "name": "EQD20-LG-W01-BO",
+      "equipmentType": "BO",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "BO",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1123",
+        "EQD20-LG-W01-BO",
+        "BO",
+        "MAIN_WEAPON",
+        "BOW",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-W01-CB",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1124,
+      "name": "EQD20-LG-W01-CB",
+      "equipmentType": "CB",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "CB",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1124",
+        "EQD20-LG-W01-CB",
+        "CB",
+        "MAIN_WEAPON",
+        "CROSSBOW",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-W01-DG",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1125,
+      "name": "EQD20-LG-W01-DG",
+      "equipmentType": "DG",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "DG",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1125",
+        "EQD20-LG-W01-DG",
+        "DG",
+        "MAIN_WEAPON",
+        "IRON_SWORD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-W01-BL",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1126,
+      "name": "EQD20-LG-W01-BL",
+      "equipmentType": "BL",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "BL",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1126",
+        "EQD20-LG-W01-BL",
+        "BL",
+        "MAIN_WEAPON",
+        "MACE",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-W01-ST",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1127,
+      "name": "EQD20-LG-W01-ST",
+      "equipmentType": "ST",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "ST",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1127",
+        "EQD20-LG-W01-ST",
+        "ST",
+        "MAIN_WEAPON",
+        "BLAZE_ROD",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-W01-PK",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1128,
+      "name": "EQD20-LG-W01-PK",
+      "equipmentType": "PK",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "PK",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1128",
+        "EQD20-LG-W01-PK",
+        "PK",
+        "MAIN_WEAPON",
+        "IRON_PICKAXE",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-LG-W01-TR",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1129,
+      "name": "EQD20-LG-W01-TR",
+      "equipmentType": "TR",
+      "equipmentSlot": "MAIN_WEAPON",
+      "displayMaterial": "TR",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1129",
+        "EQD20-LG-W01-TR",
+        "TR",
+        "MAIN_WEAPON",
+        "TRIDENT",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-MED-HEAD",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1130,
+      "name": "EQD20-AR-MED-HEAD",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ARMOR_HEAD",
+      "displayMaterial": "ARMOR_HEAD",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1130",
+        "EQD20-AR-MED-HEAD",
+        "ARMOR",
+        "ARMOR_HEAD",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-MED-CHEST",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1131,
+      "name": "EQD20-AR-MED-CHEST",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "IRON_CHESTPLATE",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1131",
+        "EQD20-AR-MED-CHEST",
+        "ARMOR",
+        "ACCESSORY/CHARM",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-MED-LEGS",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1132,
+      "name": "EQD20-AR-MED-LEGS",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ARMOR_LEGS",
+      "displayMaterial": "ARMOR_LEGS",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1132",
+        "EQD20-AR-MED-LEGS",
+        "ARMOR",
+        "ARMOR_LEGS",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-MED-FEET",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1133,
+      "name": "EQD20-AR-MED-FEET",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ARMOR_FEET",
+      "displayMaterial": "ARMOR_FEET",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1133",
+        "EQD20-AR-MED-FEET",
+        "ARMOR",
+        "ARMOR_FEET",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-CTRL-HEAD",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1134,
+      "name": "EQD20-AR-CTRL-HEAD",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ARMOR_HEAD",
+      "displayMaterial": "ARMOR_HEAD",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1134",
+        "EQD20-AR-CTRL-HEAD",
+        "ARMOR",
+        "ARMOR_HEAD",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-CTRL-CHEST",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1135,
+      "name": "EQD20-AR-CTRL-CHEST",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "IRON_CHESTPLATE",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1135",
+        "EQD20-AR-CTRL-CHEST",
+        "ARMOR",
+        "ACCESSORY/CHARM",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-CTRL-LEGS",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1136,
+      "name": "EQD20-AR-CTRL-LEGS",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ARMOR_LEGS",
+      "displayMaterial": "ARMOR_LEGS",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1136",
+        "EQD20-AR-CTRL-LEGS",
+        "ARMOR",
+        "ARMOR_LEGS",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-CTRL-FEET",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1137,
+      "name": "EQD20-AR-CTRL-FEET",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ARMOR_FEET",
+      "displayMaterial": "ARMOR_FEET",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1137",
+        "EQD20-AR-CTRL-FEET",
+        "ARMOR",
+        "ARMOR_FEET",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-GUARD-HEAD",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1138,
+      "name": "EQD20-AR-GUARD-HEAD",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ARMOR_HEAD",
+      "displayMaterial": "ARMOR_HEAD",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1138",
+        "EQD20-AR-GUARD-HEAD",
+        "ARMOR",
+        "ARMOR_HEAD",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-GUARD-CHEST",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1139,
+      "name": "EQD20-AR-GUARD-CHEST",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ACCESSORY/CHARM",
+      "displayMaterial": "IRON_CHESTPLATE",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1139",
+        "EQD20-AR-GUARD-CHEST",
+        "ARMOR",
+        "ACCESSORY/CHARM",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-GUARD-LEGS",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1140,
+      "name": "EQD20-AR-GUARD-LEGS",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ARMOR_LEGS",
+      "displayMaterial": "ARMOR_LEGS",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1140",
+        "EQD20-AR-GUARD-LEGS",
+        "ARMOR",
+        "ARMOR_LEGS",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "EQD20-AR-GUARD-FEET",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1141,
+      "name": "EQD20-AR-GUARD-FEET",
+      "equipmentType": "ARMOR",
+      "equipmentSlot": "ARMOR_FEET",
+      "displayMaterial": "ARMOR_FEET",
+      "definition": "EQUIP-DATA-D20-001",
+      "raw": [
+        "1141",
+        "EQD20-AR-GUARD-FEET",
+        "ARMOR",
+        "ARMOR_FEET",
+        "IRON_ARMOR",
+        "EQUIP-DATA-D20-001"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "fixture-draw-locks",
+  "records": [
+    {
+      "id": "DRAW-LOCKS-S1",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUTHORITY_DATA"
+      ]
+    }
+  ]
+}

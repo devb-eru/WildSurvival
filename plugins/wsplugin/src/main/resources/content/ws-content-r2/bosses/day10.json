@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "bosses",
+  "records": [
+    {
+      "id": "BOSS-D10",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "BOSS-D10",
+        "공명 추적체",
+        "RAVAGER+Display",
+        "ACTSET-BOSS-D10",
+        "ENTSET-BOSS-D10",
+        "LOOT-BOSS-D10"
+      ]
+    }
+  ]
+}

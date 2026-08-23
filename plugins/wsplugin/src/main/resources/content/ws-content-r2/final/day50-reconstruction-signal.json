@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "final",
+  "records": [
+    {
+      "id": "FINAL-D50-RECONSTRUCTION-SIGNAL",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "raw": [
+        "AUTHORITY_DATA"
+      ]
+    }
+  ]
+}

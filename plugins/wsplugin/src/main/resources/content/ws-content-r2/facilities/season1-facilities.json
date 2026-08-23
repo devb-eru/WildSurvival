@@ -1,0 +1,597 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "facilities",
+  "records": [
+    {
+      "id": "FAC-P01",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-P01",
+        "휴대 제작 꾸러미",
+        "번들/상자 아이템",
+        "기초 제작·분해·복구 부품",
+        "처리시간 150%, 고급 장비 불가"
+      ]
+    },
+    {
+      "id": "FAC-P02",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-P02",
+        "야전 수리 키트",
+        "모루 아이템",
+        "BROKEN 장비 응급 복구",
+        "최대 내구 40%까지만, 소모품"
+      ]
+    },
+    {
+      "id": "FAC-P03",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-P03",
+        "표본 채취기",
+        "유리병/솔",
+        "오염·생체·광물 표본 채취",
+        "피격·이동 시 중단"
+      ]
+    },
+    {
+      "id": "FAC-P04",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-P04",
+        "휴대 분석기",
+        "나침반/시계",
+        "증거 비교·신호 측정·소급 판정",
+        "한 번에 표본 2개, 느림"
+      ]
+    },
+    {
+      "id": "FAC-P05",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-P05",
+        "휴대 정화기",
+        "자수정 조각/양조기 아이콘",
+        "작은 반경 임시 정화장",
+        "촉매 소모, 60초, 출력 낮음"
+      ]
+    },
+    {
+      "id": "FAC-P06",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-P06",
+        "신호 말뚝",
+        "피뢰침/엔드 막대 아이템",
+        "공명 측정·동적 전장 후보 표시",
+        "회수 전 재사용 불가"
+      ]
+    },
+    {
+      "id": "FAC-P07",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-P07",
+        "구조 신호기",
+        "종/회복 토템 아이콘",
+        "빈사 위치 표시와 구조시간 소폭 감소",
+        "전투당 1회, 자동 구조 아님"
+      ]
+    },
+    {
+      "id": "FAC-P08",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-P08",
+        "휴대 보관 원장",
+        "책",
+        "공용 원장 조회·소량 입출고 예약",
+        "실제 입출고는 비전투 안전 상태"
+      ]
+    },
+    {
+      "id": "FAC-C01",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-C01",
+        "간이 작업대",
+        "작업대+통",
+        "기초 장비·부품, 작업 슬롯 1",
+        "2",
+        "P01"
+      ]
+    },
+    {
+      "id": "FAC-C02",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-C02",
+        "야전 화로",
+        "화로+모닥불",
+        "제련·식량 가공, 연료 효율 100%",
+        "3",
+        "바닐라 화로"
+      ]
+    },
+    {
+      "id": "FAC-C03",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-C03",
+        "임시 보관함",
+        "통/상자",
+        "파티 등록 보관 9칸, 파괴 시 원장 보호",
+        "2",
+        "개인 인벤토리"
+      ]
+    },
+    {
+      "id": "FAC-C04",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-C04",
+        "침낭 표식",
+        "양탄자+랜턴",
+        "재접속 안전 후보, 비전투 회복 보조",
+        "1",
+        "마지막 유효 위치"
+      ]
+    },
+    {
+      "id": "FAC-C05",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-C05",
+        "간이 경보종",
+        "종+울타리",
+        "40블록 위험 방향 경고",
+        "3",
+        "액션바 짧은 경고"
+      ]
+    },
+    {
+      "id": "FAC-C06",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-C06",
+        "야전 약제대",
+        "모닥불+양조기",
+        "기본 해독·지혈·회복품",
+        "3",
+        "인벤토리 조합"
+      ]
+    },
+    {
+      "id": "FAC-C07",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-C07",
+        "소형 탄약대",
+        "화살 제조대/통",
+        "일반 탄약 묶음 제작",
+        "3",
+        "기본 제작대"
+      ]
+    },
+    {
+      "id": "FAC-C08",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-C08",
+        "임시 바리케이드",
+        "울타리·철창",
+        "공세 전용 등록 방어 블록",
+        "배치당 1",
+        "자연 지형·이동"
+      ]
+    },
+    {
+      "id": "FAC-S01",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S01",
+        "정밀 제작대",
+        "대장장이 작업대+구리",
+        "희귀 이상 장비·시설 부품 제작",
+        "2",
+        "8"
+      ]
+    },
+    {
+      "id": "FAC-S02",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S02",
+        "강화 단조대",
+        "모루+용광로",
+        "100% 확정 강화, BROKEN 완전 수리",
+        "1",
+        "10"
+      ]
+    },
+    {
+      "id": "FAC-S03",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S03",
+        "재련 조율기",
+        "숫돌+자수정",
+        "옵션 잠금·재련, 천장 진행 저장",
+        "1",
+        "12"
+      ]
+    },
+    {
+      "id": "FAC-S04",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S04",
+        "분해·회수기",
+        "석재 절단기+호퍼",
+        "장비 분해, 부산물·제작식 연구",
+        "2",
+        "7"
+      ]
+    },
+    {
+      "id": "FAC-S05",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S05",
+        "탄약 압축기",
+        "화살 제조대+피스톤 표현",
+        "특수 탄약·탄창 일괄 제작",
+        "2",
+        "7"
+      ]
+    },
+    {
+      "id": "FAC-S06",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S06",
+        "연구 단말",
+        "독서대+책장",
+        "표본 분석, 발견 증거 비교, 도감",
+        "2",
+        "9"
+      ]
+    },
+    {
+      "id": "FAC-S07",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S07",
+        "관측 배열",
+        "피뢰침+망원경 아이콘",
+        "다음 압박 방향·전략·신호 오차 분석",
+        "1",
+        "12"
+      ]
+    },
+    {
+      "id": "FAC-S08",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S08",
+        "패턴 기록기",
+        "주크박스+표시 엔티티",
+        "적 패턴 전조·대응 로그 분석",
+        "1",
+        "9"
+      ]
+    },
+    {
+      "id": "FAC-S09",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S09",
+        "증강 공명기",
+        "마법부여대+자수정",
+        "증강 교체, 진화 계보·태그 검사",
+        "1",
+        "14"
+      ]
+    },
+    {
+      "id": "FAC-S10",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S10",
+        "훈련 단말",
+        "갑옷 거치대+표적 블록",
+        "모의 구조·CC·브레이크, 스탯 투자",
+        "파티별 1",
+        "5"
+      ]
+    },
+    {
+      "id": "FAC-S11",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S11",
+        "치료소",
+        "양조기+침대",
+        "부상 회복, 해독, 구조 보조",
+        "2",
+        "10"
+      ]
+    },
+    {
+      "id": "FAC-S12",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S12",
+        "유품 회수대",
+        "영혼 모닥불+상자",
+        "접근 불가 유품 복구 요청·귀속 확인",
+        "1",
+        "8"
+      ]
+    },
+    {
+      "id": "FAC-S13",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S13",
+        "정화기",
+        "비콘+자수정 표현",
+        "시설망·플레이어·지역 오염 정화",
+        "1",
+        "16"
+      ]
+    },
+    {
+      "id": "FAC-S14",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S14",
+        "정화 중계기",
+        "피뢰침+엔드 막대",
+        "정화 출력 범위 전달",
+        "해당 없음",
+        "6"
+      ]
+    },
+    {
+      "id": "FAC-S15",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S15",
+        "환경 차폐기",
+        "구리 블록+철창",
+        "낙뢰·오염 파동 등 특정 환경 위험 완화",
+        "1",
+        "9"
+      ]
+    },
+    {
+      "id": "FAC-S16",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S16",
+        "공용 물류고",
+        "상자+통+엔더 상자 표현",
+        "가상 공용 원장 입출고·작업 예약",
+        "3",
+        "11"
+      ]
+    },
+    {
+      "id": "FAC-S17",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S17",
+        "동력 분배기",
+        "레드스톤 블록+구리",
+        "연결 시설 동력·연료 분배",
+        "해당 없음",
+        "13"
+      ]
+    },
+    {
+      "id": "FAC-S18",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S18",
+        "이동 앵커",
+        "자석석+나침반",
+        "등록 앵커 사이 제한 빠른 이동",
+        "1",
+        "10"
+      ]
+    },
+    {
+      "id": "FAC-S19",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S19",
+        "세션 중계기",
+        "종+독서대",
+        "정상 중단 투표·체크포인트 요청",
+        "1",
+        "4"
+      ]
+    },
+    {
+      "id": "FAC-S20",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-S20",
+        "공세 관측기",
+        "스컬크 센서+종",
+        "압박 모드·접근 방향·잔존 적 표시",
+        "1",
+        "12"
+      ]
+    },
+    {
+      "id": "FAC-D01",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-D01",
+        "보강벽 등록기",
+        "철 블록/철창",
+        "지정 임시 벽을 공세 파괴 대상으로 등록",
+        "네트워크당 48블록",
+        "1/블록"
+      ]
+    },
+    {
+      "id": "FAC-D02",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-D02",
+        "감속 함정",
+        "거미줄/트립와이어",
+        "적 이동 감속, 강한 CC 아님",
+        "8개",
+        "3"
+      ]
+    },
+    {
+      "id": "FAC-D03",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-D03",
+        "충격 함정",
+        "피스톤/압력판",
+        "낮은 브레이크·밀치기",
+        "6개",
+        "4"
+      ]
+    },
+    {
+      "id": "FAC-D04",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-D04",
+        "유도 신호기",
+        "피뢰침/레드스톤 횃불",
+        "제한 시간 적 목표 우선순위 변경",
+        "2개",
+        "8"
+      ]
+    },
+    {
+      "id": "FAC-R01",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-R01",
+        "재건 조립 프레임",
+        "철·구리·석영 다중 블록",
+        "하위 계통 결합·시설 본체",
+        "C27, 부품 A",
+        "18"
+      ]
+    },
+    {
+      "id": "FAC-R02",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-R02",
+        "안정 동력 핵",
+        "레드스톤 램프+자수정",
+        "최종 장치 동력·과부하 시험",
+        "C28-B, 부품 B",
+        "22"
+      ]
+    },
+    {
+      "id": "FAC-R03",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-R03",
+        "신호 렌즈 배열",
+        "비콘 유리+피뢰침",
+        "세계 붕괴 핵 신호 교정",
+        "C28-C, 부품 C",
+        "20"
+      ]
+    },
+    {
+      "id": "FAC-R04",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-R04",
+        "정화 매질실",
+        "유리+물+자수정",
+        "최종 정화 매질 저장·순환",
+        "C28-D, 부품 D",
+        "22"
+      ]
+    },
+    {
+      "id": "FAC-R05",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-R05",
+        "교정 말뚝",
+        "자석석/엔드 막대",
+        "세 방향 오차 측정·안정화",
+        "C29, 3개",
+        "8"
+      ]
+    },
+    {
+      "id": "FAC-R06",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "FAC-R06",
+        "첫 재건 장치",
+        "R01~R05 결합 상태",
+        "Day 50+ 최종 신호와 정화 유지",
+        "C29, R01~R05 READY, 최종 신호 키",
+        "30"
+      ]
+    }
+  ]
+}

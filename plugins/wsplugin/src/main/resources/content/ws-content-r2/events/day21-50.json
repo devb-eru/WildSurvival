@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "events",
+  "records": [
+    {
+      "id": "EVENTS-D21-50",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "raw": [
+        "AUTHORITY_DATA"
+      ]
+    }
+  ]
+}

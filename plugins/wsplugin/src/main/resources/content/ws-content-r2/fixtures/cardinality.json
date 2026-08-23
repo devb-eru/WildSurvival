@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "fixture-cardinality",
+  "records": [
+    {
+      "id": "materials",
+      "expected": 59
+    },
+    {
+      "id": "items",
+      "expected": 61
+    },
+    {
+      "id": "tools",
+      "expected": 214
+    },
+    {
+      "id": "recipes",
+      "expected": 315
+    },
+    {
+      "id": "codex",
+      "expected": 334
+    },
+    {
+      "id": "skills",
+      "expected": 64
+    },
+    {
+      "id": "personalAugments",
+      "expected": 50
+    },
+    {
+      "id": "partyAugments",
+      "expected": 16
+    },
+    {
+      "id": "enemies",
+      "expected": 53
+    },
+    {
+      "id": "bosses",
+      "expected": 4
+    },
+    {
+      "id": "support",
+      "expected": 34
+    },
+    {
+      "id": "facilities",
+      "expected": 46
+    },
+    {
+      "id": "loot",
+      "expected": 62
+    }
+  ]
+}

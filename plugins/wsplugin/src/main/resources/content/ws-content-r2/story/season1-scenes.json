@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "story-scenes",
+  "records": [
+    {
+      "id": "STORY-S1-SCENES",
+      "sourceDocumentId": "STORY-DATA-S1-001",
+      "enabled": true,
+      "raw": [
+        "AUTHORITY_DATA"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "bosses",
+  "records": [
+    {
+      "id": "BOSS-D30",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "BOSS-D30",
+        "오염 섭식핵",
+        "MAGMA_CUBE+Display",
+        "ACTSET-BOSS-D30",
+        "ENTSET-BOSS-D30",
+        "LOOT-BOSS-D30"
+      ]
+    }
+  ]
+}

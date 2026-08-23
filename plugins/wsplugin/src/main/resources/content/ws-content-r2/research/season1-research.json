@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "research",
+  "records": [
+    {
+      "id": "RESEARCH-S1",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "raw": [
+        "AUTHORITY_DATA"
+      ]
+    }
+  ]
+}

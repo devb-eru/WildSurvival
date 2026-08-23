@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "migrations",
+  "records": [
+    {
+      "id": "EQL-W10",
+      "sourceDocumentId": "TOOL-LIST-001",
+      "targetId": "UNARMED_COMBAT",
+      "enabled": true
+    },
+    {
+      "id": "COMMON_RESOURCE_DEPOT",
+      "sourceDocumentId": "ITEM-LIST-001",
+      "targetId": "WSI-FAC-S16-KIT",
+      "enabled": true
+    }
+  ]
+}

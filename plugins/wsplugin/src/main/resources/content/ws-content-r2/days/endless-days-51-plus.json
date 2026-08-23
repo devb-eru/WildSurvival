@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "days-endless",
+  "records": [
+    {
+      "id": "DAY-51-PLUS",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "firstDay": 51,
+      "repeatPolicy": "ENDLESS"
+    }
+  ]
+}

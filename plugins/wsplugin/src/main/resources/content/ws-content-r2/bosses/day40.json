@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "bosses",
+  "records": [
+    {
+      "id": "BOSS-D40",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "BOSS-D40",
+        "공진 파괴자",
+        "RAVAGER+Display",
+        "ACTSET-BOSS-D40",
+        "ENTSET-BOSS-D40",
+        "LOOT-BOSS-D40"
+      ]
+    }
+  ]
+}

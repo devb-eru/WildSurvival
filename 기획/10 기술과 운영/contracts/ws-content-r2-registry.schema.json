@@ -15,7 +15,7 @@
     "registryRevision": { "type": "string", "minLength": 1 },
     "targetContentRevision": { "const": "ws-content-r2" },
     "activationPolicy": { "const": "NEW_RUN_ONLY" },
-    "contractStatus": { "const": "CONTRACT_READY" },
+    "contractStatus": { "const": "L0_VALIDATED" },
     "lockedRevisions": {
       "type": "object",
       "additionalProperties": false,

@@ -1,0 +1,12 @@
+schema-version: 2
+content-revision: "ws-content-r2"
+manifest: "manifest.json"
+manifest-sha256: "f38510e1538f36098ec01b2947d5dc8c4fead6243f7401dc096a2442fe6126c9"
+activation-policy: "NEW_RUN_ONLY"
+story-revision: "ws-story-s1-r1"
+budget-policy-revision: "budget-live-r2"
+draw-revision: "draw-s1-r2"
+rules-revision: "rules-s1-r2"
+resource-pack-contract: "ws-rp-s1-r1"
+strict-reference-check: true
+reject-unknown-fields: true

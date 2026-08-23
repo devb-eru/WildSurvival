@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contentRevision",
+    "activationPolicy",
+    "storyRevision",
+    "budgetPolicyRevision",
+    "files"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "contentRevision": {
+      "const": "ws-content-r2"
+    },
+    "activationPolicy": {
+      "const": "NEW_RUN_ONLY"
+    },
+    "storyRevision": {
+      "const": "ws-story-s1-r1"
+    },
+    "budgetPolicyRevision": {
+      "const": "budget-live-r2"
+    },
+    "files": {
+      "type": "array",
+      "minItems": 64,
+      "maxItems": 64,
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+}

@@ -24,6 +24,7 @@
     {"id": "RATION", "name": "응급 배급", "material": "COOKED_BEEF", "category": "QUICK_ITEM", "description": "체력 8과 AP 20 회복"},
     {"id": "BANDAGE", "name": "압박 붕대", "material": "PAPER", "category": "QUICK_ITEM", "description": "체력 12 회복"},
     {"id": "ANTIDOTE", "name": "오염 중화제", "material": "HONEY_BOTTLE", "category": "QUICK_ITEM", "description": "독·위더·약화·둔화 제거"},
+    {"id": "WSI-CONS-REPAIR_KIT", "name": "야전 수리 키트", "material": "ANVIL", "category": "UTILITY", "description": "BROKEN 장비를 최대 내구 40%까지 복구"},
     {"id": "COMMON_RESOURCE_DEPOT", "name": "공용 보급 저장소", "material": "BARREL", "category": "FACILITY", "description": "설치 후 공용 자원 원장을 활성화하는 시설"},
     {"id": "SURVIVAL-CLOCK", "name": "생존 시계", "material": "CLOCK", "category": "KEY_ITEM", "description": "우클릭해 현재 Day와 다음 사건까지 남은 시간을 확인하는 회차 도구"}
   ],
@@ -42,6 +43,7 @@
     {"id": "PROTO-RECIPE-RATION", "name": "응급 배급", "costs": {"WSR-FIBER": 1, "WSR-TISSUE": 1}, "shape": [null, null, null, null, "WSR-FIBER", "WSR-TISSUE", null, null, null], "shapeless": true, "rewardType": "QUICK_ITEM", "rewardId": "RATION", "rewardAmount": 2},
     {"id": "PROTO-RECIPE-BANDAGE", "name": "압박 붕대", "costs": {"WSR-FIBER": 3}, "shape": [null, null, null, "WSR-FIBER", "WSR-FIBER", "WSR-FIBER", null, null, null], "shapeless": true, "rewardType": "QUICK_ITEM", "rewardId": "BANDAGE", "rewardAmount": 2},
     {"id": "PROTO-RECIPE-ANTIDOTE", "name": "오염 중화제", "costs": {"WSR-FIBER": 2, "WSR-TISSUE": 1, "WSR-COAL": 1}, "shape": [null, "WSR-COAL", null, "WSR-FIBER", "WSR-TISSUE", "WSR-FIBER", null, null, null], "shapeless": true, "rewardType": "QUICK_ITEM", "rewardId": "ANTIDOTE", "rewardAmount": 1},
+    {"id": "PROTO-RECIPE-REPAIR-KIT", "name": "야전 수리 키트", "costs": {"WSR-IRON": 2, "WSR-FIBER": 2}, "shape": ["WSR-FIBER", "WSR-IRON", null, null, "WSR-IRON", "WSR-FIBER", null, null, null], "shapeless": false, "rewardType": "ITEM", "rewardId": "WSI-CONS-REPAIR_KIT", "rewardAmount": 1},
     {"id": "PROTO-RECIPE-COMMON-DEPOT", "name": "공용 보급 저장소", "costs": {"WSR-WOOD": 4, "WSR-STONE": 3, "WSR-IRON": 2}, "shape": ["WSR-WOOD", "WSR-WOOD", "WSR-WOOD", "WSR-WOOD", "WSR-STONE", "WSR-STONE", "WSR-STONE", "WSR-IRON", "WSR-IRON"], "shapeless": true, "rewardType": "ITEM", "rewardId": "COMMON_RESOURCE_DEPOT", "rewardAmount": 1}
   ],
   "weapons": [

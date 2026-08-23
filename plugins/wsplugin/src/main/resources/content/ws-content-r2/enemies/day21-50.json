@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "enemies",
+  "records": [
+    {
+      "id": "EN-D21-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D21-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D21-01",
+        "LOOT-EN-D21-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D22-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D22-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D22-01",
+        "LOOT-EN-D22-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D23-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D23-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D23-01",
+        "LOOT-EN-D23-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D24-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D24-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D24-01",
+        "LOOT-EN-D24-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D27-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D27-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D27-01",
+        "LOOT-EN-D27-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D28-E01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D28-E01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D28-E01",
+        "LOOT-EN-D28-E01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D31-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D31-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D31-01",
+        "LOOT-EN-D31-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D33-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D33-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D33-01",
+        "LOOT-EN-D33-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D34-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D34-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D34-01",
+        "LOOT-EN-D34-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D37-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D37-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D37-01",
+        "LOOT-EN-D37-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D38-E01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D38-E01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D38-E01",
+        "LOOT-EN-D38-E01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D41-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D41-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D41-01",
+        "LOOT-EN-D41-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D44-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D44-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D44-01",
+        "LOOT-EN-D44-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D46-E01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D46-E01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D46-E01",
+        "LOOT-EN-D46-E01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D47-01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D47-01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D47-01",
+        "LOOT-EN-D47-01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-D49-E01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-D49-E01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-D49-E01",
+        "LOOT-EN-D49-E01",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-F50-A01",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-F50-A01",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-F50-A01",
+        "LOOT-NONE",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-F50-A02",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-F50-A02",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-F50-A02",
+        "LOOT-NONE",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-F50-A03",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-F50-A03",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-F50-A03",
+        "LOOT-NONE",
+        "parent encounter/60m+300틱"
+      ]
+    },
+    {
+      "id": "EN-F50-A04",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "EN-F50-A04",
+        "HOSTILE",
+        "ENEMY-DATA-D50-001",
+        "ACT-EN-F50-A04",
+        "LOOT-NONE",
+        "parent encounter/60m+300틱"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "ops-admin",
+  "records": [
+    {
+      "id": "OPS-ADMIN-COMMANDS",
+      "sourceDocumentId": "OPS-001",
+      "enabled": true,
+      "raw": [
+        "AUTHORITY_DATA"
+      ]
+    }
+  ]
+}

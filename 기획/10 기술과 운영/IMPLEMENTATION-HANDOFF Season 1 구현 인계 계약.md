@@ -5,7 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `IMPLEMENTATION-HANDOFF-001` |
-| 상태 | `IMPLEMENTATION_CONTRACT` |
+| 상태 | `IMPLEMENTATION_IN_PROGRESS` |
 | 인계 입력 | `DOC-AUTHORITY-001`, `DATA-REVISION-002`, G1~G3 권위 문서 |
 | 구현 기준 | Minecraft Java, Paper 서버 플러그인, 바닐라 클라이언트, 모드 금지 |
 | 외부 의존 | MagicSpells 비필수; S1 기본 백엔드는 네이티브 Paper |
@@ -212,4 +212,4 @@ NMS 직접 접근은 금지하지 않지만 Paper API로 불가능한 경우에�
 
 ## 13. 인계 완료 상태
 
-현재 기획 인계는 `CONTRACT_READY`다. 소스 코드·r2 런타임 JSON·실제 부하 테스트는 아직 구현 산출물이며 완료로 표시하지 않는다. 구현자는 `DEV-ROADMAP-001`의 `DEV-000`을 먼저 수행하고, `G-400` 전에는 프로토타입 범위를 넘겨 콘텐츠를 확장하지 않는다.
+현재 인계는 `IMPLEMENTATION_IN_PROGRESS`다. r2 66파일과 L0 validator, slot0 중재·서버 내구도·BROKEN, 생산 도감 로더까지 구현됐다. 전체 레시피 실행, 생산 장비/스킬/엔티티/시설 의미 런타임, Paper 멀티플레이·부하 테스트는 아직 완료로 표시하지 않는다.

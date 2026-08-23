@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "bosses",
+  "records": [
+    {
+      "id": "BOSS-D20",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "BOSS-D20",
+        "신경 접합체",
+        "IRON_GOLEM+Display",
+        "ACTSET-BOSS-D20",
+        "ENTSET-BOSS-D20",
+        "LOOT-BOSS-D20"
+      ]
+    }
+  ]
+}

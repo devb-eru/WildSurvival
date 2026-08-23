@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "budget",
+  "records": [
+    {
+      "id": "BUDGET-LIVE-R2",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "raw": [
+        "AUTHORITY_DATA"
+      ]
+    }
+  ]
+}

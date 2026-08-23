@@ -4,7 +4,7 @@
   "registryRevision": "ws-content-r2-contract-r2",
   "targetContentRevision": "ws-content-r2",
   "activationPolicy": "NEW_RUN_ONLY",
-  "contractStatus": "CONTRACT_READY",
+  "contractStatus": "L0_VALIDATED",
   "lockedRevisions": {
     "schemaVersion": 2,
     "storyRevision": "ws-story-s1-r1",

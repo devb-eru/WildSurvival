@@ -75,11 +75,11 @@ public final class EquipmentService implements Listener {
         inventory.setItem(GUI_MAIN_WEAPON, state.mainWeaponId == null
                 ? named(Material.PLAYER_HEAD, ChatColor.YELLOW + "주무기: 권투(빈 슬롯)",
                 List.of(ChatColor.GRAY + "실제 슬롯 0", ChatColor.WHITE + "장착 아이템은 아래 인벤토리 목록에서 선택"))
-                : equippedIcon(state.mainWeaponId, state.mainWeaponInstanceId, "주무기", "클릭: 해제"));
+                : equippedIcon(player, state.mainWeaponId, state.mainWeaponInstanceId, "주무기", "클릭: 해제"));
         inventory.setItem(GUI_OFFHAND, state.offhandId == null
                 ? named(Material.SHIELD, ChatColor.GRAY + "보조무기: 비어 있음",
                 List.of(ChatColor.GRAY + "실제 슬롯 -106", ChatColor.WHITE + "후보 우클릭: 보조무기 장착"))
-                : equippedIcon(state.offhandId, state.offhandInstanceId, "보조무기", "클릭: 해제"));
+                : equippedIcon(player, state.offhandId, state.offhandInstanceId, "보조무기", "클릭: 해제"));
 
         for (int storageSlot = 0; storageSlot <= 35; storageSlot++) {
             int guiSlot = GUI_CANDIDATE_START + storageSlot;
@@ -316,8 +316,8 @@ public final class EquipmentService implements Listener {
             if (!(event.getWhoClicked() instanceof Player player) || !player.getUniqueId().equals(holder.owner)) return;
             int raw = event.getRawSlot();
             if (raw == 49) { player.closeInventory(); return; }
-            if (raw == GUI_MAIN_WEAPON) { unequip(player, false); open(player); return; }
-            if (raw == GUI_OFFHAND) { unequip(player, true); open(player); return; }
+            if (raw == GUI_MAIN_WEAPON) { if (event.isShiftClick()) fieldRepair(player, false); else unequip(player, false); open(player); return; }
+            if (raw == GUI_OFFHAND) { if (event.isShiftClick()) fieldRepair(player, true); else unequip(player, true); open(player); return; }
             Integer inventorySlot = holder.inventorySlotByGui.get(raw);
             if (inventorySlot != null) {
                 equipFromInventory(player, inventorySlot, event.isRightClick());
@@ -429,6 +429,33 @@ public final class EquipmentService implements Listener {
         player.sendMessage(ChatColor.YELLOW + content.weapon(equipped).name() + " 장착 해제");
     }
 
+    private void fieldRepair(Player player, boolean offhand) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        String instanceId = offhand ? state.offhandInstanceId : state.mainWeaponInstanceId;
+        RunSnapshot.EquipmentInstanceState instance = equipmentInstances(state).get(instanceId);
+        if (instance == null || instance.currentDurability >= instance.maxDurability) {
+            player.sendMessage(ChatColor.YELLOW + "수리가 필요한 장비가 아닙니다.");
+            return;
+        }
+        if (!codex.takeItem(player, "WSI-CONS-REPAIR_KIT", 1)) {
+            player.sendMessage(ChatColor.RED + "야전 수리 키트가 필요합니다.");
+            return;
+        }
+        runs.mutate(run -> {
+            RunSnapshot.EquipmentInstanceState target = equipmentInstances(
+                    run.players.get(player.getUniqueId().toString())).get(instanceId);
+            if (target == null) return;
+            int recovery = Math.max(1, (int) Math.ceil(target.maxDurability * 0.40));
+            target.currentDurability = "BROKEN".equals(target.condition)
+                    ? recovery : Math.min(target.maxDurability, target.currentDurability + recovery);
+            target.condition = "ACTIVE";
+        });
+        syncAuthoritativeEquipment(player);
+        telemetry.event(runs.current().orElseThrow().runId, "EQUIPMENT_REPAIRED",
+                "{\"instanceId\":\"" + instanceId + "\",\"method\":\"FIELD_KIT\"}");
+        player.sendMessage(ChatColor.GREEN + "같은 장비 인스턴스를 야전 수리했습니다.");
+    }
+
     private void repairSlot(Player player, boolean offhand, String expectedWeaponId, String expectedInstanceId) {
         PlayerInventory inventory = player.getInventory();
         ItemStack actual = offhand ? inventory.getItemInOffHand() : inventory.getItem(0);
@@ -469,7 +496,7 @@ public final class EquipmentService implements Listener {
         });
     }
 
-    private ItemStack equippedIcon(String weaponId, String instanceId, String slotName, String instruction) {
+    private ItemStack equippedIcon(Player player, String weaponId, String instanceId, String slotName, String instruction) {
         RunSnapshot.EquipmentInstanceState instance = runs.current().stream()
                 .flatMap(run -> run.players.values().stream())
                 .map(state -> equipmentInstances(state).get(instanceId))
@@ -478,7 +505,8 @@ public final class EquipmentService implements Listener {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = new ArrayList<>(Objects.requireNonNull(meta.getLore()));
         lore.add(ChatColor.GREEN + slotName + " 장착 중");
-        lore.add(ChatColor.YELLOW + instruction);
+        lore.add(ChatColor.YELLOW + instruction + " / Shift+클릭: 야전 수리");
+        lore.add(ChatColor.WHITE + "수리 키트 " + codex.countItem(player, "WSI-CONS-REPAIR_KIT"));
         meta.setLore(lore);
         item.setItemMeta(meta);
         return item;

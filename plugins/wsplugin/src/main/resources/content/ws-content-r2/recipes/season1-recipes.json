@@ -1,0 +1,4732 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "recipes",
+  "records": [
+    {
+      "id": "WSRCP-D20-CALL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CALL-D20",
+      "recipeType": "BOSS_CALL",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-CALL",
+        "WSI-CALL-D20",
+        "BOSS_CALL",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-F01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-C06-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-F01",
+        "WSI-FAC-C06-KIT",
+        "FACILITY_KIT",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-F02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S06-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-F02",
+        "WSI-FAC-S06-KIT",
+        "FACILITY_KIT",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-F03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S11-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-F03",
+        "WSI-FAC-S11-KIT",
+        "FACILITY_KIT",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-F04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S10-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-F04",
+        "WSI-FAC-S10-KIT",
+        "FACILITY_KIT",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-F05",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S09-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-F05",
+        "WSI-FAC-S09-KIT",
+        "FACILITY_KIT",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-F06",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "FAC-S07@LEVEL2",
+      "recipeType": "VIRTUAL_BUILD",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-F06",
+        "FAC-S07@LEVEL2",
+        "VIRTUAL_BUILD",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-P01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-STERILE_GEL",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-P01",
+        "WSR-STERILE_GEL",
+        "PROCESS",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-P02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-ELASTIC_WEAVE",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-P02",
+        "WSR-ELASTIC_WEAVE",
+        "PROCESS",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-P03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-REINFORCED_ALLOY",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-P03",
+        "WSR-REINFORCED_ALLOY",
+        "PROCESS",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-P04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-NEURAL_CIRCUIT",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-P04",
+        "WSR-NEURAL_CIRCUIT",
+        "PROCESS",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-P05",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-BIO_MEDIUM",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-P05",
+        "WSR-BIO_MEDIUM",
+        "PROCESS",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-P06",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-STATUS_PLATE",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-P06",
+        "WSR-STATUS_PLATE",
+        "PROCESS",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-S01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-ANTIDOTE_INJECTION",
+      "recipeType": "CRAFT",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-S01",
+        "WSI-CONS-ANTIDOTE_INJECTION",
+        "CRAFT",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-S02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-COOLING_SALVE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-S02",
+        "WSI-CONS-COOLING_SALVE",
+        "CRAFT",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-S03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-TOURNIQUET",
+      "recipeType": "CRAFT",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-S03",
+        "WSI-CONS-TOURNIQUET",
+        "CRAFT",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-S04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-NEURAL_STABILIZER",
+      "recipeType": "CRAFT",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-S04",
+        "WSI-CONS-NEURAL_STABILIZER",
+        "CRAFT",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-S05",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-REINFORCED_RESCUE_BRACE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-S05",
+        "WSI-CONS-REINFORCED_RESCUE_BRACE",
+        "CRAFT",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D20-S06",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-BIO_SHIELD_AMPOULE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "RESOURCE-DATA-D20-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D20-S06",
+        "WSI-CONS-BIO_SHIELD_AMPOULE",
+        "CRAFT",
+        "RESOURCE-DATA-D20-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D30-CALL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CALL-D30",
+      "recipeType": "BOSS_CALL",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D30-CALL",
+        "WSI-CALL-D30",
+        "BOSS_CALL",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D40-CALL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CALL-D40",
+      "recipeType": "BOSS_CALL",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D40-CALL",
+        "WSI-CALL-D40",
+        "BOSS_CALL",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-PURIFY_CATALYST",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P01",
+        "WSR-PURIFY_CATALYST",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-RIFT_POWDER",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P02",
+        "WSR-RIFT_POWDER",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-REFINED_MUTATION",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P03",
+        "WSR-REFINED_MUTATION",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-STABLE_CORE",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P04",
+        "WSR-STABLE_CORE",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P05",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-PURIFY_MEDIUM",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P05",
+        "WSR-PURIFY_MEDIUM",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P06",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-HARD_AGGREGATE",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P06",
+        "WSR-HARD_AGGREGATE",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P07",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-RESONANCE_COIL",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P07",
+        "WSR-RESONANCE_COIL",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P08",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-PATTERN_RESIDUE",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P08",
+        "WSR-PATTERN_RESIDUE",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P09",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-HIGH_DENSITY_ALLOY",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P09",
+        "WSR-HIGH_DENSITY_ALLOY",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P10",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-INTERRUPT_CORE",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P10",
+        "WSR-INTERRUPT_CORE",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P11",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-POWER_MATRIX",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P11",
+        "WSR-POWER_MATRIX",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P12",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-CALIBRATED_LENS",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P12",
+        "WSR-CALIBRATED_LENS",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P13",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-PURIFY_MATRIX",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P13",
+        "WSR-PURIFY_MATRIX",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-P14",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-STABILIZED_FRAME",
+      "recipeType": "PROCESS",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-P14",
+        "WSR-STABILIZED_FRAME",
+        "PROCESS",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-E01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-C01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-E01",
+        "EQL-AR-C01",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-E02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-C02",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-E02",
+        "EQL-AR-C02",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-E03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-C03",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-E03",
+        "EQL-AR-C03",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-E04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-C04",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-E04",
+        "EQL-AR-C04",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-E05",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-OH-C01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-E05",
+        "EQL-OH-C01",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-E06",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AC-C01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-E06",
+        "EQL-AC-C01",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-E07",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AC-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-E07",
+        "EQL-AC-U01",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-PORTABLE-CRAFT_KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F01",
+        "WSI-PORTABLE-CRAFT_KIT",
+        "FACILITY_KIT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-C01-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F02",
+        "WSI-FAC-C01-KIT",
+        "FACILITY_KIT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-C02-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F03",
+        "WSI-FAC-C02-KIT",
+        "FACILITY_KIT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-C03-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F04",
+        "WSI-FAC-C03-KIT",
+        "FACILITY_KIT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F05",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-C06-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F05",
+        "WSI-FAC-C06-KIT",
+        "FACILITY_KIT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F06",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-C07-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F06",
+        "WSI-FAC-C07-KIT",
+        "FACILITY_KIT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F07",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-PORTABLE-ANALYZER",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F07",
+        "WSI-PORTABLE-ANALYZER",
+        "FACILITY_KIT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FINAL-KEY",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-FINAL_SIGNAL_KEY",
+      "recipeType": "CRAFT",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FINAL-KEY",
+        "WSR-FINAL_SIGNAL_KEY",
+        "CRAFT",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-G01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-PORTABLE-SIGNAL_STAKE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-G01",
+        "WSI-PORTABLE-SIGNAL_STAKE",
+        "CRAFT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-G02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-BOSS_SIGNAL_CORE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-G02",
+        "WSR-BOSS_SIGNAL_CORE",
+        "CRAFT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-G03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CALL-D10",
+      "recipeType": "BOSS_CALL",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-G03",
+        "WSI-CALL-D10",
+        "BOSS_CALL",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-P01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-HARDWOOD_PART",
+      "recipeType": "PROCESS",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-P01",
+        "WSR-HARDWOOD_PART",
+        "PROCESS",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-P02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-SINTERED_AGGREGATE",
+      "recipeType": "PROCESS",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-P02",
+        "WSR-SINTERED_AGGREGATE",
+        "PROCESS",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-P03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-METAL_PLATE",
+      "recipeType": "PROCESS",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-P03",
+        "WSR-METAL_PLATE",
+        "PROCESS",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-P04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-COPPER_COIL",
+      "recipeType": "PROCESS",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-P04",
+        "WSR-COPPER_COIL",
+        "PROCESS",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-P05",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-REFINED_ALLOY",
+      "recipeType": "PROCESS",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-P05",
+        "WSR-REFINED_ALLOY",
+        "PROCESS",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-P06",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-PRECISION_PART",
+      "recipeType": "PROCESS",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-P06",
+        "WSR-PRECISION_PART",
+        "PROCESS",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-P07",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-CRUDE_PURIFY_CATALYST",
+      "recipeType": "PROCESS",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-P07",
+        "WSR-CRUDE_PURIFY_CATALYST",
+        "PROCESS",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-P08",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-MAGIC_CRYSTAL",
+      "recipeType": "PROCESS",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-P08",
+        "WSR-MAGIC_CRYSTAL",
+        "PROCESS",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-P09",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-SIGNAL_LENS",
+      "recipeType": "PROCESS",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-P09",
+        "WSR-SIGNAL_LENS",
+        "PROCESS",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-P10",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSR-REINFORCED_CLOTH",
+      "recipeType": "PROCESS",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-P10",
+        "WSR-REINFORCED_CLOTH",
+        "PROCESS",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "FAC-R01@PLANNED",
+      "recipeType": "VIRTUAL_BUILD",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-R01",
+        "FAC-R01@PLANNED",
+        "VIRTUAL_BUILD",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-R02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "FAC-R02@PLANNED",
+      "recipeType": "VIRTUAL_BUILD",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-R02",
+        "FAC-R02@PLANNED",
+        "VIRTUAL_BUILD",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-R03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "FAC-R03@PLANNED",
+      "recipeType": "VIRTUAL_BUILD",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-R03",
+        "FAC-R03@PLANNED",
+        "VIRTUAL_BUILD",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-R04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "FAC-R04@PLANNED",
+      "recipeType": "VIRTUAL_BUILD",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-R04",
+        "FAC-R04@PLANNED",
+        "VIRTUAL_BUILD",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-R05",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "FAC-R05@PLANNED",
+      "recipeType": "VIRTUAL_BUILD",
+      "inputAuthority": "RESOURCE-DATA-D50-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-R05",
+        "FAC-R05@PLANNED",
+        "VIRTUAL_BUILD",
+        "RESOURCE-DATA-D50-001"
+      ]
+    },
+    {
+      "id": "WSRCP-S01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-BANDAGE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-S01",
+        "WSI-CONS-BANDAGE",
+        "CRAFT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-S02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-REPAIR_KIT",
+      "recipeType": "CRAFT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-S02",
+        "WSI-CONS-REPAIR_KIT",
+        "CRAFT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-S03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-AMMO-ARROW_BUNDLE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-S03",
+        "WSI-AMMO-ARROW_BUNDLE",
+        "CRAFT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-S04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-AMMO-PIERCING_BOLT_BUNDLE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-S04",
+        "WSI-AMMO-PIERCING_BOLT_BUNDLE",
+        "CRAFT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-S05",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-PURIFY_AMPOULE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-S05",
+        "WSI-CONS-PURIFY_AMPOULE",
+        "CRAFT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-S06",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-AP_STIM",
+      "recipeType": "CRAFT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-S06",
+        "WSI-CONS-AP_STIM",
+        "CRAFT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-S07",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-RESCUE_BRACE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-S07",
+        "WSI-CONS-RESCUE_BRACE",
+        "CRAFT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-S08",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-PORTABLE_PURIFIER_CHARGE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-S08",
+        "WSI-CONS-PORTABLE_PURIFIER_CHARGE",
+        "CRAFT",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-W01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-W01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-W01",
+        "EQL-W01",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-W02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-W02",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-W02",
+        "EQL-W02",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-W03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-W03",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-W03",
+        "EQL-W03",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-W04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-W04",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-W04",
+        "EQL-W04",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-W05",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-W05",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-W05",
+        "EQL-W05",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-W06",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-W06",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-W06",
+        "EQL-W06",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-W07",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-W07",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-W07",
+        "EQL-W07",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-W08",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-W08",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-W08",
+        "EQL-W08",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-W09",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-W09",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "CRAFT-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-W09",
+        "EQL-W09",
+        "EQUIPMENT_FORGE",
+        "CRAFT-001"
+      ]
+    },
+    {
+      "id": "WSRCP-R06",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "FAC-R06@READY_LOCKED",
+      "recipeType": "VIRTUAL_BUILD",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-R06",
+        "FAC-R06@READY_LOCKED",
+        "VIRTUAL_BUILD",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-S09",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-CONS-RATION_PACK",
+      "recipeType": "CRAFT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-S09",
+        "WSI-CONS-RATION_PACK",
+        "CRAFT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-S01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-AMMO-PURIFY_ARROW_BUNDLE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-S01",
+        "WSI-AMMO-PURIFY_ARROW_BUNDLE",
+        "CRAFT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-S02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-AMMO-RESONANCE_BOLT_BUNDLE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-S02",
+        "WSI-AMMO-RESONANCE_BOLT_BUNDLE",
+        "CRAFT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-D50-S03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-AMMO-STABILIZER_DART_BUNDLE",
+      "recipeType": "CRAFT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-D50-S03",
+        "WSI-AMMO-STABILIZER_DART_BUNDLE",
+        "CRAFT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F08",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-PORTABLE-SAMPLE_EXTRACTOR",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F08",
+        "WSI-PORTABLE-SAMPLE_EXTRACTOR",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F09",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-PORTABLE-PURIFIER",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F09",
+        "WSI-PORTABLE-PURIFIER",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F10",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-PORTABLE-RESCUE_BEACON",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F10",
+        "WSI-PORTABLE-RESCUE_BEACON",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F11",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-PORTABLE-LEDGER",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F11",
+        "WSI-PORTABLE-LEDGER",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F12",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-C04-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F12",
+        "WSI-FAC-C04-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F13",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-C05-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F13",
+        "WSI-FAC-C05-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-F14",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-C08-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-F14",
+        "WSI-FAC-C08-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S01-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S01",
+        "WSI-FAC-S01-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S02-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S02",
+        "WSI-FAC-S02-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S03-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S03",
+        "WSI-FAC-S03-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S04-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S04",
+        "WSI-FAC-S04-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S05",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S05-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S05",
+        "WSI-FAC-S05-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S07",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S07-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S07",
+        "WSI-FAC-S07-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S08",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S08-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S08",
+        "WSI-FAC-S08-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S12",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S12-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S12",
+        "WSI-FAC-S12-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S13",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S13-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S13",
+        "WSI-FAC-S13-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S14",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S14-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S14",
+        "WSI-FAC-S14-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S15",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S15-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S15",
+        "WSI-FAC-S15-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S16",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S16-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S16",
+        "WSI-FAC-S16-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S17",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S17-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S17",
+        "WSI-FAC-S17-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S18",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S18-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S18",
+        "WSI-FAC-S18-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S19",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S19-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S19",
+        "WSI-FAC-S19-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-S20",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-S20-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-S20",
+        "WSI-FAC-S20-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-D01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-D01-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-D01",
+        "WSI-FAC-D01-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-D02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-D02-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-D02",
+        "WSI-FAC-D02-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-D03",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-D03-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-D03",
+        "WSI-FAC-D03-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-FAC-D04",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "WSI-FAC-D04-KIT",
+      "recipeType": "FACILITY_KIT",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-FAC-D04",
+        "WSI-FAC-D04-KIT",
+        "FACILITY_KIT",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RI-PICKAXE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RI-PICKAXE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RI-PICKAXE",
+        "EQL-UT-RI-PICKAXE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RI-AXE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RI-AXE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RI-AXE",
+        "EQL-UT-RI-AXE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RI-SHOVEL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RI-SHOVEL",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RI-SHOVEL",
+        "EQL-UT-RI-SHOVEL",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RI-HOE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RI-HOE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RI-HOE",
+        "EQL-UT-RI-HOE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RS-PICKAXE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RS-PICKAXE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RS-PICKAXE",
+        "EQL-UT-RS-PICKAXE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RS-AXE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RS-AXE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RS-AXE",
+        "EQL-UT-RS-AXE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RS-SHOVEL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RS-SHOVEL",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RS-SHOVEL",
+        "EQL-UT-RS-SHOVEL",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RS-HOE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RS-HOE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RS-HOE",
+        "EQL-UT-RS-HOE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-HD-PICKAXE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-HD-PICKAXE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-HD-PICKAXE",
+        "EQL-UT-HD-PICKAXE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-HD-AXE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-HD-AXE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-HD-AXE",
+        "EQL-UT-HD-AXE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-HD-SHOVEL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-HD-SHOVEL",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-HD-SHOVEL",
+        "EQL-UT-HD-SHOVEL",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-HD-HOE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-HD-HOE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-HD-HOE",
+        "EQL-UT-HD-HOE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RC-PICKAXE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RC-PICKAXE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RC-PICKAXE",
+        "EQL-UT-RC-PICKAXE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RC-AXE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RC-AXE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RC-AXE",
+        "EQL-UT-RC-AXE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RC-SHOVEL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RC-SHOVEL",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RC-SHOVEL",
+        "EQL-UT-RC-SHOVEL",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-UT-RC-HOE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UT-RC-HOE",
+      "recipeType": "UTILITY_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-UT-RC-HOE",
+        "EQL-UT-RC-HOE",
+        "UTILITY_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AC-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AC-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AC-R01",
+        "EQL-AC-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AC-R02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AC-R02",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AC-R02",
+        "EQL-AC-R02",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AC-U02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AC-U02",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AC-U02",
+        "EQL-AC-U02",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AX-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AX-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AX-R01",
+        "EQL-AX-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AX-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AX-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AX-U01",
+        "EQL-AX-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-BL-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-BL-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-BL-R01",
+        "EQL-BL-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-BL-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-BL-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-BL-U01",
+        "EQL-BL-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-BO-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-BO-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-BO-R01",
+        "EQL-BO-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-BO-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-BO-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-BO-U01",
+        "EQL-BO-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-CB-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-CB-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-CB-R01",
+        "EQL-CB-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-CB-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-CB-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-CB-U01",
+        "EQL-CB-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-CH-C01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-CH-C01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-CH-C01",
+        "EQL-CH-C01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-CH-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-CH-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-CH-R01",
+        "EQL-CH-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-CH-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-CH-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-CH-U01",
+        "EQL-CH-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-CH-U02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-CH-U02",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-CH-U02",
+        "EQL-CH-U02",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-AC",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-AC",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-AC",
+        "EQL-D10-AC",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-AR",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-AR",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-AR",
+        "EQL-D10-AR",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-CH",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-CH",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-CH",
+        "EQL-D10-CH",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-OH",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-OH",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-OH",
+        "EQL-D10-OH",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-UA",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-UA",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-UA",
+        "EQL-D10-UA",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-DG-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-DG-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-DG-R01",
+        "EQL-DG-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-DG-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-DG-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-DG-U01",
+        "EQL-DG-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-OH-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-OH-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-OH-R01",
+        "EQL-OH-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-OH-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-OH-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-OH-U01",
+        "EQL-OH-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-PK-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-PK-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-PK-R01",
+        "EQL-PK-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-PK-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-PK-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-PK-U01",
+        "EQL-PK-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-ST-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-ST-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-ST-R01",
+        "EQL-ST-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-ST-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-ST-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-ST-U01",
+        "EQL-ST-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-SW-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-SW-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-SW-R01",
+        "EQL-SW-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-SW-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-SW-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-SW-U01",
+        "EQL-SW-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-TR-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-TR-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-TR-R01",
+        "EQL-TR-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-TR-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-TR-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-TR-U01",
+        "EQL-TR-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-UA-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UA-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-UA-R01",
+        "EQL-UA-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-UA-U01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-UA-U01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-UA-U01",
+        "EQL-UA-U01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-U-SCOUT-HEAD",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-U-SCOUT-HEAD",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-U-SCOUT-HEAD",
+        "EQL-AR-U-SCOUT-HEAD",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-U-SCOUT-CHEST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-U-SCOUT-CHEST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-U-SCOUT-CHEST",
+        "EQL-AR-U-SCOUT-CHEST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-U-SCOUT-LEGS",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-U-SCOUT-LEGS",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-U-SCOUT-LEGS",
+        "EQL-AR-U-SCOUT-LEGS",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-U-SCOUT-FEET",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-U-SCOUT-FEET",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-U-SCOUT-FEET",
+        "EQL-AR-U-SCOUT-FEET",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-U-VANGUARD-HEAD",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-U-VANGUARD-HEAD",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-U-VANGUARD-HEAD",
+        "EQL-AR-U-VANGUARD-HEAD",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-U-VANGUARD-CHEST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-U-VANGUARD-CHEST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-U-VANGUARD-CHEST",
+        "EQL-AR-U-VANGUARD-CHEST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-U-VANGUARD-LEGS",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-U-VANGUARD-LEGS",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-U-VANGUARD-LEGS",
+        "EQL-AR-U-VANGUARD-LEGS",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-U-VANGUARD-FEET",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-U-VANGUARD-FEET",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-U-VANGUARD-FEET",
+        "EQL-AR-U-VANGUARD-FEET",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-R-OBSERVER-HEAD",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-R-OBSERVER-HEAD",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-R-OBSERVER-HEAD",
+        "EQL-AR-R-OBSERVER-HEAD",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-R-OBSERVER-CHEST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-R-OBSERVER-CHEST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-R-OBSERVER-CHEST",
+        "EQL-AR-R-OBSERVER-CHEST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-R-OBSERVER-LEGS",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-R-OBSERVER-LEGS",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-R-OBSERVER-LEGS",
+        "EQL-AR-R-OBSERVER-LEGS",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-AR-R-OBSERVER-FEET",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-AR-R-OBSERVER-FEET",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-AR-R-OBSERVER-FEET",
+        "EQL-AR-R-OBSERVER-FEET",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-W-SW",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-W-SW",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-W-SW",
+        "EQL-D10-W-SW",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-W-AX",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-W-AX",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-W-AX",
+        "EQL-D10-W-AX",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-W-BO",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-W-BO",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-W-BO",
+        "EQL-D10-W-BO",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-W-CB",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-W-CB",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-W-CB",
+        "EQL-D10-W-CB",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-W-DG",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-W-DG",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-W-DG",
+        "EQL-D10-W-DG",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-W-BL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-W-BL",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-W-BL",
+        "EQL-D10-W-BL",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-W-ST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-W-ST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-W-ST",
+        "EQL-D10-W-ST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-W-PK",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-W-PK",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-W-PK",
+        "EQL-D10-W-PK",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQL-D10-W-TR",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQL-D10-W-TR",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQL-D10-W-TR",
+        "EQL-D10-W-TR",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AC-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AC-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AC-R01",
+        "EQD20-AC-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AC-R02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AC-R02",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AC-R02",
+        "EQD20-AC-R02",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AX-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AX-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AX-R01",
+        "EQD20-AX-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-BL-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-BL-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-BL-R01",
+        "EQD20-BL-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-BO-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-BO-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-BO-R01",
+        "EQD20-BO-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-CB-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-CB-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-CB-R01",
+        "EQD20-CB-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-CH-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-CH-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-CH-R01",
+        "EQD20-CH-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-CH-R02",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-CH-R02",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-CH-R02",
+        "EQD20-CH-R02",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-DG-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-DG-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-DG-R01",
+        "EQD20-DG-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-AC01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-AC01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-AC01",
+        "EQD20-EP-AC01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-AR01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-AR01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-AR01",
+        "EQD20-EP-AR01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-CH01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-CH01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-CH01",
+        "EQD20-EP-CH01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-OH01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-OH01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-OH01",
+        "EQD20-EP-OH01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-UA01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-UA01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-UA01",
+        "EQD20-EP-UA01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-AC01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-AC01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-AC01",
+        "EQD20-LG-AC01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-AR01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-AR01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-AR01",
+        "EQD20-LG-AR01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-CH01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-CH01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-CH01",
+        "EQD20-LG-CH01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-OH01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-OH01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-OH01",
+        "EQD20-LG-OH01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-UA01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-UA01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-UA01",
+        "EQD20-LG-UA01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-OH-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-OH-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-OH-R01",
+        "EQD20-OH-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-PK-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-PK-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-PK-R01",
+        "EQD20-PK-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-ST-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-ST-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-ST-R01",
+        "EQD20-ST-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-SW-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-SW-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-SW-R01",
+        "EQD20-SW-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-TR-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-TR-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-TR-R01",
+        "EQD20-TR-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-UA-R01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-UA-R01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-UA-R01",
+        "EQD20-UA-R01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-W01-SW",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-W01-SW",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-W01-SW",
+        "EQD20-EP-W01-SW",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-W01-AX",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-W01-AX",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-W01-AX",
+        "EQD20-EP-W01-AX",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-W01-BO",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-W01-BO",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-W01-BO",
+        "EQD20-EP-W01-BO",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-W01-CB",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-W01-CB",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-W01-CB",
+        "EQD20-EP-W01-CB",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-W01-DG",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-W01-DG",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-W01-DG",
+        "EQD20-EP-W01-DG",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-W01-BL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-W01-BL",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-W01-BL",
+        "EQD20-EP-W01-BL",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-W01-ST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-W01-ST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-W01-ST",
+        "EQD20-EP-W01-ST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-W01-PK",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-W01-PK",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-W01-PK",
+        "EQD20-EP-W01-PK",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-EP-W01-TR",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-EP-W01-TR",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-EP-W01-TR",
+        "EQD20-EP-W01-TR",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-W01-SW",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-W01-SW",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-W01-SW",
+        "EQD20-LG-W01-SW",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-W01-AX",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-W01-AX",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-W01-AX",
+        "EQD20-LG-W01-AX",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-W01-BO",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-W01-BO",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-W01-BO",
+        "EQD20-LG-W01-BO",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-W01-CB",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-W01-CB",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-W01-CB",
+        "EQD20-LG-W01-CB",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-W01-DG",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-W01-DG",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-W01-DG",
+        "EQD20-LG-W01-DG",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-W01-BL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-W01-BL",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-W01-BL",
+        "EQD20-LG-W01-BL",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-W01-ST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-W01-ST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-W01-ST",
+        "EQD20-LG-W01-ST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-W01-PK",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-W01-PK",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-W01-PK",
+        "EQD20-LG-W01-PK",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-LG-W01-TR",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-LG-W01-TR",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-LG-W01-TR",
+        "EQD20-LG-W01-TR",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-MED-HEAD",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-MED-HEAD",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-MED-HEAD",
+        "EQD20-AR-MED-HEAD",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-MED-CHEST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-MED-CHEST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-MED-CHEST",
+        "EQD20-AR-MED-CHEST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-MED-LEGS",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-MED-LEGS",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-MED-LEGS",
+        "EQD20-AR-MED-LEGS",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-MED-FEET",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-MED-FEET",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-MED-FEET",
+        "EQD20-AR-MED-FEET",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-CTRL-HEAD",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-CTRL-HEAD",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-CTRL-HEAD",
+        "EQD20-AR-CTRL-HEAD",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-CTRL-CHEST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-CTRL-CHEST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-CTRL-CHEST",
+        "EQD20-AR-CTRL-CHEST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-CTRL-LEGS",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-CTRL-LEGS",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-CTRL-LEGS",
+        "EQD20-AR-CTRL-LEGS",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-CTRL-FEET",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-CTRL-FEET",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-CTRL-FEET",
+        "EQD20-AR-CTRL-FEET",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-GUARD-HEAD",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-GUARD-HEAD",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-GUARD-HEAD",
+        "EQD20-AR-GUARD-HEAD",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-GUARD-CHEST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-GUARD-CHEST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-GUARD-CHEST",
+        "EQD20-AR-GUARD-CHEST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-GUARD-LEGS",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-GUARD-LEGS",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-GUARD-LEGS",
+        "EQD20-AR-GUARD-LEGS",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD20-AR-GUARD-FEET",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD20-AR-GUARD-FEET",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD20-AR-GUARD-FEET",
+        "EQD20-AR-GUARD-FEET",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AC-CALIBRATE",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AC-CALIBRATE",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AC-CALIBRATE",
+        "EQD50-AC-CALIBRATE",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AX-A41",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AX-A41",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AX-A41",
+        "EQD50-AX-A41",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AX-E21",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AX-E21",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AX-E21",
+        "EQD50-AX-E21",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AX-L31",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AX-L31",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AX-L31",
+        "EQD50-AX-L31",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-AC01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-AC01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-AC01",
+        "EQD50-B30-AC01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-AR01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-AR01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-AR01",
+        "EQD50-B30-AR01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-OH01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-OH01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-OH01",
+        "EQD50-B30-OH01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-UA01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-UA01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-UA01",
+        "EQD50-B30-UA01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-AC01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-AC01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-AC01",
+        "EQD50-B40-AC01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-AR01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-AR01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-AR01",
+        "EQD50-B40-AR01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-OH01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-OH01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-OH01",
+        "EQD50-B40-OH01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-UA01",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-UA01",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-UA01",
+        "EQD50-B40-UA01",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-BL-A41",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-BL-A41",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-BL-A41",
+        "EQD50-BL-A41",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-BL-E21",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-BL-E21",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-BL-E21",
+        "EQD50-BL-E21",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-BL-L31",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-BL-L31",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-BL-L31",
+        "EQD50-BL-L31",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-BO-A41",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-BO-A41",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-BO-A41",
+        "EQD50-BO-A41",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-BO-E21",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-BO-E21",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-BO-E21",
+        "EQD50-BO-E21",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-BO-L31",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-BO-L31",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-BO-L31",
+        "EQD50-BO-L31",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-CB-A41",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-CB-A41",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-CB-A41",
+        "EQD50-CB-A41",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-CB-E21",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-CB-E21",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-CB-E21",
+        "EQD50-CB-E21",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-CB-L31",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-CB-L31",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-CB-L31",
+        "EQD50-CB-L31",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-CH-RELAY",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-CH-RELAY",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-CH-RELAY",
+        "EQD50-CH-RELAY",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-DG-A41",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-DG-A41",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-DG-A41",
+        "EQD50-DG-A41",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-DG-E21",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-DG-E21",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-DG-E21",
+        "EQD50-DG-E21",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-DG-L31",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-DG-L31",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-DG-L31",
+        "EQD50-DG-L31",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-OH-INTERRUPT",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-OH-INTERRUPT",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-OH-INTERRUPT",
+        "EQD50-OH-INTERRUPT",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-OH-PURIFY",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-OH-PURIFY",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-OH-PURIFY",
+        "EQD50-OH-PURIFY",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-PK-A41",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-PK-A41",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-PK-A41",
+        "EQD50-PK-A41",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-PK-E21",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-PK-E21",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-PK-E21",
+        "EQD50-PK-E21",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-PK-L31",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-PK-L31",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-PK-L31",
+        "EQD50-PK-L31",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-ST-A41",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-ST-A41",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-ST-A41",
+        "EQD50-ST-A41",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-ST-E21",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-ST-E21",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-ST-E21",
+        "EQD50-ST-E21",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-ST-L31",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-ST-L31",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-ST-L31",
+        "EQD50-ST-L31",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-SW-A41",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-SW-A41",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-SW-A41",
+        "EQD50-SW-A41",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-SW-E21",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-SW-E21",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-SW-E21",
+        "EQD50-SW-E21",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-SW-L31",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-SW-L31",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-SW-L31",
+        "EQD50-SW-L31",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-TR-A41",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-TR-A41",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-TR-A41",
+        "EQD50-TR-A41",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-TR-E21",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-TR-E21",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-TR-E21",
+        "EQD50-TR-E21",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-TR-L31",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-TR-L31",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-TR-L31",
+        "EQD50-TR-L31",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-UA-A41",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-UA-A41",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-UA-A41",
+        "EQD50-UA-A41",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-UA-E21",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-UA-E21",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-UA-E21",
+        "EQD50-UA-E21",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-UA-L31",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-UA-L31",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-UA-L31",
+        "EQD50-UA-L31",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-W01-SW",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-W01-SW",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-W01-SW",
+        "EQD50-B30-W01-SW",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-W01-AX",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-W01-AX",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-W01-AX",
+        "EQD50-B30-W01-AX",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-W01-BO",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-W01-BO",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-W01-BO",
+        "EQD50-B30-W01-BO",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-W01-CB",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-W01-CB",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-W01-CB",
+        "EQD50-B30-W01-CB",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-W01-DG",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-W01-DG",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-W01-DG",
+        "EQD50-B30-W01-DG",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-W01-BL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-W01-BL",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-W01-BL",
+        "EQD50-B30-W01-BL",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-W01-ST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-W01-ST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-W01-ST",
+        "EQD50-B30-W01-ST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-W01-PK",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-W01-PK",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-W01-PK",
+        "EQD50-B30-W01-PK",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B30-W01-TR",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B30-W01-TR",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B30-W01-TR",
+        "EQD50-B30-W01-TR",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-W01-SW",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-W01-SW",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-W01-SW",
+        "EQD50-B40-W01-SW",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-W01-AX",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-W01-AX",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-W01-AX",
+        "EQD50-B40-W01-AX",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-W01-BO",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-W01-BO",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-W01-BO",
+        "EQD50-B40-W01-BO",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-W01-CB",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-W01-CB",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-W01-CB",
+        "EQD50-B40-W01-CB",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-W01-DG",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-W01-DG",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-W01-DG",
+        "EQD50-B40-W01-DG",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-W01-BL",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-W01-BL",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-W01-BL",
+        "EQD50-B40-W01-BL",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-W01-ST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-W01-ST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-W01-ST",
+        "EQD50-B40-W01-ST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-W01-PK",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-W01-PK",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-W01-PK",
+        "EQD50-B40-W01-PK",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-B40-W01-TR",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-B40-W01-TR",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-B40-W01-TR",
+        "EQD50-B40-W01-TR",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-PURIFIER-HEAD",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-PURIFIER-HEAD",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-PURIFIER-HEAD",
+        "EQD50-AR-PURIFIER-HEAD",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-PURIFIER-CHEST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-PURIFIER-CHEST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-PURIFIER-CHEST",
+        "EQD50-AR-PURIFIER-CHEST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-PURIFIER-LEGS",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-PURIFIER-LEGS",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-PURIFIER-LEGS",
+        "EQD50-AR-PURIFIER-LEGS",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-PURIFIER-FEET",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-PURIFIER-FEET",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-PURIFIER-FEET",
+        "EQD50-AR-PURIFIER-FEET",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-INTERRUPT-HEAD",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-INTERRUPT-HEAD",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-INTERRUPT-HEAD",
+        "EQD50-AR-INTERRUPT-HEAD",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-INTERRUPT-CHEST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-INTERRUPT-CHEST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-INTERRUPT-CHEST",
+        "EQD50-AR-INTERRUPT-CHEST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-INTERRUPT-LEGS",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-INTERRUPT-LEGS",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-INTERRUPT-LEGS",
+        "EQD50-AR-INTERRUPT-LEGS",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-INTERRUPT-FEET",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-INTERRUPT-FEET",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-INTERRUPT-FEET",
+        "EQD50-AR-INTERRUPT-FEET",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-REBUILD-HEAD",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-REBUILD-HEAD",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-REBUILD-HEAD",
+        "EQD50-AR-REBUILD-HEAD",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-REBUILD-CHEST",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-REBUILD-CHEST",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-REBUILD-CHEST",
+        "EQD50-AR-REBUILD-CHEST",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-REBUILD-LEGS",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-REBUILD-LEGS",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-REBUILD-LEGS",
+        "EQD50-AR-REBUILD-LEGS",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    },
+    {
+      "id": "WSRCP-EQ-EQD50-AR-REBUILD-FEET",
+      "sourceDocumentId": "RECIPE-LIST-001",
+      "enabled": true,
+      "outputId": "EQD50-AR-REBUILD-FEET",
+      "recipeType": "EQUIPMENT_FORGE",
+      "inputAuthority": "RECIPE-LIST-001",
+      "layout": "AUTHORITY_DEFINED_3X3",
+      "raw": [
+        "WSRCP-EQ-EQD50-AR-REBUILD-FEET",
+        "EQD50-AR-REBUILD-FEET",
+        "EQUIPMENT_FORGE",
+        "RECIPE-LIST-001"
+      ]
+    }
+  ]
+}

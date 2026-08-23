@@ -1,0 +1,292 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "resources",
+  "records": [
+    {
+      "id": "WSR-PURIFY_CATALYST",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 22,
+      "name": "안정 정화 촉매",
+      "firstDay": 21,
+      "displayMaterial": "T4",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-PURIFY_CATALYST",
+        "안정 정화 촉매",
+        "T4",
+        "21",
+        "GHAST_TEAR",
+        "자연 정화 노드·D50-P01",
+        "정화 매질·행렬"
+      ]
+    },
+    {
+      "id": "WSR-RIFT_POWDER",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 23,
+      "name": "균열 가루",
+      "firstDay": 23,
+      "displayMaterial": "T4",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-RIFT_POWDER",
+        "균열 가루",
+        "T4",
+        "23",
+        "GLOWSTONE_DUST",
+        "균열 안정화·D50-P02",
+        "안정화 코어"
+      ]
+    },
+    {
+      "id": "WSR-REFINED_MUTATION",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 24,
+      "name": "정제 변이 파편",
+      "firstDay": 25,
+      "displayMaterial": "T4",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-REFINED_MUTATION",
+        "정제 변이 파편",
+        "T4",
+        "25",
+        "ECHO_SHARD",
+        "변이 3범주·D50-P03",
+        "정화·심연 개조"
+      ]
+    },
+    {
+      "id": "WSR-STABLE_CORE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 25,
+      "name": "안정화 코어",
+      "firstDay": 27,
+      "displayMaterial": "T5",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-STABLE_CORE",
+        "안정화 코어",
+        "T5",
+        "27",
+        "HEART_OF_THE_SEA",
+        "D50-P04·복구 사건",
+        "D30 호출"
+      ]
+    },
+    {
+      "id": "WSR-PURIFY_MEDIUM",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 26,
+      "name": "정화 매질",
+      "firstDay": 28,
+      "displayMaterial": "T5",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-PURIFY_MEDIUM",
+        "정화 매질",
+        "T5",
+        "28",
+        "PRISMARINE_CRYSTALS",
+        "D50-P05·운전 기록",
+        "D30·행렬"
+      ]
+    },
+    {
+      "id": "WSR-HARD_AGGREGATE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 27,
+      "name": "고강도 구조 골재",
+      "firstDay": 31,
+      "displayMaterial": "T4",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-HARD_AGGREGATE",
+        "고강도 구조 골재",
+        "T4",
+        "31",
+        "TUFF",
+        "중장 잔해·D50-P06",
+        "합금·재건 구조"
+      ]
+    },
+    {
+      "id": "WSR-RESONANCE_COIL",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 28,
+      "name": "공진 코일",
+      "firstDay": 32,
+      "displayMaterial": "T5",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-RESONANCE_COIL",
+        "공진 코일",
+        "T5",
+        "32",
+        "COPPER_BULB",
+        "D50-P07·공진 문맥",
+        "중단·동력"
+      ]
+    },
+    {
+      "id": "WSR-PATTERN_RESIDUE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 29,
+      "name": "패턴 잔재",
+      "firstDay": 34,
+      "displayMaterial": "T5",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-PATTERN_RESIDUE",
+        "패턴 잔재",
+        "T5",
+        "34",
+        "MUSIC_DISC_5",
+        "전조 기록·D50-P08",
+        "중단·렌즈"
+      ]
+    },
+    {
+      "id": "WSR-HIGH_DENSITY_ALLOY",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 30,
+      "name": "고밀도 합금",
+      "firstDay": 37,
+      "displayMaterial": "T5",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-HIGH_DENSITY_ALLOY",
+        "고밀도 합금",
+        "T5",
+        "37",
+        "NETHERITE_SCRAP",
+        "D50-P09·균열 보상",
+        "심연·프레임"
+      ]
+    },
+    {
+      "id": "WSR-INTERRUPT_CORE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 31,
+      "name": "중단 코어",
+      "firstDay": 39,
+      "displayMaterial": "T6",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-INTERRUPT_CORE",
+        "중단 코어",
+        "T6",
+        "39",
+        "RECOVERY_COMPASS",
+        "D50-P10·수단 기록",
+        "D40 호출"
+      ]
+    },
+    {
+      "id": "WSR-POWER_MATRIX",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 32,
+      "name": "동력 행렬",
+      "firstDay": 41,
+      "displayMaterial": "T6",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-POWER_MATRIX",
+        "동력 행렬",
+        "T6",
+        "41",
+        "REDSTONE_BLOCK",
+        "D50-P11·동력 기록",
+        "FAC-R02·Final"
+      ]
+    },
+    {
+      "id": "WSR-CALIBRATED_LENS",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 33,
+      "name": "교정 렌즈",
+      "firstDay": 42,
+      "displayMaterial": "T6",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-CALIBRATED_LENS",
+        "교정 렌즈",
+        "T6",
+        "42",
+        "SPYGLASS",
+        "D50-P12·관측 기록",
+        "FAC-R03·Final"
+      ]
+    },
+    {
+      "id": "WSR-PURIFY_MATRIX",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 34,
+      "name": "정화 행렬",
+      "firstDay": 43,
+      "displayMaterial": "T6",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-PURIFY_MATRIX",
+        "정화 행렬",
+        "T6",
+        "43",
+        "SEA_LANTERN",
+        "D50-P13·정화 3범주",
+        "FAC-R04·Final"
+      ]
+    },
+    {
+      "id": "WSR-STABILIZED_FRAME",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 35,
+      "name": "안정 프레임",
+      "firstDay": 44,
+      "displayMaterial": "T6",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-STABILIZED_FRAME",
+        "안정 프레임",
+        "T6",
+        "44",
+        "HEAVY_CORE",
+        "D50-P14·시설 회수",
+        "FAC-R01·Final"
+      ]
+    },
+    {
+      "id": "WSR-FINAL_SIGNAL_KEY",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 36,
+      "name": "최종 신호 키",
+      "firstDay": 49,
+      "displayMaterial": "UNIQUE",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-FINAL_SIGNAL_KEY",
+        "최종 신호 키",
+        "UNIQUE",
+        "49",
+        "NETHER_STAR",
+        "D49+RS-D49+C29",
+        "FAC-R06 활성 증명"
+      ]
+    }
+  ]
+}

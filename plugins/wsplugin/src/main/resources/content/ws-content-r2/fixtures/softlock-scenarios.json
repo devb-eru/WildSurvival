@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "fixture-softlocks",
+  "records": [
+    {
+      "id": "SOFTLOCK-SCENARIOS-S1",
+      "sourceDocumentId": "CONTENT-GRAPH-AUDIT-001",
+      "enabled": true,
+      "raw": [
+        "AUTHORITY_DATA"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,594 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "resources",
+  "records": [
+    {
+      "id": "WSR-WOOD",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 1,
+      "name": "목재",
+      "firstDay": 1,
+      "displayMaterial": "OAK_LOG",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-WOOD",
+        "목재",
+        "T0 BASIC",
+        "1",
+        "개인, 원목 4",
+        "OAK_LOG",
+        "원목 채집",
+        "기초 부품·시설"
+      ]
+    },
+    {
+      "id": "WSR-STONE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 2,
+      "name": "석재",
+      "firstDay": 1,
+      "displayMaterial": "COBBLESTONE",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-STONE",
+        "석재",
+        "T0 BASIC",
+        "1",
+        "개인, 석재류 8",
+        "COBBLESTONE",
+        "돌 채굴",
+        "골재·시설"
+      ]
+    },
+    {
+      "id": "WSR-FIBER",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 3,
+      "name": "섬유",
+      "firstDay": 1,
+      "displayMaterial": "STRING",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-FIBER",
+        "섬유",
+        "T0 BASIC",
+        "1",
+        "개인, 실·식물 4",
+        "STRING",
+        "거미·식생",
+        "천·치료품"
+      ]
+    },
+    {
+      "id": "WSR-LEATHER",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 4,
+      "name": "가죽",
+      "firstDay": 1,
+      "displayMaterial": "LEATHER",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-LEATHER",
+        "가죽",
+        "T0 BASIC",
+        "1",
+        "개인, 가죽 1",
+        "LEATHER",
+        "동물·상자",
+        "천·장비"
+      ]
+    },
+    {
+      "id": "WSR-RATION",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 5,
+      "name": "식량 배급",
+      "firstDay": 1,
+      "displayMaterial": "BREAD",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-RATION",
+        "식량 배급",
+        "T0 BASIC",
+        "1",
+        "개인, 12 food point",
+        "BREAD",
+        "음식 등록",
+        "배급팩·자극제"
+      ]
+    },
+    {
+      "id": "WSR-COAL",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 6,
+      "name": "연료",
+      "firstDay": 1,
+      "displayMaterial": "COAL",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-COAL",
+        "연료",
+        "T0 BASIC",
+        "1",
+        "개인, 석탄·숯 2",
+        "COAL",
+        "채굴·제련",
+        "모든 열 가공"
+      ]
+    },
+    {
+      "id": "WSR-IRON",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 7,
+      "name": "철",
+      "firstDay": 1,
+      "displayMaterial": "IRON_INGOT",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-IRON",
+        "철",
+        "T1 INDUSTRIAL",
+        "1",
+        "개인, 주괴 1",
+        "IRON_INGOT",
+        "철 채굴·제련",
+        "판재·장비·시설"
+      ]
+    },
+    {
+      "id": "WSR-COPPER",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 8,
+      "name": "구리",
+      "firstDay": 4,
+      "displayMaterial": "COPPER_INGOT",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-COPPER",
+        "구리",
+        "T1 INDUSTRIAL",
+        "4",
+        "개인, 주괴 1",
+        "COPPER_INGOT",
+        "구리 채굴·제련",
+        "코일·회로·시설"
+      ]
+    },
+    {
+      "id": "WSR-GOLD",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 9,
+      "name": "금",
+      "firstDay": 5,
+      "displayMaterial": "GOLD_INGOT",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-GOLD",
+        "금",
+        "T1 INDUSTRIAL",
+        "5",
+        "개인, 주괴 1",
+        "GOLD_INGOT",
+        "위험 광맥·정예",
+        "정밀·약제·장비"
+      ]
+    },
+    {
+      "id": "WSR-REDSTONE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 10,
+      "name": "회로 가루",
+      "firstDay": 4,
+      "displayMaterial": "REDSTONE",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-REDSTONE",
+        "회로 가루",
+        "T1 INDUSTRIAL",
+        "4",
+        "개인, 가루 4",
+        "REDSTONE",
+        "광맥·폐허",
+        "회로·시설"
+      ]
+    },
+    {
+      "id": "WSR-AMETHYST",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 11,
+      "name": "자수정",
+      "firstDay": 6,
+      "displayMaterial": "AMETHYST_SHARD",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-AMETHYST",
+        "자수정",
+        "T2 SPECIALIZED",
+        "6",
+        "개인, 조각 4",
+        "AMETHYST_SHARD",
+        "자수정 노드",
+        "결정·렌즈·정화"
+      ]
+    },
+    {
+      "id": "WSR-MAGIC_CRYSTAL",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 12,
+      "name": "마력 결정",
+      "firstDay": 6,
+      "displayMaterial": "AMETHYST_SHARD",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-MAGIC_CRYSTAL",
+        "마력 결정",
+        "T2 SPECIALIZED",
+        "6",
+        "개인, 결정 1",
+        "AMETHYST_SHARD",
+        "가공·엘리트",
+        "지팡이·신호·연구"
+      ]
+    },
+    {
+      "id": "WSR-TISSUE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 13,
+      "name": "오염 조직",
+      "firstDay": 5,
+      "displayMaterial": "ROTTEN_FLESH",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-TISSUE",
+        "오염 조직",
+        "T2 CORRUPTED",
+        "5",
+        "개인, 표본 1",
+        "ROTTEN_FLESH",
+        "오염 적·균열",
+        "촉매·분석"
+      ]
+    },
+    {
+      "id": "WSR-MUTATION_SHARD",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 14,
+      "name": "변이 파편",
+      "firstDay": 8,
+      "displayMaterial": "ECHO_SHARD",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-MUTATION_SHARD",
+        "변이 파편",
+        "T2 CORRUPTED",
+        "8",
+        "개인, 파편 1",
+        "ECHO_SHARD",
+        "변이·정예",
+        "재련·후반 정제"
+      ]
+    },
+    {
+      "id": "WSR-HARDWOOD_PART",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 37,
+      "name": "경목 부품",
+      "firstDay": 1,
+      "displayMaterial": "T1",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-HARDWOOD_PART",
+        "경목 부품",
+        "T1",
+        "1",
+        "WSRCP-P01",
+        "STICK",
+        "무기·시설"
+      ]
+    },
+    {
+      "id": "WSR-SINTERED_AGGREGATE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 38,
+      "name": "소결 골재",
+      "firstDay": 2,
+      "displayMaterial": "T1",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-SINTERED_AGGREGATE",
+        "소결 골재",
+        "T1",
+        "2",
+        "WSRCP-P02",
+        "ANDESITE",
+        "둔기·시설"
+      ]
+    },
+    {
+      "id": "WSR-METAL_PLATE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 39,
+      "name": "금속 판재",
+      "firstDay": 2,
+      "displayMaterial": "T1",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-METAL_PLATE",
+        "금속 판재",
+        "T1",
+        "2",
+        "WSRCP-P03",
+        "IRON_NUGGET",
+        "무기·방어구"
+      ]
+    },
+    {
+      "id": "WSR-COPPER_COIL",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 40,
+      "name": "구리 코일",
+      "firstDay": 4,
+      "displayMaterial": "T2",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-COPPER_COIL",
+        "구리 코일",
+        "T2",
+        "4",
+        "WSRCP-P04",
+        "LIGHTNING_ROD",
+        "정밀·장비"
+      ]
+    },
+    {
+      "id": "WSR-REFINED_ALLOY",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 41,
+      "name": "정련 합금",
+      "firstDay": 5,
+      "displayMaterial": "T2",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-REFINED_ALLOY",
+        "정련 합금",
+        "T2",
+        "5",
+        "WSRCP-P05",
+        "IRON_INGOT",
+        "희귀 장비"
+      ]
+    },
+    {
+      "id": "WSR-PRECISION_PART",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 42,
+      "name": "정밀 부품",
+      "firstDay": 5,
+      "displayMaterial": "T2",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-PRECISION_PART",
+        "정밀 부품",
+        "T2",
+        "5",
+        "WSRCP-P06",
+        "COMPARATOR",
+        "희귀·고유 장비"
+      ]
+    },
+    {
+      "id": "WSR-CRUDE_PURIFY_CATALYST",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 43,
+      "name": "조잡한 정화 촉매",
+      "firstDay": 5,
+      "displayMaterial": "T2",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-CRUDE_PURIFY_CATALYST",
+        "조잡한 정화 촉매",
+        "T2",
+        "5",
+        "WSRCP-P07",
+        "GLOWSTONE_DUST",
+        "초반 앰풀·휴대 정화"
+      ]
+    },
+    {
+      "id": "WSR-SIGNAL_LENS",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 44,
+      "name": "신호 렌즈",
+      "firstDay": 6,
+      "displayMaterial": "T3",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-SIGNAL_LENS",
+        "신호 렌즈",
+        "T3",
+        "6",
+        "WSRCP-P09",
+        "TINTED_GLASS",
+        "D10~30 호출"
+      ]
+    },
+    {
+      "id": "WSR-REINFORCED_CLOTH",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 45,
+      "name": "보강 천",
+      "firstDay": 2,
+      "displayMaterial": "T1",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-REINFORCED_CLOTH",
+        "보강 천",
+        "T1",
+        "2",
+        "WSRCP-P10",
+        "WHITE_CARPET",
+        "방어구·구조품"
+      ]
+    },
+    {
+      "id": "WSR-RESONANT_RESIDUE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 52,
+      "name": "공명 잔류 패턴",
+      "firstDay": 1,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-RESONANT_RESIDUE",
+        "공명 잔류 패턴",
+        "PARTY_RESOURCE",
+        "Day 10 보스 6/7/8",
+        "D10 영웅 추가 제작·강화"
+      ]
+    },
+    {
+      "id": "WSR-NEURAL_RESIDUE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 53,
+      "name": "신경 보스 잔류물",
+      "firstDay": 1,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-NEURAL_RESIDUE",
+        "신경 보스 잔류물",
+        "PARTY_RESOURCE",
+        "Day 20 보스 8/10/12",
+        "D20 전설 추가 제작"
+      ]
+    },
+    {
+      "id": "WSP-BOSS-D10-CORE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 54,
+      "name": "공명 추적체 핵 증명",
+      "firstDay": 1,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "RUN_PROOF",
+      "raw": [
+        "WSP-BOSS-D10-CORE",
+        "공명 추적체 핵 증명",
+        "BOUND_PROOF",
+        "Day 10 최초 완료",
+        "D20 호출 존재 검사, 소각 금지"
+      ]
+    },
+    {
+      "id": "WSP-REBUILD-PART-A",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 55,
+      "name": "재건 안정화 부품 A",
+      "firstDay": 1,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "RUN_PROOF",
+      "raw": [
+        "WSP-REBUILD-PART-A",
+        "재건 안정화 부품 A",
+        "BOUND_PROOF",
+        "Day 10 최초 완료",
+        "D20+, FAC-R01 증명"
+      ]
+    },
+    {
+      "id": "WSP-REBUILD-PART-B",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 56,
+      "name": "재건 생체 부품 B",
+      "firstDay": 1,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "RUN_PROOF",
+      "raw": [
+        "WSP-REBUILD-PART-B",
+        "재건 생체 부품 B",
+        "BOUND_PROOF",
+        "Day 20 최초 완료",
+        "D30+, FAC-R02 증명"
+      ]
+    },
+    {
+      "id": "WSP-REBUILD-PART-C",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 57,
+      "name": "재건 정화 부품 C",
+      "firstDay": 1,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "RUN_PROOF",
+      "raw": [
+        "WSP-REBUILD-PART-C",
+        "재건 정화 부품 C",
+        "BOUND_PROOF",
+        "Day 30 최초 완료",
+        "D40+, FAC-R03 증명"
+      ]
+    },
+    {
+      "id": "WSP-REBUILD-PART-D",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 58,
+      "name": "재건 공명 부품 D",
+      "firstDay": 1,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "RUN_PROOF",
+      "raw": [
+        "WSP-REBUILD-PART-D",
+        "재건 공명 부품 D",
+        "BOUND_PROOF",
+        "Day 40 최초 완료",
+        "FAC-R04·Final 증명"
+      ]
+    },
+    {
+      "id": "WSR-BOSS_SIGNAL_CORE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 59,
+      "name": "보스 신호 코어",
+      "firstDay": 1,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-BOSS_SIGNAL_CORE",
+        "보스 신호 코어",
+        "PARTY_RESOURCE",
+        "WSRCP-G02` 제작",
+        "WSRCP-G03` Day 10 호출"
+      ]
+    }
+  ]
+}

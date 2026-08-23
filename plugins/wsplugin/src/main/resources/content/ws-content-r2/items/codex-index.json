@@ -1,0 +1,2011 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "codex",
+  "records": [
+    {
+      "id": "WSR-WOOD",
+      "codexIndex": 1,
+      "domain": "MATERIAL",
+      "displayMaterial": "OAK_LOG"
+    },
+    {
+      "id": "WSR-STONE",
+      "codexIndex": 2,
+      "domain": "MATERIAL",
+      "displayMaterial": "COBBLESTONE"
+    },
+    {
+      "id": "WSR-FIBER",
+      "codexIndex": 3,
+      "domain": "MATERIAL",
+      "displayMaterial": "STRING"
+    },
+    {
+      "id": "WSR-LEATHER",
+      "codexIndex": 4,
+      "domain": "MATERIAL",
+      "displayMaterial": "LEATHER"
+    },
+    {
+      "id": "WSR-RATION",
+      "codexIndex": 5,
+      "domain": "MATERIAL",
+      "displayMaterial": "BREAD"
+    },
+    {
+      "id": "WSR-COAL",
+      "codexIndex": 6,
+      "domain": "MATERIAL",
+      "displayMaterial": "COAL"
+    },
+    {
+      "id": "WSR-IRON",
+      "codexIndex": 7,
+      "domain": "MATERIAL",
+      "displayMaterial": "IRON_INGOT"
+    },
+    {
+      "id": "WSR-COPPER",
+      "codexIndex": 8,
+      "domain": "MATERIAL",
+      "displayMaterial": "COPPER_INGOT"
+    },
+    {
+      "id": "WSR-GOLD",
+      "codexIndex": 9,
+      "domain": "MATERIAL",
+      "displayMaterial": "GOLD_INGOT"
+    },
+    {
+      "id": "WSR-REDSTONE",
+      "codexIndex": 10,
+      "domain": "MATERIAL",
+      "displayMaterial": "REDSTONE"
+    },
+    {
+      "id": "WSR-AMETHYST",
+      "codexIndex": 11,
+      "domain": "MATERIAL",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "WSR-MAGIC_CRYSTAL",
+      "codexIndex": 12,
+      "domain": "MATERIAL",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "WSR-TISSUE",
+      "codexIndex": 13,
+      "domain": "MATERIAL",
+      "displayMaterial": "ROTTEN_FLESH"
+    },
+    {
+      "id": "WSR-MUTATION_SHARD",
+      "codexIndex": 14,
+      "domain": "MATERIAL",
+      "displayMaterial": "ECHO_SHARD"
+    },
+    {
+      "id": "WSR-HERB",
+      "codexIndex": 15,
+      "domain": "MATERIAL",
+      "displayMaterial": "HONEY_BOTTLE"
+    },
+    {
+      "id": "WSR-ELASTIC_FIBER",
+      "codexIndex": 16,
+      "domain": "MATERIAL",
+      "displayMaterial": "COBWEB"
+    },
+    {
+      "id": "WSR-TOXIN_SAMPLE",
+      "codexIndex": 17,
+      "domain": "MATERIAL",
+      "displayMaterial": "LIME_DYE"
+    },
+    {
+      "id": "WSR-THERMAL_SAMPLE",
+      "codexIndex": 18,
+      "domain": "MATERIAL",
+      "displayMaterial": "BLAZE_POWDER"
+    },
+    {
+      "id": "WSR-HEMATIC_SAMPLE",
+      "codexIndex": 19,
+      "domain": "MATERIAL",
+      "displayMaterial": "RED_DYE"
+    },
+    {
+      "id": "WSR-NEURAL_SAMPLE",
+      "codexIndex": 20,
+      "domain": "MATERIAL",
+      "displayMaterial": "FERMENTED_SPIDER_EYE"
+    },
+    {
+      "id": "WSR-VITAL_TISSUE",
+      "codexIndex": 21,
+      "domain": "MATERIAL",
+      "displayMaterial": "SCUTE"
+    },
+    {
+      "id": "WSR-PURIFY_CATALYST",
+      "codexIndex": 22,
+      "domain": "MATERIAL",
+      "displayMaterial": "T4"
+    },
+    {
+      "id": "WSR-RIFT_POWDER",
+      "codexIndex": 23,
+      "domain": "MATERIAL",
+      "displayMaterial": "T4"
+    },
+    {
+      "id": "WSR-REFINED_MUTATION",
+      "codexIndex": 24,
+      "domain": "MATERIAL",
+      "displayMaterial": "T4"
+    },
+    {
+      "id": "WSR-STABLE_CORE",
+      "codexIndex": 25,
+      "domain": "MATERIAL",
+      "displayMaterial": "T5"
+    },
+    {
+      "id": "WSR-PURIFY_MEDIUM",
+      "codexIndex": 26,
+      "domain": "MATERIAL",
+      "displayMaterial": "T5"
+    },
+    {
+      "id": "WSR-HARD_AGGREGATE",
+      "codexIndex": 27,
+      "domain": "MATERIAL",
+      "displayMaterial": "T4"
+    },
+    {
+      "id": "WSR-RESONANCE_COIL",
+      "codexIndex": 28,
+      "domain": "MATERIAL",
+      "displayMaterial": "T5"
+    },
+    {
+      "id": "WSR-PATTERN_RESIDUE",
+      "codexIndex": 29,
+      "domain": "MATERIAL",
+      "displayMaterial": "T5"
+    },
+    {
+      "id": "WSR-HIGH_DENSITY_ALLOY",
+      "codexIndex": 30,
+      "domain": "MATERIAL",
+      "displayMaterial": "T5"
+    },
+    {
+      "id": "WSR-INTERRUPT_CORE",
+      "codexIndex": 31,
+      "domain": "MATERIAL",
+      "displayMaterial": "T6"
+    },
+    {
+      "id": "WSR-POWER_MATRIX",
+      "codexIndex": 32,
+      "domain": "MATERIAL",
+      "displayMaterial": "T6"
+    },
+    {
+      "id": "WSR-CALIBRATED_LENS",
+      "codexIndex": 33,
+      "domain": "MATERIAL",
+      "displayMaterial": "T6"
+    },
+    {
+      "id": "WSR-PURIFY_MATRIX",
+      "codexIndex": 34,
+      "domain": "MATERIAL",
+      "displayMaterial": "T6"
+    },
+    {
+      "id": "WSR-STABILIZED_FRAME",
+      "codexIndex": 35,
+      "domain": "MATERIAL",
+      "displayMaterial": "T6"
+    },
+    {
+      "id": "WSR-FINAL_SIGNAL_KEY",
+      "codexIndex": 36,
+      "domain": "MATERIAL",
+      "displayMaterial": "UNIQUE"
+    },
+    {
+      "id": "WSR-HARDWOOD_PART",
+      "codexIndex": 37,
+      "domain": "MATERIAL",
+      "displayMaterial": "T1"
+    },
+    {
+      "id": "WSR-SINTERED_AGGREGATE",
+      "codexIndex": 38,
+      "domain": "MATERIAL",
+      "displayMaterial": "T1"
+    },
+    {
+      "id": "WSR-METAL_PLATE",
+      "codexIndex": 39,
+      "domain": "MATERIAL",
+      "displayMaterial": "T1"
+    },
+    {
+      "id": "WSR-COPPER_COIL",
+      "codexIndex": 40,
+      "domain": "MATERIAL",
+      "displayMaterial": "T2"
+    },
+    {
+      "id": "WSR-REFINED_ALLOY",
+      "codexIndex": 41,
+      "domain": "MATERIAL",
+      "displayMaterial": "T2"
+    },
+    {
+      "id": "WSR-PRECISION_PART",
+      "codexIndex": 42,
+      "domain": "MATERIAL",
+      "displayMaterial": "T2"
+    },
+    {
+      "id": "WSR-CRUDE_PURIFY_CATALYST",
+      "codexIndex": 43,
+      "domain": "MATERIAL",
+      "displayMaterial": "T2"
+    },
+    {
+      "id": "WSR-SIGNAL_LENS",
+      "codexIndex": 44,
+      "domain": "MATERIAL",
+      "displayMaterial": "T3"
+    },
+    {
+      "id": "WSR-REINFORCED_CLOTH",
+      "codexIndex": 45,
+      "domain": "MATERIAL",
+      "displayMaterial": "T1"
+    },
+    {
+      "id": "WSR-STERILE_GEL",
+      "codexIndex": 46,
+      "domain": "MATERIAL",
+      "displayMaterial": "T3"
+    },
+    {
+      "id": "WSR-ELASTIC_WEAVE",
+      "codexIndex": 47,
+      "domain": "MATERIAL",
+      "displayMaterial": "T3"
+    },
+    {
+      "id": "WSR-REINFORCED_ALLOY",
+      "codexIndex": 48,
+      "domain": "MATERIAL",
+      "displayMaterial": "T3"
+    },
+    {
+      "id": "WSR-NEURAL_CIRCUIT",
+      "codexIndex": 49,
+      "domain": "MATERIAL",
+      "displayMaterial": "T3"
+    },
+    {
+      "id": "WSR-BIO_MEDIUM",
+      "codexIndex": 50,
+      "domain": "MATERIAL",
+      "displayMaterial": "T4"
+    },
+    {
+      "id": "WSR-STATUS_PLATE",
+      "codexIndex": 51,
+      "domain": "MATERIAL",
+      "displayMaterial": "T3"
+    },
+    {
+      "id": "WSR-RESONANT_RESIDUE",
+      "codexIndex": 52,
+      "domain": "MATERIAL",
+      "displayMaterial": "PAPER"
+    },
+    {
+      "id": "WSR-NEURAL_RESIDUE",
+      "codexIndex": 53,
+      "domain": "MATERIAL",
+      "displayMaterial": "PAPER"
+    },
+    {
+      "id": "WSP-BOSS-D10-CORE",
+      "codexIndex": 54,
+      "domain": "MATERIAL",
+      "displayMaterial": "PAPER"
+    },
+    {
+      "id": "WSP-REBUILD-PART-A",
+      "codexIndex": 55,
+      "domain": "MATERIAL",
+      "displayMaterial": "PAPER"
+    },
+    {
+      "id": "WSP-REBUILD-PART-B",
+      "codexIndex": 56,
+      "domain": "MATERIAL",
+      "displayMaterial": "PAPER"
+    },
+    {
+      "id": "WSP-REBUILD-PART-C",
+      "codexIndex": 57,
+      "domain": "MATERIAL",
+      "displayMaterial": "PAPER"
+    },
+    {
+      "id": "WSP-REBUILD-PART-D",
+      "codexIndex": 58,
+      "domain": "MATERIAL",
+      "displayMaterial": "PAPER"
+    },
+    {
+      "id": "WSR-BOSS_SIGNAL_CORE",
+      "codexIndex": 59,
+      "domain": "MATERIAL",
+      "displayMaterial": "PAPER"
+    },
+    {
+      "id": "WSI-CONS-RATION_PACK",
+      "codexIndex": 100,
+      "domain": "ITEM",
+      "displayMaterial": "BREAD"
+    },
+    {
+      "id": "WSI-CONS-BANDAGE",
+      "codexIndex": 101,
+      "domain": "ITEM",
+      "displayMaterial": "PAPER"
+    },
+    {
+      "id": "WSI-CONS-REPAIR_KIT",
+      "codexIndex": 102,
+      "domain": "ITEM",
+      "displayMaterial": "ANVIL"
+    },
+    {
+      "id": "WSI-AMMO-ARROW_BUNDLE",
+      "codexIndex": 103,
+      "domain": "ITEM",
+      "displayMaterial": "ARROW"
+    },
+    {
+      "id": "WSI-AMMO-PIERCING_BOLT_BUNDLE",
+      "codexIndex": 104,
+      "domain": "ITEM",
+      "displayMaterial": "SPECTRAL_ARROW"
+    },
+    {
+      "id": "WSI-CONS-PURIFY_AMPOULE",
+      "codexIndex": 105,
+      "domain": "ITEM",
+      "displayMaterial": "HONEY_BOTTLE"
+    },
+    {
+      "id": "WSI-CONS-AP_STIM",
+      "codexIndex": 106,
+      "domain": "ITEM",
+      "displayMaterial": "SUGAR"
+    },
+    {
+      "id": "WSI-CONS-RESCUE_BRACE",
+      "codexIndex": 107,
+      "domain": "ITEM",
+      "displayMaterial": "TRIPWIRE_HOOK"
+    },
+    {
+      "id": "WSI-CONS-PORTABLE_PURIFIER_CHARGE",
+      "codexIndex": 108,
+      "domain": "ITEM",
+      "displayMaterial": "GLOWSTONE_DUST"
+    },
+    {
+      "id": "WSI-CONS-ANTIDOTE_INJECTION",
+      "codexIndex": 109,
+      "domain": "ITEM",
+      "displayMaterial": "POTION"
+    },
+    {
+      "id": "WSI-CONS-COOLING_SALVE",
+      "codexIndex": 110,
+      "domain": "ITEM",
+      "displayMaterial": "SNOWBALL"
+    },
+    {
+      "id": "WSI-CONS-TOURNIQUET",
+      "codexIndex": 111,
+      "domain": "ITEM",
+      "displayMaterial": "RED_CARPET"
+    },
+    {
+      "id": "WSI-CONS-NEURAL_STABILIZER",
+      "codexIndex": 112,
+      "domain": "ITEM",
+      "displayMaterial": "FERMENTED_SPIDER_EYE"
+    },
+    {
+      "id": "WSI-CONS-REINFORCED_RESCUE_BRACE",
+      "codexIndex": 113,
+      "domain": "ITEM",
+      "displayMaterial": "CHAIN"
+    },
+    {
+      "id": "WSI-CONS-BIO_SHIELD_AMPOULE",
+      "codexIndex": 114,
+      "domain": "ITEM",
+      "displayMaterial": "TURTLE_SCUTE"
+    },
+    {
+      "id": "WSI-AMMO-PURIFY_ARROW_BUNDLE",
+      "codexIndex": 115,
+      "domain": "ITEM",
+      "displayMaterial": "TIPPED_ARROW"
+    },
+    {
+      "id": "WSI-AMMO-RESONANCE_BOLT_BUNDLE",
+      "codexIndex": 116,
+      "domain": "ITEM",
+      "displayMaterial": "FIREWORK_STAR"
+    },
+    {
+      "id": "WSI-AMMO-STABILIZER_DART_BUNDLE",
+      "codexIndex": 117,
+      "domain": "ITEM",
+      "displayMaterial": "WIND_CHARGE"
+    },
+    {
+      "id": "WSI-PORTABLE-CRAFT_KIT",
+      "codexIndex": 120,
+      "domain": "ITEM",
+      "displayMaterial": "BUNDLE"
+    },
+    {
+      "id": "WSI-PORTABLE-SAMPLE_EXTRACTOR",
+      "codexIndex": 121,
+      "domain": "ITEM",
+      "displayMaterial": "BRUSH"
+    },
+    {
+      "id": "WSI-PORTABLE-ANALYZER",
+      "codexIndex": 122,
+      "domain": "ITEM",
+      "displayMaterial": "COMPASS"
+    },
+    {
+      "id": "WSI-PORTABLE-PURIFIER",
+      "codexIndex": 123,
+      "domain": "ITEM",
+      "displayMaterial": "BREWING_STAND"
+    },
+    {
+      "id": "WSI-PORTABLE-SIGNAL_STAKE",
+      "codexIndex": 124,
+      "domain": "ITEM",
+      "displayMaterial": "LIGHTNING_ROD"
+    },
+    {
+      "id": "WSI-PORTABLE-RESCUE_BEACON",
+      "codexIndex": 125,
+      "domain": "ITEM",
+      "displayMaterial": "BELL"
+    },
+    {
+      "id": "WSI-PORTABLE-LEDGER",
+      "codexIndex": 126,
+      "domain": "ITEM",
+      "displayMaterial": "WRITABLE_BOOK"
+    },
+    {
+      "id": "WSI-FAC-C01-KIT",
+      "codexIndex": 130,
+      "domain": "ITEM",
+      "displayMaterial": "CRAFTING_TABLE"
+    },
+    {
+      "id": "WSI-FAC-C02-KIT",
+      "codexIndex": 131,
+      "domain": "ITEM",
+      "displayMaterial": "FURNACE"
+    },
+    {
+      "id": "WSI-FAC-C03-KIT",
+      "codexIndex": 132,
+      "domain": "ITEM",
+      "displayMaterial": "BARREL"
+    },
+    {
+      "id": "WSI-FAC-C04-KIT",
+      "codexIndex": 133,
+      "domain": "ITEM",
+      "displayMaterial": "WHITE_CARPET"
+    },
+    {
+      "id": "WSI-FAC-C05-KIT",
+      "codexIndex": 134,
+      "domain": "ITEM",
+      "displayMaterial": "BELL"
+    },
+    {
+      "id": "WSI-FAC-C06-KIT",
+      "codexIndex": 135,
+      "domain": "ITEM",
+      "displayMaterial": "BREWING_STAND"
+    },
+    {
+      "id": "WSI-FAC-C07-KIT",
+      "codexIndex": 136,
+      "domain": "ITEM",
+      "displayMaterial": "FLETCHING_TABLE"
+    },
+    {
+      "id": "WSI-FAC-C08-KIT",
+      "codexIndex": 137,
+      "domain": "ITEM",
+      "displayMaterial": "IRON_BARS"
+    },
+    {
+      "id": "WSI-FAC-S01-KIT",
+      "codexIndex": 140,
+      "domain": "ITEM",
+      "displayMaterial": "SMITHING_TABLE"
+    },
+    {
+      "id": "WSI-FAC-S02-KIT",
+      "codexIndex": 141,
+      "domain": "ITEM",
+      "displayMaterial": "ANVIL"
+    },
+    {
+      "id": "WSI-FAC-S03-KIT",
+      "codexIndex": 142,
+      "domain": "ITEM",
+      "displayMaterial": "GRINDSTONE"
+    },
+    {
+      "id": "WSI-FAC-S04-KIT",
+      "codexIndex": 143,
+      "domain": "ITEM",
+      "displayMaterial": "STONECUTTER"
+    },
+    {
+      "id": "WSI-FAC-S05-KIT",
+      "codexIndex": 144,
+      "domain": "ITEM",
+      "displayMaterial": "FLETCHING_TABLE"
+    },
+    {
+      "id": "WSI-FAC-S06-KIT",
+      "codexIndex": 145,
+      "domain": "ITEM",
+      "displayMaterial": "LECTERN"
+    },
+    {
+      "id": "WSI-FAC-S07-KIT",
+      "codexIndex": 146,
+      "domain": "ITEM",
+      "displayMaterial": "SPYGLASS"
+    },
+    {
+      "id": "WSI-FAC-S08-KIT",
+      "codexIndex": 147,
+      "domain": "ITEM",
+      "displayMaterial": "JUKEBOX"
+    },
+    {
+      "id": "WSI-FAC-S09-KIT",
+      "codexIndex": 148,
+      "domain": "ITEM",
+      "displayMaterial": "ENCHANTING_TABLE"
+    },
+    {
+      "id": "WSI-FAC-S10-KIT",
+      "codexIndex": 149,
+      "domain": "ITEM",
+      "displayMaterial": "TARGET"
+    },
+    {
+      "id": "WSI-FAC-S11-KIT",
+      "codexIndex": 150,
+      "domain": "ITEM",
+      "displayMaterial": "RED_BED"
+    },
+    {
+      "id": "WSI-FAC-S12-KIT",
+      "codexIndex": 151,
+      "domain": "ITEM",
+      "displayMaterial": "SOUL_CAMPFIRE"
+    },
+    {
+      "id": "WSI-FAC-S13-KIT",
+      "codexIndex": 152,
+      "domain": "ITEM",
+      "displayMaterial": "BEACON"
+    },
+    {
+      "id": "WSI-FAC-S14-KIT",
+      "codexIndex": 153,
+      "domain": "ITEM",
+      "displayMaterial": "END_ROD"
+    },
+    {
+      "id": "WSI-FAC-S15-KIT",
+      "codexIndex": 154,
+      "domain": "ITEM",
+      "displayMaterial": "COPPER_BLOCK"
+    },
+    {
+      "id": "WSI-FAC-S16-KIT",
+      "codexIndex": 155,
+      "domain": "ITEM",
+      "displayMaterial": "ENDER_CHEST"
+    },
+    {
+      "id": "WSI-FAC-S17-KIT",
+      "codexIndex": 156,
+      "domain": "ITEM",
+      "displayMaterial": "REDSTONE_BLOCK"
+    },
+    {
+      "id": "WSI-FAC-S18-KIT",
+      "codexIndex": 157,
+      "domain": "ITEM",
+      "displayMaterial": "LODESTONE"
+    },
+    {
+      "id": "WSI-FAC-S19-KIT",
+      "codexIndex": 158,
+      "domain": "ITEM",
+      "displayMaterial": "BELL"
+    },
+    {
+      "id": "WSI-FAC-S20-KIT",
+      "codexIndex": 159,
+      "domain": "ITEM",
+      "displayMaterial": "SCULK_SENSOR"
+    },
+    {
+      "id": "WSI-FAC-D01-KIT",
+      "codexIndex": 160,
+      "domain": "ITEM",
+      "displayMaterial": "IRON_BARS"
+    },
+    {
+      "id": "WSI-FAC-D02-KIT",
+      "codexIndex": 161,
+      "domain": "ITEM",
+      "displayMaterial": "TRIPWIRE_HOOK"
+    },
+    {
+      "id": "WSI-FAC-D03-KIT",
+      "codexIndex": 162,
+      "domain": "ITEM",
+      "displayMaterial": "PISTON"
+    },
+    {
+      "id": "WSI-FAC-D04-KIT",
+      "codexIndex": 163,
+      "domain": "ITEM",
+      "displayMaterial": "REDSTONE_TORCH"
+    },
+    {
+      "id": "WSI-CALL-D10",
+      "codexIndex": 170,
+      "domain": "ITEM",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "WSI-CALL-D20",
+      "codexIndex": 171,
+      "domain": "ITEM",
+      "displayMaterial": "SCULK_CATALYST"
+    },
+    {
+      "id": "WSI-CALL-D30",
+      "codexIndex": 172,
+      "domain": "ITEM",
+      "displayMaterial": "HEART_OF_THE_SEA"
+    },
+    {
+      "id": "WSI-CALL-D40",
+      "codexIndex": 173,
+      "domain": "ITEM",
+      "displayMaterial": "HEAVY_CORE"
+    },
+    {
+      "id": "EQL-UT-RI-PICKAXE",
+      "codexIndex": 1000,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_PICKAXE"
+    },
+    {
+      "id": "EQL-UT-RI-AXE",
+      "codexIndex": 1001,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_AXE"
+    },
+    {
+      "id": "EQL-UT-RI-SHOVEL",
+      "codexIndex": 1002,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_SHOVEL"
+    },
+    {
+      "id": "EQL-UT-RI-HOE",
+      "codexIndex": 1003,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_HOE"
+    },
+    {
+      "id": "EQL-UT-RS-PICKAXE",
+      "codexIndex": 1004,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DIAMOND_PICKAXE"
+    },
+    {
+      "id": "EQL-UT-RS-AXE",
+      "codexIndex": 1005,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DIAMOND_AXE"
+    },
+    {
+      "id": "EQL-UT-RS-SHOVEL",
+      "codexIndex": 1006,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DIAMOND_SHOVEL"
+    },
+    {
+      "id": "EQL-UT-RS-HOE",
+      "codexIndex": 1007,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DIAMOND_HOE"
+    },
+    {
+      "id": "EQL-UT-HD-PICKAXE",
+      "codexIndex": 1008,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "NETHERITE_PICKAXE"
+    },
+    {
+      "id": "EQL-UT-HD-AXE",
+      "codexIndex": 1009,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "NETHERITE_AXE"
+    },
+    {
+      "id": "EQL-UT-HD-SHOVEL",
+      "codexIndex": 1010,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "NETHERITE_SHOVEL"
+    },
+    {
+      "id": "EQL-UT-HD-HOE",
+      "codexIndex": 1011,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "NETHERITE_HOE"
+    },
+    {
+      "id": "EQL-UT-RC-PICKAXE",
+      "codexIndex": 1012,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "NETHERITE_PICKAXE"
+    },
+    {
+      "id": "EQL-UT-RC-AXE",
+      "codexIndex": 1013,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "NETHERITE_AXE"
+    },
+    {
+      "id": "EQL-UT-RC-SHOVEL",
+      "codexIndex": 1014,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "NETHERITE_SHOVEL"
+    },
+    {
+      "id": "EQL-UT-RC-HOE",
+      "codexIndex": 1015,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "NETHERITE_HOE"
+    },
+    {
+      "id": "EQL-AC-C01",
+      "codexIndex": 1016,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQL-AC-R01",
+      "codexIndex": 1017,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQL-AC-R02",
+      "codexIndex": 1018,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQL-AC-U01",
+      "codexIndex": 1019,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQL-AC-U02",
+      "codexIndex": 1020,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQL-AR-C01",
+      "codexIndex": 1021,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_HEAD"
+    },
+    {
+      "id": "EQL-AR-C02",
+      "codexIndex": 1022,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_CHEST"
+    },
+    {
+      "id": "EQL-AR-C03",
+      "codexIndex": 1023,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_LEGS"
+    },
+    {
+      "id": "EQL-AR-C04",
+      "codexIndex": 1024,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_FEET"
+    },
+    {
+      "id": "EQL-AX-R01",
+      "codexIndex": 1025,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQL-AX-U01",
+      "codexIndex": 1026,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQL-BL-R01",
+      "codexIndex": 1027,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQL-BL-U01",
+      "codexIndex": 1028,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQL-BO-R01",
+      "codexIndex": 1029,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQL-BO-U01",
+      "codexIndex": 1030,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQL-CB-R01",
+      "codexIndex": 1031,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQL-CB-U01",
+      "codexIndex": 1032,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQL-CH-C01",
+      "codexIndex": 1033,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "EQL-CH-R01",
+      "codexIndex": 1034,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "EQL-CH-U01",
+      "codexIndex": 1035,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "EQL-CH-U02",
+      "codexIndex": 1036,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "EQL-D10-AC",
+      "codexIndex": 1037,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQL-D10-AR",
+      "codexIndex": 1038,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_CHEST"
+    },
+    {
+      "id": "EQL-D10-CH",
+      "codexIndex": 1039,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "EQL-D10-OH",
+      "codexIndex": 1040,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SHIELD"
+    },
+    {
+      "id": "EQL-D10-UA",
+      "codexIndex": 1041,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "UNARMED_SUPPORT"
+    },
+    {
+      "id": "EQL-DG-R01",
+      "codexIndex": 1042,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQL-DG-U01",
+      "codexIndex": 1043,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQL-OH-C01",
+      "codexIndex": 1044,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SHIELD"
+    },
+    {
+      "id": "EQL-OH-R01",
+      "codexIndex": 1045,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SHIELD"
+    },
+    {
+      "id": "EQL-OH-U01",
+      "codexIndex": 1046,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SHIELD"
+    },
+    {
+      "id": "EQL-PK-R01",
+      "codexIndex": 1047,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQL-PK-U01",
+      "codexIndex": 1048,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQL-ST-R01",
+      "codexIndex": 1049,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQL-ST-U01",
+      "codexIndex": 1050,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQL-SW-R01",
+      "codexIndex": 1051,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQL-SW-U01",
+      "codexIndex": 1052,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQL-TR-R01",
+      "codexIndex": 1053,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQL-TR-U01",
+      "codexIndex": 1054,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQL-UA-R01",
+      "codexIndex": 1055,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "UNARMED_SUPPORT"
+    },
+    {
+      "id": "EQL-UA-U01",
+      "codexIndex": 1056,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "UNARMED_SUPPORT"
+    },
+    {
+      "id": "EQL-W01",
+      "codexIndex": 1057,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQL-W02",
+      "codexIndex": 1058,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQL-W03",
+      "codexIndex": 1059,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQL-W04",
+      "codexIndex": 1060,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQL-W05",
+      "codexIndex": 1061,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQL-W06",
+      "codexIndex": 1062,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQL-W07",
+      "codexIndex": 1063,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQL-W08",
+      "codexIndex": 1064,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQL-W09",
+      "codexIndex": 1065,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQL-AR-U-SCOUT-HEAD",
+      "codexIndex": 1066,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_HEAD"
+    },
+    {
+      "id": "EQL-AR-U-SCOUT-CHEST",
+      "codexIndex": 1067,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_CHESTPLATE"
+    },
+    {
+      "id": "EQL-AR-U-SCOUT-LEGS",
+      "codexIndex": 1068,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_LEGS"
+    },
+    {
+      "id": "EQL-AR-U-SCOUT-FEET",
+      "codexIndex": 1069,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_FEET"
+    },
+    {
+      "id": "EQL-AR-U-VANGUARD-HEAD",
+      "codexIndex": 1070,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_HEAD"
+    },
+    {
+      "id": "EQL-AR-U-VANGUARD-CHEST",
+      "codexIndex": 1071,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_CHESTPLATE"
+    },
+    {
+      "id": "EQL-AR-U-VANGUARD-LEGS",
+      "codexIndex": 1072,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_LEGS"
+    },
+    {
+      "id": "EQL-AR-U-VANGUARD-FEET",
+      "codexIndex": 1073,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_FEET"
+    },
+    {
+      "id": "EQL-AR-R-OBSERVER-HEAD",
+      "codexIndex": 1074,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_HEAD"
+    },
+    {
+      "id": "EQL-AR-R-OBSERVER-CHEST",
+      "codexIndex": 1075,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_CHESTPLATE"
+    },
+    {
+      "id": "EQL-AR-R-OBSERVER-LEGS",
+      "codexIndex": 1076,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_LEGS"
+    },
+    {
+      "id": "EQL-AR-R-OBSERVER-FEET",
+      "codexIndex": 1077,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_FEET"
+    },
+    {
+      "id": "EQL-D10-W-SW",
+      "codexIndex": 1078,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQL-D10-W-AX",
+      "codexIndex": 1079,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQL-D10-W-BO",
+      "codexIndex": 1080,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQL-D10-W-CB",
+      "codexIndex": 1081,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQL-D10-W-DG",
+      "codexIndex": 1082,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQL-D10-W-BL",
+      "codexIndex": 1083,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQL-D10-W-ST",
+      "codexIndex": 1084,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQL-D10-W-PK",
+      "codexIndex": 1085,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQL-D10-W-TR",
+      "codexIndex": 1086,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQD20-AC-R01",
+      "codexIndex": 1087,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQD20-AC-R02",
+      "codexIndex": 1088,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQD20-AX-R01",
+      "codexIndex": 1089,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQD20-BL-R01",
+      "codexIndex": 1090,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQD20-BO-R01",
+      "codexIndex": 1091,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQD20-CB-R01",
+      "codexIndex": 1092,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQD20-CH-R01",
+      "codexIndex": 1093,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "EQD20-CH-R02",
+      "codexIndex": 1094,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "EQD20-DG-R01",
+      "codexIndex": 1095,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQD20-EP-AC01",
+      "codexIndex": 1096,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQD20-EP-AR01",
+      "codexIndex": 1097,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_CHEST"
+    },
+    {
+      "id": "EQD20-EP-CH01",
+      "codexIndex": 1098,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "EQD20-EP-OH01",
+      "codexIndex": 1099,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SHIELD"
+    },
+    {
+      "id": "EQD20-EP-UA01",
+      "codexIndex": 1100,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "UNARMED_SUPPORT"
+    },
+    {
+      "id": "EQD20-LG-AC01",
+      "codexIndex": 1101,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQD20-LG-AR01",
+      "codexIndex": 1102,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_CHEST"
+    },
+    {
+      "id": "EQD20-LG-CH01",
+      "codexIndex": 1103,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "EQD20-LG-OH01",
+      "codexIndex": 1104,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SHIELD"
+    },
+    {
+      "id": "EQD20-LG-UA01",
+      "codexIndex": 1105,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "UNARMED_SUPPORT"
+    },
+    {
+      "id": "EQD20-OH-R01",
+      "codexIndex": 1106,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SHIELD"
+    },
+    {
+      "id": "EQD20-PK-R01",
+      "codexIndex": 1107,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQD20-ST-R01",
+      "codexIndex": 1108,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQD20-SW-R01",
+      "codexIndex": 1109,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQD20-TR-R01",
+      "codexIndex": 1110,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQD20-UA-R01",
+      "codexIndex": 1111,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "UNARMED_SUPPORT"
+    },
+    {
+      "id": "EQD20-EP-W01-SW",
+      "codexIndex": 1112,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQD20-EP-W01-AX",
+      "codexIndex": 1113,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQD20-EP-W01-BO",
+      "codexIndex": 1114,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQD20-EP-W01-CB",
+      "codexIndex": 1115,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQD20-EP-W01-DG",
+      "codexIndex": 1116,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQD20-EP-W01-BL",
+      "codexIndex": 1117,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQD20-EP-W01-ST",
+      "codexIndex": 1118,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQD20-EP-W01-PK",
+      "codexIndex": 1119,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQD20-EP-W01-TR",
+      "codexIndex": 1120,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQD20-LG-W01-SW",
+      "codexIndex": 1121,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQD20-LG-W01-AX",
+      "codexIndex": 1122,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQD20-LG-W01-BO",
+      "codexIndex": 1123,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQD20-LG-W01-CB",
+      "codexIndex": 1124,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQD20-LG-W01-DG",
+      "codexIndex": 1125,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQD20-LG-W01-BL",
+      "codexIndex": 1126,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQD20-LG-W01-ST",
+      "codexIndex": 1127,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQD20-LG-W01-PK",
+      "codexIndex": 1128,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQD20-LG-W01-TR",
+      "codexIndex": 1129,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQD20-AR-MED-HEAD",
+      "codexIndex": 1130,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_HEAD"
+    },
+    {
+      "id": "EQD20-AR-MED-CHEST",
+      "codexIndex": 1131,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_CHESTPLATE"
+    },
+    {
+      "id": "EQD20-AR-MED-LEGS",
+      "codexIndex": 1132,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_LEGS"
+    },
+    {
+      "id": "EQD20-AR-MED-FEET",
+      "codexIndex": 1133,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_FEET"
+    },
+    {
+      "id": "EQD20-AR-CTRL-HEAD",
+      "codexIndex": 1134,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_HEAD"
+    },
+    {
+      "id": "EQD20-AR-CTRL-CHEST",
+      "codexIndex": 1135,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_CHESTPLATE"
+    },
+    {
+      "id": "EQD20-AR-CTRL-LEGS",
+      "codexIndex": 1136,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_LEGS"
+    },
+    {
+      "id": "EQD20-AR-CTRL-FEET",
+      "codexIndex": 1137,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_FEET"
+    },
+    {
+      "id": "EQD20-AR-GUARD-HEAD",
+      "codexIndex": 1138,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_HEAD"
+    },
+    {
+      "id": "EQD20-AR-GUARD-CHEST",
+      "codexIndex": 1139,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_CHESTPLATE"
+    },
+    {
+      "id": "EQD20-AR-GUARD-LEGS",
+      "codexIndex": 1140,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_LEGS"
+    },
+    {
+      "id": "EQD20-AR-GUARD-FEET",
+      "codexIndex": 1141,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_FEET"
+    },
+    {
+      "id": "EQD50-AC-CALIBRATE",
+      "codexIndex": 1142,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQD50-AX-A41",
+      "codexIndex": 1143,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQD50-AX-E21",
+      "codexIndex": 1144,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQD50-AX-L31",
+      "codexIndex": 1145,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQD50-B30-AC01",
+      "codexIndex": 1146,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQD50-B30-AR01",
+      "codexIndex": 1147,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_CHEST"
+    },
+    {
+      "id": "EQD50-B30-OH01",
+      "codexIndex": 1148,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SHIELD"
+    },
+    {
+      "id": "EQD50-B30-UA01",
+      "codexIndex": 1149,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "UNARMED_SUPPORT"
+    },
+    {
+      "id": "EQD50-B40-AC01",
+      "codexIndex": 1150,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "RECOVERY_COMPASS"
+    },
+    {
+      "id": "EQD50-B40-AR01",
+      "codexIndex": 1151,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_CHEST"
+    },
+    {
+      "id": "EQD50-B40-OH01",
+      "codexIndex": 1152,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SHIELD"
+    },
+    {
+      "id": "EQD50-B40-UA01",
+      "codexIndex": 1153,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "UNARMED_SUPPORT"
+    },
+    {
+      "id": "EQD50-BL-A41",
+      "codexIndex": 1154,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQD50-BL-E21",
+      "codexIndex": 1155,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQD50-BL-L31",
+      "codexIndex": 1156,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQD50-BO-A41",
+      "codexIndex": 1157,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQD50-BO-E21",
+      "codexIndex": 1158,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQD50-BO-L31",
+      "codexIndex": 1159,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQD50-CB-A41",
+      "codexIndex": 1160,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQD50-CB-E21",
+      "codexIndex": 1161,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQD50-CB-L31",
+      "codexIndex": 1162,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQD50-CH-RELAY",
+      "codexIndex": 1163,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AMETHYST_SHARD"
+    },
+    {
+      "id": "EQD50-DG-A41",
+      "codexIndex": 1164,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQD50-DG-E21",
+      "codexIndex": 1165,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQD50-DG-L31",
+      "codexIndex": 1166,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQD50-OH-INTERRUPT",
+      "codexIndex": 1167,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SHIELD"
+    },
+    {
+      "id": "EQD50-OH-PURIFY",
+      "codexIndex": 1168,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SHIELD"
+    },
+    {
+      "id": "EQD50-PK-A41",
+      "codexIndex": 1169,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQD50-PK-E21",
+      "codexIndex": 1170,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQD50-PK-L31",
+      "codexIndex": 1171,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQD50-ST-A41",
+      "codexIndex": 1172,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQD50-ST-E21",
+      "codexIndex": 1173,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQD50-ST-L31",
+      "codexIndex": 1174,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQD50-SW-A41",
+      "codexIndex": 1175,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQD50-SW-E21",
+      "codexIndex": 1176,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQD50-SW-L31",
+      "codexIndex": 1177,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQD50-TR-A41",
+      "codexIndex": 1178,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQD50-TR-E21",
+      "codexIndex": 1179,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQD50-TR-L31",
+      "codexIndex": 1180,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQD50-UA-A41",
+      "codexIndex": 1181,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "UNARMED_SUPPORT"
+    },
+    {
+      "id": "EQD50-UA-E21",
+      "codexIndex": 1182,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "UNARMED_SUPPORT"
+    },
+    {
+      "id": "EQD50-UA-L31",
+      "codexIndex": 1183,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "UNARMED_SUPPORT"
+    },
+    {
+      "id": "EQD50-B30-W01-SW",
+      "codexIndex": 1184,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQD50-B30-W01-AX",
+      "codexIndex": 1185,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQD50-B30-W01-BO",
+      "codexIndex": 1186,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQD50-B30-W01-CB",
+      "codexIndex": 1187,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQD50-B30-W01-DG",
+      "codexIndex": 1188,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQD50-B30-W01-BL",
+      "codexIndex": 1189,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQD50-B30-W01-ST",
+      "codexIndex": 1190,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQD50-B30-W01-PK",
+      "codexIndex": 1191,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQD50-B30-W01-TR",
+      "codexIndex": 1192,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQD50-B40-W01-SW",
+      "codexIndex": 1193,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "SW"
+    },
+    {
+      "id": "EQD50-B40-W01-AX",
+      "codexIndex": 1194,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "AX"
+    },
+    {
+      "id": "EQD50-B40-W01-BO",
+      "codexIndex": 1195,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BO"
+    },
+    {
+      "id": "EQD50-B40-W01-CB",
+      "codexIndex": 1196,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "CB"
+    },
+    {
+      "id": "EQD50-B40-W01-DG",
+      "codexIndex": 1197,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "DG"
+    },
+    {
+      "id": "EQD50-B40-W01-BL",
+      "codexIndex": 1198,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "BL"
+    },
+    {
+      "id": "EQD50-B40-W01-ST",
+      "codexIndex": 1199,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ST"
+    },
+    {
+      "id": "EQD50-B40-W01-PK",
+      "codexIndex": 1200,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "PK"
+    },
+    {
+      "id": "EQD50-B40-W01-TR",
+      "codexIndex": 1201,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "TR"
+    },
+    {
+      "id": "EQD50-AR-PURIFIER-HEAD",
+      "codexIndex": 1202,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_HEAD"
+    },
+    {
+      "id": "EQD50-AR-PURIFIER-CHEST",
+      "codexIndex": 1203,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_CHESTPLATE"
+    },
+    {
+      "id": "EQD50-AR-PURIFIER-LEGS",
+      "codexIndex": 1204,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_LEGS"
+    },
+    {
+      "id": "EQD50-AR-PURIFIER-FEET",
+      "codexIndex": 1205,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_FEET"
+    },
+    {
+      "id": "EQD50-AR-INTERRUPT-HEAD",
+      "codexIndex": 1206,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_HEAD"
+    },
+    {
+      "id": "EQD50-AR-INTERRUPT-CHEST",
+      "codexIndex": 1207,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_CHESTPLATE"
+    },
+    {
+      "id": "EQD50-AR-INTERRUPT-LEGS",
+      "codexIndex": 1208,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_LEGS"
+    },
+    {
+      "id": "EQD50-AR-INTERRUPT-FEET",
+      "codexIndex": 1209,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_FEET"
+    },
+    {
+      "id": "EQD50-AR-REBUILD-HEAD",
+      "codexIndex": 1210,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_HEAD"
+    },
+    {
+      "id": "EQD50-AR-REBUILD-CHEST",
+      "codexIndex": 1211,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "IRON_CHESTPLATE"
+    },
+    {
+      "id": "EQD50-AR-REBUILD-LEGS",
+      "codexIndex": 1212,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_LEGS"
+    },
+    {
+      "id": "EQD50-AR-REBUILD-FEET",
+      "codexIndex": 1213,
+      "domain": "EQUIPMENT",
+      "displayMaterial": "ARMOR_FEET"
+    }
+  ]
+}

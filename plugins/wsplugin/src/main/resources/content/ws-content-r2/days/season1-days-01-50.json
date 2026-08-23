@@ -1,0 +1,357 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "days",
+  "records": [
+    {
+      "id": "DAY-01",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 1,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-02",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 2,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-03",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 3,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-04",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 4,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-05",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 5,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-06",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 6,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-07",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 7,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-08",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 8,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-09",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 9,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-10",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 10,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-11",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 11,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-12",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 12,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-13",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 13,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-14",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 14,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-15",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 15,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-16",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 16,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-17",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 17,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-18",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 18,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-19",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 19,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-20",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 20,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-21",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 21,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-22",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 22,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-23",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 23,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-24",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 24,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-25",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 25,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-26",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 26,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-27",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 27,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-28",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 28,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-29",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 29,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-30",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 30,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-31",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 31,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-32",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 32,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-33",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 33,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-34",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 34,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-35",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 35,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-36",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 36,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-37",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 37,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-38",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 38,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-39",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 39,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-40",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 40,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-41",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 41,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-42",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 42,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-43",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 43,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-44",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 44,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-45",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 45,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-46",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 46,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-47",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 47,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-48",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 48,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-49",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 49,
+      "finalAvailable": false
+    },
+    {
+      "id": "DAY-50",
+      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "enabled": true,
+      "day": 50,
+      "finalAvailable": true
+    }
+  ]
+}

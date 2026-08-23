@@ -1,0 +1,657 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "personal-augments",
+  "records": [
+    {
+      "id": "AUG-S-001",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-001",
+        "가벼운 발걸음",
+        "DODGE`, `AP`, `BRIDGE",
+        "회피 AP 비용 -4",
+        "최소 비용 하한 적용",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-002",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-002",
+        "숨 고르기",
+        "AP`, `RECOVERY`, `BRIDGE",
+        "피해를 받지 않은 4초 후 AP 회복 +3/초",
+        "전투 중에도 조건 검사",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-003",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-003",
+        "응급 지혈",
+        "SURVIVAL`, `BLEED`, `BRIDGE",
+        "받는 출혈 지속시간 -25%, 출혈 해제 시 HP 2% 회복",
+        "8초",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-004",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-004",
+        "정화 호흡",
+        "CORRUPTION`, `SURVIVAL",
+        "개인 오염 획득 -10%, 정화 소모품 효과 +10%",
+        "오염 감소 하한 적용",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-005",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-005",
+        "견고한 중심",
+        "GUARD`, `PARRY",
+        "가드 충격 AP -12%, 패링 실패 후 가드 전환 비용 -3",
+        "행동당 1회",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-006",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-006",
+        "약점 기록",
+        "BREAK`, `MARK",
+        "같은 대상 3회 유효 적중 시 4초간 브레이크 피해 +12%",
+        "대상별 6초",
+        "브레이크 비적용 대상 제외"
+      ]
+    },
+    {
+      "id": "AUG-S-007",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-007",
+        "정밀 반복",
+        "COMBO`, `HIT",
+        "콤보 마지막 단계 명중 시 다음 일반 공격 HIT +12",
+        "4초, 중첩 없음",
+        "콤보 무기 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-008",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-008",
+        "예비 탄약",
+        "AMMO`, `RANGED",
+        "일반 탄약 소비 시 15% 확률로 미소비",
+        "시전당 1회",
+        "활·석궁 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-009",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-009",
+        "빠른 손질",
+        "RELOAD`, `RANGED",
+        "장전시간 -10%, 장전 중 이동 페널티 -10%",
+        "장전 하한 적용",
+        "석궁 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-010",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-010",
+        "잔류 마력",
+        "MAGIC`, `AREA",
+        "지속 영역 종료 시 최대 AP 4% 회복",
+        "영역별 1회, 6초",
+        "지팡이 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-011",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-011",
+        "충격 흡수",
+        "SHIELD`, `SURVIVAL",
+        "보호막이 전부 소모될 때 받는 다음 피해 -10%",
+        "6초",
+        "보호막 출처 보유 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-012",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-012",
+        "짧은 반격",
+        "COUNTER`, `DODGE",
+        "정확 회피 후 2초 내 첫 공격 피해 +8%",
+        "회피당 1회",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-013",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-013",
+        "상처 관찰",
+        "STATUS`, `BLEED`, `POISON",
+        "DOT가 있는 적에게 HIT +8, 브레이크 +5%",
+        "상시",
+        "DOT 태그 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-014",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-014",
+        "구조 본능",
+        "RESCUE`, `SUPPORT",
+        "구조 채널링 시간 -10%, 구조 완료 후 두 플레이어 AP 5 회복",
+        "구조당 1회",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-015",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-015",
+        "현장 수리",
+        "UTILITY`, `FACILITY",
+        "긴급 수리 자원 비용 -8%, 피격 중단 임계 피해 +10%",
+        "상시",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-016",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-016",
+        "전투 관측",
+        "MARK`, `UTILITY",
+        "엘리트·보스 패턴을 처음 회피/방어하면 5초간 대상 받는 브레이크 +6%",
+        "대상 패턴별 1회",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-017",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-017",
+        "낮은 자세",
+        "TENACITY`, `SURVIVAL",
+        "강한 CC 지속시간 -10%, 강제 이동 세기 -8%",
+        "저항 하드캡 적용",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-018",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-S-018",
+        "절약 가공",
+        "RESOURCE`, `UTILITY",
+        "휴대 가공 시 일반 재료 8% 확률 미소비",
+        "작업당 1회",
+        "전투 보상 아님"
+      ]
+    },
+    {
+      "id": "AUG-G-001",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-001",
+        "완벽한 간격",
+        "DODGE`, `COUNTER",
+        "정확 회피 시 다음 공격 피해 +18%, 브레이크 +15%",
+        "4초, 회피당 1회",
+        "AUG-G-002` 강한 배타"
+      ]
+    },
+    {
+      "id": "AUG-G-002",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-002",
+        "연속 기동",
+        "DODGE`, `MOBILITY",
+        "회피 성공 시 회피 AP 30% 환급, 연속 발동마다 절반 감소",
+        "6초 내 3단 감쇠",
+        "AUG-G-001` 강한 배타"
+      ]
+    },
+    {
+      "id": "AUG-G-003",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-003",
+        "방패 너머",
+        "PARRY`, `BREAK",
+        "패링 성공 시 대상 브레이크 +20%, 다음 스킬 AP -8",
+        "5초",
+        "방어·패링 가능 장비 가중"
+      ]
+    },
+    {
+      "id": "AUG-G-004",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-004",
+        "파열 계산",
+        "BREAK`, `BURST",
+        "브레이크 성공 시 대상에게 6초간 받는 피해 +8%",
+        "대상별 12초",
+        "보스 상한 +5%"
+      ]
+    },
+    {
+      "id": "AUG-G-005",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-005",
+        "상태 촉매",
+        "STATUS`, `CONSUME",
+        "서로 다른 약화 2종 대상 공격 시 하나의 남은 시간을 1초 소비해 추가 피해 ATK 35%",
+        "대상별 4초",
+        "강한 CC 소비 불가"
+      ]
+    },
+    {
+      "id": "AUG-G-006",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-006",
+        "잔혹한 누적",
+        "BLEED`, `MULTIHIT",
+        "출혈 최대 중첩 대상에게 일반 공격 마지막 타격 +22%",
+        "실행당 1회",
+        "출혈 빌드 가중"
+      ]
+    },
+    {
+      "id": "AUG-G-007",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-007",
+        "독성 순환",
+        "POISON`, `AP",
+        "독 틱이 실제 HP 피해를 줄 때 AP 1 회복",
+        "초당 최대 4",
+        "보상 비적용 대상 제외"
+      ]
+    },
+    {
+      "id": "AUG-G-008",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-008",
+        "연소 확산",
+        "BURN`, `AREA",
+        "화상 대상 처치가 아닌 화상 3중첩 도달 시 주변 3블록에 1중첩 전이",
+        "5초",
+        "소환물·훈련 제외"
+      ]
+    },
+    {
+      "id": "AUG-G-009",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-009",
+        "탄약 조율",
+        "AMMO`, `STATUS",
+        "특수 탄약의 상태 적중 +12, 기본 피해 -5%",
+        "상시",
+        "탄약 무기만"
+      ]
+    },
+    {
+      "id": "AUG-G-010",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-010",
+        "관통 궤도",
+        "RANGED`, `PIERCE",
+        "투사체 첫 관통 후 다음 대상 피해 감소를 20%p 완화",
+        "투사체당 1회",
+        "활·석궁·삼지창 가중"
+      ]
+    },
+    {
+      "id": "AUG-G-011",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-011",
+        "마력 환류",
+        "MAGIC`, `AP",
+        "AP 30 이상 스킬이 2명 이상 유효 적중하면 AP 8 환급",
+        "시전당 1회, 4초",
+        "지팡이 가중"
+      ]
+    },
+    {
+      "id": "AUG-G-012",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-012",
+        "충격 연쇄",
+        "HEAVY`, `AREA`, `BREAK",
+        "단일 타격 브레이크 20 이상이면 주변 3블록에 원래 브레이크의 25%",
+        "5초",
+        "둔기·도끼·곡괭이 가중"
+      ]
+    },
+    {
+      "id": "AUG-G-013",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-013",
+        "응급 보호막",
+        "SURVIVAL`, `SHIELD",
+        "HP 30% 아래 진입 시 최대 HP 12% 보호막 5초",
+        "35초",
+        "중첩 없음"
+      ]
+    },
+    {
+      "id": "AUG-G-014",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-014",
+        "정화 전환",
+        "CORRUPTION`, `AP",
+        "개인 오염 단계 하락 시 AP 20 회복, 다음 상태 저항 +15",
+        "15초",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-G-015",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-015",
+        "구조 파동",
+        "RESCUE`, `SUPPORT",
+        "구조 완료 시 5블록 파티원에게 최대 HP 5% 회복",
+        "구조당 1회",
+        "자기 구조 미적용"
+      ]
+    },
+    {
+      "id": "AUG-G-016",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-016",
+        "장비 적응",
+        "EQUIPMENT`, `BRIDGE",
+        "현재 무기 태그와 일치하는 증강 2개 이상이면 ATK +7%, 불일치 시 DEF +7",
+        "2초마다 재평가",
+        "단일 출처"
+      ]
+    },
+    {
+      "id": "AUG-G-017",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-017",
+        "예측 관측",
+        "PATTERN`, `UTILITY",
+        "같은 패턴을 처음 대응한 뒤 해당 패턴 전조 UI 0.15초 조기 표시",
+        "패턴별",
+        "보스 데이터 안전선 적용"
+      ]
+    },
+    {
+      "id": "AUG-G-018",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-G-018",
+        "불굴의 흐름",
+        "TENACITY`, `AP",
+        "강한 CC 종료 시 AP 10, 다음 회피 비용 -5",
+        "8초",
+        "면역된 CC 미발동"
+      ]
+    },
+    {
+      "id": "AUG-P-001",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-001",
+        "한계 돌파",
+        "BURST`, `RISK",
+        "HP 40% 이하에서 주는 피해 +22%, 브레이크 +15%",
+        "받는 회복 -20%",
+        "AUG-P-002` 강한 배타"
+      ]
+    },
+    {
+      "id": "AUG-P-002",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-002",
+        "불가침 궤도",
+        "DODGE`, `SURVIVAL",
+        "정확 회피 2회 후 다음 피격 70% 감소",
+        "주는 피해 -8%, 12초",
+        "AUG-P-001` 강한 배타"
+      ]
+    },
+    {
+      "id": "AUG-P-003",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-003",
+        "영점 반격",
+        "PARRY`, `COUNTER`, `BREAK",
+        "보스 패링 성공 시 패턴 브레이크 +35% 및 파티 AP 5 회복",
+        "패턴별 10초, 같은 실행 1회",
+        "보상·아군 공격 제외"
+      ]
+    },
+    {
+      "id": "AUG-P-004",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-004",
+        "붕괴 설계",
+        "BREAK`, `EVOLUTION",
+        "브레이크 성공 후 8초간 대상 약점 태그 하나를 추가 공개하고 개인 피해 +16%",
+        "보스 피해 +10% 상한",
+        "진화 계열 F01"
+      ]
+    },
+    {
+      "id": "AUG-P-005",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-005",
+        "만성 독성체",
+        "POISON`, `RISK",
+        "독 최대 중첩 +2, 독 피해 +25%",
+        "자신의 정화 효과 -15%",
+        "독 빌드 가중"
+      ]
+    },
+    {
+      "id": "AUG-P-006",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-006",
+        "피의 박동",
+        "BLEED`, `HEALING",
+        "출혈 피해의 8%를 회복, 최대 HP 초과분은 4초 보호막",
+        "초당 최대 HP 2%, 광역 감쇠",
+        "생명력 흡수 상한 공유"
+      ]
+    },
+    {
+      "id": "AUG-P-007",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-007",
+        "원소 융합",
+        "MAGIC`, `ELEMENT`, `EVOLUTION",
+        "화상·빙결·감전 계열 중 서로 다른 2종이 만나면 융합 폭발 ATK 65%",
+        "대상별 6초",
+        "강한 CC 추가 없음"
+      ]
+    },
+    {
+      "id": "AUG-P-008",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-008",
+        "무한 탄창의 역설",
+        "AMMO`, `RISK",
+        "탄약 미소비 확률 +45%",
+        "재장전·발사 AP 비용 +20%, 최종 미소비 상한 75%",
+        "원거리 탄약 무기만"
+      ]
+    },
+    {
+      "id": "AUG-P-009",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-009",
+        "회귀하는 창",
+        "TRIDENT`, `RECALL`, `EVOLUTION",
+        "삼지창 회수 경로 적에게 60% 계수로 1회 재적중",
+        "회수 AP +8, 대상별 1회",
+        "삼지창 전용"
+      ]
+    },
+    {
+      "id": "AUG-P-010",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-010",
+        "맨손의 증명",
+        "UNARMED`, `COUNTER`, `EVOLUTION",
+        "권투 정확 회피 반격이 대상 DEF 35% 무시, 브레이크 2배",
+        "반격 외 일반 피해 -8%",
+        "권투 전용"
+      ]
+    },
+    {
+      "id": "AUG-P-011",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-011",
+        "이동하는 요새",
+        "GUARD`, `SUPPORT",
+        "방어 중 4블록 뒤 파티원의 받는 투사체 피해 -25%",
+        "자신의 이동속도 -20%, 초당 AP 4 추가",
+        "보조 방패 요구"
+      ]
+    },
+    {
+      "id": "AUG-P-012",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-012",
+        "오염 공생",
+        "CORRUPTION`, `RISK",
+        "개인 오염 단계당 ATK·상태 적중 +4%, 최대 +16%",
+        "받는 정화 -25%, 단계 5에서는 추가 증가 없음",
+        "정화 전환과 약한 충돌"
+      ]
+    },
+    {
+      "id": "AUG-P-013",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-013",
+        "시간 압축",
+        "COOLDOWN`, `RISK",
+        "AP 50 이상 스킬 적중 시 다른 스킬 쿨다운 1초 감소",
+        "8초, 해당 스킬 AP +15",
+        "자기 쿨다운 미감소"
+      ]
+    },
+    {
+      "id": "AUG-P-014",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "raw": [
+        "AUG-P-014",
+        "마지막 구조선",
+        "RESCUE`, `PARTY`, `SURVIVAL",
+        "다른 파티원 구조 시작 시 구조자·대상 50% 피해 감소",
+        "구조 후 자신 AP 0, 45초",
+        "자기 구조 제외"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "story-logs",
+  "records": [
+    {
+      "id": "STORY-S1-LOGS",
+      "sourceDocumentId": "STORY-DATA-S1-001",
+      "enabled": true,
+      "raw": [
+        "AUTHORITY_DATA"
+      ]
+    }
+  ]
+}

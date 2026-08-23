@@ -1,0 +1,415 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "support-entities",
+  "records": [
+    {
+      "id": "ENT-PROJ-PLAYER-BOW",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-PROJ-PLAYER-BOW",
+        "PROJECTILE",
+        "ARROW",
+        "owner skill 종료/적중/60틱",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-PROJ-PLAYER-CROSSBOW",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-PROJ-PLAYER-CROSSBOW",
+        "PROJECTILE",
+        "ARROW",
+        "owner skill 종료/적중/60틱",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-PROJ-PLAYER-STAFF",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-PROJ-PLAYER-STAFF",
+        "PROJECTILE",
+        "SNOWBALL+Display",
+        "적중/40틱",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-PROJ-PLAYER-TRIDENT",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-PROJ-PLAYER-TRIDENT",
+        "PROJECTILE",
+        "TRIDENT Display",
+        "회수/80틱",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-PROJ-PLAYER-RESCUE-FLARE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-PROJ-PLAYER-RESCUE-FLARE",
+        "PROJECTILE",
+        "FIREWORK",
+        "착탄/40틱",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-DEPLOY-EMERGENCY-COVER",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-DEPLOY-EMERGENCY-COVER",
+        "DEPLOYABLE",
+        "BLOCK_DISPLAY",
+        "HP0/12초/전투 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-UI-DAMAGE-NUMBER",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-UI-DAMAGE-NUMBER",
+        "UI_TRANSIENT",
+        "TEXT_DISPLAY",
+        "12~18틱",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-NODE-BASIC",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-NODE-BASIC",
+        "RESOURCE_NODE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "채집/Day despawn",
+        "LOOT-NODE-BASIC"
+      ]
+    },
+    {
+      "id": "ENT-NODE-INDUSTRIAL",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-NODE-INDUSTRIAL",
+        "RESOURCE_NODE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "채집/Day despawn",
+        "LOOT-NODE-INDUSTRIAL"
+      ]
+    },
+    {
+      "id": "ENT-NODE-MEDICAL",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-NODE-MEDICAL",
+        "RESOURCE_NODE",
+        "INTERACTION+ITEM_DISPLAY",
+        "채집/Day despawn",
+        "LOOT-NODE-MEDICAL"
+      ]
+    },
+    {
+      "id": "ENT-NODE-CORRUPTED",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-NODE-CORRUPTED",
+        "RESOURCE_NODE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "채집/정화/Day despawn",
+        "LOOT-NODE-CORRUPTED"
+      ]
+    },
+    {
+      "id": "ENT-NODE-RIFT",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-NODE-RIFT",
+        "RESOURCE_NODE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "안정화/사건 종료",
+        "LOOT-NODE-RIFT"
+      ]
+    },
+    {
+      "id": "ENT-NODE-RECONSTRUCTION",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-NODE-RECONSTRUCTION",
+        "RESOURCE_NODE",
+        "INTERACTION+ITEM_DISPLAY",
+        "채집/회차 보존",
+        "LOOT-NODE-RECONSTRUCTION"
+      ]
+    },
+    {
+      "id": "ENT-B10-ECHO",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B10-ECHO",
+        "SUMMON",
+        "ZOMBIE/SKELETON+Display",
+        "BOSS-D10/페이즈 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B10-CORE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B10-CORE",
+        "OBJECTIVE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "패턴 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B10-SHARD",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B10-SHARD",
+        "PROJECTILE",
+        "SNOWBALL+Display",
+        "적중/40틱",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B10-SIPHON-LINK",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B10-SIPHON-LINK",
+        "TELEGRAPH",
+        "TEXT_DISPLAY+PARTICLE",
+        "패턴 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B20-LINK-CORE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B20-LINK-CORE",
+        "OBJECTIVE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "연결 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B20-UNSPLICE-CORE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B20-UNSPLICE-CORE",
+        "OBJECTIVE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "패턴 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B20-GRAFT-SPAWN",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B20-GRAFT-SPAWN",
+        "TELEGRAPH",
+        "INTERACTION+PARTICLE",
+        "1.2초/취소",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B20-STATUS-AREA",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B20-STATUS-AREA",
+        "AREA",
+        "AREA_EFFECT_CLOUD+Display",
+        "패턴 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B30-RIFT-SPORE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B30-RIFT-SPORE",
+        "SUMMON",
+        "SLIME+Display",
+        "BOSS-D30/페이즈 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B30-CORRUPTION-POOL",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B30-CORRUPTION-POOL",
+        "AREA",
+        "AREA_EFFECT_CLOUD+Display",
+        "정화/전투 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B30-SEPARATION-CORE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B30-SEPARATION-CORE",
+        "OBJECTIVE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "패턴 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B30-RIFT-NODE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B30-RIFT-NODE",
+        "OBJECTIVE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "안정화/패턴 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B40-GUARD-CORE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B40-GUARD-CORE",
+        "OBJECTIVE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "파괴/페이즈 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B40-PRISON-CORE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B40-PRISON-CORE",
+        "OBJECTIVE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "해제/6초",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B40-RESONANCE-SHARD",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B40-RESONANCE-SHARD",
+        "PROJECTILE",
+        "SHULKER_BULLET 대체 Display",
+        "적중/50틱",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-B40-FRACTURE-FIELD",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-B40-FRACTURE-FIELD",
+        "AREA",
+        "AREA_EFFECT_CLOUD+BLOCK_DISPLAY",
+        "4초",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-F50-COLLAPSE-CORE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-F50-COLLAPSE-CORE",
+        "FINAL_BOSS",
+        "IRON_GOLEM+Display",
+        "CORE_SUBDUED/Final 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-F50-SYNAPSE-CORE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-F50-SYNAPSE-CORE",
+        "OBJECTIVE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "패턴 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-F50-THREE-CORE",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-F50-THREE-CORE",
+        "OBJECTIVE",
+        "INTERACTION+BLOCK_DISPLAY",
+        "패턴 종료",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-F50-JAMMER-LINK",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-F50-JAMMER-LINK",
+        "OBJECTIVE",
+        "INTERACTION+TEXT_DISPLAY",
+        "절단/8초",
+        "LOOT-NONE"
+      ]
+    },
+    {
+      "id": "ENT-F50-OUTPUT-RING",
+      "sourceDocumentId": "ENTITY-LIST-001",
+      "enabled": true,
+      "raw": [
+        "ENT-F50-OUTPUT-RING",
+        "AREA",
+        "BLOCK_DISPLAY+PARTICLE",
+        "패턴 종료",
+        "LOOT-NONE"
+      ]
+    }
+  ]
+}

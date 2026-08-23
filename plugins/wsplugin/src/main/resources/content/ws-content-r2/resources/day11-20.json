@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2",
+  "domain": "resources",
+  "records": [
+    {
+      "id": "WSR-HERB",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 15,
+      "name": "의약 재료",
+      "firstDay": 11,
+      "displayMaterial": "HONEY_BOTTLE",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-HERB",
+        "의약 재료",
+        "T2 MEDICAL",
+        "11",
+        "HONEY_BOTTLE",
+        "의약 식생",
+        "식량·약초 사건",
+        "젤·상태 소모품"
+      ]
+    },
+    {
+      "id": "WSR-ELASTIC_FIBER",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 16,
+      "name": "탄성 섬유",
+      "firstDay": 11,
+      "displayMaterial": "COBWEB",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-ELASTIC_FIBER",
+        "탄성 섬유",
+        "T2 MEDICAL",
+        "11",
+        "COBWEB",
+        "탄성 둥지·적",
+        "섬유+가죽 압축",
+        "직조·구조품"
+      ]
+    },
+    {
+      "id": "WSR-TOXIN_SAMPLE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 17,
+      "name": "독성 표본",
+      "firstDay": 11,
+      "displayMaterial": "LIME_DYE",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-TOXIN_SAMPLE",
+        "독성 표본",
+        "T2 STATUS_SAMPLE",
+        "11",
+        "LIME_DYE",
+        "독성 적·잔류물",
+        "조직 분석",
+        "해독·분류판"
+      ]
+    },
+    {
+      "id": "WSR-THERMAL_SAMPLE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 18,
+      "name": "열성 표본",
+      "firstDay": 12,
+      "displayMaterial": "BLAZE_POWDER",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-THERMAL_SAMPLE",
+        "열성 표본",
+        "T2 STATUS_SAMPLE",
+        "12",
+        "BLAZE_POWDER",
+        "열성 적·열핵",
+        "연료+조직 실험",
+        "냉각·분류판"
+      ]
+    },
+    {
+      "id": "WSR-HEMATIC_SAMPLE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 19,
+      "name": "혈성 표본",
+      "firstDay": 13,
+      "displayMaterial": "RED_DYE",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-HEMATIC_SAMPLE",
+        "혈성 표본",
+        "T2 STATUS_SAMPLE",
+        "13",
+        "RED_DYE",
+        "열상 적·생체 흔적",
+        "가죽+조직 분석",
+        "지혈·분류판"
+      ]
+    },
+    {
+      "id": "WSR-NEURAL_SAMPLE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 20,
+      "name": "신경 표본",
+      "firstDay": 14,
+      "displayMaterial": "FERMENTED_SPIDER_EYE",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-NEURAL_SAMPLE",
+        "신경 표본",
+        "T3 STATUS_SAMPLE",
+        "14",
+        "FERMENTED_SPIDER_EYE",
+        "제어 적·군락",
+        "저항·해제 기록",
+        "회로·안정제"
+      ]
+    },
+    {
+      "id": "WSR-VITAL_TISSUE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 21,
+      "name": "생체 조직",
+      "firstDay": 16,
+      "displayMaterial": "SCUTE",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-VITAL_TISSUE",
+        "생체 조직",
+        "T3 BIO",
+        "16",
+        "SCUTE",
+        "정예·고위험 생체",
+        "표본 3종 합성",
+        "생체 매질·D20"
+      ]
+    },
+    {
+      "id": "WSR-STERILE_GEL",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 46,
+      "name": "멸균 젤",
+      "firstDay": 11,
+      "displayMaterial": "T3",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-STERILE_GEL",
+        "멸균 젤",
+        "T3",
+        "11",
+        "WSRCP-D20-P01",
+        "SLIME_BALL",
+        "의료·방어구"
+      ]
+    },
+    {
+      "id": "WSR-ELASTIC_WEAVE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 47,
+      "name": "탄성 직조",
+      "firstDay": 12,
+      "displayMaterial": "T3",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-ELASTIC_WEAVE",
+        "탄성 직조",
+        "T3",
+        "12",
+        "WSRCP-D20-P02",
+        "STRING",
+        "D20 장비·구조"
+      ]
+    },
+    {
+      "id": "WSR-REINFORCED_ALLOY",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 48,
+      "name": "강화 합금",
+      "firstDay": 14,
+      "displayMaterial": "T3",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-REINFORCED_ALLOY",
+        "강화 합금",
+        "T3",
+        "14",
+        "WSRCP-D20-P03",
+        "IRON_BLOCK",
+        "D20 장비·시설"
+      ]
+    },
+    {
+      "id": "WSR-NEURAL_CIRCUIT",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 49,
+      "name": "신경 회로",
+      "firstDay": 15,
+      "displayMaterial": "T3",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-NEURAL_CIRCUIT",
+        "신경 회로",
+        "T3",
+        "15",
+        "WSRCP-D20-P04",
+        "REPEATER",
+        "D20 장비·연구"
+      ]
+    },
+    {
+      "id": "WSR-BIO_MEDIUM",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 50,
+      "name": "생체 매질",
+      "firstDay": 16,
+      "displayMaterial": "T4",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-BIO_MEDIUM",
+        "생체 매질",
+        "T4",
+        "16",
+        "WSRCP-D20-P05",
+        "TURTLE_SCUTE",
+        "D20 보스·장비"
+      ]
+    },
+    {
+      "id": "WSR-STATUS_PLATE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 51,
+      "name": "상태 분류판",
+      "firstDay": 13,
+      "displayMaterial": "T3",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "raw": [
+        "WSR-STATUS_PLATE",
+        "상태 분류판",
+        "T3",
+        "13",
+        "WSRCP-D20-P06",
+        "MAP",
+        "상태 연구·장비"
+      ]
+    }
+  ]
+}

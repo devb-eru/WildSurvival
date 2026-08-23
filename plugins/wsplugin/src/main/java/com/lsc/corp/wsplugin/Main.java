@@ -44,7 +44,7 @@ public final class Main extends JavaPlugin {
             runService = new RunService(this, repository, testRepository, content.content(), telemetry);
             tutorial = new TutorialService(this, runService);
 
-            ItemCodexService codex = new ItemCodexService(this, runService, content.content(), telemetry);
+            ItemCodexService codex = new ItemCodexService(this, runService, content.content(), content.productionCatalog(), telemetry);
             GrowthService growth = new GrowthService(this, runService, content.content(), telemetry);
             EquipmentService equipment = new EquipmentService(this, runService, content.content(), telemetry, codex);
             SkillLoadoutService skills = new SkillLoadoutService(runService, content.content(), equipment);
@@ -85,7 +85,7 @@ public final class Main extends JavaPlugin {
             virtualParty.cleanupOrphans();
             testLab.recoverActiveSession();
             runService.startHeartbeat();
-            getLogger().info("WildSurvival ws-prototype-r1 is ready.");
+            getLogger().info("WildSurvival prototype runtime + ws-content-r2 catalog are ready (66 files, 334 codex entries).");
         } catch (Exception exception) {
             getLogger().log(java.util.logging.Level.SEVERE, "Prototype bootstrap failed; disabling plugin.", exception);
             getServer().getPluginManager().disablePlugin(this);
