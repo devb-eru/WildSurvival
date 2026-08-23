@@ -24,6 +24,10 @@ class ProductionBundleValidatorTest {
         assertEquals(50, result.catalog().personalAugments().size());
         assertEquals(16, result.catalog().partyAugments().size());
         assertEquals(List.of("AUG-G-002"), result.catalog().augmentsById().get("AUG-G-001").exclusiveWith());
+        assertEquals(59, result.catalog().materialsById().size());
+        assertEquals(61, result.catalog().nonEquipmentItemsById().size());
+        assertEquals(13, result.catalog().nonEquipmentItemsById().values().stream()
+                .filter(ProductionContentCatalog.ItemEntry::quickConsumable).count());
         assertTrue(result.catalog().recipes().stream().allMatch(recipe -> !recipe.ingredients().isEmpty()));
         assertTrue(result.catalog().recipes().stream().noneMatch(recipe -> recipe.layout().contains("AUTHORITY_DEFINED")));
         assertTrue(result.catalog().recipes().stream().flatMap(recipe -> recipe.ingredients().stream())

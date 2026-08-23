@@ -122,9 +122,14 @@ public final class EquipmentService implements Listener {
         for (int i = 0; i < GUI_QUICK.length; i++) {
             String bound = state.quickBindings.get(i + 1);
             int amount = bound == null ? 0 : codex.countItem(player, bound);
-            Material material = bound == null ? Material.GRAY_DYE : Material.matchMaterial(content.item(bound).material());
+            ProductionContentCatalog.ItemEntry quick = bound == null ? null : production.nonEquipmentItemsById().get(bound);
+            PrototypeContent.ItemDefinition legacy = bound == null || quick != null ? null
+                    : content.items().stream().filter(item -> item.id().equals(bound)).findFirst().orElse(null);
+            Material material = bound == null ? Material.GRAY_DYE : Material.matchMaterial(
+                    quick != null ? quick.displayMaterial() : legacy == null ? "PAPER" : legacy.material());
+            String name = quick != null ? quick.name() : legacy == null ? bound : legacy.name();
             inventory.setItem(GUI_QUICK[i], named(material == null ? Material.PAPER : material,
-                    ChatColor.AQUA + "Q" + (i + 1) + ": " + (bound == null ? "비어 있음" : content.item(bound).name()),
+                    ChatColor.AQUA + "Q" + (i + 1) + ": " + (bound == null ? "비어 있음" : name),
                     List.of(ChatColor.WHITE + "인벤토리 보유 " + amount,
                             ChatColor.GRAY + "좌클릭: 보유 소모품 순환", ChatColor.GRAY + "우클릭: 바인딩 해제")));
         }
@@ -247,6 +252,9 @@ public final class EquipmentService implements Listener {
         for (PrototypeContent.ItemDefinition item : content.items()) if ("QUICK_ITEM".equals(item.category())) {
             codex.takeItem(player, item.id(), codex.countItem(player, item.id()));
         }
+        for (ProductionContentCatalog.ItemEntry item : production.nonEquipmentItemsById().values()) if (item.quickConsumable()) {
+            codex.takeItem(player, item.id(), codex.countItem(player, item.id()));
+        }
         runs.mutate(run -> {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
             state.mainWeaponId = null;
@@ -304,10 +312,50 @@ public final class EquipmentService implements Listener {
         return codex.countItem(player, id) > 0;
     }
 
+    public boolean canRepairEquipped(Player player) {
+        return mostDamagedEquipped(player) != null;
+    }
+
+    public boolean repairMostDamagedWithConsumedKit(Player player) {
+        String instanceId = mostDamagedEquipped(player);
+        if (instanceId == null) return false;
+        runs.mutate(run -> {
+            RunSnapshot.EquipmentInstanceState target = equipmentInstances(
+                    run.players.get(player.getUniqueId().toString())).get(instanceId);
+            if (target == null) return;
+            int recovery = Math.max(1, (int) Math.ceil(target.maxDurability * 0.40));
+            target.currentDurability = "BROKEN".equals(target.condition)
+                    ? recovery : Math.min(target.maxDurability, target.currentDurability + recovery);
+            target.condition = "ACTIVE";
+        });
+        syncAuthoritativeEquipment(player);
+        telemetry.event(runs.current().orElseThrow().runId, "EQUIPMENT_REPAIRED",
+                "{\"instanceId\":\"" + instanceId + "\",\"method\":\"QUICK_KIT\"}");
+        return true;
+    }
+
+    private String mostDamagedEquipped(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return null;
+        java.util.Set<String> equipped = new java.util.LinkedHashSet<>();
+        if (state.mainWeaponInstanceId != null) equipped.add(state.mainWeaponInstanceId);
+        if (state.offhandInstanceId != null) equipped.add(state.offhandInstanceId);
+        equipped.addAll(equippedInstancesBySlot(state).values());
+        return equipped.stream().map(id -> equipmentInstances(state).get(id)).filter(java.util.Objects::nonNull)
+                .filter(instance -> instance.currentDurability < instance.maxDurability)
+                .min(java.util.Comparator.comparingDouble(instance -> instance.currentDurability
+                        / (double) Math.max(1, instance.maxDurability)))
+                .map(instance -> instance.instanceId).orElse(null);
+    }
+
     public String resolveWeaponId(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         return state == null || state.mainWeaponId == null || state.mainWeaponId.isBlank()
                 ? "UNARMED" : weaponClass(state.mainWeaponId);
+    }
+
+    public String equipmentTemplateId(ItemStack item) {
+        return weaponId(item);
     }
 
     public boolean isMainWeaponUsable(Player player) {
@@ -694,8 +742,12 @@ public final class EquipmentService implements Listener {
                 state.quickBindings.remove(quickSlot);
                 return;
             }
-            List<String> available = content.items().stream().filter(item -> "QUICK_ITEM".equals(item.category())
-                    && codex.countItem(player, item.id()) > 0).map(PrototypeContent.ItemDefinition::id).toList();
+            List<String> available = production.nonEquipmentItemsById().values().stream()
+                    .filter(ProductionContentCatalog.ItemEntry::quickConsumable)
+                    .filter(item -> codex.countItem(player, item.id()) > 0)
+                    .sorted(java.util.Comparator.comparingInt(ProductionContentCatalog.ItemEntry::firstDay)
+                            .thenComparing(ProductionContentCatalog.ItemEntry::id))
+                    .map(ProductionContentCatalog.ItemEntry::id).toList();
             if (available.isEmpty()) state.quickBindings.remove(quickSlot);
             else {
                 int current = available.indexOf(state.quickBindings.get(quickSlot));

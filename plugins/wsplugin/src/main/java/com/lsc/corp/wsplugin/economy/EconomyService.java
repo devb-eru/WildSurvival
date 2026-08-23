@@ -9,6 +9,7 @@ import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import com.lsc.corp.wsplugin.ui.ActionBarService;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -48,6 +49,13 @@ public final class EconomyService implements Listener {
     private static final int[] INPUTS = {11, 12, 13, 20, 21, 22, 29, 30, 31};
     private static final Set<Integer> INPUT_SET = Set.of(11, 12, 13, 20, 21, 22, 29, 30, 31);
     private static final int RESULT = 24;
+    private static final int[] LEDGER_SLOTS = {
+            0, 1, 2, 3, 4, 5, 6, 7, 8,
+            9, 10, 11, 12, 13, 14, 15, 16, 17,
+            18, 19, 20, 21, 22, 23, 24, 25, 26,
+            27, 28, 29, 30, 31, 32, 33, 34, 35,
+            36, 37, 38, 39, 40, 41, 42, 43, 44
+    };
     private final JavaPlugin plugin;
     private final RunService runs;
     private final PrototypeContent content;
@@ -99,18 +107,30 @@ public final class EconomyService implements Listener {
     }
 
     public void openLedger(Player player) {
+        openLedger(player, 0);
+    }
+
+    private void openLedger(Player player, int requestedPage) {
         RunSnapshot run = runs.current().orElse(null);
         if (!runs.isRunningMember(player) || run == null || !run.sharedLedgerUnlocked
                 || run.facility == null || !run.facility.active) {
             player.sendMessage(ChatColor.RED + "공용 보급 저장소를 제작한 뒤 월드에 설치해야 합니다.");
             return;
         }
-        LedgerHolder holder = new LedgerHolder(player.getUniqueId());
-        Inventory inventory = Bukkit.createInventory(holder, 45, ChatColor.DARK_GREEN + "공용 자원 원장");
-        int[] slots = {11, 13, 15, 29, 31};
-        for (int i = 0; i < content.resources().size() && i < slots.length; i++) {
-            PrototypeContent.ResourceDefinition resource = content.resources().get(i);
-            holder.resourceBySlot.put(slots[i], resource.id());
+        List<ProductionContentCatalog.MaterialEntry> visible = production.materialsById().values().stream()
+                .filter(resource -> resource.firstDay() <= run.day)
+                .sorted(Comparator.comparingInt(resource -> production.item(resource.id()).codexIndex()))
+                .toList();
+        int pageCount = Math.max(1, (visible.size() + LEDGER_SLOTS.length - 1) / LEDGER_SLOTS.length);
+        int page = Math.max(0, Math.min(requestedPage, pageCount - 1));
+        LedgerHolder holder = new LedgerHolder(player.getUniqueId(), page);
+        Inventory inventory = Bukkit.createInventory(holder, 54,
+                ChatColor.DARK_GREEN + "공용 자원 원장 " + (page + 1) + "/" + pageCount);
+        int offset = page * LEDGER_SLOTS.length;
+        for (int i = 0; i < LEDGER_SLOTS.length && offset + i < visible.size(); i++) {
+            ProductionContentCatalog.MaterialEntry resource = visible.get(offset + i);
+            int slot = LEDGER_SLOTS[i];
+            holder.resourceBySlot.put(slot, resource.id());
             int personal = codex.countResource(player, resource.id());
             int shared = run.resources.getOrDefault(resource.id(), 0);
             ItemStack icon = codex.resourceItem(resource.id(), Math.max(1, Math.min(64, personal)));
@@ -119,9 +139,11 @@ public final class EconomyService implements Listener {
                     ChatColor.GRAY + "좌클릭: 개인→공용 1", ChatColor.GRAY + "Shift+좌클릭: 전량 입금",
                     ChatColor.GRAY + "우클릭: 공용→개인 1", ChatColor.GRAY + "Shift+우클릭: 최대 64 출금"));
             icon.setItemMeta(meta);
-            inventory.setItem(slots[i], icon);
+            inventory.setItem(slot, icon);
         }
-        inventory.setItem(40, named(Material.OAK_DOOR, ChatColor.RED + "닫기", List.of()));
+        if (page > 0) inventory.setItem(45, named(Material.ARROW, ChatColor.YELLOW + "이전 페이지", List.of()));
+        inventory.setItem(49, named(Material.OAK_DOOR, ChatColor.RED + "닫기", List.of()));
+        if (page + 1 < pageCount) inventory.setItem(53, named(Material.ARROW, ChatColor.YELLOW + "다음 페이지", List.of()));
         player.openInventory(inventory);
     }
 
@@ -194,45 +216,44 @@ public final class EconomyService implements Listener {
     public void onResourceBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         if (!runs.isRunningMember(player)) return;
-        PrototypeContent.ResourceDefinition resource = findResource(event.getBlock().getType());
+        RunSnapshot snapshot = runs.current().orElseThrow();
+        Material blockMaterial = event.getBlock().getType();
+        // Craft 해금에 필요한 첫 원목 4개는 반드시 바닐라 아이템으로 남긴다.
+        if (!snapshot.craftUnlocked && Tag.LOGS.isTagged(blockMaterial)) return;
+        ProductionContentCatalog.MaterialEntry resource = findResource(blockMaterial, snapshot.day);
         if (resource == null) return;
         event.setDropItems(false);
         event.setExpToDrop(0);
-        if (!canHarvest(player, resource.id())) {
+        if (!canHarvest(player, resource, blockMaterial)) {
             event.setCancelled(true);
             ActionBarService.notice(player, net.kyori.adventure.text.Component.text(
-                    requiredToolMessage(resource.id()), net.kyori.adventure.text.format.NamedTextColor.RED), 40);
+                    requiredToolMessage(resource), net.kyori.adventure.text.format.NamedTextColor.RED), 40);
             return;
         }
-        int amount = Math.max(1, (int) Math.floor(resource.amountPerNode() * growth.resourceMultiplier(player)));
+        int amount = Math.max(1, (int) Math.floor(growth.resourceMultiplier(player)));
         int personal = codex.grantResource(player, resource.id(), amount);
         String key = "node:" + event.getBlock().getWorld().getUID() + ":" + event.getBlock().getX() + ":"
                 + event.getBlock().getY() + ":" + event.getBlock().getZ();
         int beforeExp = runs.playerState(player.getUniqueId()).map(state -> state.exp).orElse(0);
-        growth.awardExp(player, resource.activityExp(), "node-exp:" + key + ":" + player.getUniqueId());
+        int activityExp = content.resources().stream().filter(value -> value.id().equals(resource.id()))
+                .map(PrototypeContent.ResourceDefinition::activityExp).findFirst().orElse(0);
+        if (activityExp > 0) growth.awardExp(player, activityExp, "node-exp:" + key + ":" + player.getUniqueId());
         int gainedExp = Math.max(0, runs.playerState(player.getUniqueId()).map(state -> state.exp).orElse(beforeExp) - beforeExp);
         ActionBarService.show(player, net.kyori.adventure.text.Component.text(
                 resource.name() + " +" + amount + " · EXP +" + gainedExp + " · 개인 " + personal,
                 net.kyori.adventure.text.format.NamedTextColor.GREEN), 45, 25);
     }
 
-    private boolean canHarvest(Player player, String resourceId) {
-        if ("WSR-WOOD".equals(resourceId) || "WSR-FIBER".equals(resourceId)) return true;
-        String toolId = codex.itemId(player.getInventory().getItemInMainHand());
-        return switch (resourceId) {
-            case "WSR-STONE", "WSR-COAL" -> Set.of(
-                    "TOOL-CRUDE-PICKAXE", "TOOL-STONE-PICKAXE", "TOOL-IRON-PICKAXE", "PICKAXE").contains(toolId);
-            case "WSR-IRON" -> Set.of("TOOL-STONE-PICKAXE", "TOOL-IRON-PICKAXE", "PICKAXE").contains(toolId);
-            default -> true;
-        };
+    private boolean canHarvest(Player player, ProductionContentCatalog.MaterialEntry resource, Material source) {
+        int requiredTier = resourceTier(resource.tier());
+        if (requiredTier == 0 && !requiresPickaxe(source)) return true;
+        ItemStack tool = player.getInventory().getItemInMainHand();
+        if (!toolMatchesSource(tool, source)) return false;
+        return toolTier(tool) >= requiredTier;
     }
 
-    private String requiredToolMessage(String resourceId) {
-        return switch (resourceId) {
-            case "WSR-STONE", "WSR-COAL" -> "급조 곡괭이 이상의 채집 도구가 필요합니다.";
-            case "WSR-IRON" -> "석재 채집 곡괭이 이상의 채집 도구가 필요합니다.";
-            default -> "알맞은 채집 도구가 필요합니다.";
-        };
+    private String requiredToolMessage(ProductionContentCatalog.MaterialEntry resource) {
+        return resource.name() + " 채집에는 " + toolTierName(resourceTier(resource.tier())) + " 등급의 알맞은 도구가 필요합니다.";
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -297,9 +318,11 @@ public final class EconomyService implements Listener {
         if (top.getHolder() instanceof LedgerHolder holder) {
             event.setCancelled(true);
             if (!(event.getWhoClicked() instanceof Player player) || !holder.owner.equals(player.getUniqueId())) return;
-            if (event.getRawSlot() == 40) { player.closeInventory(); return; }
+            if (event.getRawSlot() == 45) { openLedger(player, holder.page - 1); return; }
+            if (event.getRawSlot() == 49) { player.closeInventory(); return; }
+            if (event.getRawSlot() == 53) { openLedger(player, holder.page + 1); return; }
             String id = holder.resourceBySlot.get(event.getRawSlot());
-            if (id != null) transferLedger(player, id, event.getClick());
+            if (id != null) transferLedger(player, id, event.getClick(), holder.page);
             return;
         }
         if (!(top.getHolder() instanceof CraftHolder holder)) return;
@@ -581,7 +604,7 @@ public final class EconomyService implements Listener {
         return result;
     }
 
-    private void transferLedger(Player player, String id, ClickType click) {
+    private void transferLedger(Player player, String id, ClickType click, int page) {
         boolean deposit = click.isLeftClick();
         boolean withdraw = click.isRightClick();
         if (!deposit && !withdraw) return;
@@ -597,7 +620,7 @@ public final class EconomyService implements Listener {
             }
             codex.grantResource(player, id, amount);
         }
-        openLedger(player);
+        openLedger(player, page);
     }
 
     private int countLogs(Player player) {
@@ -618,9 +641,82 @@ public final class EconomyService implements Listener {
         player.getInventory().setStorageContents(contents);
     }
 
-    private PrototypeContent.ResourceDefinition findResource(Material material) {
-        return content.resources().stream().filter(resource -> resource.sourceMaterials().stream()
-                .map(name -> Material.matchMaterial(name.toUpperCase(Locale.ROOT))).anyMatch(material::equals)).findFirst().orElse(null);
+    private ProductionContentCatalog.MaterialEntry findResource(Material material, int day) {
+        return production.materialsById().values().stream()
+                .filter(resource -> "HARVEST".equals(resource.acquisitionKind()) && resource.firstDay() <= day)
+                .filter(resource -> resource.harvestSources().stream().anyMatch(source -> harvestSourceMatches(source, material)))
+                .max(Comparator.comparingInt(ProductionContentCatalog.MaterialEntry::firstDay)
+                        .thenComparingInt(resource -> resourceTier(resource.tier())))
+                .orElse(null);
+    }
+
+    private boolean harvestSourceMatches(String source, Material material) {
+        if ("#LOGS".equals(source)) return Tag.LOGS.isTagged(material);
+        Material configured = Material.matchMaterial(source.toUpperCase(Locale.ROOT));
+        return material.equals(configured);
+    }
+
+    private boolean toolMatchesSource(ItemStack tool, Material source) {
+        String name = tool == null ? "AIR" : tool.getType().name();
+        if (requiresPickaxe(source)) return name.endsWith("_PICKAXE");
+        if (Tag.LOGS.isTagged(source)) return name.endsWith("_AXE");
+        if (source == Material.COBWEB) return name.endsWith("_SWORD") || tool != null && tool.getType() == Material.SHEARS;
+        return name.endsWith("_HOE") || tool != null && tool.getType() == Material.SHEARS;
+    }
+
+    private boolean requiresPickaxe(Material source) {
+        String name = source.name();
+        return name.endsWith("_ORE") || name.contains("STONE") || name.contains("DEEPSLATE")
+                || source == Material.AMETHYST_CLUSTER;
+    }
+
+    private int toolTier(ItemStack tool) {
+        if (tool == null || tool.getType().isAir()) return -1;
+        String templateId = equipment.equipmentTemplateId(tool);
+        if (templateId != null) {
+            if (templateId.startsWith("EQL-UT-RI-")) return 3;
+            if (templateId.startsWith("EQL-UT-RS-")) return 4;
+            if (templateId.startsWith("EQL-UT-HD-")) return 5;
+            if (templateId.startsWith("EQL-UT-RC-")) return 6;
+            ProductionContentCatalog.CatalogEntry entry = production.itemsById().get(templateId);
+            if (entry != null && "PK".equals(entry.equipmentType())) return dayToolTier(entry.firstDay());
+        }
+        String itemId = codex.itemId(tool);
+        if (Set.of("TOOL-CRUDE-PICKAXE", "TOOL-CRUDE-AXE").contains(itemId)) return 0;
+        if (Set.of("TOOL-STONE-PICKAXE", "TOOL-STONE-AXE").contains(itemId)) return 1;
+        if (Set.of("TOOL-IRON-PICKAXE", "TOOL-IRON-AXE").contains(itemId)) return 2;
+        String name = tool.getType().name();
+        if (name.startsWith("WOODEN_") || name.startsWith("GOLDEN_")) return 0;
+        if (name.startsWith("STONE_")) return 1;
+        if (name.startsWith("IRON_") || name.startsWith("DIAMOND_") || name.startsWith("NETHERITE_")
+                || tool.getType() == Material.SHEARS) return 2;
+        return -1;
+    }
+
+    private int dayToolTier(int firstDay) {
+        if (firstDay >= 41) return 6;
+        if (firstDay >= 31) return 5;
+        if (firstDay >= 21) return 4;
+        if (firstDay >= 11) return 3;
+        return 2;
+    }
+
+    private int resourceTier(String tier) {
+        if (tier == null || !tier.startsWith("T")) return 6;
+        try { return Integer.parseInt(tier.substring(1)); }
+        catch (NumberFormatException ignored) { return 6; }
+    }
+
+    private String toolTierName(int tier) {
+        return switch (tier) {
+            case 0 -> "목재";
+            case 1 -> "석재";
+            case 2 -> "철";
+            case 3 -> "강화 철";
+            case 4 -> "공명";
+            case 5 -> "경화";
+            default -> "재건";
+        };
     }
 
     private void markFacility(Block block) {
@@ -661,8 +757,9 @@ public final class EconomyService implements Listener {
         @Override public Inventory getInventory() { return null; }
     }
     private static final class LedgerHolder implements InventoryHolder {
-        private final UUID owner; private final Map<Integer, String> resourceBySlot = new java.util.HashMap<>();
-        private LedgerHolder(UUID owner) { this.owner = owner; }
+        private final UUID owner; private final int page;
+        private final Map<Integer, String> resourceBySlot = new java.util.HashMap<>();
+        private LedgerHolder(UUID owner, int page) { this.owner = owner; this.page = page; }
         @Override public Inventory getInventory() { return null; }
     }
 }

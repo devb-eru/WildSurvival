@@ -100,6 +100,7 @@ public final class ProductionBundleValidator {
             validateEquipmentCatalog(catalog);
             validateSkillCatalog(catalog);
             validateAugmentCatalog(catalog);
+            validateItemCatalog(catalog);
             return new ValidationResult(catalog, Map.copyOf(counts), paths.size() + 2,
                     ContentBundleValidator.sha256(manifestBytes));
         } catch (ContentValidationException exception) {
@@ -110,6 +111,24 @@ public final class ProductionBundleValidator {
     }
 
     private ProductionContentCatalog loadCatalog(ResourceReader reader, Map<String, Integer> counts) throws Exception {
+        Map<String, ProductionContentCatalog.MaterialEntry> materialsById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "items/materials.json")) {
+            ProductionContentCatalog.MaterialEntry material = new ProductionContentCatalog.MaterialEntry(
+                    requiredString(record, "id"), requiredString(record, "name"), requiredString(record, "tier"),
+                    requiredInt(record, "firstDay"), requiredString(record, "displayMaterial"),
+                    requiredString(record, "ledgerScope"), requiredString(record, "acquisitionKind"),
+                    requiredInt(record, "registrationAmount"), stringArray(record, "harvestSources"),
+                    optionalString(record, "sourceText", ""), optionalString(record, "usageText", ""));
+            materialsById.put(material.id(), material);
+        }
+        Map<String, ProductionContentCatalog.ItemEntry> nonEquipmentItemsById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "items/non-equipment-items.json")) {
+            ProductionContentCatalog.ItemEntry item = new ProductionContentCatalog.ItemEntry(requiredString(record, "id"),
+                    requiredString(record, "name"), requiredString(record, "category"), requiredInt(record, "firstDay"),
+                    requiredString(record, "displayMaterial"), requiredInt(record, "stackLimit"),
+                    requiredString(record, "effectText"), optionalString(record, "recipeId", ""));
+            nonEquipmentItemsById.put(item.id(), item);
+        }
         Map<String, JsonObject> details = new HashMap<>();
         for (String path : List.of("items/materials.json", "items/non-equipment-items.json",
                 "equipment/day01-10.json", "equipment/day11-20.json", "equipment/day21-50.json")) {
@@ -191,7 +210,8 @@ public final class ProductionBundleValidator {
                 throw new ContentValidationException("Duplicate augment ID " + augment.id());
             }
         }
-        return new ProductionContentCatalog(List.copyOf(codex), Map.copyOf(byId), List.copyOf(recipes),
+        return new ProductionContentCatalog(List.copyOf(codex), Map.copyOf(byId), Map.copyOf(materialsById),
+                Map.copyOf(nonEquipmentItemsById), List.copyOf(recipes),
                 Map.copyOf(byOutput), List.copyOf(skills), Map.copyOf(skillsById),
                 List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById), Map.copyOf(counts));
     }
@@ -211,11 +231,15 @@ public final class ProductionBundleValidator {
         return result;
     }
 
-    private static List<String> stringArray(JsonObject object, String key) {
-        JsonArray array = object.getAsJsonArray(key);
-        if (array == null) return List.of();
+    private static List<String> stringArray(JsonObject object, String key) throws ContentValidationException {
+        JsonElement value = object.get(key);
+        if (value == null || value.isJsonNull()) return List.of();
+        if (!value.isJsonArray()) {
+            throw new ContentValidationException(key + " must be an array");
+        }
+        JsonArray array = value.getAsJsonArray();
         List<String> result = new ArrayList<>();
-        array.forEach(value -> result.add(value.getAsString()));
+        array.forEach(element -> result.add(element.getAsString()));
         return List.copyOf(result);
     }
 
@@ -362,6 +386,38 @@ public final class ProductionBundleValidator {
                 if (other == null || !other.exclusiveWith().contains(augment.id())) {
                     throw new ContentValidationException("Asymmetric augment exclusion " + augment.id() + " -> " + exclusive);
                 }
+            }
+        }
+    }
+
+    private void validateItemCatalog(ProductionContentCatalog catalog) throws ContentValidationException {
+        if (catalog.materialsById().size() != 59 || catalog.nonEquipmentItemsById().size() != 61) {
+            throw new ContentValidationException("Material/item catalog cardinality mismatch");
+        }
+        Set<String> acquisitionKinds = Set.of("HARVEST", "CRAFTED", "ENCOUNTER", "PARTY_REWARD", "PROOF");
+        for (ProductionContentCatalog.MaterialEntry material : catalog.materialsById().values()) {
+            if (!acquisitionKinds.contains(material.acquisitionKind()) || material.registrationAmount() < 1
+                    || material.firstDay() < 1 || material.firstDay() > 50) {
+                throw new ContentValidationException("Invalid material profile " + material.id());
+            }
+            if ("HARVEST".equals(material.acquisitionKind()) && material.harvestSources().isEmpty()) {
+                throw new ContentValidationException("Harvest source missing " + material.id());
+            }
+            for (String source : material.harvestSources()) {
+                if (!"#LOGS".equals(source) && !source.matches("[A-Z][A-Z0-9_]*")) {
+                    throw new ContentValidationException("Invalid harvest material key " + material.id() + " -> " + source);
+                }
+            }
+        }
+        Set<String> recipeIds = catalog.recipes().stream().map(ProductionContentCatalog.RecipeEntry::id)
+                .collect(java.util.stream.Collectors.toSet());
+        for (ProductionContentCatalog.ItemEntry item : catalog.nonEquipmentItemsById().values()) {
+            if (item.stackLimit() < 1 || item.stackLimit() > 64 || item.effectText().isBlank()
+                    || item.firstDay() < 1 || item.firstDay() > 50) {
+                throw new ContentValidationException("Invalid item profile " + item.id());
+            }
+            if (!item.recipeId().isBlank() && !recipeIds.contains(item.recipeId())) {
+                throw new ContentValidationException("Unknown item recipe " + item.id() + " -> " + item.recipeId());
             }
         }
     }

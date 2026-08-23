@@ -49,7 +49,8 @@ public final class Main extends JavaPlugin {
             EquipmentService equipment = new EquipmentService(this, runService, content.content(),
                     content.productionCatalog(), telemetry, codex);
             SkillLoadoutService skills = new SkillLoadoutService(runService, content.content(), content.productionCatalog(), equipment);
-            CombatService combat = new CombatService(this, runService, content.content(), equipment, growth, skills, telemetry);
+            CombatService combat = new CombatService(this, runService, content.content(), content.productionCatalog(),
+                    equipment, growth, skills, telemetry);
             EconomyService economy = new EconomyService(this, runService, content.content(),
                     content.productionCatalog(), equipment, growth, telemetry, codex);
             PlayerStatService stats = new PlayerStatService(this, runService, growth);

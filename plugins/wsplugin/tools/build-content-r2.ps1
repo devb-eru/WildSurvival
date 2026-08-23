@@ -233,8 +233,17 @@ foreach ($cells in $materialRows) {
     }
 }
 $materialMetadata = Find-IdRows $materialRows '^WS[RP]-[A-Z0-9_-]+$'
+$harvestSources = @{
+    'WSR-WOOD'=@('#LOGS'); 'WSR-STONE'=@('STONE','COBBLESTONE','DEEPSLATE','COBBLED_DEEPSLATE')
+    'WSR-FIBER'=@('STRING','COBWEB','VINE'); 'WSR-COAL'=@('COAL_ORE','DEEPSLATE_COAL_ORE')
+    'WSR-IRON'=@('IRON_ORE','DEEPSLATE_IRON_ORE'); 'WSR-COPPER'=@('COPPER_ORE','DEEPSLATE_COPPER_ORE')
+    'WSR-GOLD'=@('GOLD_ORE','DEEPSLATE_GOLD_ORE','NETHER_GOLD_ORE'); 'WSR-REDSTONE'=@('REDSTONE_ORE','DEEPSLATE_REDSTONE_ORE')
+    'WSR-AMETHYST'=@('AMETHYST_CLUSTER'); 'WSR-HERB'=@('DANDELION','POPPY','OXEYE_DAISY','AZURE_BLUET')
+    'WSR-ELASTIC_FIBER'=@('COBWEB')
+}
 $materials = foreach ($entry in $materialCodex.GetEnumerator()) {
     $cells = $materialMetadata[$entry.Key]
+    $joined = $cells -join ' '
     $firstDay = @($cells | Where-Object { $_ -match '^\d{1,2}$' } | ForEach-Object { [int]$_ } | Where-Object { $_ -le 50 } | Select-Object -First 1)
     $displayMaterial = First-Material $cells ''
     if ($displayMaterial -match '^T\d$' -or $displayMaterial -eq 'UNIQUE') { $displayMaterial = Fallback-Material $entry.Key }
@@ -243,6 +252,12 @@ $materials = foreach ($entry in $materialCodex.GetEnumerator()) {
         codexIndex = $entry.Value; name = Korean-Name $cells $entry.Key
         firstDay = $(if ($firstDay.Count) { $firstDay[0] } else { 1 })
         displayMaterial = $displayMaterial; ledgerScope = $(if ($entry.Key.StartsWith('WSP-')) { 'RUN_PROOF' } else { 'PERSONAL_THEN_PUBLIC' })
+        tier = $(if ($cells.Count -gt 2) {$cells[2].Split(' ')[0]} else {'UNIQUE'})
+        acquisitionKind = $(if ($entry.Key.StartsWith('WSP-')) {'PROOF'} elseif ($joined -match 'PARTY_RESOURCE') {'PARTY_REWARD'}
+            elseif ($joined -match 'WSRCP-') {'CRAFTED'} elseif ($harvestSources.ContainsKey($entry.Key)) {'HARVEST'} else {'ENCOUNTER'})
+        registrationAmount = $(if ($cells.Count -gt 4 -and $cells[4] -match '([0-9]+)') {[int]$Matches[1]} else {1})
+        harvestSources = [string[]]$(if ($harvestSources.ContainsKey($entry.Key)) {@($harvestSources[$entry.Key])} else {@()})
+        sourceText = $(if ($cells.Count -gt 5) {$cells[$cells.Count - 2]} else {''}); usageText = $cells[$cells.Count - 1]
         raw = @($cells)
     }
 }
@@ -254,7 +269,12 @@ $items = foreach ($cells in $itemRows) {
         id = $cells[1]; sourceDocumentId = 'ITEM-LIST-001'; enabled = $true
         codexIndex = [int]$cells[0]; name = Korean-Name ($cells | Select-Object -Skip 2) $cells[1]
         firstDay = $(if ($numbers.Count) { [Math]::Min(50, $numbers[0]) } else { 1 })
-        displayMaterial = First-Material $cells ''; raw = @($cells)
+        displayMaterial = First-Material $cells ''
+        category = $(if ($cells[1] -match '^WSI-([A-Z0-9]+)-') {$Matches[1]} else {'ITEM'})
+        stackLimit = $(if ($cells.Count -gt 5 -and $cells[5] -match '^\d+$') {[int]$cells[5]} else {64})
+        effectText = $(if ($cells.Count -gt 6) {$cells[6]} else {''})
+        recipeId = $(if ($cells.Count -gt 7 -and $cells[7] -match '^WSRCP-') {$cells[7]} else {''})
+        raw = @($cells)
     }
 }
 

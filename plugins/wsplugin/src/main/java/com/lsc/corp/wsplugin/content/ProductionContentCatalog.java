@@ -6,6 +6,8 @@ import java.util.Map;
 public record ProductionContentCatalog(
         List<CatalogEntry> codexEntries,
         Map<String, CatalogEntry> itemsById,
+        Map<String, MaterialEntry> materialsById,
+        Map<String, ItemEntry> nonEquipmentItemsById,
         List<RecipeEntry> recipes,
         Map<String, List<RecipeEntry>> recipesByOutput,
         List<SkillEntry> skills,
@@ -25,6 +27,17 @@ public record ProductionContentCatalog(
                                String domain, int firstDay, String equipmentType, String equipmentSlot) {
         public boolean equipment() {
             return equipmentType != null && !equipmentType.isBlank();
+        }
+    }
+
+    public record MaterialEntry(String id, String name, String tier, int firstDay, String displayMaterial,
+                                String ledgerScope, String acquisitionKind, int registrationAmount,
+                                List<String> harvestSources, String sourceText, String usageText) { }
+
+    public record ItemEntry(String id, String name, String category, int firstDay, String displayMaterial,
+                            int stackLimit, String effectText, String recipeId) {
+        public boolean quickConsumable() {
+            return "CONS".equals(category);
         }
     }
 

@@ -57,6 +57,9 @@ public final class RunSnapshot {
         public Map<String, EquipmentInstanceState> equipmentInstances = new LinkedHashMap<>();
         public Map<String, Integer> quickItems = new LinkedHashMap<>();
         public Map<Integer, String> quickBindings = new LinkedHashMap<>();
+        public Map<String, Integer> quickItemUsesByDay = new LinkedHashMap<>();
+        public int rescueBraceCharges;
+        public double rescueInterruptThresholdBonus;
         public Map<String, Map<Integer, String>> weaponSkillLoadouts = new LinkedHashMap<>();
         public Map<Integer, String> commonSkillLoadout = new LinkedHashMap<>();
         public boolean productionWeaponSkillLoadoutsInitialized;

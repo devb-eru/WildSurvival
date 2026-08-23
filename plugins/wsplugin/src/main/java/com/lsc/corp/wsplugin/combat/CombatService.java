@@ -1,6 +1,7 @@
 package com.lsc.corp.wsplugin.combat;
 
 import com.lsc.corp.wsplugin.content.PrototypeContent;
+import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
@@ -84,6 +85,7 @@ public final class CombatService implements Listener {
     private final JavaPlugin plugin;
     private final RunService runs;
     private final PrototypeContent content;
+    private final ProductionContentCatalog production;
     private final EquipmentService equipment;
     private final GrowthService growth;
     private final SkillLoadoutService skills;
@@ -119,11 +121,13 @@ public final class CombatService implements Listener {
     private boolean scannedPersistedEntities;
     private int hudTick;
 
-    public CombatService(JavaPlugin plugin, RunService runs, PrototypeContent content, EquipmentService equipment,
+    public CombatService(JavaPlugin plugin, RunService runs, PrototypeContent content,
+                         ProductionContentCatalog production, EquipmentService equipment,
                          GrowthService growth, SkillLoadoutService skills, TelemetryService telemetry) {
         this.plugin = plugin;
         this.runs = runs;
         this.content = content;
+        this.production = production;
         this.equipment = equipment;
         this.growth = growth;
         this.skills = skills;
@@ -967,6 +971,7 @@ public final class CombatService implements Listener {
             ActionBarService.notice(player, Component.text("필요 소모품이 없습니다: " + consumableId, NamedTextColor.RED), 40);
             return;
         }
+        if (!consumableId.isBlank() && !canUseLimitedConsumable(player, consumableId)) return;
         double apCost = growth.skillApCost(player, skill.id(), skill.apCost());
         if (!runs.consumeAp(player, apCost)) {
             apFailure(player, apCost);
@@ -979,6 +984,7 @@ public final class CombatService implements Listener {
             });
             return;
         }
+        if (!consumableId.isBlank()) recordConsumableUse(player, consumableId);
         startSkillCooldown(player, skill);
         executeCommonEffect(player, skill, target);
         showSkillEffect(player, skill, target == null ? List.of() : List.of(target));
@@ -989,10 +995,25 @@ public final class CombatService implements Listener {
     private void executeQuickItem(Player player, int slot) {
         if (!requireActiveAction(player)) return;
         String bound = equipment.quickBinding(player, slot);
-        if (bound == null || !equipment.consumeQuickItem(player, bound)) {
+        if (bound == null || !equipment.hasRegisteredItem(player, bound)) {
             ActionBarService.notice(player, Component.text("Q" + slot + " 소모품 없음", NamedTextColor.RED), 30);
             return;
         }
+        if (!quickEffectSupported(bound)) {
+            ActionBarService.notice(player, Component.text("아직 직접 사용할 수 없는 소모품입니다: " + bound, NamedTextColor.RED), 40);
+            return;
+        }
+        if ("WSI-CONS-REPAIR_KIT".equals(bound) && !equipment.canRepairEquipped(player)) {
+            ActionBarService.notice(player, Component.text("수리가 필요한 장착 장비가 없습니다", NamedTextColor.GRAY), 35);
+            return;
+        }
+        if ("WSI-CONS-PORTABLE_PURIFIER_CHARGE".equals(bound)
+                && runs.current().map(run -> run.facility == null || !run.facility.active
+                || !"FAC-P05".equals(run.facility.id)).orElse(true)) {
+            ActionBarService.notice(player, Component.text("가동할 FAC-P05 휴대 정화기가 없습니다", NamedTextColor.RED), 40);
+            return;
+        }
+        if (!canUseLimitedConsumable(player, bound) || !equipment.consumeQuickItem(player, bound)) return;
         double maxHealth = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
                 : player.getAttribute(Attribute.MAX_HEALTH).getValue();
         String result;
@@ -1016,10 +1037,101 @@ public final class CombatService implements Listener {
                 player.removePotionEffect(PotionEffectType.SLOWNESS);
                 result = "독·위더·약화·둔화 제거";
             }
+            case "WSI-CONS-RATION_PACK" -> {
+                player.setFoodLevel(Math.min(20, player.getFoodLevel() + 8));
+                player.setSaturation(Math.min(20.0f, player.getSaturation() + 6.0f));
+                result = "허기 +8 / 포화 +6";
+            }
+            case "WSI-CONS-BANDAGE" -> { removePlayerStatus(player, "bleed"); result = "BLEED 1중첩 제거"; }
+            case "WSI-CONS-REPAIR_KIT" -> {
+                equipment.repairMostDamagedWithConsumedKit(player); result = "가장 손상된 장착 장비 40% 수리";
+            }
+            case "WSI-CONS-PURIFY_AMPOULE" -> {
+                cleanseWeakEffects(player); result = "개인 오염 감소 / 약한 상태 정화";
+            }
+            case "WSI-CONS-AP_STIM" -> {
+                runs.mutate(run -> {
+                    RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                    state.ap = Math.min(state.maxAp, state.ap + 30.0);
+                });
+                result = "AP +30";
+            }
+            case "WSI-CONS-RESCUE_BRACE" -> {
+                runs.mutate(run -> run.players.get(player.getUniqueId().toString()).rescueBraceCharges++);
+                result = "다음 구조 중단 저항 1회";
+            }
+            case "WSI-CONS-PORTABLE_PURIFIER_CHARGE" -> { result = "FAC-P05 가동시간 +60초"; }
+            case "WSI-CONS-ANTIDOTE_INJECTION" -> {
+                player.removePotionEffect(PotionEffectType.POISON); removePlayerStatus(player, "poison"); result = "POISON 제거";
+            }
+            case "WSI-CONS-COOLING_SALVE" -> {
+                player.setFireTicks(0); removePlayerStatus(player, "burn"); result = "BURN 제거";
+            }
+            case "WSI-CONS-TOURNIQUET" -> { removePlayerStatus(player, "bleed"); result = "BLEED 2중첩 제거"; }
+            case "WSI-CONS-NEURAL_STABILIZER" -> {
+                player.removePotionEffect(PotionEffectType.SLOWNESS); player.removePotionEffect(PotionEffectType.WEAKNESS);
+                removePlayerStatus(player, "root"); removePlayerStatus(player, "silence"); removePlayerStatus(player, "disarm");
+                result = "신경계 약화 1개 제거";
+            }
+            case "WSI-CONS-REINFORCED_RESCUE_BRACE" -> {
+                runs.mutate(run -> {
+                    RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                    state.rescueBraceCharges++;
+                    state.rescueInterruptThresholdBonus = Math.max(state.rescueInterruptThresholdBonus, 0.25);
+                });
+                result = "다음 구조 중단 임계 +25%";
+            }
+            case "WSI-CONS-BIO_SHIELD_AMPOULE" -> {
+                player.setAbsorptionAmount(Math.max(player.getAbsorptionAmount(), maxHealth * 0.08));
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    if (player.isOnline()) player.setAbsorptionAmount(Math.max(0.0, player.getAbsorptionAmount() - maxHealth * 0.08));
+                }, 120L);
+                result = "최대 HP 8% 보호막";
+            }
             default -> { ActionBarService.notice(player, Component.text("지원하지 않는 Q 아이템 " + bound, NamedTextColor.RED), 40); return; }
         }
+        recordConsumableUse(player, bound);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EAT, 0.8f, 1.0f);
-        ActionBarService.notice(player, Component.text("Q" + slot + " " + content.item(bound).name() + ": " + result, NamedTextColor.GREEN), 40);
+        ProductionContentCatalog.ItemEntry definition = production.nonEquipmentItemsById().get(bound);
+        String name = definition == null ? content.item(bound).name() : definition.name();
+        ActionBarService.notice(player, Component.text("Q" + slot + " " + name + ": " + result, NamedTextColor.GREEN), 40);
+    }
+
+    private boolean quickEffectSupported(String id) {
+        return Set.of("RATION", "BANDAGE", "ANTIDOTE", "WSI-CONS-RATION_PACK", "WSI-CONS-BANDAGE",
+                "WSI-CONS-REPAIR_KIT", "WSI-CONS-PURIFY_AMPOULE", "WSI-CONS-AP_STIM",
+                "WSI-CONS-RESCUE_BRACE", "WSI-CONS-PORTABLE_PURIFIER_CHARGE",
+                "WSI-CONS-ANTIDOTE_INJECTION", "WSI-CONS-COOLING_SALVE", "WSI-CONS-TOURNIQUET",
+                "WSI-CONS-NEURAL_STABILIZER", "WSI-CONS-REINFORCED_RESCUE_BRACE",
+                "WSI-CONS-BIO_SHIELD_AMPOULE").contains(id);
+    }
+
+    private boolean canUseLimitedConsumable(Player player, String id) {
+        int limit = switch (id) {
+            case "WSI-CONS-PURIFY_AMPOULE" -> 2;
+            case "WSI-CONS-AP_STIM", "WSI-CONS-BIO_SHIELD_AMPOULE" -> 1;
+            default -> Integer.MAX_VALUE;
+        };
+        int day = runs.current().map(run -> run.day).orElse(1);
+        int used = runs.playerState(player.getUniqueId()).map(state -> state.quickItemUsesByDay == null ? 0
+                : state.quickItemUsesByDay.getOrDefault(day + ":" + id, 0)).orElse(0);
+        if (used < limit) return true;
+        ActionBarService.notice(player, Component.text("오늘 사용 한도에 도달했습니다: " + id, NamedTextColor.RED), 40);
+        return false;
+    }
+
+    private void recordConsumableUse(Player player, String id) {
+        if (!id.startsWith("WSI-CONS-")) return;
+        int day = runs.current().map(run -> run.day).orElse(1);
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            if (state.quickItemUsesByDay == null) state.quickItemUsesByDay = new HashMap<>();
+            state.quickItemUsesByDay.merge(day + ":" + id, 1, Integer::sum);
+        });
+    }
+
+    private void removePlayerStatus(Player player, String id) {
+        player.getPersistentDataContainer().remove(new NamespacedKey(plugin, "status_" + id));
     }
 
     private void executeDodge(Player player) {

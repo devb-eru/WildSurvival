@@ -75,6 +75,7 @@ public final class ItemCodexService implements Listener {
     public ItemStack resourceItem(String rawId, int amount) {
         String id = rawId.toUpperCase(java.util.Locale.ROOT);
         ProductionContentCatalog.CatalogEntry resource = production.item(id);
+        ProductionContentCatalog.MaterialEntry definition = production.materialsById().get(id);
         if (!"MATERIAL".equals(resource.domain()) || !id.startsWith("WSR-")) throw new IllegalArgumentException("Not a countable resource " + rawId);
         Material display = Material.matchMaterial(resource.displayMaterial());
         if (display == null || display.isAir()) display = resourceMaterial(id);
@@ -84,6 +85,8 @@ public final class ItemCodexService implements Listener {
         meta.setLore(List.of(
                 ChatColor.GRAY + "개인 소지 자원",
                 ChatColor.WHITE + "공용 보급 저장소에서 원장으로 전환 가능",
+                ChatColor.GRAY + (definition == null ? "획득 정보 없음"
+                        : definition.acquisitionKind() + " · " + definition.usageText()),
                 ChatColor.DARK_GRAY + "ID: " + resource.id()
         ));
         meta.getPersistentDataContainer().set(itemIdKey, PersistentDataType.STRING, resource.id());
@@ -95,14 +98,21 @@ public final class ItemCodexService implements Listener {
         String id = rawId.toUpperCase(java.util.Locale.ROOT);
         PrototypeContent.ItemDefinition prototype = content.items().stream().filter(value -> value.id().equals(id)).findFirst().orElse(null);
         ProductionContentCatalog.CatalogEntry productionEntry = prototype == null ? production.item(id) : null;
+        ProductionContentCatalog.ItemEntry itemDefinition = prototype == null
+                ? production.nonEquipmentItemsById().get(id) : null;
         String materialName = prototype == null ? productionEntry.displayMaterial() : prototype.material();
         Material material = Material.matchMaterial(materialName);
         if (material == null || material.isAir()) throw new IllegalArgumentException("Invalid item material " + materialName);
-        ItemStack item = new ItemStack(material, Math.max(1, Math.min(material.getMaxStackSize(), amount)));
+        int stackLimit = itemDefinition == null ? material.getMaxStackSize()
+                : Math.min(material.getMaxStackSize(), itemDefinition.stackLimit());
+        ItemStack item = new ItemStack(material, Math.max(1, Math.min(stackLimit, amount)));
         ItemMeta meta = item.getItemMeta();
         String name = prototype == null ? productionEntry.name() : prototype.name();
-        String category = prototype == null ? productionEntry.domain() : prototype.category();
-        String description = prototype == null ? "ws-content-r2 등록 아이템" : prototype.description();
+        String category = itemDefinition == null ? (prototype == null ? productionEntry.domain() : prototype.category())
+                : itemDefinition.category();
+        String description = itemDefinition == null ? (prototype == null ? "ws-content-r2 등록 아이템" : prototype.description())
+                : itemDefinition.effectText();
+        if (itemDefinition != null) meta.setMaxStackSize(stackLimit);
         meta.setDisplayName(ChatColor.GOLD + "[WS] " + name);
         meta.setLore(List.of(ChatColor.WHITE + description, ChatColor.GRAY + "분류: " + category,
                 ChatColor.DARK_GRAY + "ID: " + id));
@@ -125,9 +135,11 @@ public final class ItemCodexService implements Listener {
         String id = itemId.toUpperCase(java.util.Locale.ROOT);
         ItemStack example = contentItem(id, 1);
         Material material = example.getType();
+        ProductionContentCatalog.ItemEntry definition = production.nonEquipmentItemsById().get(id);
+        int stackLimit = definition == null ? (material == null ? 64 : material.getMaxStackSize()) : definition.stackLimit();
         int remaining = amount;
         while (remaining > 0) {
-            int stack = Math.min(material == null ? 64 : material.getMaxStackSize(), remaining);
+            int stack = Math.min(stackLimit, remaining);
             int overflow = addWithoutReservedSlot(player, contentItem(id, stack));
             if (overflow > 0) queueRegisteredItem(player, id, overflow);
             remaining -= stack;

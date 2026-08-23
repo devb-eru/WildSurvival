@@ -198,31 +198,31 @@
       "path": "resources/day01-10.json",
       "domain": "resources",
       "schema": "resource.schema.json",
-      "sha256": "979527c97aec09361b46dfd272d0902f4d1bb9ece0fc0e8b43c459887174aa32"
+      "sha256": "8f85782a8e803347feddcd51d42b1075153d432ae11f4d48ffbdbcfa2fd6cbb4"
     },
     {
       "path": "resources/day11-20.json",
       "domain": "resources",
       "schema": "resource.schema.json",
-      "sha256": "1553aed89b190ee1735196465722cc083ad6b924a00e4625f69a1a2892d2b1ee"
+      "sha256": "24a4f06f803c75fc5b1f51b8ec9299578a59e01e60ff3ab2a4276287dbb4eb8a"
     },
     {
       "path": "resources/day21-50.json",
       "domain": "resources",
       "schema": "resource.schema.json",
-      "sha256": "e183a1794d368ed0531a81ff72bf23115fc42f168a0b4be779c0f76f2340413d"
+      "sha256": "f7ff4f6e34aa4434f719e15534deca54bb131da6baa6bd137ba0f40bead6e0fe"
     },
     {
       "path": "items/materials.json",
       "domain": "materials",
       "schema": "resource.schema.json",
-      "sha256": "edf16622aa708b964551c27c5d3ca5e575c3d62354129c955fb1948df16e4c18"
+      "sha256": "e6bdeea7b62f5416e409e570b4864d9ef47bd30443a0a037ec453441503831de"
     },
     {
       "path": "items/non-equipment-items.json",
       "domain": "items",
       "schema": "item.schema.json",
-      "sha256": "5802a3b7d0f523cea169440a2eb0d0f64e7cbc07db3e27b1aa06b7743c4f0b1e"
+      "sha256": "f1157ff6b13933ebd8ff9da3268b7d6f04cc7a99b7d5409a8ee48306d89bd374"
     },
     {
       "path": "items/codex-index.json",
