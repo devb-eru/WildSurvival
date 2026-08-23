@@ -126,7 +126,7 @@
       "path": "schemas/final.schema.json",
       "domain": "schema",
       "schema": "common.schema.json",
-      "sha256": "11618c7119ac4443a2a8ce6341ce2d7d50b16378c6b1457e2214940024b80e27"
+      "sha256": "cd2c51e4a585239f6ca2ae2ee0ba07de058e7a0c102d0e29809c2e058029339e"
     },
     {
       "path": "schemas/story.schema.json",
@@ -330,7 +330,7 @@
       "path": "final/day50-reconstruction-signal.json",
       "domain": "final",
       "schema": "final.schema.json",
-      "sha256": "48abaa3ae3ea6359aca8a0decf6f776606be8f1756a29702e10cbfafd4b07515"
+      "sha256": "de2ec085a690719bf78179a2f0fa7edeb490473f1727dee4469b422af8df8f53"
     },
     {
       "path": "story/season1-scenes.json",
@@ -360,7 +360,7 @@
       "path": "fixtures/cardinality.json",
       "domain": "fixture-cardinality",
       "schema": "common.schema.json",
-      "sha256": "f5dc12c2b0942174bac0b89a57c5764e04f8d70fee8c0668173116e433c6101f"
+      "sha256": "5d2ed833caae54922480489bcec80b07388119959ca5ad6bfee219e7c5ad0a38"
     },
     {
       "path": "fixtures/reference-graph.json",

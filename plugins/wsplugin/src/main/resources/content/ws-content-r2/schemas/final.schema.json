@@ -16,20 +16,54 @@
       "const": "ws-content-r2"
     },
     "domain": {
-      "type": "string",
-      "minLength": 1
+      "const": "final"
     },
     "records": {
       "type": "array",
+      "minItems": 32,
+      "maxItems": 32,
       "items": {
         "type": "object",
         "required": [
-          "id"
+          "id",
+          "sourceDocumentId",
+          "enabled",
+          "recordKind",
+          "executionOpcode",
+          "raw"
         ],
         "properties": {
           "id": {
             "type": "string",
             "minLength": 1
+          },
+          "sourceDocumentId": {
+            "const": "FINAL-DATA-001"
+          },
+          "enabled": {
+            "const": true
+          },
+          "recordKind": {
+            "enum": [
+              "OBJECTIVE",
+              "FINAL_BOSS",
+              "OBJECTIVE_COMPONENT",
+              "WAVE_PROFILE",
+              "BOSS_PHASE",
+              "BOSS_PATTERN",
+              "COMPLETION_STEP"
+            ]
+          },
+          "executionOpcode": {
+            "type": "string",
+            "minLength": 1
+          },
+          "raw": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "string"
+            }
           }
         }
       }

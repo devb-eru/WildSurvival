@@ -4,11 +4,873 @@
   "domain": "final",
   "records": [
     {
-      "id": "FINAL-D50-RECONSTRUCTION-SIGNAL",
+      "id": "FINAL-D50-FIRST-RECONSTRUCTION-SIGNAL",
       "sourceDocumentId": "FINAL-DATA-001",
       "enabled": true,
+      "recordKind": "OBJECTIVE",
+      "executionOpcode": "FINAL_STATE_MACHINE",
+      "minimumDay": 50,
+      "requiredBossIds": [
+        "BOSS-001",
+        "BOSS-002",
+        "BOSS-003",
+        "BOSS-004"
+      ],
+      "requiredPartIds": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "requiredDiscoveryIds": [
+        "C27",
+        "C28-A",
+        "C28-B",
+        "C28-C",
+        "C28-D",
+        "C29"
+      ],
+      "facilityRequirements": {
+        "FAC-R01": "READY",
+        "FAC-R02": "READY",
+        "FAC-R03": "READY",
+        "FAC-R04": "READY",
+        "FAC-R05": "CALIBRATED:3",
+        "FAC-R06": "READY"
+      },
+      "uniqueInputId": "WSR-FINAL_SIGNAL_KEY",
+      "forbiddenActive": [
+        "BOSS",
+        "SIEGE",
+        "BLOCKING_TRANSACTION"
+      ],
+      "stateMachine": [
+        "LOCKED",
+        "AVAILABLE",
+        "ACTIVATING",
+        "ACTIVE_STAGE_1",
+        "ACTIVE_STAGE_2",
+        "ACTIVE_STAGE_3",
+        "RESOLVING",
+        "COMPLETED"
+      ],
+      "stage1BudgetByParty": [
+        {
+          "partySize": 1,
+          "total": 60,
+          "waveBudgets": [
+            20,
+            20,
+            20
+          ],
+          "activeCap": 8
+        },
+        {
+          "partySize": 2,
+          "total": 90,
+          "waveBudgets": [
+            30,
+            30,
+            30
+          ],
+          "activeCap": 10
+        },
+        {
+          "partySize": 3,
+          "total": 117,
+          "waveBudgets": [
+            29,
+            29,
+            29,
+            30
+          ],
+          "activeCap": 12
+        },
+        {
+          "partySize": 4,
+          "total": 144,
+          "waveBudgets": [
+            36,
+            36,
+            36,
+            36
+          ],
+          "activeCap": 12
+        }
+      ],
+      "arena": {
+        "facilityDistanceMin": 18,
+        "facilityDistanceMax": 36,
+        "bodySpawnClearance": 12,
+        "combatRadius": 50,
+        "recoveryRadius": 70,
+        "stakeCount": 3,
+        "stakeDistanceMin": 14,
+        "stakeDistanceMax": 24,
+        "stakeSeparationMin": 18,
+        "candidateCount": 24,
+        "candidatesPerTick": 2
+      },
       "raw": [
-        "AUTHORITY_DATA"
+        "FINAL-D50-FIRST-RECONSTRUCTION-SIGNAL",
+        "Day 50+",
+        "first reconstruction signal"
+      ]
+    },
+    {
+      "id": "FINAL-BOSS-WORLD-COLLAPSE-CORE",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "FINAL_BOSS",
+      "executionOpcode": "FINAL_BOSS_PATTERN_CONTROLLER",
+      "representation": "Ravager 이동 코어 + 다중 Display 외피",
+      "defence": 240,
+      "penetration": 50,
+      "resistance": 135,
+      "tenacity": 70,
+      "staggerResistance": 75,
+      "moveSpeedSprintRatio": 0.86,
+      "partyProfiles": [
+        {
+          "partySize": 1,
+          "hp": 900000,
+          "breakMax": 33750,
+          "summonCap": 2,
+          "simultaneousTargets": 1
+        },
+        {
+          "partySize": 2,
+          "hp": 1250000,
+          "breakMax": 45000,
+          "summonCap": 3,
+          "simultaneousTargets": 1
+        },
+        {
+          "partySize": 3,
+          "hp": 1650000,
+          "breakMax": 56250,
+          "summonCap": 4,
+          "simultaneousTargets": 2
+        },
+        {
+          "partySize": 4,
+          "hp": 2000000,
+          "breakMax": 67500,
+          "summonCap": 4,
+          "simultaneousTargets": 2
+        }
+      ],
+      "breakResult": {
+        "groggyTicks": 100,
+        "damageTakenMultiplier": 1.15,
+        "maxApRestoreRatio": 0.2,
+        "facilityOutputGain": 10,
+        "nextGaugeIncreaseRatio": 0.2,
+        "gaugeIncreaseCapRatio": 1.0
+      },
+      "dotHpPerSecondCapRatio": 0.005,
+      "slowCapRatio": 0.15,
+      "immuneStatuses": [
+        "SILENCE",
+        "DISARM"
+      ],
+      "zeroHpState": "CORE_SUBDUED",
+      "raw": [
+        "FINAL-BOSS-WORLD-COLLAPSE-CORE",
+        "Stage 2"
+      ]
+    },
+    {
+      "id": "F50-STAKE",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "OBJECTIVE_COMPONENT",
+      "executionOpcode": "FINAL_STAKE_CHANNEL",
+      "count": 3,
+      "maxProgress": 100,
+      "interactionTicks": 60,
+      "interactionGain": 25,
+      "enemyClearGain": 15,
+      "breakGain": 10,
+      "minimumPreservedProgress": 10,
+      "raw": [
+        "F50-STAKE",
+        "3",
+        "100/개",
+        "3초 상호작용 +25, 주변 주요 적 제거 +15, 브레이크 성공 +10",
+        "피격 시 채널 취소, 진행 최소10 보존"
+      ]
+    },
+    {
+      "id": "FAC-R06-OUTPUT",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "OBJECTIVE_COMPONENT",
+      "executionOpcode": "FINAL_OUTPUT_CHANNEL",
+      "count": 1,
+      "maxProgress": 100,
+      "validChannelGainPerSecond": 2,
+      "invaderChannelLoss": 20,
+      "raw": [
+        "FAC-R06-OUTPUT",
+        "1",
+        "100",
+        "유효 채널 +2/초",
+        "침입체 채널 -20"
+      ]
+    },
+    {
+      "id": "FINAL-ST1-PURSUIT",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "WAVE_PROFILE",
+      "executionOpcode": "EXECUTE_LOCKED_WAVE_PROFILE",
+      "stage": 1,
+      "waveIndex": 1,
+      "roles": [
+        "PARTY_TRACKER",
+        "CHASER"
+      ],
+      "allowedPartySizes": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "noRewards": true,
+      "raw": [
+        "FINAL-ST1-PURSUIT",
+        "PARTY_TRACKER, CHASER"
+      ]
+    },
+    {
+      "id": "FINAL-ST1-STAKES",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "WAVE_PROFILE",
+      "executionOpcode": "EXECUTE_LOCKED_WAVE_PROFILE",
+      "stage": 1,
+      "waveIndex": 2,
+      "roles": [
+        "EN-F50-A01",
+        "SUPPORT_MAX_1"
+      ],
+      "allowedPartySizes": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "noRewards": true,
+      "raw": [
+        "FINAL-ST1-STAKES",
+        "EN-F50-A01, SUPPORT_MAX_1"
+      ]
+    },
+    {
+      "id": "FINAL-ST1-OUTPUT",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "WAVE_PROFILE",
+      "executionOpcode": "EXECUTE_LOCKED_WAVE_PROFILE",
+      "stage": 1,
+      "waveIndex": 3,
+      "roles": [
+        "EN-F50-A02",
+        "SIEGE_MAX_1"
+      ],
+      "allowedPartySizes": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "noRewards": true,
+      "raw": [
+        "FINAL-ST1-OUTPUT",
+        "EN-F50-A02, SIEGE_MAX_1"
+      ]
+    },
+    {
+      "id": "FINAL-ST1-MIXED",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "WAVE_PROFILE",
+      "executionOpcode": "EXECUTE_LOCKED_WAVE_PROFILE",
+      "stage": 1,
+      "waveIndex": 4,
+      "roles": [
+        "PARTY_SIZE_3_OR_4",
+        "ELITE_MAX_1"
+      ],
+      "allowedPartySizes": [
+        3,
+        4
+      ],
+      "noRewards": true,
+      "raw": [
+        "FINAL-ST1-MIXED",
+        "PARTY_SIZE_3_OR_4, ELITE_MAX_1"
+      ]
+    },
+    {
+      "id": "FINAL-ST3-STATUS",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "WAVE_PROFILE",
+      "executionOpcode": "EXECUTE_LOCKED_WAVE_PROFILE",
+      "stage": 3,
+      "fromSecond": 0,
+      "toSecond": 60,
+      "budgetByPartySize": [
+        {
+          "partySize": 2,
+          "threat": 30
+        },
+        {
+          "partySize": 3,
+          "threat": 39
+        },
+        {
+          "partySize": 4,
+          "threat": 48
+        }
+      ],
+      "rolesText": "상태·이동, 방해자0~1",
+      "noRewards": true,
+      "raw": [
+        "FINAL-ST3-STATUS",
+        "0~60초",
+        "30/39/48",
+        "상태·이동, 방해자0~1"
+      ]
+    },
+    {
+      "id": "FINAL-ST3-CORRUPTION",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "WAVE_PROFILE",
+      "executionOpcode": "EXECUTE_LOCKED_WAVE_PROFILE",
+      "stage": 3,
+      "fromSecond": 60,
+      "toSecond": 120,
+      "budgetByPartySize": [
+        {
+          "partySize": 2,
+          "threat": 36
+        },
+        {
+          "partySize": 3,
+          "threat": 47
+        },
+        {
+          "partySize": 4,
+          "threat": 58
+        }
+      ],
+      "rolesText": "출력 방해자1, 지원1",
+      "noRewards": true,
+      "raw": [
+        "FINAL-ST3-CORRUPTION",
+        "60~120초",
+        "36/47/58",
+        "출력 방해자1, 지원1"
+      ]
+    },
+    {
+      "id": "FINAL-ST3-SIEGE",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "WAVE_PROFILE",
+      "executionOpcode": "EXECUTE_LOCKED_WAVE_PROFILE",
+      "stage": 3,
+      "fromSecond": 120,
+      "toSecond": 180,
+      "budgetByPartySize": [
+        {
+          "partySize": 2,
+          "threat": 42
+        },
+        {
+          "partySize": 3,
+          "threat": 55
+        },
+        {
+          "partySize": 4,
+          "threat": 67
+        }
+      ],
+      "rolesText": "공성1, 정예1",
+      "noRewards": true,
+      "raw": [
+        "FINAL-ST3-SIEGE",
+        "120~180초",
+        "42/55/67",
+        "공성1, 정예1"
+      ]
+    },
+    {
+      "id": "F50-P1-COLLAPSE-PURSUIT",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PHASE",
+      "executionOpcode": "ENTER_FINAL_BOSS_PHASE",
+      "hpRangeText": "100~72%",
+      "patternPoolText": "CUT, STATUS_QUADRANT, TRACK_LINE, ECHO_SUMMON",
+      "repeatRuleText": "같은 ID 2회 연속 금지",
+      "transitionSafeTicks": 80,
+      "resetBreakOnEntry": true,
+      "retainAccumulatedResistance": true,
+      "raw": [
+        "F50-P1-COLLAPSE-PURSUIT",
+        "100~72%",
+        "CUT, STATUS_QUADRANT, TRACK_LINE, ECHO_SUMMON",
+        "같은 ID 2회 연속 금지"
+      ]
+    },
+    {
+      "id": "F50-P2-CORRUPTION-GRAFT",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PHASE",
+      "executionOpcode": "ENTER_FINAL_BOSS_PHASE",
+      "hpRangeText": "72~38%",
+      "patternPoolText": "MUTATION_ROTATE, PURIFY_BACKFLOW, FACILITY_JAM, SYNAPSE_CORE",
+      "repeatRuleText": "같은 축 12초",
+      "transitionSafeTicks": 80,
+      "resetBreakOnEntry": true,
+      "retainAccumulatedResistance": true,
+      "raw": [
+        "F50-P2-CORRUPTION-GRAFT",
+        "72~38%",
+        "MUTATION_ROTATE, PURIFY_BACKFLOW, FACILITY_JAM, SYNAPSE_CORE",
+        "같은 축 12초"
+      ]
+    },
+    {
+      "id": "F50-P3-RESONANCE-FRACTURE",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PHASE",
+      "executionOpcode": "ENTER_FINAL_BOSS_PHASE",
+      "hpRangeText": "38~0%",
+      "patternPoolText": "FRACTURE_CHANNEL, LOCKED_RING, THREE_CORES, FINAL_COLLAPSE",
+      "repeatRuleText": "최종 패턴 1회",
+      "transitionSafeTicks": 80,
+      "resetBreakOnEntry": true,
+      "retainAccumulatedResistance": true,
+      "raw": [
+        "F50-P3-RESONANCE-FRACTURE",
+        "38~0%",
+        "FRACTURE_CHANNEL, LOCKED_RING, THREE_CORES, FINAL_COLLAPSE",
+        "최종 패턴 1회"
+      ]
+    },
+    {
+      "id": "F50-COLLAPSE_CUT",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "DODGE",
+        "GUARD"
+      ],
+      "telegraphCooldownText": "0.9초/7초",
+      "executionText": "두 부채 320, 교차 60%",
+      "responseText": "회피·방어·패링·후방",
+      "parameters": {
+        "telegraphTicks": 18,
+        "cooldownTicks": 140,
+        "baseDamage": 320
+      },
+      "raw": [
+        "F50-COLLAPSE_CUT",
+        "DODGE/GUARD",
+        "0.9초/7초",
+        "두 부채 320, 교차 60%",
+        "회피·방어·패링·후방"
+      ]
+    },
+    {
+      "id": "F50-STATUS_QUADRANT",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "POSITIONAL",
+        "STATUS"
+      ],
+      "telegraphCooldownText": "1.5초/12초",
+      "executionText": "4구역 중2, 300+공개 상태",
+      "responseText": "안전구역·상태 대응·브레이크3,200",
+      "parameters": {
+        "telegraphTicks": 30,
+        "cooldownTicks": 240,
+        "baseDamage": 300,
+        "interruptBreak": 3200
+      },
+      "raw": [
+        "F50-STATUS_QUADRANT",
+        "POSITIONAL/STATUS",
+        "1.5초/12초",
+        "4구역 중2, 300+공개 상태",
+        "안전구역·상태 대응·브레이크3,200"
+      ]
+    },
+    {
+      "id": "F50-TRACK_LINE",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "PARRYABLE"
+      ],
+      "telegraphCooldownText": "1.3초/10초",
+      "executionText": "대상/시설 반대 선 340",
+      "responseText": "외곽 유도·반대편·패링",
+      "parameters": {
+        "telegraphTicks": 26,
+        "cooldownTicks": 200,
+        "baseDamage": 340
+      },
+      "raw": [
+        "F50-TRACK_LINE",
+        "PARRYABLE",
+        "1.3초/10초",
+        "대상/시설 반대 선 340",
+        "외곽 유도·반대편·패링"
+      ]
+    },
+    {
+      "id": "F50-ECHO_SUMMON",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "SUMMON"
+      ],
+      "telegraphCooldownText": "1.2초/14초",
+      "executionText": "EN-F50-A03` 2~4",
+      "responseText": "지점 선점·광역·본체 브레이크",
+      "parameters": {
+        "telegraphTicks": 24,
+        "cooldownTicks": 280,
+        "summonMin": 2,
+        "summonMax": 4
+      },
+      "raw": [
+        "F50-ECHO_SUMMON",
+        "SUMMON",
+        "1.2초/14초",
+        "EN-F50-A03` 2~4",
+        "지점 선점·광역·본체 브레이크"
+      ]
+    },
+    {
+      "id": "F50-MUTATION_ROTATE",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "MUTATION"
+      ],
+      "telegraphCooldownText": "1.6초/16초",
+      "executionText": "서로 다른 축 변이2, 14초",
+      "responseText": "HUD·축 전환·정화·브레이크",
+      "parameters": {
+        "telegraphTicks": 32,
+        "cooldownTicks": 320,
+        "axisCount": 2,
+        "durationTicks": 280
+      },
+      "raw": [
+        "F50-MUTATION_ROTATE",
+        "MUTATION",
+        "1.6초/16초",
+        "서로 다른 축 변이2, 14초",
+        "HUD·축 전환·정화·브레이크"
+      ]
+    },
+    {
+      "id": "F50-PURIFY_BACKFLOW",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "PARTIAL"
+      ],
+      "telegraphCooldownText": "1.5초/14초",
+      "executionText": "링 360, 출력-10",
+      "responseText": "위치·말뚝 차폐·브레이크3,800",
+      "parameters": {
+        "telegraphTicks": 30,
+        "cooldownTicks": 280,
+        "baseDamage": 360,
+        "outputLoss": 10,
+        "interruptBreak": 3800
+      },
+      "raw": [
+        "F50-PURIFY_BACKFLOW",
+        "PARTIAL",
+        "1.5초/14초",
+        "링 360, 출력-10",
+        "위치·말뚝 차폐·브레이크3,800"
+      ]
+    },
+    {
+      "id": "F50-FACILITY_JAM",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "INTERRUPTIBLE"
+      ],
+      "telegraphCooldownText": "1.8초/18초",
+      "executionText": "7초 뒤 출력 정지8초",
+      "responseText": "선 절단·브레이크·소환체 제거",
+      "parameters": {
+        "telegraphTicks": 36,
+        "cooldownTicks": 360,
+        "delayTicks": 140,
+        "outputStopTicks": 160
+      },
+      "raw": [
+        "F50-FACILITY_JAM",
+        "INTERRUPTIBLE",
+        "1.8초/18초",
+        "7초 뒤 출력 정지8초",
+        "선 절단·브레이크·소환체 제거"
+      ]
+    },
+    {
+      "id": "F50-SYNAPSE_CORE",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "SCRIPTED"
+      ],
+      "telegraphCooldownText": "1.4초/16초",
+      "executionText": "두 대상/1인 핵, 실패320+상태2",
+      "responseText": "6~14m 유지, HP3,500/브레이크1,800",
+      "parameters": {
+        "telegraphTicks": 28,
+        "cooldownTicks": 320,
+        "failureDamage": 320,
+        "objectiveHp": 3500,
+        "objectiveBreak": 1800
+      },
+      "raw": [
+        "F50-SYNAPSE_CORE",
+        "SCRIPTED",
+        "1.4초/16초",
+        "두 대상/1인 핵, 실패320+상태2",
+        "6~14m 유지, HP3,500/브레이크1,800"
+      ]
+    },
+    {
+      "id": "F50-FRACTURE_CHANNEL",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "INTERRUPTIBLE"
+      ],
+      "telegraphCooldownText": "8초/24초",
+      "executionText": "실패420, 출력-20",
+      "responseText": "브레이크6,000·말뚝3·상태 변환",
+      "parameters": {
+        "telegraphTicks": 160,
+        "cooldownTicks": 480,
+        "failureDamage": 420,
+        "outputLoss": 20,
+        "interruptBreak": 6000
+      },
+      "raw": [
+        "F50-FRACTURE_CHANNEL",
+        "INTERRUPTIBLE",
+        "8초/24초",
+        "실패420, 출력-20",
+        "브레이크6,000·말뚝3·상태 변환"
+      ]
+    },
+    {
+      "id": "F50-LOCKED_RING",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "UNBREAKABLE"
+      ],
+      "telegraphCooldownText": "1.4초/12초",
+      "executionText": "3회×330, 후속65%",
+      "responseText": "안전 링·보호·게이지 누적",
+      "parameters": {
+        "telegraphTicks": 28,
+        "cooldownTicks": 240,
+        "hitCount": 3,
+        "baseDamage": 330
+      },
+      "raw": [
+        "F50-LOCKED_RING",
+        "UNBREAKABLE",
+        "1.4초/12초",
+        "3회×330, 후속65%",
+        "안전 링·보호·게이지 누적"
+      ]
+    },
+    {
+      "id": "F50-THREE_CORES",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "SCRIPTED"
+      ],
+      "telegraphCooldownText": "8초/22초",
+      "executionText": "핵3, 실패400",
+      "responseText": "합계 HP12,000/브레이크6,000",
+      "parameters": {
+        "telegraphTicks": 160,
+        "cooldownTicks": 440,
+        "failureDamage": 400,
+        "objectiveCount": 3,
+        "objectiveHpTotal": 12000,
+        "objectiveBreakTotal": 6000
+      },
+      "raw": [
+        "F50-THREE_CORES",
+        "SCRIPTED",
+        "8초/22초",
+        "핵3, 실패400",
+        "합계 HP12,000/브레이크6,000"
+      ]
+    },
+    {
+      "id": "F50-FINAL_COLLAPSE",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "BOSS_PATTERN",
+      "executionOpcode": "EXECUTE_FINAL_PATTERN",
+      "tags": [
+        "PARTIAL"
+      ],
+      "telegraphCooldownText": "HP8% 10초",
+      "executionText": "중단 시 마지막2파 취소, 1파 유지",
+      "responseText": "브레이크7,500·이동·방어",
+      "parameters": {
+        "telegraphTicks": 200,
+        "cooldownTicks": 0,
+        "hpTriggerPercent": 8,
+        "interruptBreak": 7500
+      },
+      "raw": [
+        "F50-FINAL_COLLAPSE",
+        "PARTIAL",
+        "HP8% 10초",
+        "중단 시 마지막2파 취소, 1파 유지",
+        "브레이크7,500·이동·방어"
+      ]
+    },
+    {
+      "id": "F50-TX-01",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "COMPLETION_STEP",
+      "executionOpcode": "COMMIT_FINAL_COMPLETION_STEP",
+      "ordinal": 1,
+      "writeText": "사전조건: CORE_SUBDUED·180초·확정 수",
+      "idempotencyKey": "completionId:validate",
+      "raw": [
+        "F50-TX-01",
+        "사전조건: CORE_SUBDUED·180초·확정 수",
+        "completionId:validate"
+      ]
+    },
+    {
+      "id": "F50-TX-02",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "COMPLETION_STEP",
+      "executionOpcode": "COMMIT_FINAL_COMPLETION_STEP",
+      "ordinal": 2,
+      "writeText": "C30 `COMPLETE",
+      "idempotencyKey": "completionId:discovery",
+      "raw": [
+        "F50-TX-02",
+        "C30 `COMPLETE",
+        "completionId:discovery"
+      ]
+    },
+    {
+      "id": "F50-TX-03",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "COMPLETION_STEP",
+      "executionOpcode": "COMMIT_FINAL_COMPLETION_STEP",
+      "ordinal": 3,
+      "writeText": "finalObjectiveState=RESOLVING",
+      "idempotencyKey": "completionId:objective",
+      "raw": [
+        "F50-TX-03",
+        "finalObjectiveState=RESOLVING",
+        "completionId:objective"
+      ]
+    },
+    {
+      "id": "F50-TX-04",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "COMPLETION_STEP",
+      "executionOpcode": "COMMIT_FINAL_COMPLETION_STEP",
+      "ordinal": 4,
+      "writeText": "worldStabilization=FIRST_SIGNAL_SENT",
+      "idempotencyKey": "completionId:world",
+      "raw": [
+        "F50-TX-04",
+        "worldStabilization=FIRST_SIGNAL_SENT",
+        "completionId:world"
+      ]
+    },
+    {
+      "id": "F50-TX-05",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "COMPLETION_STEP",
+      "executionOpcode": "COMMIT_FINAL_COMPLETION_STEP",
+      "ordinal": 5,
+      "writeText": "회차 `COMPLETED`, 통계 스냅샷",
+      "idempotencyKey": "completionId:run",
+      "raw": [
+        "F50-TX-05",
+        "회차 `COMPLETED`, 통계 스냅샷",
+        "completionId:run"
+      ]
+    },
+    {
+      "id": "F50-TX-06",
+      "sourceDocumentId": "FINAL-DATA-001",
+      "enabled": true,
+      "recordKind": "COMPLETION_STEP",
+      "executionOpcode": "COMMIT_FINAL_COMPLETION_STEP",
+      "ordinal": 6,
+      "writeText": "Story·결과 책 소비 이벤트",
+      "idempotencyKey": "completionId:presentation",
+      "raw": [
+        "F50-TX-06",
+        "Story·결과 책 소비 이벤트",
+        "completionId:presentation"
       ]
     }
   ]

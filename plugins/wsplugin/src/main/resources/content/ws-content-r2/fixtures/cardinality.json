@@ -78,6 +78,10 @@
     {
       "id": "eventsD50",
       "expected": 55
+    },
+    {
+      "id": "final",
+      "expected": 32
     }
   ]
 }

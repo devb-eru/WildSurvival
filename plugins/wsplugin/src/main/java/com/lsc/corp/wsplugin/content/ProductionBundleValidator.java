@@ -88,6 +88,7 @@ public final class ProductionBundleValidator {
             counts.put("eventsD10", count(reader, "events/day01-10.json"));
             counts.put("eventsD20", count(reader, "events/day11-20.json"));
             counts.put("eventsD50", count(reader, "events/day21-50.json"));
+            counts.put("final", count(reader, "final/day50-reconstruction-signal.json"));
             Map<String, Integer> expected = Map.ofEntries(
                     Map.entry("materials", 59), Map.entry("items", 61), Map.entry("tools", 214),
                     Map.entry("recipes", 315), Map.entry("codex", 334), Map.entry("skills", 64),
@@ -95,7 +96,8 @@ public final class ProductionBundleValidator {
                     Map.entry("enemies", 53), Map.entry("bosses", 4), Map.entry("support", 34),
                     Map.entry("facilities", 46), Map.entry("loot", 62), Map.entry("days", 50),
                     Map.entry("research", 25), Map.entry("storyScenes", 73), Map.entry("storyLogs", 9),
-                    Map.entry("eventsD10", 34), Map.entry("eventsD20", 18), Map.entry("eventsD50", 55));
+                    Map.entry("eventsD10", 34), Map.entry("eventsD20", 18), Map.entry("eventsD50", 55),
+                    Map.entry("final", 32));
             for (Map.Entry<String, Integer> entry : expected.entrySet()) {
                 if (!entry.getValue().equals(counts.get(entry.getKey()))) {
                     throw new ContentValidationException("Cardinality mismatch " + entry.getKey()
@@ -106,6 +108,7 @@ public final class ProductionBundleValidator {
             ProductionContentCatalog catalog = loadCatalog(reader, counts);
             validateStructuredAuthorityData(reader);
             validateEventData(reader);
+            validateFinalData(reader);
             validateReferences(reader, catalog);
             validateEquipmentCatalog(catalog);
             validateSkillCatalog(catalog);
@@ -995,6 +998,116 @@ public final class ProductionBundleValidator {
     private static void requireOpcode(JsonObject record, String expected) throws ContentValidationException {
         if (!expected.equals(requiredString(record, "executionOpcode"))) {
             throw new ContentValidationException("Invalid event opcode " + requiredString(record, "id"));
+        }
+    }
+
+    private void validateFinalData(ResourceReader reader) throws Exception {
+        Map<String, Integer> expectedByKind = Map.ofEntries(
+                Map.entry("OBJECTIVE", 1), Map.entry("FINAL_BOSS", 1),
+                Map.entry("OBJECTIVE_COMPONENT", 2), Map.entry("WAVE_PROFILE", 7),
+                Map.entry("BOSS_PHASE", 3), Map.entry("BOSS_PATTERN", 12),
+                Map.entry("COMPLETION_STEP", 6));
+        Map<String, Integer> actualByKind = new HashMap<>();
+        Set<String> ids = new HashSet<>();
+        Set<Integer> completionOrdinals = new HashSet<>();
+        for (JsonObject record : records(reader, "final/day50-reconstruction-signal.json")) {
+            rejectAuthorityStub(record);
+            String id = requiredString(record, "id");
+            String kind = requiredString(record, "recordKind");
+            actualByKind.merge(kind, 1, Integer::sum);
+            if (!ids.add(id) || !"FINAL-DATA-001".equals(requiredString(record, "sourceDocumentId"))
+                    || !record.get("enabled").getAsBoolean()
+                    || record.getAsJsonArray("raw") == null || record.getAsJsonArray("raw").size() < 2) {
+                throw new ContentValidationException("Invalid Final record " + id);
+            }
+            switch (kind) {
+                case "OBJECTIVE" -> {
+                    requireOpcode(record, "FINAL_STATE_MACHINE");
+                    if (!"FINAL-D50-FIRST-RECONSTRUCTION-SIGNAL".equals(id)
+                            || requiredInt(record, "minimumDay") != 50
+                            || stringArray(record, "requiredBossIds").size() != 4
+                            || stringArray(record, "requiredPartIds").size() != 4
+                            || stringArray(record, "requiredDiscoveryIds").size() != 6
+                            || stringArray(record, "forbiddenActive").size() != 3
+                            || stringArray(record, "stateMachine").size() != 8
+                            || record.getAsJsonObject("facilityRequirements").size() != 6
+                            || record.getAsJsonArray("stage1BudgetByParty").size() != 4
+                            || record.getAsJsonObject("arena") == null) {
+                        throw new ContentValidationException("Invalid Final objective " + id);
+                    }
+                }
+                case "FINAL_BOSS" -> {
+                    requireOpcode(record, "FINAL_BOSS_PATTERN_CONTROLLER");
+                    JsonArray partyProfiles = record.getAsJsonArray("partyProfiles");
+                    if (!"FINAL-BOSS-WORLD-COLLAPSE-CORE".equals(id) || partyProfiles == null
+                            || partyProfiles.size() != 4 || requiredDouble(record, "defence") <= 0
+                            || requiredDouble(record, "penetration") <= 0
+                            || requiredDouble(record, "moveSpeedSprintRatio") <= 0
+                            || requiredString(record, "zeroHpState").equals("DEAD")) {
+                        throw new ContentValidationException("Invalid Final boss " + id);
+                    }
+                    for (JsonElement value : partyProfiles) {
+                        JsonObject profile = value.getAsJsonObject();
+                        if (requiredInt(profile, "partySize") < 1 || requiredInt(profile, "partySize") > 4
+                                || requiredInt(profile, "hp") <= 0 || requiredInt(profile, "breakMax") <= 0
+                                || requiredInt(profile, "summonCap") < 1) {
+                            throw new ContentValidationException("Invalid Final boss party profile " + id);
+                        }
+                    }
+                }
+                case "OBJECTIVE_COMPONENT" -> {
+                    if (!("FINAL_STAKE_CHANNEL".equals(requiredString(record, "executionOpcode"))
+                            || "FINAL_OUTPUT_CHANNEL".equals(requiredString(record, "executionOpcode")))
+                            || requiredInt(record, "count") < 1 || requiredInt(record, "maxProgress") != 100) {
+                        throw new ContentValidationException("Invalid Final objective component " + id);
+                    }
+                }
+                case "WAVE_PROFILE" -> {
+                    requireOpcode(record, "EXECUTE_LOCKED_WAVE_PROFILE");
+                    int stage = requiredInt(record, "stage");
+                    if (!record.get("noRewards").getAsBoolean()
+                            || (stage == 1 && integerArray(record, "allowedPartySizes").isEmpty())
+                            || (stage == 3 && record.getAsJsonArray("budgetByPartySize").size() != 3)
+                            || (stage != 1 && stage != 3)) {
+                        throw new ContentValidationException("Invalid Final wave profile " + id);
+                    }
+                }
+                case "BOSS_PHASE" -> {
+                    requireOpcode(record, "ENTER_FINAL_BOSS_PHASE");
+                    if (requiredString(record, "hpRangeText").isBlank()
+                            || requiredString(record, "patternPoolText").isBlank()
+                            || requiredString(record, "repeatRuleText").isBlank()
+                            || requiredInt(record, "transitionSafeTicks") != 80
+                            || !record.get("resetBreakOnEntry").getAsBoolean()
+                            || !record.get("retainAccumulatedResistance").getAsBoolean()) {
+                        throw new ContentValidationException("Invalid Final boss phase " + id);
+                    }
+                }
+                case "BOSS_PATTERN" -> {
+                    requireOpcode(record, "EXECUTE_FINAL_PATTERN");
+                    JsonObject parameters = record.getAsJsonObject("parameters");
+                    if (stringArray(record, "tags").isEmpty()
+                            || requiredString(record, "executionText").isBlank()
+                            || requiredString(record, "responseText").isBlank()
+                            || parameters == null || requiredInt(parameters, "telegraphTicks") < 10
+                            || requiredInt(parameters, "cooldownTicks") < 0) {
+                        throw new ContentValidationException("Invalid Final boss pattern " + id);
+                    }
+                }
+                case "COMPLETION_STEP" -> {
+                    requireOpcode(record, "COMMIT_FINAL_COMPLETION_STEP");
+                    int ordinal = requiredInt(record, "ordinal");
+                    if (!completionOrdinals.add(ordinal) || ordinal < 1 || ordinal > 6
+                            || requiredString(record, "writeText").isBlank()
+                            || !requiredString(record, "idempotencyKey").startsWith("completionId:")) {
+                        throw new ContentValidationException("Invalid Final completion step " + id);
+                    }
+                }
+                default -> throw new ContentValidationException("Unknown Final record kind " + kind);
+            }
+        }
+        if (!expectedByKind.equals(actualByKind) || completionOrdinals.size() != 6) {
+            throw new ContentValidationException("Final cardinality mismatch " + actualByKind);
         }
     }
 

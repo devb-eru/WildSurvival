@@ -473,6 +473,7 @@ $storyRows = Read-TableRows '기획\08 스토리\STORY-DATA Season 1 런타임 �
 $eventD10Rows = Read-TableRows '기획\06 사건과 적\EVENT-DATA Day 1-10 사건·공세·자원 데이터 기획서.md'
 $eventD20Rows = Read-TableRows '기획\06 사건과 적\EVENT-DATA Day 11-20 사건 실행 데이터 기획서.md'
 $eventD50Rows = Read-TableRows '기획\06 사건과 적\EVENT-DATA Day 21-50 사건 실행 데이터 기획서.md'
+$finalRows = Read-TableRows '기획\01 회차와 진행\FINAL-DATA Day 50+ 최종 목표 실행 데이터 기획서.md'
 
 $materialCodex = [ordered]@{}
 foreach ($cells in $materialRows) {
@@ -1117,8 +1118,75 @@ $eventsD50 += @($eventD50Rows | ForEach-Object {
     }
 })
 
-$expected = [ordered]@{ materials=59; items=61; tools=214; recipes=315; codex=334; skills=64; personalAugments=50; partyAugments=16; enemies=53; bosses=4; support=34; facilities=46; loot=62; research=25; storyScenes=73; storyLogs=9; eventsD10=34; eventsD20=18; eventsD50=55 }
-$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; facilities=@($facilities).Count; loot=@($loot).Count; research=@($research).Count; storyScenes=@($storyScenes).Count; storyLogs=@($storyLogs).Count; eventsD10=@($eventsD10).Count; eventsD20=@($eventsD20).Count; eventsD50=@($eventsD50).Count }
+$finalRecords = @(
+    [ordered]@{
+        id='FINAL-D50-FIRST-RECONSTRUCTION-SIGNAL';sourceDocumentId='FINAL-DATA-001';enabled=$true;recordKind='OBJECTIVE';executionOpcode='FINAL_STATE_MACHINE';minimumDay=50
+        requiredBossIds=@('BOSS-001','BOSS-002','BOSS-003','BOSS-004');requiredPartIds=@('A','B','C','D');requiredDiscoveryIds=@('C27','C28-A','C28-B','C28-C','C28-D','C29')
+        facilityRequirements=[ordered]@{'FAC-R01'='READY';'FAC-R02'='READY';'FAC-R03'='READY';'FAC-R04'='READY';'FAC-R05'='CALIBRATED:3';'FAC-R06'='READY'}
+        uniqueInputId='WSR-FINAL_SIGNAL_KEY';forbiddenActive=@('BOSS','SIEGE','BLOCKING_TRANSACTION')
+        stateMachine=@('LOCKED','AVAILABLE','ACTIVATING','ACTIVE_STAGE_1','ACTIVE_STAGE_2','ACTIVE_STAGE_3','RESOLVING','COMPLETED')
+        stage1BudgetByParty=@(
+            [ordered]@{partySize=1;total=60;waveBudgets=@(20,20,20);activeCap=8},[ordered]@{partySize=2;total=90;waveBudgets=@(30,30,30);activeCap=10},
+            [ordered]@{partySize=3;total=117;waveBudgets=@(29,29,29,30);activeCap=12},[ordered]@{partySize=4;total=144;waveBudgets=@(36,36,36,36);activeCap=12})
+        arena=[ordered]@{facilityDistanceMin=18;facilityDistanceMax=36;bodySpawnClearance=12;combatRadius=50;recoveryRadius=70;stakeCount=3;stakeDistanceMin=14;stakeDistanceMax=24;stakeSeparationMin=18;candidateCount=24;candidatesPerTick=2}
+        raw=@('FINAL-D50-FIRST-RECONSTRUCTION-SIGNAL','Day 50+','first reconstruction signal')
+    },
+    [ordered]@{
+        id='FINAL-BOSS-WORLD-COLLAPSE-CORE';sourceDocumentId='FINAL-DATA-001';enabled=$true;recordKind='FINAL_BOSS';executionOpcode='FINAL_BOSS_PATTERN_CONTROLLER'
+        representation='Ravager 이동 코어 + 다중 Display 외피';defence=240;penetration=50;resistance=135;tenacity=70;staggerResistance=75;moveSpeedSprintRatio=0.86
+        partyProfiles=@(
+            [ordered]@{partySize=1;hp=900000;breakMax=33750;summonCap=2;simultaneousTargets=1},[ordered]@{partySize=2;hp=1250000;breakMax=45000;summonCap=3;simultaneousTargets=1},
+            [ordered]@{partySize=3;hp=1650000;breakMax=56250;summonCap=4;simultaneousTargets=2},[ordered]@{partySize=4;hp=2000000;breakMax=67500;summonCap=4;simultaneousTargets=2})
+        breakResult=[ordered]@{groggyTicks=100;damageTakenMultiplier=1.15;maxApRestoreRatio=0.20;facilityOutputGain=10;nextGaugeIncreaseRatio=0.20;gaugeIncreaseCapRatio=1.00}
+        dotHpPerSecondCapRatio=0.005;slowCapRatio=0.15;immuneStatuses=@('SILENCE','DISARM');zeroHpState='CORE_SUBDUED';raw=@('FINAL-BOSS-WORLD-COLLAPSE-CORE','Stage 2')
+    },
+    [ordered]@{id='F50-STAKE';sourceDocumentId='FINAL-DATA-001';enabled=$true;recordKind='OBJECTIVE_COMPONENT';executionOpcode='FINAL_STAKE_CHANNEL';count=3;maxProgress=100;interactionTicks=60;interactionGain=25;enemyClearGain=15;breakGain=10;minimumPreservedProgress=10;raw=@('F50-STAKE','3','100/개','3초 상호작용 +25, 주변 주요 적 제거 +15, 브레이크 성공 +10','피격 시 채널 취소, 진행 최소10 보존')},
+    [ordered]@{id='FAC-R06-OUTPUT';sourceDocumentId='FINAL-DATA-001';enabled=$true;recordKind='OBJECTIVE_COMPONENT';executionOpcode='FINAL_OUTPUT_CHANNEL';count=1;maxProgress=100;validChannelGainPerSecond=2;invaderChannelLoss=20;raw=@('FAC-R06-OUTPUT','1','100','유효 채널 +2/초','침입체 채널 -20')}
+)
+$stage1WaveRoles = [ordered]@{
+    'FINAL-ST1-PURSUIT'=@('PARTY_TRACKER','CHASER');'FINAL-ST1-STAKES'=@('EN-F50-A01','SUPPORT_MAX_1');
+    'FINAL-ST1-OUTPUT'=@('EN-F50-A02','SIEGE_MAX_1');'FINAL-ST1-MIXED'=@('PARTY_SIZE_3_OR_4','ELITE_MAX_1')}
+$stage1Index=0
+foreach ($entry in $stage1WaveRoles.GetEnumerator()) {
+    $stage1Index++
+    $finalRecords += [ordered]@{id=$entry.Key;sourceDocumentId='FINAL-DATA-001';enabled=$true;recordKind='WAVE_PROFILE';executionOpcode='EXECUTE_LOCKED_WAVE_PROFILE';stage=1;waveIndex=$stage1Index;roles=[string[]]$entry.Value;allowedPartySizes=$(if($entry.Key -eq 'FINAL-ST1-MIXED'){@(3,4)}else{@(1,2,3,4)});noRewards=$true;raw=@($entry.Key,($entry.Value -join ', '))}
+}
+$stage3Profiles = @(
+    [ordered]@{id='FINAL-ST3-STATUS';fromSecond=0;toSecond=60;budgets=@(30,39,48);roles='상태·이동, 방해자0~1'},
+    [ordered]@{id='FINAL-ST3-CORRUPTION';fromSecond=60;toSecond=120;budgets=@(36,47,58);roles='출력 방해자1, 지원1'},
+    [ordered]@{id='FINAL-ST3-SIEGE';fromSecond=120;toSecond=180;budgets=@(42,55,67);roles='공성1, 정예1'})
+foreach ($profile in $stage3Profiles) {
+    $finalRecords += [ordered]@{id=$profile.id;sourceDocumentId='FINAL-DATA-001';enabled=$true;recordKind='WAVE_PROFILE';executionOpcode='EXECUTE_LOCKED_WAVE_PROFILE';stage=3;fromSecond=$profile.fromSecond;toSecond=$profile.toSecond;budgetByPartySize=@([ordered]@{partySize=2;threat=$profile.budgets[0]},[ordered]@{partySize=3;threat=$profile.budgets[1]},[ordered]@{partySize=4;threat=$profile.budgets[2]});rolesText=$profile.roles;noRewards=$true;raw=@($profile.id,"$($profile.fromSecond)~$($profile.toSecond)초",($profile.budgets -join '/'),$profile.roles)}
+}
+$finalRecords += @($finalRows | ForEach-Object {
+    $cells=$_
+    if($cells.Count -eq 4 -and $cells[0] -match '^F50-P[1-3]-') {
+        [ordered]@{id=$cells[0];sourceDocumentId='FINAL-DATA-001';enabled=$true;recordKind='BOSS_PHASE';executionOpcode='ENTER_FINAL_BOSS_PHASE';hpRangeText=$cells[1];patternPoolText=$cells[2];repeatRuleText=$cells[3];transitionSafeTicks=80;resetBreakOnEntry=$true;retainAccumulatedResistance=$true;raw=@($cells)}
+    }
+})
+$finalPatternParameters = [ordered]@{
+    'F50-COLLAPSE_CUT'=[ordered]@{telegraphTicks=18;cooldownTicks=140;baseDamage=320};'F50-STATUS_QUADRANT'=[ordered]@{telegraphTicks=30;cooldownTicks=240;baseDamage=300;interruptBreak=3200}
+    'F50-TRACK_LINE'=[ordered]@{telegraphTicks=26;cooldownTicks=200;baseDamage=340};'F50-ECHO_SUMMON'=[ordered]@{telegraphTicks=24;cooldownTicks=280;summonMin=2;summonMax=4}
+    'F50-MUTATION_ROTATE'=[ordered]@{telegraphTicks=32;cooldownTicks=320;axisCount=2;durationTicks=280};'F50-PURIFY_BACKFLOW'=[ordered]@{telegraphTicks=30;cooldownTicks=280;baseDamage=360;outputLoss=10;interruptBreak=3800}
+    'F50-FACILITY_JAM'=[ordered]@{telegraphTicks=36;cooldownTicks=360;delayTicks=140;outputStopTicks=160};'F50-SYNAPSE_CORE'=[ordered]@{telegraphTicks=28;cooldownTicks=320;failureDamage=320;objectiveHp=3500;objectiveBreak=1800}
+    'F50-FRACTURE_CHANNEL'=[ordered]@{telegraphTicks=160;cooldownTicks=480;failureDamage=420;outputLoss=20;interruptBreak=6000};'F50-LOCKED_RING'=[ordered]@{telegraphTicks=28;cooldownTicks=240;hitCount=3;baseDamage=330}
+    'F50-THREE_CORES'=[ordered]@{telegraphTicks=160;cooldownTicks=440;failureDamage=400;objectiveCount=3;objectiveHpTotal=12000;objectiveBreakTotal=6000};'F50-FINAL_COLLAPSE'=[ordered]@{telegraphTicks=200;cooldownTicks=0;hpTriggerPercent=8;interruptBreak=7500}
+}
+$finalRecords += @($finalRows | ForEach-Object {
+    $cells=$_
+    if($cells.Count -eq 5 -and $finalPatternParameters.Contains($cells[0])) {
+        [ordered]@{id=$cells[0];sourceDocumentId='FINAL-DATA-001';enabled=$true;recordKind='BOSS_PATTERN';executionOpcode='EXECUTE_FINAL_PATTERN';tags=@($cells[1].Split('/'));telegraphCooldownText=$cells[2];executionText=$cells[3];responseText=$cells[4];parameters=$finalPatternParameters[$cells[0]];raw=@($cells)}
+    }
+})
+$finalRecords += @($finalRows | ForEach-Object {
+    $cells=$_
+    if($cells.Count -eq 3 -and $cells[0] -match '^F50-TX-0([1-6])$') {
+        [ordered]@{id=$cells[0];sourceDocumentId='FINAL-DATA-001';enabled=$true;recordKind='COMPLETION_STEP';executionOpcode='COMMIT_FINAL_COMPLETION_STEP';ordinal=[int]$Matches[1];writeText=$cells[1];idempotencyKey=$cells[2];raw=@($cells)}
+    }
+})
+
+$expected = [ordered]@{ materials=59; items=61; tools=214; recipes=315; codex=334; skills=64; personalAugments=50; partyAugments=16; enemies=53; bosses=4; support=34; facilities=46; loot=62; research=25; storyScenes=73; storyLogs=9; eventsD10=34; eventsD20=18; eventsD50=55; final=32 }
+$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; facilities=@($facilities).Count; loot=@($loot).Count; research=@($research).Count; storyScenes=@($storyScenes).Count; storyLogs=@($storyLogs).Count; eventsD10=@($eventsD10).Count; eventsD20=@($eventsD20).Count; eventsD50=@($eventsD50).Count; final=@($finalRecords).Count }
 foreach ($key in $expected.Keys) {
     if ($actual[$key] -ne $expected[$key]) { throw "Cardinality mismatch $key expected=$($expected[$key]) actual=$($actual[$key])" }
 }
@@ -1208,8 +1276,16 @@ $eventSchema = [ordered]@{
         }}
     }
 }
+$finalSchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{const='final'}
+        records=[ordered]@{type='array';minItems=32;maxItems=32;items=[ordered]@{type='object';required=@('id','sourceDocumentId','enabled','recordKind','executionOpcode','raw');properties=[ordered]@{id=[ordered]@{type='string';minLength=1};sourceDocumentId=[ordered]@{const='FINAL-DATA-001'};enabled=[ordered]@{const=$true};recordKind=[ordered]@{enum=@('OBJECTIVE','FINAL_BOSS','OBJECTIVE_COMPONENT','WAVE_PROFILE','BOSS_PHASE','BOSS_PATTERN','COMPLETION_STEP')};executionOpcode=[ordered]@{type='string';minLength=1};raw=[ordered]@{type='array';minItems=2;items=[ordered]@{type='string'}}}}}
+    }
+}
 foreach ($name in $schemaNames) {
-    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } else { $genericSchema }
+    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } else { $genericSchema }
     Write-Json "schemas/$name.schema.json" $schema
 }
 
@@ -1242,7 +1318,7 @@ $data['skills/entity-actions.json'] = Domain 'entity-actions' $actions
 $data['entities/support-entities.json'] = Domain 'support-entities' $supportEntities
 $data['loot/season1-loot.json'] = Domain 'loot' $loot
 for ($index = 0; $index -lt 4; $index++) { $day = @(10,20,30,40)[$index]; $data["bosses/day$day.json"] = Domain 'bosses' @($bosses[$index]) }
-$data['final/day50-reconstruction-signal.json'] = Domain 'final' @(&$eventStub 'FINAL-D50-RECONSTRUCTION-SIGNAL' 'FINAL-DATA-001')
+$data['final/day50-reconstruction-signal.json'] = Domain 'final' $finalRecords
 $data['story/season1-scenes.json'] = Domain 'story-scenes' $storyScenes
 $data['story/season1-logs.json'] = Domain 'story-logs' $storyLogs
 $data['budget/live-profiles.json'] = Domain 'budget' @(&$eventStub 'BUDGET-LIVE-R2' 'BUDGET-PROFILE-001')
