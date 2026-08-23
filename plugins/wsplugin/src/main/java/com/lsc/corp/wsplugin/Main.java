@@ -25,6 +25,7 @@ import com.lsc.corp.wsplugin.testlab.VirtualPartyService;
 import com.lsc.corp.wsplugin.tutorial.TutorialService;
 import com.lsc.corp.wsplugin.world.PrototypeLoopService;
 import com.lsc.corp.wsplugin.world.DiscoveryService;
+import com.lsc.corp.wsplugin.story.StoryService;
 import com.lsc.corp.wsplugin.ui.PlayerMenuService;
 import java.util.Objects;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -63,8 +64,9 @@ public final class Main extends JavaPlugin {
             facility.setOpeners(economy::openCraft, economy::openLedger, codex::open, stats::open);
             economy.setVirtualFacilityHandler(facility::canAssembleVirtual, facility::assembleVirtual);
             DiscoveryService discoveries = new DiscoveryService(runService, content.productionCatalog());
+            StoryService story = new StoryService(runService, content.productionCatalog());
             PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, skills,
-                    growth, tutorial, discoveries);
+                    growth, tutorial, discoveries, story);
             damageNumbers = new DamageNumberService(this, runService);
             combat.setMenuOpener(menu::open);
             combat.setItemRewardHandler((player, resourceId, amount) -> codex.grantResource(player, resourceId, amount));
@@ -86,7 +88,7 @@ public final class Main extends JavaPlugin {
             TestLabCommand testLabCommand = new TestLabCommand(testLab, testLabGui, scenarios, virtualParty, combat, runService);
 
             runService.attach(loop, equipment, growth);
-            registerListeners(equipment, skills, combat, economy, facility, codex, stats, menu, discoveries,
+            registerListeners(equipment, skills, combat, economy, facility, codex, stats, menu, discoveries, story,
                     tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
 
             PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand, menu);
@@ -97,6 +99,7 @@ public final class Main extends JavaPlugin {
             facility.restore();
             getServer().getScheduler().runTaskTimer(this, facility::tick, 20L, 20L);
             getServer().getScheduler().runTaskTimer(this, discoveries::tick, 20L, 20L);
+            getServer().getScheduler().runTaskTimer(this, story::tick, 30L, 20L);
             tutorial.start();
             for (org.bukkit.entity.Player player : runService.onlineMembers()) {
                 codex.reconcile(player);

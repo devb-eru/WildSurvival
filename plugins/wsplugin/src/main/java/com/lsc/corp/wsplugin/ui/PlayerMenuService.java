@@ -10,6 +10,7 @@ import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import com.lsc.corp.wsplugin.tutorial.TutorialService;
 import com.lsc.corp.wsplugin.world.DiscoveryService;
+import com.lsc.corp.wsplugin.story.StoryService;
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -35,15 +36,18 @@ public final class PlayerMenuService implements Listener {
     private final GrowthService growth;
     private final TutorialService tutorial;
     private final DiscoveryService discoveries;
+    private final StoryService story;
 
     public PlayerMenuService(RunService runs, EconomyService economy, ItemCodexService codex,
                              PlayerStatService stats, EquipmentService equipment, SkillLoadoutService skills,
-                             GrowthService growth, TutorialService tutorial, DiscoveryService discoveries) {
+                             GrowthService growth, TutorialService tutorial, DiscoveryService discoveries,
+                             StoryService story) {
         this.runs = runs; this.economy = economy; this.codex = codex;
         this.stats = stats; this.equipment = equipment; this.growth = growth;
         this.skills = skills;
         this.tutorial = tutorial;
         this.discoveries = discoveries;
+        this.story = story;
     }
 
     public void open(Player player) {
@@ -72,6 +76,8 @@ public final class PlayerMenuService implements Listener {
         inventory.setItem(35, named(Material.BOOK, ChatColor.GOLD + "초반 생존 길잡이", List.of(ChatColor.GRAY + "L키 Advancement 탭 안내")));
         inventory.setItem(37, named(Material.SPYGLASS, ChatColor.LIGHT_PURPLE + "발견 기록",
                 List.of(ChatColor.GRAY + "파티 공유 단서·가설·실험·해금 확인")));
+        inventory.setItem(39, named(Material.WRITTEN_BOOK, ChatColor.GOLD + "Story 기록",
+                List.of(ChatColor.GRAY + "재생된 장면·선택 기록 확인")));
         inventory.setItem(49, named(Material.BARRIER, ChatColor.RED + "닫기", List.of()));
         player.openInventory(inventory);
     }
@@ -103,6 +109,7 @@ public final class PlayerMenuService implements Listener {
                 case 25 -> equipment.open(player); case 27 -> skills.open(player); case 29 -> growth.openAugments(player);
                 case 31 -> economy.openLedger(player); case 33 -> openSettings(player); case 35 -> tutorial.showGuide(player);
                 case 37 -> discoveries.open(player);
+                case 39 -> story.open(player);
                 case 49 -> player.closeInventory();
                 default -> { }
             }
