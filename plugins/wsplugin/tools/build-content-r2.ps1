@@ -14,6 +14,7 @@ if (-not $OutputRoot.EndsWith($expectedSuffix, [StringComparison]::OrdinalIgnore
 }
 
 $utf8 = [Text.UTF8Encoding]::new($false)
+$canonicalContentRoot = Join-Path $repoRoot 'plugins\wsplugin\src\main\resources\content\ws-content-r2'
 function Write-Utf8Lf([string]$Path, [string]$Text) {
     $parent = Split-Path -Parent $Path
     [IO.Directory]::CreateDirectory($parent) | Out-Null
@@ -22,6 +23,13 @@ function Write-Utf8Lf([string]$Path, [string]$Text) {
 function Write-Json([string]$RelativePath, [object]$Value) {
     $json = $Value | ConvertTo-Json -Depth 30
     Write-Utf8Lf (Join-Path $OutputRoot $RelativePath) ($json + "`n")
+}
+function Write-CanonicalArtifact([string]$RelativePath) {
+    $source = [IO.Path]::GetFullPath((Join-Path $canonicalContentRoot $RelativePath))
+    $destination = [IO.Path]::GetFullPath((Join-Path $OutputRoot $RelativePath))
+    if ($source.Equals($destination, [StringComparison]::OrdinalIgnoreCase)) { return }
+    [IO.Directory]::CreateDirectory((Split-Path -Parent $destination)) | Out-Null
+    [IO.File]::WriteAllBytes($destination, [IO.File]::ReadAllBytes($source))
 }
 function Read-TableRows([string]$RelativePath) {
     $path = Join-Path $repoRoot $RelativePath
@@ -807,7 +815,8 @@ $enemies = foreach ($entry in $enemyById.GetEnumerator()) {
     $elite = $role -eq 'ELITE' -or $id -match '-E\d+'
     $noReward = $registry[4] -eq 'LOOT-NONE'
     $range = if ($role -in @('RANGED','ARTILLERY','SUPPORT','CONTROLLER')) {16.0} elseif ($role -eq 'SIEGE') {5.0} else {3.2}
-    $flags = if ($noReward) { @('NO_REWARD','NO_SAMPLE','NO_AUGMENT_TRIGGER') } elseif ($elite) { @('ELITE','SAMPLE_ELIGIBLE') } else { @('COMBAT_REWARD') }
+    $flags = @(if ($noReward) { @('NO_REWARD','NO_SAMPLE','NO_AUGMENT_TRIGGER') } elseif ($elite) { @('ELITE','SAMPLE_ELIGIBLE') } else { @('COMBAT_REWARD') })
+    if ($id -eq 'EN-D14-01') { $flags = @($flags) + @('DOWNED_EXECUTOR') }
     [ordered]@{
         id=$id;sourceDocumentId=$registry[2];enabled=$true;name=(Enemy-Name $id $detail);kind=$registry[1]
         bukkitType=(Enemy-BukkitType $appearance);displayFallback=$appearance;firstDay=$day;dayProfile=(Enemy-DayProfile $day)
@@ -1027,7 +1036,7 @@ $research = foreach ($cells in $researchRows) {
         id=$cells[0];sourceDocumentId='RESEARCH-001';enabled=$true;minimumDay=$minimumDay
         prerequisiteText=$cells[1];comparisonInput=$cells[2]
         cost=[ordered]@{general=[int]$Matches[1];metal=[int]$Matches[2];signal=[int]$Matches[3];specialist=[int]$Matches[4]}
-        durationSeconds=[int]$Matches[5];unlockText=$cells[4];stateMachine=@('LOCKED','AVAILABLE','READY_LOCKED','RUNNING','COMPLETED','MASTERED');raw=@($cells)
+        durationSeconds=[int]$Matches[5];unlockText=$cells[4];stateMachine=@('HIDDEN','OBSERVABLE','HYPOTHESIZED','READY','QUEUED','PROCESSING','PAUSED','ANALYZED','UNLOCKED','MASTERED');raw=@($cells)
     }
 }
 
@@ -1407,7 +1416,7 @@ $equipmentEarly = @($tools | Where-Object { $_.id -like 'EQL-*' })
 $equipmentD20 = @($tools | Where-Object { $_.id -like 'EQD20-*' })
 $equipmentD50 = @($tools | Where-Object { $_.id -like 'EQD50-*' })
 
-$schemaNames = @('manifest','common','day','event','enemy','resource','item','recipe','equipment','facility','research','discovery','augment','skill','action','entity','loot','codex','migration','boss','final','story','budget','ops')
+$schemaNames = @('manifest','common','day','event','enemy','resource','item','recipe','equipment','facility','research','status','discovery','augment','skill','action','entity','loot','codex','migration','boss','final','story','budget','ops')
 $genericSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema'; type='object'; additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
@@ -1422,7 +1431,7 @@ $manifestSchema = [ordered]@{
     properties=[ordered]@{
         schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; activationPolicy=[ordered]@{const='NEW_RUN_ONLY'}
         storyRevision=[ordered]@{const='ws-story-s1-r1'}; budgetPolicyRevision=[ordered]@{const='budget-live-r2'}
-        files=[ordered]@{type='array';minItems=66;maxItems=66;items=[ordered]@{type='object'}}
+        files=[ordered]@{type='array';minItems=68;maxItems=68;items=[ordered]@{type='object'}}
     }
 }
 $daySchema = [ordered]@{
@@ -1476,7 +1485,7 @@ $researchSchema = [ordered]@{
                 id=[ordered]@{type='string';pattern='^RS-'};sourceDocumentId=[ordered]@{const='RESEARCH-001'};enabled=[ordered]@{const=$true};minimumDay=[ordered]@{type='integer';minimum=1;maximum=50}
                 prerequisiteText=[ordered]@{type='string';minLength=1};comparisonInput=[ordered]@{type='string';minLength=1};durationSeconds=[ordered]@{type='integer';minimum=1};unlockText=[ordered]@{type='string';minLength=1}
                 cost=[ordered]@{type='object';additionalProperties=$false;required=@('general','metal','signal','specialist');properties=[ordered]@{general=[ordered]@{type='integer';minimum=0};metal=[ordered]@{type='integer';minimum=0};signal=[ordered]@{type='integer';minimum=0};specialist=[ordered]@{type='integer';minimum=0}}}
-                stateMachine=[ordered]@{type='array';minItems=6;maxItems=6;items=[ordered]@{type='string'}};raw=[ordered]@{type='array';minItems=5;maxItems=5;items=[ordered]@{type='string'}}
+                stateMachine=[ordered]@{type='array';minItems=10;maxItems=10;items=[ordered]@{type='string'}};raw=[ordered]@{type='array';minItems=5;maxItems=5;items=[ordered]@{type='string'}}
             }
         }}
     }
@@ -1520,6 +1529,10 @@ $finalSchema = [ordered]@{
     }
 }
 foreach ($name in $schemaNames) {
+    if ($name -eq 'status') {
+        Write-CanonicalArtifact 'schemas/status.schema.json'
+        continue
+    }
     $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'day') { $daySchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'discovery') { $discoverySchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } else { $genericSchema }
     Write-Json "schemas/$name.schema.json" $schema
 }
@@ -1544,6 +1557,7 @@ $data['equipment/day01-10.json'] = Domain 'equipment' $equipmentEarly
 $data['equipment/day11-20.json'] = Domain 'equipment' $equipmentD20
 $data['equipment/day21-50.json'] = Domain 'equipment' $equipmentD50
 $data['facilities/season1-facilities.json'] = Domain 'facilities' $facilities
+$data['statuses/season1-statuses.json'] = Get-Content -Raw -Encoding UTF8 (Join-Path $canonicalContentRoot 'statuses/season1-statuses.json') | ConvertFrom-Json -AsHashtable
 $data['research/season1-research.json'] = Domain 'research' $research
 $data['discoveries/season1-discoveries.json'] = Domain 'discoveries' $discoveries
 $data['augments/personal-augments.json'] = Domain 'personal-augments' $personalAugments
@@ -1566,8 +1580,11 @@ $data['fixtures/draw-locks.json'] = Domain 'fixture-draw-locks' $drawLocks
 $data['fixtures/softlock-scenarios.json'] = Domain 'fixture-softlocks' $softlockRecords
 $data['ops/admin-commands.json'] = Domain 'ops-admin' $opsAdmin
 $data['ops/telemetry-contract.json'] = Domain 'ops-telemetry' $opsTelemetry
-if ($data.Count -ne 42) { throw "Expected 42 data files, got $($data.Count)" }
-foreach ($entry in $data.GetEnumerator()) { Write-Json $entry.Key $entry.Value }
+if ($data.Count -ne 43) { throw "Expected 43 data files, got $($data.Count)" }
+foreach ($entry in $data.GetEnumerator()) {
+    if ($entry.Key -eq 'statuses/season1-statuses.json') { Write-CanonicalArtifact $entry.Key }
+    else { Write-Json $entry.Key $entry.Value }
+}
 
 function Sha256([string]$Path) {
     $stream = [IO.File]::OpenRead($Path)
@@ -1576,7 +1593,7 @@ function Sha256([string]$Path) {
 }
 $schemaForDomain = [ordered]@{
     days='day'; 'days-endless'='day'; events='event'; enemies='enemy'; resources='resource'; materials='resource'; items='item'; codex='codex'; recipes='recipe'
-    equipment='equipment'; facilities='facility'; research='research'; discoveries='discovery'; 'personal-augments'='augment'; 'party-augments'='augment'; 'player-skills'='skill'; 'entity-actions'='action'
+    equipment='equipment'; facilities='facility'; statuses='status'; research='research'; discoveries='discovery'; 'personal-augments'='augment'; 'party-augments'='augment'; 'player-skills'='skill'; 'entity-actions'='action'
     'support-entities'='entity'; loot='loot'; bosses='boss'; final='final'; 'story-scenes'='story'; 'story-logs'='story'; budget='budget'; migrations='migration'
     'fixture-cardinality'='common'; 'fixture-reference-graph'='common'; 'fixture-draw-locks'='common'; 'fixture-softlocks'='common'; 'ops-admin'='ops'; 'ops-telemetry'='ops'
 }
@@ -1590,7 +1607,7 @@ foreach ($entry in $data.GetEnumerator()) {
     $domainName = $entry.Value.domain
     $files.Add([ordered]@{path=$relative;domain=$domainName;schema=($schemaForDomain[$domainName] + '.schema.json');sha256=Sha256 (Join-Path $OutputRoot $relative)})
 }
-if ($files.Count -ne 66) { throw "Expected 66 manifest entries, got $($files.Count)" }
+if ($files.Count -ne 68) { throw "Expected 68 manifest entries, got $($files.Count)" }
 $manifest = [ordered]@{
     schemaVersion=2;contentRevision='ws-content-r2';activationPolicy='NEW_RUN_ONLY';storyRevision='ws-story-s1-r1'
     budgetPolicyRevision='budget-live-r2';drawRevision='draw-s1-r2';rulesRevision='rules-s1-r2';resourcePackContract='ws-rp-s1-r1';files=@($files)
@@ -1611,6 +1628,6 @@ resource-pack-contract: "ws-rp-s1-r1"
 strict-reference-check: true
 reject-unknown-fields: true
 "@
-Write-Utf8Lf (Join-Path $OutputRoot 'content-lock.yaml') $lock
+Write-Utf8Lf (Join-Path $OutputRoot 'content-lock.yaml') ($lock + "`n")
 
-[ordered]@{ outputRoot=$OutputRoot; totalFiles=68; manifestEntries=$files.Count; counts=$actual; manifestSha256=$manifestHash } | ConvertTo-Json -Depth 5
+[ordered]@{ outputRoot=$OutputRoot; totalFiles=70; manifestEntries=$files.Count; counts=$actual; manifestSha256=$manifestHash } | ConvertTo-Json -Depth 5

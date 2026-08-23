@@ -57,6 +57,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -66,11 +67,14 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
+import io.papermc.paper.event.entity.EntityKnockbackEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -115,6 +119,8 @@ public final class CombatService implements Listener {
     private final Map<UUID, CombatInputPolicy.LeftDisposition> lastLeftDisposition = new HashMap<>();
     private final Map<UUID, Long> invulnerableUntilEpochMs = new HashMap<>();
     private final Map<UUID, Long> lastSneakAtEpochMs = new HashMap<>();
+    private final Set<UUID> lifeMovementProfiles = new HashSet<>();
+    private final Set<UUID> permittedRestrictedTeleports = new HashSet<>();
     private final Map<UUID, ReviveSession> reviveSessions = new HashMap<>();
     private final Map<UUID, BossBar> breakBars = new HashMap<>();
     private final Set<UUID> activeCombatEntities = new HashSet<>();
@@ -266,6 +272,8 @@ public final class CombatService implements Listener {
         processLifeStates(now);
         processTridents(now);
         hudTick++;
+        if (hudTick % 5 == 0) synchronizeLifeMovement();
+        if (hudTick % 10 == 0) enforceSpectatorBoundaries();
         if (hudTick % 20 == 0) trackLastSafeLocations(now);
         if (hudTick % 10 == 0) {
             updateHud();
@@ -793,6 +801,57 @@ public final class CombatService implements Listener {
         if (runs.isRunningMember(event.getPlayer()) && isActionRestricted(event.getPlayer())) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onLifeStateMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        if (!runs.isRunningMember(player) || !event.hasChangedPosition() || event.getTo() == null) return;
+        if (event instanceof PlayerTeleportEvent && permittedRestrictedTeleports.contains(player.getUniqueId())) return;
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
+        Location from = event.getFrom();
+        Location to = event.getTo();
+        if ("DOWNED_GRACE".equals(state.lifeState)) {
+            Location locked = from.clone();
+            locked.setYaw(to.getYaw());
+            locked.setPitch(to.getPitch());
+            event.setTo(locked);
+            return;
+        }
+        if (!("DOWNED".equals(state.lifeState) || "BEING_REVIVED".equals(state.lifeState))) return;
+        if ((player.isClimbing() && to.getY() > from.getY())
+                || (player.isSwimming() && to.getY() < from.getY())) {
+            Location limited = to.clone();
+            limited.setY(from.getY());
+            event.setTo(limited);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onRestrictedTeleport(PlayerTeleportEvent event) {
+        Player player = event.getPlayer();
+        if (!runs.isRunningMember(player) || permittedRestrictedTeleports.contains(player.getUniqueId())) return;
+        if (runs.playerState(player.getUniqueId()).map(state -> isDowned(state.lifeState)).orElse(false)) {
+            event.setCancelled(true);
+            showRestrictedAction(player);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onRestrictedMount(EntityMountEvent event) {
+        if (event.getEntity() instanceof Player player && runs.isRunningMember(player) && isActionRestricted(player)) {
+            event.setCancelled(true);
+            showRestrictedAction(player);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onDownedKnockback(EntityKnockbackEvent event) {
+        if (!(event.getEntity() instanceof Player player) || !runs.isRunningMember(player)) return;
+        String lifeState = runs.playerState(player.getUniqueId()).map(state -> state.lifeState).orElse("");
+        double fraction = DeathRuntimePolicy.knockbackFraction(lifeState);
+        if (fraction < 1.0) event.setKnockback(event.getKnockback().clone().multiply(fraction));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -1499,8 +1558,10 @@ public final class CombatService implements Listener {
         reviveSessions.remove(player.getUniqueId());
         statuses.clearControls(player);
         player.setHealth(1.0);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 4, false, false));
+        player.removePotionEffect(PotionEffectType.SLOWNESS);
         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false));
+        if (player.isInsideVehicle()) player.leaveVehicle();
+        applyLifeMovementProfile(player, "DOWNED_GRACE");
         runs.broadcast(ChatColor.RED + "[빈사 보호] " + player.getName() + " — 부상 " + nextInjury
                 + "/3 · " + DeathRuntimePolicy.DOWNED_GRACE_MILLIS / 1000.0 + "초");
         for (Player member : runs.onlineMembers()) {
@@ -1623,6 +1684,7 @@ public final class CombatService implements Listener {
         });
         target.removePotionEffect(PotionEffectType.SLOWNESS);
         target.removePotionEffect(PotionEffectType.GLOWING);
+        restoreActiveMovementProfile(target);
         statuses.remove(target, "BURN", 64);
         statuses.remove(target, "POISON", 64);
         statuses.remove(target, "BLEED", 64);
@@ -1744,6 +1806,117 @@ public final class CombatService implements Listener {
         }
     }
 
+    private void synchronizeLifeMovement() {
+        Set<UUID> online = new HashSet<>();
+        for (Player player : runs.onlineMembers()) {
+            online.add(player.getUniqueId());
+            String lifeState = runs.playerState(player.getUniqueId()).map(state -> state.lifeState).orElse("");
+            if (isDowned(lifeState)) {
+                applyLifeMovementProfile(player, lifeState);
+                player.setSprinting(false);
+                player.removePotionEffect(PotionEffectType.SLOWNESS);
+                if (player.isInsideVehicle()) player.leaveVehicle();
+            } else if (lifeMovementProfiles.contains(player.getUniqueId())) {
+                restoreActiveMovementProfile(player);
+            }
+        }
+        lifeMovementProfiles.removeIf(uuid -> !online.contains(uuid));
+    }
+
+    private void applyLifeMovementProfile(Player player, String lifeState) {
+        var speed = player.getAttribute(Attribute.MOVEMENT_SPEED);
+        if (speed == null) return;
+        speed.setBaseValue(activeMovementSpeed(player) * DeathRuntimePolicy.movementFraction(lifeState));
+        lifeMovementProfiles.add(player.getUniqueId());
+    }
+
+    private void restoreActiveMovementProfile(Player player) {
+        var speed = player.getAttribute(Attribute.MOVEMENT_SPEED);
+        if (speed != null) speed.setBaseValue(activeMovementSpeed(player));
+        lifeMovementProfiles.remove(player.getUniqueId());
+    }
+
+    private double activeMovementSpeed(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return 0.11;
+        return Math.min(0.16, PlayerStatPolicy.movementSpeed(state.investedStats)
+                * (1.0 + equipment.activeStats(player).value("SPD") / 100.0));
+    }
+
+    private void enforceSpectatorBoundaries() {
+        RunSnapshot snapshot = runs.current().orElse(null);
+        if (snapshot == null || !"RUNNING".equals(snapshot.state)) return;
+        SpectatorAnchor arena = activeArenaAnchor(snapshot);
+        List<SpectatorAnchor> normalAnchors = arena == null ? spectatorAnchors(snapshot) : List.of(arena);
+        if (normalAnchors.isEmpty()) return;
+        for (Player spectator : runs.onlineMembers()) {
+            RunSnapshot.PlayerState state = runs.playerState(spectator.getUniqueId()).orElse(null);
+            if (state == null || !"DEAD".equals(state.lifeState) || spectator.getGameMode() != GameMode.SPECTATOR) {
+                continue;
+            }
+            Entity viewed = spectator.getSpectatorTarget();
+            if (viewed instanceof Player viewedPlayer && normalAnchors.stream()
+                    .anyMatch(anchor -> anchor.player != null && anchor.player.equals(viewedPlayer))) continue;
+            if (normalAnchors.stream().anyMatch(anchor -> anchor.contains(spectator.getLocation()))) continue;
+            SpectatorAnchor nearest = normalAnchors.stream().min(Comparator.comparingDouble(anchor ->
+                    anchor.distanceSquared(spectator.getLocation()))).orElse(null);
+            if (nearest == null) continue;
+            if (nearest.player != null && nearest.player.isOnline()) {
+                teleportRestricted(spectator, nearest.player.getLocation());
+                spectator.setSpectatorTarget(nearest.player);
+            } else {
+                teleportRestricted(spectator, nearest.location.clone().add(0.0, 2.0, 0.0));
+            }
+            ActionBarService.critical(spectator,
+                    Component.text("관전 허용 영역으로 복귀했습니다.", NamedTextColor.YELLOW), 50);
+            telemetry.event(snapshot.runId, "SPECTATOR_BOUNDARY_RECOVERY",
+                    "{\"player\":\"" + spectator.getUniqueId() + "\",\"radius\":" + nearest.radius + "}");
+        }
+    }
+
+    private SpectatorAnchor activeArenaAnchor(RunSnapshot snapshot) {
+        RunSnapshot.FinalState finale = snapshot.finalObjective;
+        if (finale != null && finale.state != null && finale.state.startsWith("ACTIVE_STAGE_")
+                && finale.arenaWorld != null) {
+            org.bukkit.World world = Bukkit.getWorld(finale.arenaWorld);
+            if (world != null) return new SpectatorAnchor(new Location(world, finale.arenaX, finale.arenaY, finale.arenaZ),
+                    DeathRuntimePolicy.spectatorArenaRadius(finale.objectiveId), null);
+        }
+        RunSnapshot.BossState boss = snapshot.boss;
+        if (boss == null || !"ACTIVE".equals(boss.state) || boss.world == null) return null;
+        org.bukkit.World world = Bukkit.getWorld(boss.world);
+        if (world == null) return null;
+        return new SpectatorAnchor(new Location(world, boss.x, boss.y, boss.z),
+                DeathRuntimePolicy.spectatorArenaRadius(boss.bossId), null);
+    }
+
+    private List<SpectatorAnchor> spectatorAnchors(RunSnapshot snapshot) {
+        List<SpectatorAnchor> anchors = new ArrayList<>();
+        for (Player member : runs.onlineMembers()) {
+            if (runs.playerState(member.getUniqueId()).map(state -> "ACTIVE".equals(state.lifeState)).orElse(false)) {
+                anchors.add(new SpectatorAnchor(member.getLocation(), 48.0, member));
+            }
+        }
+        long now = Instant.now().toEpochMilli();
+        for (RunSnapshot.FacilityInstanceState facility : FacilityStateAccess.instances(snapshot).values()) {
+            if (!"ACTIVE".equals(facility.state) || FacilityStateAccess.expired(facility, now)
+                    || facility.world == null) continue;
+            org.bukkit.World world = Bukkit.getWorld(facility.world);
+            if (world != null) anchors.add(new SpectatorAnchor(
+                    new Location(world, facility.x + 0.5, facility.y + 0.5, facility.z + 0.5), 32.0, null));
+        }
+        return anchors;
+    }
+
+    private boolean teleportRestricted(Player player, Location destination) {
+        permittedRestrictedTeleports.add(player.getUniqueId());
+        try {
+            return player.teleport(destination);
+        } finally {
+            permittedRestrictedTeleports.remove(player.getUniqueId());
+        }
+    }
+
     private void trackLastSafeLocations(long now) {
         for (Player player : runs.onlineMembers()) {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
@@ -1852,9 +2025,12 @@ public final class CombatService implements Listener {
             return;
         }
         statuses.clearOnDeath(player);
-        player.setGameMode(GameMode.SPECTATOR);
-        player.removePotionEffect(PotionEffectType.SLOWNESS);
-        player.removePotionEffect(PotionEffectType.GLOWING);
+        restoreActiveMovementProfile(player);
+        if (player.isOnline()) {
+            player.setGameMode(GameMode.SPECTATOR);
+            player.removePotionEffect(PotionEffectType.SLOWNESS);
+            player.removePotionEffect(PotionEffectType.GLOWING);
+        }
         runs.mutate(run -> run.players.get(player.getUniqueId().toString()).lifeState = "DEAD");
         runs.broadcast(ChatColor.DARK_RED + "[완전 사망] " + player.getName());
         for (Player member : runs.onlineMembers()) {
@@ -2057,6 +2233,12 @@ public final class CombatService implements Listener {
                     ignored -> new EnemyActionState(tick + 20L));
             if (state.targetUuid != null) {
                 Player target = Bukkit.getPlayer(state.targetUuid);
+                if (!lockedProductionTargetValid(enemy, definition, target, action.range())) {
+                    state.targetUuid = null;
+                    state.executeAtTick = 0L;
+                    state.nextReadyTick = tick;
+                    continue;
+                }
                 if (tick < state.executeAtTick) {
                     if (tick % 5L == 0L) telegraphEnemyAction(enemy, target, action);
                     continue;
@@ -2070,7 +2252,7 @@ public final class CombatService implements Listener {
             if (tick < state.nextReadyTick || !enemy.hasAI()
                     || enemy.getPersistentDataContainer().getOrDefault(groggyUntilKey,
                     PersistentDataType.LONG, 0L) > Instant.now().toEpochMilli()) continue;
-            Player target = nearestProductionTarget(enemy, action.range()).orElse(null);
+            Player target = nearestProductionTarget(enemy, definition, action.range()).orElse(null);
             if (target == null) continue;
             state.targetUuid = target.getUniqueId();
             state.executeAtTick = tick + action.telegraphTicks();
@@ -2079,7 +2261,9 @@ public final class CombatService implements Listener {
         productionActionStates.keySet().removeIf(uuid -> !live.contains(uuid));
     }
 
-    private java.util.Optional<Player> nearestProductionTarget(LivingEntity enemy, double range) {
+    private java.util.Optional<Player> nearestProductionTarget(LivingEntity enemy,
+                                                               ProductionContentCatalog.EnemyEntry definition,
+                                                               double range) {
         double maximum = Math.max(3.0, range);
         UUID forcedTarget = statuses.tauntTarget(enemy).orElse(null);
         if (forcedTarget != null) {
@@ -2089,12 +2273,38 @@ public final class CombatService implements Listener {
                     && forced.getLocation().distanceSquared(enemy.getLocation()) <= maximum * maximum
                     && enemy.hasLineOfSight(forced)) return java.util.Optional.of(forced);
         }
+        List<Player> candidates = runs.onlineMembers().stream()
+                .filter(player -> player.getWorld().equals(enemy.getWorld()))
+                .filter(player -> player.getLocation().distanceSquared(enemy.getLocation()) <= maximum * maximum)
+                .filter(enemy::hasLineOfSight).toList();
+        boolean activeAvailable = candidates.stream().anyMatch(player -> runs.playerState(player.getUniqueId())
+                .map(state -> "ACTIVE".equals(state.lifeState)).orElse(false));
+        boolean executor = definition.flags().contains("DOWNED_EXECUTOR");
+        return candidates.stream().filter(player -> DeathRuntimePolicy.enemyTargetPriority(executor,
+                        runs.playerState(player.getUniqueId()).map(state -> state.lifeState).orElse(""),
+                        activeAvailable) < Integer.MAX_VALUE)
+                .min(Comparator.comparingInt((Player player) -> DeathRuntimePolicy.enemyTargetPriority(executor,
+                                runs.playerState(player.getUniqueId()).map(state -> state.lifeState).orElse(""),
+                                activeAvailable))
+                        .thenComparingDouble(player -> player.getLocation().distanceSquared(enemy.getLocation())));
+    }
+
+    private boolean lockedProductionTargetValid(LivingEntity enemy,
+                                                ProductionContentCatalog.EnemyEntry definition,
+                                                Player target, double range) {
+        if (target == null || !target.isOnline() || !target.getWorld().equals(enemy.getWorld())
+                || target.getLocation().distanceSquared(enemy.getLocation()) > Math.max(3.0, range) * Math.max(3.0, range)
+                || !enemy.hasLineOfSight(target)) return false;
+        String lifeState = runs.playerState(target.getUniqueId()).map(state -> state.lifeState).orElse("");
+        if ("ACTIVE".equals(lifeState)) return true;
+        if (!("DOWNED".equals(lifeState) || "BEING_REVIVED".equals(lifeState))) return false;
+        if (definition.flags().contains("DOWNED_EXECUTOR")) return true;
         return runs.onlineMembers().stream().filter(player -> player.getWorld().equals(enemy.getWorld()))
                 .filter(player -> runs.playerState(player.getUniqueId())
                         .map(state -> "ACTIVE".equals(state.lifeState)).orElse(false))
-                .filter(player -> player.getLocation().distanceSquared(enemy.getLocation()) <= maximum * maximum)
-                .filter(enemy::hasLineOfSight)
-                .min(Comparator.comparingDouble(player -> player.getLocation().distanceSquared(enemy.getLocation())));
+                .filter(player -> player.getLocation().distanceSquared(enemy.getLocation())
+                        <= Math.max(3.0, range) * Math.max(3.0, range))
+                .noneMatch(enemy::hasLineOfSight);
     }
 
     private void telegraphEnemyAction(LivingEntity enemy, Player target,
@@ -2217,6 +2427,11 @@ public final class CombatService implements Listener {
                 .map(state -> !"ACTIVE".equals(state.lifeState)
                         || Instant.now().toEpochMilli() < state.reviveProtectionUntilEpochMs).orElse(true)
                 || statuses.blocksAllActions(player) || isReviving(player);
+    }
+
+    private static boolean isDowned(String lifeState) {
+        return "DOWNED_GRACE".equals(lifeState) || "DOWNED".equals(lifeState)
+                || "BEING_REVIVED".equals(lifeState);
     }
 
     private void showRestrictedAction(Player player) {
@@ -2432,7 +2647,7 @@ public final class CombatService implements Listener {
         Vector away = player.getLocation().toVector().subtract(member.getLocation().toVector());
         if (away.lengthSquared() < 0.01) away = player.getLocation().getDirection().multiply(-1.0);
         Location destination = player.getLocation().clone().subtract(away.normalize().multiply(1.5));
-        member.teleport(destination);
+        teleportRestricted(member, destination);
     }
 
     private void showSkillEffect(Player player, PrototypeContent.SkillDefinition skill, List<LivingEntity> targets) {
@@ -2536,6 +2751,18 @@ public final class CombatService implements Listener {
     }
 
     private record CoverField(Location location, long expiresAtEpochMs) { }
+
+    private record SpectatorAnchor(Location location, double radius, Player player) {
+        private boolean contains(Location other) {
+            return location.getWorld() != null && location.getWorld().equals(other.getWorld())
+                    && DeathRuntimePolicy.insideBoundary(location.distanceSquared(other), radius);
+        }
+
+        private double distanceSquared(Location other) {
+            return location.getWorld() != null && location.getWorld().equals(other.getWorld())
+                    ? location.distanceSquared(other) : Double.MAX_VALUE;
+        }
+    }
 
     private static final class EnemyActionState {
         private long nextReadyTick;

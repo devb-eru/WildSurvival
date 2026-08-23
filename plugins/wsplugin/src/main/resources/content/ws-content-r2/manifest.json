@@ -12,7 +12,7 @@
       "path": "schemas/manifest.schema.json",
       "domain": "schema",
       "schema": "common.schema.json",
-      "sha256": "56d5a9139a79af2b370eeaddf90c7c8b9089fb9f2d325c0369e417fc0568b9fc"
+      "sha256": "4e7f060fa8908ce87c1aead32f76aa7bdce547f759febe2a4c02a09779e0be2a"
     },
     {
       "path": "schemas/common.schema.json",
@@ -198,7 +198,7 @@
       "path": "enemies/day11-20.json",
       "domain": "enemies",
       "schema": "enemy.schema.json",
-      "sha256": "8a39530c2e93c0f58d83d492ce74614ef293d071a76e8b50390e778e01905015"
+      "sha256": "44ff3205e0c2bec533071541fd3850739787693efe4fd06746ab736b3ab3a313"
     },
     {
       "path": "enemies/day21-50.json",

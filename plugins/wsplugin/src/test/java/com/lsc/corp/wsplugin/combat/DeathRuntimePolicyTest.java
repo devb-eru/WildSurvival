@@ -63,6 +63,43 @@ class DeathRuntimePolicyTest {
     }
 
     @Test
+    void downedMovementAndKnockbackUseLockedFractions() {
+        assertEquals(0.0, DeathRuntimePolicy.movementFraction("DOWNED_GRACE"));
+        assertEquals(0.20, DeathRuntimePolicy.movementFraction("DOWNED"));
+        assertEquals(0.20, DeathRuntimePolicy.movementFraction("BEING_REVIVED"));
+        assertEquals(1.0, DeathRuntimePolicy.movementFraction("ACTIVE"));
+        assertEquals(0.0, DeathRuntimePolicy.knockbackFraction("DOWNED_GRACE"));
+        assertEquals(0.50, DeathRuntimePolicy.knockbackFraction("DOWNED"));
+        assertEquals(1.0, DeathRuntimePolicy.knockbackFraction("DEAD"));
+    }
+
+    @Test
+    void spectatorBoundariesUseEncounterAndInclusiveEdge() {
+        assertEquals(48.0, DeathRuntimePolicy.spectatorArenaRadius("BOSS-D10"));
+        assertEquals(52.0, DeathRuntimePolicy.spectatorArenaRadius("BOSS-D20"));
+        assertEquals(40.0, DeathRuntimePolicy.spectatorArenaRadius("BOSS-D30"));
+        assertEquals(44.0, DeathRuntimePolicy.spectatorArenaRadius("BOSS-D40"));
+        assertEquals(50.0, DeathRuntimePolicy.spectatorArenaRadius(
+                "FINAL-D50-FIRST-RECONSTRUCTION-SIGNAL"));
+        assertTrue(DeathRuntimePolicy.insideBoundary(48.0 * 48.0, 48.0));
+        assertFalse(DeathRuntimePolicy.insideBoundary(48.0 * 48.0 + 0.001, 48.0));
+    }
+
+    @Test
+    void enemyTargetPriorityProtectsGraceAndLetsExecutorsPressureDownedPlayers() {
+        assertEquals(0, DeathRuntimePolicy.enemyTargetPriority(true, "DOWNED", true));
+        assertEquals(1, DeathRuntimePolicy.enemyTargetPriority(true, "ACTIVE", true));
+        assertEquals(0, DeathRuntimePolicy.enemyTargetPriority(false, "ACTIVE", true));
+        assertEquals(Integer.MAX_VALUE,
+                DeathRuntimePolicy.enemyTargetPriority(false, "DOWNED", true));
+        assertEquals(1, DeathRuntimePolicy.enemyTargetPriority(false, "DOWNED", false));
+        assertEquals(Integer.MAX_VALUE,
+                DeathRuntimePolicy.enemyTargetPriority(true, "DOWNED_GRACE", false));
+        assertEquals(Integer.MAX_VALUE,
+                DeathRuntimePolicy.enemyTargetPriority(true, "DEAD", false));
+    }
+
+    @Test
     void fourthFatalHitSkipsDowned() {
         assertFalse(DeathRuntimePolicy.fatalInsteadOfDowned(2));
         assertTrue(DeathRuntimePolicy.fatalInsteadOfDowned(3));

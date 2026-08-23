@@ -54,6 +54,8 @@ val checkDevelopmentServerStopped = tasks.register("checkDevelopmentServerStoppe
 tasks {
     test {
         useJUnitPlatform()
+        // Keep JUnit @TempDir writes inside the project so restricted CI/sandbox workers remain reproducible.
+        systemProperty("java.io.tmpdir", layout.buildDirectory.dir("test-tmp").get().asFile.absolutePath)
     }
 
     jar {

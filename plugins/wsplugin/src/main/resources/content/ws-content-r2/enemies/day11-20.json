@@ -305,7 +305,8 @@
       "lootTableId": "LOOT-EN-D14-01",
       "activityExp": 20,
       "flags": [
-        "COMBAT_REWARD"
+        "COMBAT_REWARD",
+        "DOWNED_EXECUTOR"
       ],
       "raw": [
         "EN-D14-01",
