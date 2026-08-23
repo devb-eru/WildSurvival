@@ -104,6 +104,7 @@ public final class ProductionBundleValidator {
             validateEquipmentProfiles(catalog);
             validateFacilityProfiles(catalog);
             validateEntityProfiles(catalog);
+            validateLootProfiles(catalog);
             return new ValidationResult(catalog, Map.copyOf(counts), paths.size() + 2,
                     ContentBundleValidator.sha256(manifestBytes));
         } catch (ContentValidationException exception) {
@@ -326,12 +327,40 @@ public final class ProductionBundleValidator {
                 throw new ContentValidationException("Duplicate entity action bundle " + bundle.id());
             }
         }
+        Map<String, ProductionContentCatalog.LootEntry> lootById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "loot/season1-loot.json")) {
+            List<ProductionContentCatalog.LootFixedEntry> fixedEntries = new ArrayList<>();
+            JsonArray fixedValues = record.getAsJsonArray("fixedEntries");
+            if (fixedValues != null) {
+                for (JsonElement value : fixedValues) {
+                    JsonObject fixed = value.getAsJsonObject();
+                    fixedEntries.add(new ProductionContentCatalog.LootFixedEntry(
+                            requiredString(fixed, "itemId"), integerArray(fixed, "amounts"),
+                            requiredString(fixed, "scope")));
+                }
+            }
+            ProductionContentCatalog.LootEntry loot = new ProductionContentCatalog.LootEntry(
+                    requiredString(record, "id"), requiredString(record, "sourceId"),
+                    requiredString(record, "profile"), requiredString(record, "distribution"),
+                    requiredString(record, "executionOpcode"), stringArray(record, "guaranteedPool"),
+                    requiredInt(record, "guaranteedMin"), requiredInt(record, "guaranteedMax"),
+                    stringArray(record, "specialtyPool"), requiredInt(record, "specialtyMin"),
+                    requiredInt(record, "specialtyMax"), numberMap(record, "equipmentChances"),
+                    requiredInt(record, "pityLimit"), List.copyOf(fixedEntries),
+                    optionalString(record, "equipmentSelectionProfile", ""),
+                    requiredInt(record, "partyAugmentMilestone"), requiredInt(record, "requiredToolTierMin"),
+                    requiredInt(record, "requiredToolTierMax"), record.get("noReward").getAsBoolean(),
+                    stringArray(record, "flags"));
+            if (lootById.putIfAbsent(loot.id(), loot) != null) {
+                throw new ContentValidationException("Duplicate loot profile " + loot.id());
+            }
+        }
         return new ProductionContentCatalog(List.copyOf(codex), Map.copyOf(byId), Map.copyOf(materialsById),
                 Map.copyOf(nonEquipmentItemsById), Map.copyOf(equipmentById), Map.copyOf(facilitiesById), List.copyOf(recipes),
                 Map.copyOf(byOutput), List.copyOf(skills), Map.copyOf(skillsById),
                 List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById),
                 Map.copyOf(enemiesById), Map.copyOf(bossesById), Map.copyOf(supportEntitiesById),
-                Map.copyOf(actionBundlesById), Map.copyOf(counts));
+                Map.copyOf(actionBundlesById), Map.copyOf(lootById), Map.copyOf(counts));
     }
 
     private List<ProductionContentCatalog.AugmentEntry> loadAugments(ResourceReader reader, String path) throws Exception {
@@ -373,6 +402,14 @@ public final class ProductionBundleValidator {
             result.put(entry.getKey(), entry.getValue().getAsDouble());
         }
         return Map.copyOf(result);
+    }
+
+    private static List<Integer> integerArray(JsonObject object, String key) throws ContentValidationException {
+        JsonElement value = object.get(key);
+        if (value == null || !value.isJsonArray()) throw new ContentValidationException(key + " must be an array");
+        List<Integer> result = new ArrayList<>();
+        value.getAsJsonArray().forEach(element -> result.add(element.getAsInt()));
+        return List.copyOf(result);
     }
 
     private void validateReferences(ResourceReader reader, ProductionContentCatalog catalog) throws Exception {
@@ -708,6 +745,84 @@ public final class ProductionBundleValidator {
                         || action.damage() <= 0 || action.penetration() < 0 || action.breakDamage() < 0) {
                     throw new ContentValidationException("Invalid entity action " + bundle.id() + " -> " + action.id());
                 }
+            }
+        }
+    }
+
+    private void validateLootProfiles(ProductionContentCatalog catalog) throws ContentValidationException {
+        if (catalog.lootById().size() != 62) {
+            throw new ContentValidationException("Loot profile cardinality mismatch " + catalog.lootById().size());
+        }
+        long enemyTables = catalog.lootById().keySet().stream().filter(id -> id.startsWith("LOOT-EN-")).count();
+        long bossTables = catalog.lootById().keySet().stream().filter(id -> id.startsWith("LOOT-BOSS-")).count();
+        long nodeTables = catalog.lootById().keySet().stream().filter(id -> id.startsWith("LOOT-NODE-")).count();
+        if (enemyTables != 45 || bossTables != 4 || nodeTables != 6) {
+            throw new ContentValidationException("Loot category cardinality mismatch enemy=" + enemyTables
+                    + " boss=" + bossTables + " node=" + nodeTables);
+        }
+        Set<String> profiles = Set.of("EMPTY", "COMBAT-D10", "COMBAT-D20", "COMBAT-D30",
+                "COMBAT-D40", "COMBAT-D50", "ELITE", "BOSS", "RESOURCE_NODE", "EVENT");
+        Set<String> distributions = Set.of("NONE", "CONTRIBUTOR_ROUND_ROBIN", "HARVESTER_PERSONAL", "OWNER");
+        Set<String> equipmentKeys = Set.of("COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY",
+                "ABYSSAL", "CURRENT_CAP", "BLUEPRINT");
+        Set<String> knownItems = new HashSet<>(catalog.itemsById().keySet());
+        for (ProductionContentCatalog.LootEntry loot : catalog.lootById().values()) {
+            if (!profiles.contains(loot.profile()) || !distributions.contains(loot.distribution())
+                    || loot.executionOpcode().isBlank() || loot.sourceId().isBlank()
+                    || loot.guaranteedMin() < 0 || loot.guaranteedMax() < loot.guaranteedMin()
+                    || loot.specialtyMin() < 0 || loot.specialtyMax() < loot.specialtyMin()
+                    || loot.pityLimit() < 0 || loot.requiredToolTierMin() < 0
+                    || loot.requiredToolTierMax() < loot.requiredToolTierMin()
+                    || !equipmentKeys.containsAll(loot.equipmentChances().keySet())
+                    || loot.equipmentChances().values().stream().anyMatch(value -> value < 0 || value > 1)) {
+                throw new ContentValidationException("Invalid loot profile " + loot.id());
+            }
+            for (String itemId : java.util.stream.Stream.concat(loot.guaranteedPool().stream(),
+                    loot.specialtyPool().stream()).toList()) {
+                if (!catalog.materialsById().containsKey(itemId)) {
+                    throw new ContentValidationException("Unknown loot material " + loot.id() + " -> " + itemId);
+                }
+            }
+            for (ProductionContentCatalog.LootFixedEntry fixed : loot.fixedEntries()) {
+                if (!knownItems.contains(fixed.itemId()) || fixed.amounts().size() != 3
+                        || fixed.amounts().stream().anyMatch(amount -> amount < 1)
+                        || !Set.of("RUN_PROOF", "PARTY_DISTRIBUTED").contains(fixed.scope())) {
+                    throw new ContentValidationException("Invalid fixed loot " + loot.id() + " -> " + fixed.itemId());
+                }
+            }
+            if (loot.id().startsWith("LOOT-EN-") && (!catalog.enemiesById().containsKey(loot.sourceId())
+                    || !"COMBAT_ROLL".equals(loot.executionOpcode()))) {
+                throw new ContentValidationException("Enemy loot source mismatch " + loot.id());
+            }
+            if (loot.id().startsWith("LOOT-BOSS-") && (!catalog.bossesById().containsKey(loot.sourceId())
+                    || loot.fixedEntries().isEmpty() || loot.equipmentSelectionProfile().isBlank()
+                    || loot.partyAugmentMilestone() < 1 || loot.partyAugmentMilestone() > 4)) {
+                throw new ContentValidationException("Boss loot contract mismatch " + loot.id());
+            }
+            if (loot.id().startsWith("LOOT-NODE-") && (!catalog.supportEntitiesById().containsKey(loot.sourceId())
+                    || loot.guaranteedPool().isEmpty() || loot.requiredToolTierMax() > 6)) {
+                throw new ContentValidationException("Node loot contract mismatch " + loot.id());
+            }
+        }
+        ProductionContentCatalog.LootEntry none = catalog.lootById().get("LOOT-NONE");
+        if (none == null || !none.noReward() || !none.guaranteedPool().isEmpty()
+                || !none.specialtyPool().isEmpty() || !none.fixedEntries().isEmpty()
+                || !none.flags().containsAll(List.of("NO_REWARD", "NO_ROLL", "NO_CLAIM"))) {
+            throw new ContentValidationException("LOOT-NONE must be an explicit empty table");
+        }
+        for (ProductionContentCatalog.EnemyEntry enemy : catalog.enemiesById().values()) {
+            if (!catalog.lootById().containsKey(enemy.lootTableId())) {
+                throw new ContentValidationException("Enemy typed loot reference missing " + enemy.id());
+            }
+        }
+        for (ProductionContentCatalog.BossEntry boss : catalog.bossesById().values()) {
+            if (!catalog.lootById().containsKey(boss.lootTableId())) {
+                throw new ContentValidationException("Boss typed loot reference missing " + boss.id());
+            }
+        }
+        for (ProductionContentCatalog.SupportEntityEntry support : catalog.supportEntitiesById().values()) {
+            if (!catalog.lootById().containsKey(support.lootTableId())) {
+                throw new ContentValidationException("Support typed loot reference missing " + support.id());
             }
         }
     }

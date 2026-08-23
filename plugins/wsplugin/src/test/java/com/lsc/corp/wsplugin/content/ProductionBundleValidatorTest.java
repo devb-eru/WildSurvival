@@ -79,6 +79,16 @@ class ProductionBundleValidatorTest {
                 .get("ENT-DEPLOY-EMERGENCY-COVER").bukkitType());
         assertEquals("ENEMY_ACTION_BUNDLE", result.catalog().actionBundlesById()
                 .get("ACT-EN-D21-01").kind());
+        assertEquals(62, result.catalog().lootById().size());
+        var day30Loot = result.catalog().lootById().get("LOOT-EN-D21-01");
+        assertEquals(List.of("WSR-REINFORCED_ALLOY", "WSR-NEURAL_CIRCUIT"), day30Loot.guaranteedPool());
+        assertEquals(18, day30Loot.pityLimit());
+        assertEquals(0.04, day30Loot.equipmentChances().get("RARE"));
+        var boss30Loot = result.catalog().lootById().get("LOOT-BOSS-D30");
+        assertEquals(3, boss30Loot.fixedEntries().size());
+        assertEquals(10, boss30Loot.fixedEntries().get(1).amountForPartySize(3));
+        assertEquals(12, boss30Loot.fixedEntries().get(1).amountForPartySize(4));
+        assertTrue(result.catalog().lootById().get("LOOT-NONE").noReward());
         assertEquals(91, result.counts().get("enemies") + result.counts().get("bosses") + result.counts().get("support"));
     }
 }

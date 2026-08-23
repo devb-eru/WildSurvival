@@ -300,7 +300,7 @@
       "path": "loot/season1-loot.json",
       "domain": "loot",
       "schema": "loot.schema.json",
-      "sha256": "919d186ee4ef083cc4296e8d95c1122c4b40aa9136eef5c00fff5b619e122bc4"
+      "sha256": "74ec0f70c43455482ea8c8fec97f7108fa43a9e0ee0d2ffc5ff282225ca314a1"
     },
     {
       "path": "bosses/day10.json",

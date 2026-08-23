@@ -902,7 +902,76 @@ $lootById = Find-IdRows $lootRows '^LOOT-[A-Z0-9-]+$'
 $lootById.Remove('LOOT-LIST-001')
 $lootById.Remove('loot-s1-r1')
 if (-not $lootById.Contains('LOOT-NONE')) { $lootById['LOOT-NONE'] = @('LOOT-NONE','EMPTY') }
-$loot = foreach ($entry in $lootById.GetEnumerator()) { Raw-Record $entry.Key 'LOOT-LIST-001' $entry.Value }
+$combatPools = @{
+    'COMBAT-D10'=@{Guaranteed=@('WSR-WOOD','WSR-STONE','WSR-FIBER','WSR-COAL');GMin=1;GMax=3;Special=@('WSR-TISSUE');SMin=0;SMax=1;Pity=20;Equipment=@{COMMON=0.02;UNCOMMON=0.005}}
+    'COMBAT-D20'=@{Guaranteed=@('WSR-IRON','WSR-COPPER','WSR-HERB','WSR-ELASTIC_FIBER');GMin=2;GMax=4;Special=@('WSR-TOXIN_SAMPLE','WSR-THERMAL_SAMPLE','WSR-HEMATIC_SAMPLE','WSR-NEURAL_SAMPLE');SMin=1;SMax=2;Pity=16;Equipment=@{UNCOMMON=0.04;RARE=0.015}}
+    'COMBAT-D30'=@{Guaranteed=@('WSR-REINFORCED_ALLOY','WSR-NEURAL_CIRCUIT');GMin=1;GMax=3;Special=@('WSR-PURIFY_CATALYST','WSR-RIFT_POWDER');SMin=0;SMax=2;Pity=18;Equipment=@{RARE=0.04;EPIC=0.012}}
+    'COMBAT-D40'=@{Guaranteed=@('WSR-HARD_AGGREGATE','WSR-RESONANCE_COIL');GMin=1;GMax=3;Special=@('WSR-PATTERN_RESIDUE');SMin=0;SMax=1;Pity=20;Equipment=@{EPIC=0.03;LEGENDARY=0.008}}
+    'COMBAT-D50'=@{Guaranteed=@('WSR-HIGH_DENSITY_ALLOY');GMin=1;GMax=2;Special=@('WSR-STABLE_CORE','WSR-CALIBRATED_LENS','WSR-POWER_MATRIX','WSR-PURIFY_MATRIX','WSR-STATUS_PLATE','WSR-INTERRUPT_CORE');SMin=1;SMax=1;Pity=0;Equipment=@{LEGENDARY=0.02;ABYSSAL=0.0}}
+    'ELITE'=@{Guaranteed=@();GMin=2;GMax=2;Special=@();SMin=2;SMax=4;Pity=6;Equipment=@{CURRENT_CAP=0.08;BLUEPRINT=0.12}}
+}
+$nodePools = @{
+    'LOOT-NODE-BASIC'=@('WSR-WOOD','WSR-STONE','WSR-FIBER','WSR-LEATHER','WSR-RATION','WSR-COAL')
+    'LOOT-NODE-INDUSTRIAL'=@('WSR-IRON','WSR-COPPER','WSR-GOLD','WSR-REDSTONE','WSR-AMETHYST')
+    'LOOT-NODE-MEDICAL'=@('WSR-HERB','WSR-ELASTIC_FIBER','WSR-TOXIN_SAMPLE','WSR-THERMAL_SAMPLE','WSR-HEMATIC_SAMPLE','WSR-NEURAL_SAMPLE')
+    'LOOT-NODE-CORRUPTED'=@('WSR-TISSUE','WSR-MUTATION_SHARD','WSR-VITAL_TISSUE')
+    'LOOT-NODE-RIFT'=@('WSR-PURIFY_CATALYST','WSR-RIFT_POWDER','WSR-REFINED_MUTATION')
+    'LOOT-NODE-RECONSTRUCTION'=@('WSR-HARD_AGGREGATE','WSR-RESONANCE_COIL','WSR-PATTERN_RESIDUE','WSR-HIGH_DENSITY_ALLOY')
+}
+$bossFixed = @{
+    'LOOT-BOSS-D10'=@(
+        [ordered]@{itemId='WSP-BOSS-D10-CORE';amounts=@(1,1,1);scope='RUN_PROOF'},
+        [ordered]@{itemId='WSP-REBUILD-PART-A';amounts=@(1,1,1);scope='RUN_PROOF'},
+        [ordered]@{itemId='WSR-RESONANT_RESIDUE';amounts=@(6,7,8);scope='PARTY_DISTRIBUTED'})
+    'LOOT-BOSS-D20'=@(
+        [ordered]@{itemId='WSP-REBUILD-PART-B';amounts=@(1,1,1);scope='RUN_PROOF'},
+        [ordered]@{itemId='WSR-NEURAL_RESIDUE';amounts=@(8,10,12);scope='PARTY_DISTRIBUTED'})
+    'LOOT-BOSS-D30'=@(
+        [ordered]@{itemId='WSP-REBUILD-PART-C';amounts=@(1,1,1);scope='RUN_PROOF'},
+        [ordered]@{itemId='WSR-REFINED_MUTATION';amounts=@(8,10,12);scope='PARTY_DISTRIBUTED'},
+        [ordered]@{itemId='WSR-PURIFY_MEDIUM';amounts=@(6,8,10);scope='PARTY_DISTRIBUTED'})
+    'LOOT-BOSS-D40'=@(
+        [ordered]@{itemId='WSP-REBUILD-PART-D';amounts=@(1,1,1);scope='RUN_PROOF'},
+        [ordered]@{itemId='WSR-PATTERN_RESIDUE';amounts=@(10,13,16);scope='PARTY_DISTRIBUTED'},
+        [ordered]@{itemId='WSR-HIGH_DENSITY_ALLOY';amounts=@(7,9,11);scope='PARTY_DISTRIBUTED'})
+}
+$bossEquipment = @{'LOOT-BOSS-D10'='EQL-D10';'LOOT-BOSS-D20'='EQD20-LG';'LOOT-BOSS-D30'='EQD50-B30';'LOOT-BOSS-D40'='EQD50-B40'}
+$loot = foreach ($entry in $lootById.GetEnumerator()) {
+    $id = $entry.Key; $cells = $entry.Value
+    $source = $(if ($cells.Count -gt 1) {$cells[1]} else {'NONE'}); $profile='EMPTY'; $distribution='NONE'; $opcode='EMPTY'
+    $guaranteed=@(); $gMin=0; $gMax=0; $special=@(); $sMin=0; $sMax=0; $equipmentChances=[ordered]@{}; $pity=0
+    $fixed=@(); $equipmentSelection=''; $partyMilestone=0; $toolMin=0; $toolMax=0; $flags=@()
+    if ($id -like 'LOOT-EN-*') {
+        $profile=$cells[2]; $distribution=$cells[3]; $opcode='COMBAT_ROLL'; $spec=$combatPools[$profile]
+        if (-not $spec) { throw "Unknown combat loot profile: $id -> $profile" }
+        $guaranteed=@($spec.Guaranteed);$gMin=$spec.GMin;$gMax=$spec.GMax;$special=@($spec.Special);$sMin=$spec.SMin;$sMax=$spec.SMax;$pity=$spec.Pity
+        foreach($key in @($spec.Equipment.Keys|Sort-Object)){$equipmentChances[$key]=[double]$spec.Equipment[$key]}
+        if ($profile -eq 'ELITE') {$flags=@('CURRENT_DAY_RESOURCE_POOL','SAMPLE_ELIGIBLE','BLUEPRINT_ELIGIBLE')}
+    } elseif ($id -like 'LOOT-BOSS-*') {
+        $profile='BOSS';$distribution='CONTRIBUTOR_ROUND_ROBIN';$opcode='BOSS_FIXED_AND_CHOICE';$fixed=@($bossFixed[$id]);$equipmentSelection=$bossEquipment[$id]
+        $partyMilestone=@{'LOOT-BOSS-D10'=1;'LOOT-BOSS-D20'=2;'LOOT-BOSS-D30'=3;'LOOT-BOSS-D40'=4}[$id];$flags=@('COMPLETION_ONCE','INBOX_PERSISTENT')
+    } elseif ($id -like 'LOOT-NODE-*') {
+        $profile='RESOURCE_NODE';$distribution=$(if ($id -in @('LOOT-NODE-RIFT','LOOT-NODE-RECONSTRUCTION')) {'CONTRIBUTOR_ROUND_ROBIN'} else {'HARVESTER_PERSONAL'});$opcode='NODE_HARVEST'
+        $guaranteed=@($nodePools[$id]);$gMin=1;$gMax=3
+        switch ($id) {
+            'LOOT-NODE-BASIC' {$toolMin=0;$toolMax=1};'LOOT-NODE-INDUSTRIAL' {$toolMin=1;$toolMax=2};'LOOT-NODE-MEDICAL' {$toolMin=3;$toolMax=3}
+            'LOOT-NODE-CORRUPTED' {$toolMin=2;$toolMax=4};'LOOT-NODE-RIFT' {$toolMin=4;$toolMax=5};'LOOT-NODE-RECONSTRUCTION' {$toolMin=5;$toolMax=6}
+        }
+        $flags=@('PRESERVE_ON_TOOL_FAILURE','NO_VANILLA_DOUBLE_DROP')
+    } elseif ($id -eq 'LOOT-NONE') {
+        $flags=@('NO_REWARD','NO_ROLL','NO_CLAIM')
+    } else {
+        $profile='EVENT';$distribution=$(if ($id -eq 'LOOT-DISCOVERY') {'OWNER'} else {'CONTRIBUTOR_ROUND_ROBIN'})
+        $opcode=@{'LOOT-ENCOUNTER-COMMON'='CURRENT_DAY_COMBAT';'LOOT-ENCOUNTER-ELITE'='ELITE_ONCE';'LOOT-ENCOUNTER-ASSAULT'='ASSAULT_SUCCESS';'LOOT-DISCOVERY'='UNLOCK_ONLY';'LOOT-SALVAGE-EQUIPMENT'='SALVAGE_FORMULA';'LOOT-RECOVERY'='RETURN_ORIGINAL_TRANSACTION'}[$id]
+        $flags=@('NO_FLOOR_DROP','INBOX_PERSISTENT')
+    }
+    [ordered]@{
+        id=$id;sourceDocumentId='LOOT-LIST-001';enabled=$true;sourceId=$source;profile=$profile;distribution=$distribution;executionOpcode=$opcode
+        guaranteedPool=[string[]]$guaranteed;guaranteedMin=$gMin;guaranteedMax=$gMax;specialtyPool=[string[]]$special;specialtyMin=$sMin;specialtyMax=$sMax
+        equipmentChances=$equipmentChances;pityLimit=$pity;fixedEntries=@($fixed);equipmentSelectionProfile=$equipmentSelection;partyAugmentMilestone=$partyMilestone
+        requiredToolTierMin=$toolMin;requiredToolTierMax=$toolMax;noReward=($id -eq 'LOOT-NONE');flags=[string[]]$flags;raw=@($cells)
+    }
+}
 
 $codex = @($materials | ForEach-Object { [ordered]@{ id=$_.id; codexIndex=$_.codexIndex; domain='MATERIAL'; displayMaterial=$_.displayMaterial } })
 $codex += @($items | ForEach-Object { [ordered]@{ id=$_.id; codexIndex=$_.codexIndex; domain='ITEM'; displayMaterial=$_.displayMaterial } })

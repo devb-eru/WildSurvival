@@ -21,6 +21,7 @@ public record ProductionContentCatalog(
         Map<String, BossEntry> bossesById,
         Map<String, SupportEntityEntry> supportEntitiesById,
         Map<String, ActionBundleEntry> actionBundlesById,
+        Map<String, LootEntry> lootById,
         Map<String, Integer> counts
 ) {
     public CatalogEntry item(String id) {
@@ -133,4 +134,19 @@ public record ProductionContentCatalog(
     public record ActionEntry(String id, String name, int telegraphTicks, int startupTicks,
                               int activeTicks, int recoveryTicks, int cooldownTicks, double range,
                               double damage, double penetration, double breakDamage, String statusId) { }
+
+    public record LootEntry(String id, String sourceId, String profile, String distribution,
+                            String executionOpcode, List<String> guaranteedPool, int guaranteedMin,
+                            int guaranteedMax, List<String> specialtyPool, int specialtyMin,
+                            int specialtyMax, Map<String, Double> equipmentChances, int pityLimit,
+                            List<LootFixedEntry> fixedEntries, String equipmentSelectionProfile,
+                            int partyAugmentMilestone, int requiredToolTierMin,
+                            int requiredToolTierMax, boolean noReward, List<String> flags) { }
+
+    public record LootFixedEntry(String itemId, List<Integer> amounts, String scope) {
+        public int amountForPartySize(int partySize) {
+            int index = partySize >= 4 ? 2 : partySize == 3 ? 1 : 0;
+            return amounts.get(index);
+        }
+    }
 }
