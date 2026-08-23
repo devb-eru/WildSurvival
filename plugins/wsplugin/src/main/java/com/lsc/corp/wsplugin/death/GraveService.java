@@ -83,7 +83,7 @@ public final class GraveService implements Listener {
             return true;
         }
 
-        Location safe = safeRemainsLocation(player.getLocation(), snapshot);
+        Location safe = safeRemainsLocation(player.getLocation(), snapshot, owner);
         long now = Instant.now().toEpochMilli();
         int deathNumber = owner.deathCount + 1;
         String remainsId = "remains-" + player.getUniqueId() + "-" + deathNumber;
@@ -455,8 +455,14 @@ public final class GraveService implements Listener {
         }
     }
 
-    private Location safeRemainsLocation(Location requested, RunSnapshot snapshot) {
+    private Location safeRemainsLocation(Location requested, RunSnapshot snapshot, RunSnapshot.PlayerState owner) {
         if (isSafe(requested)) return requested.getBlock().getLocation();
+        if (owner.lastSafeWorld != null) {
+            World safeWorld = Bukkit.getWorld(owner.lastSafeWorld);
+            Location recorded = safeWorld == null ? null
+                    : new Location(safeWorld, owner.lastSafeX, owner.lastSafeY, owner.lastSafeZ);
+            if (isSafe(recorded)) return recorded.getBlock().getLocation();
+        }
         RunSnapshot.FacilityInstanceState recovery = FacilityStateAccess.firstActive(snapshot, "FAC-S12").orElse(null);
         if (recovery != null) {
             World world = Bukkit.getWorld(recovery.world);

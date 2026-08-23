@@ -110,6 +110,13 @@ public final class RunSnapshot {
         public Map<String, Double> reviveContributions = new LinkedHashMap<>();
         public long reviveProtectionUntilEpochMs;
         public long reviveTailProtectionUntilEpochMs;
+        public long helpSignalCooldownUntilEpochMs;
+        public String lastSafeWorld;
+        public double lastSafeX;
+        public double lastSafeY;
+        public double lastSafeZ;
+        public long lastSafeAtEpochMs;
+        public boolean voidRescueUsed;
         public int deathCount;
         public String remainsId;
         public DeathRecordState death;

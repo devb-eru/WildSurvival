@@ -73,6 +73,15 @@ public final class DeathRuntimePolicy {
         return bossDay || residualAssault ? safeStacks : Math.max(0, safeStacks - 1);
     }
 
+    public static boolean helpSignalReady(long nowEpochMs, long cooldownUntilEpochMs) {
+        return nowEpochMs >= cooldownUntilEpochMs;
+    }
+
+    public static boolean recentSafeLocation(long nowEpochMs, long recordedAtEpochMs) {
+        return recordedAtEpochMs > 0L && nowEpochMs >= recordedAtEpochMs
+                && nowEpochMs - recordedAtEpochMs <= 10_000L;
+    }
+
     public static double downedDamage(double finalDamage, double typeMultiplier, double downedMaximum) {
         if (!Double.isFinite(finalDamage) || finalDamage <= 0.0 || downedMaximum <= 0.0) return 0.0;
         return Math.min(downedMaximum * 0.50, finalDamage * Math.max(0.0, typeMultiplier));

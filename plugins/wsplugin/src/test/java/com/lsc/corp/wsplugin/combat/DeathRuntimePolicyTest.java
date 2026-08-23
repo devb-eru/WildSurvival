@@ -55,6 +55,14 @@ class DeathRuntimePolicyTest {
     }
 
     @Test
+    void helpAndVoidSafetyWindowsUseAuthoritativeTimes() {
+        assertFalse(DeathRuntimePolicy.helpSignalReady(9_999L, 10_000L));
+        assertTrue(DeathRuntimePolicy.helpSignalReady(10_000L, 10_000L));
+        assertTrue(DeathRuntimePolicy.recentSafeLocation(11_000L, 1_000L));
+        assertFalse(DeathRuntimePolicy.recentSafeLocation(11_001L, 1_000L));
+    }
+
+    @Test
     void fourthFatalHitSkipsDowned() {
         assertFalse(DeathRuntimePolicy.fatalInsteadOfDowned(2));
         assertTrue(DeathRuntimePolicy.fatalInsteadOfDowned(3));

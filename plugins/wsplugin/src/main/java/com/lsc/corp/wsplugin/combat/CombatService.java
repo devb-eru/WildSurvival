@@ -66,6 +66,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
@@ -264,7 +265,9 @@ public final class CombatService implements Listener {
         processRevives(now);
         processLifeStates(now);
         processTridents(now);
-        if (++hudTick % 10 == 0) {
+        hudTick++;
+        if (hudTick % 20 == 0) trackLastSafeLocations(now);
+        if (hudTick % 10 == 0) {
             updateHud();
             refreshBreakBars();
         }
@@ -659,6 +662,13 @@ public final class CombatService implements Listener {
             case BLOCK -> event.setCancelled(true);
             case ENTER_DOWNED -> {
                 event.setCancelled(true);
+                if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+                    if (playerState.voidRescueUsed) {
+                        completeDeath(player, "VOID_RESCUE_EXHAUSTED");
+                        break;
+                    }
+                    rescueFromVoid(player, now);
+                }
                 enterDowned(player);
             }
             case ALLOW -> {
@@ -836,10 +846,15 @@ public final class CombatService implements Listener {
     @EventHandler
     public void onToggleSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        if (!event.isSneaking() || !runs.isRunningMember(player) || !inCombatStance(player)
-                || !requireActiveAction(player)) {
+        if (!event.isSneaking() || !runs.isRunningMember(player)) {
             return;
         }
+        RunSnapshot.PlayerState life = runs.playerState(player.getUniqueId()).orElse(null);
+        if (life != null && ("DOWNED".equals(life.lifeState) || "BEING_REVIVED".equals(life.lifeState))) {
+            requestHelp(player, life);
+            return;
+        }
+        if (!inCombatStance(player) || !requireActiveAction(player)) return;
         long now = Instant.now().toEpochMilli();
         long previous = lastSneakAtEpochMs.getOrDefault(player.getUniqueId(), 0L);
         lastSneakAtEpochMs.put(player.getUniqueId(), now);
@@ -847,6 +862,22 @@ public final class CombatService implements Listener {
             executeDodge(player);
             lastSneakAtEpochMs.put(player.getUniqueId(), 0L);
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || !("DOWNED_GRACE".equals(state.lifeState) || "DOWNED".equals(state.lifeState)
+                || "BEING_REVIVED".equals(state.lifeState))) return;
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (player.isOnline()) return;
+            RunSnapshot.PlayerState current = runs.playerState(player.getUniqueId()).orElse(null);
+            if (current != null && ("DOWNED_GRACE".equals(current.lifeState) || "DOWNED".equals(current.lifeState)
+                    || "BEING_REVIVED".equals(current.lifeState))) {
+                completeDeath(player, "DOWNED_DISCONNECT");
+            }
+        }, 1L);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -1711,6 +1742,74 @@ public final class CombatService implements Listener {
                 throw new IllegalStateException(exception);
             }
         }
+    }
+
+    private void trackLastSafeLocations(long now) {
+        for (Player player : runs.onlineMembers()) {
+            RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+            Location location = player.getLocation();
+            if (state == null || !"ACTIVE".equals(state.lifeState) || !player.isOnGround()
+                    || location.getBlock().isLiquid()
+                    || !location.clone().subtract(0, 1, 0).getBlock().getType().isSolid()) continue;
+            runs.mutateTransient(run -> {
+                RunSnapshot.PlayerState stored = run.players.get(player.getUniqueId().toString());
+                stored.lastSafeWorld = location.getWorld().getName();
+                stored.lastSafeX = location.getX();
+                stored.lastSafeY = location.getY();
+                stored.lastSafeZ = location.getZ();
+                stored.lastSafeAtEpochMs = now;
+            });
+        }
+    }
+
+    private void rescueFromVoid(Player player, long now) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        Location destination = null;
+        if (DeathRuntimePolicy.recentSafeLocation(now, state.lastSafeAtEpochMs) && state.lastSafeWorld != null) {
+            org.bukkit.World world = Bukkit.getWorld(state.lastSafeWorld);
+            if (world != null) destination = new Location(world, state.lastSafeX, state.lastSafeY, state.lastSafeZ);
+        }
+        if (destination == null) destination = player.getWorld().getSpawnLocation();
+        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).voidRescueUsed = true);
+        player.teleport(destination);
+        runs.broadcast(ChatColor.DARK_AQUA + player.getName() + "의 1회 공허 구조가 소모되었습니다.");
+        player.getWorld().playSound(player.getLocation(), Sound.ITEM_CHORUS_FRUIT_TELEPORT, 0.8f, 0.7f);
+    }
+
+    private void requestHelp(Player player, RunSnapshot.PlayerState state) {
+        long now = Instant.now().toEpochMilli();
+        if (!DeathRuntimePolicy.helpSignalReady(now, state.helpSignalCooldownUntilEpochMs)) {
+            double seconds = Math.ceil((state.helpSignalCooldownUntilEpochMs - now) / 1000.0);
+            ActionBarService.critical(player, Component.text("도움 요청 재사용 " + (int) seconds + "초",
+                    NamedTextColor.RED), 30);
+            return;
+        }
+        runs.mutate(run -> run.players.get(player.getUniqueId().toString())
+                .helpSignalCooldownUntilEpochMs = now + 10_000L);
+        player.getWorld().spawnParticle(Particle.END_ROD, player.getLocation().add(0, 1, 0),
+                28, 0.45, 0.8, 0.45, 0.02);
+        for (Player member : runs.onlineMembers()) {
+            if (member.equals(player)) continue;
+            RunSnapshot.PlayerState memberState = runs.playerState(member.getUniqueId()).orElse(null);
+            if (memberState == null || !"ACTIVE".equals(memberState.lifeState)) continue;
+            String locationText = member.getWorld().equals(player.getWorld())
+                    ? Math.round(member.getLocation().distance(player.getLocation())) + "m · "
+                    + compassDirection(member.getLocation(), player.getLocation())
+                    : "다른 차원";
+            member.sendMessage(ChatColor.RED + "[도움 요청] " + player.getName() + " · " + locationText);
+            ActionBarService.critical(member, Component.text("도움 요청: " + player.getName() + " · " + locationText,
+                    NamedTextColor.RED), 60);
+            member.playSound(member.getLocation(), Sound.BLOCK_BELL_USE, 0.75f, 1.2f);
+        }
+        ActionBarService.critical(player, Component.text("도움 요청을 보냈습니다.", NamedTextColor.YELLOW), 60);
+        telemetry.event(runs.current().orElseThrow().runId, "DOWNED_HELP_SIGNAL",
+                "{\"player\":\"" + player.getUniqueId() + "\"}");
+    }
+
+    private String compassDirection(Location from, Location to) {
+        double degrees = Math.toDegrees(Math.atan2(to.getX() - from.getX(), -(to.getZ() - from.getZ())));
+        int index = Math.floorMod((int) Math.round(degrees / 45.0), 8);
+        return List.of("북", "북동", "동", "남동", "남", "남서", "서", "북서").get(index);
     }
 
     private void applyDownedDamage(Player player, double finalDamage, double typeMultiplier) {
