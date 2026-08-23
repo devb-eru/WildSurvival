@@ -20,7 +20,7 @@ import java.util.Set;
 
 public final class ProductionBundleValidator {
     public static final String REVISION = "ws-content-r2";
-    private static final int MANIFEST_ENTRIES = 66;
+    private static final int MANIFEST_ENTRIES = 68;
 
     public ValidationResult validateDirectory(Path root) throws ContentValidationException {
         Path normalized = root.toAbsolutePath().normalize();
@@ -62,8 +62,8 @@ public final class ProductionBundleValidator {
                 if (path.startsWith("schemas/")) schemaFiles++; else dataFiles++;
                 requireHash(path, requiredString(entry, "sha256"), reader.read(path));
             }
-            if (schemaFiles != 24 || dataFiles != 42) {
-                throw new ContentValidationException("Production bundle must contain schema=24 and data=42");
+            if (schemaFiles != 25 || dataFiles != 43) {
+                throw new ContentValidationException("Production bundle must contain schema=25 and data=43");
             }
 
             Map<String, Integer> counts = new LinkedHashMap<>();
@@ -76,6 +76,7 @@ public final class ProductionBundleValidator {
             counts.put("skills", count(reader, "skills/player-skills.json"));
             counts.put("personalAugments", count(reader, "augments/personal-augments.json"));
             counts.put("partyAugments", count(reader, "augments/party-augments.json"));
+            counts.put("statuses", count(reader, "statuses/season1-statuses.json"));
             counts.put("enemies", count(reader, "enemies/day01-10.json")
                     + count(reader, "enemies/day11-20.json") + count(reader, "enemies/day21-50.json"));
             counts.put("bosses", count(reader, "bosses/day10.json") + count(reader, "bosses/day20.json")
@@ -98,7 +99,7 @@ public final class ProductionBundleValidator {
             Map<String, Integer> expected = Map.ofEntries(
                     Map.entry("materials", 59), Map.entry("items", 61), Map.entry("tools", 214),
                     Map.entry("recipes", 315), Map.entry("codex", 334), Map.entry("skills", 64),
-                    Map.entry("personalAugments", 50), Map.entry("partyAugments", 16),
+                    Map.entry("personalAugments", 50), Map.entry("partyAugments", 16), Map.entry("statuses", 21),
                     Map.entry("enemies", 53), Map.entry("bosses", 4), Map.entry("support", 34),
                     Map.entry("facilities", 46), Map.entry("loot", 62), Map.entry("days", 50),
                     Map.entry("research", 25), Map.entry("storyScenes", 73), Map.entry("storyLogs", 9),
@@ -124,6 +125,7 @@ public final class ProductionBundleValidator {
             validateEquipmentCatalog(catalog);
             validateSkillCatalog(catalog);
             validateAugmentCatalog(catalog);
+            validateStatusCatalog(catalog);
             validateItemCatalog(catalog);
             validateEquipmentProfiles(catalog);
             validateFacilityProfiles(catalog);
@@ -494,10 +496,28 @@ public final class ProductionBundleValidator {
                     record.get("sharedTierLock").getAsBoolean());
             drawLocksById.put(draw.id(), draw);
         }
+        Map<String, ProductionContentCatalog.StatusEntry> statusesById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "statuses/season1-statuses.json")) {
+            ProductionContentCatalog.StatusEntry status = new ProductionContentCatalog.StatusEntry(
+                    requiredString(record, "id"), requiredString(record, "canonicalId"),
+                    requiredString(record, "authorityState"), requiredString(record, "name"),
+                    stringArray(record, "tags"), requiredDouble(record, "standardDurationSeconds"),
+                    requiredDouble(record, "chaosDurationSeconds"), requiredDouble(record, "standardMaxPreResistSeconds"),
+                    requiredDouble(record, "chaosMaxPreResistSeconds"), requiredDouble(record, "baseStrength"),
+                    requiredDouble(record, "tickIntervalSeconds"), requiredInt(record, "maxStacks"),
+                    requiredString(record, "resistPolicy"), requiredString(record, "tenacityPolicy"),
+                    requiredString(record, "bossPolicy"), requiredString(record, "stacking"),
+                    requiredString(record, "cleanseCategory"), requiredInt(record, "visualPriority"),
+                    requiredString(record, "zeroDamagePolicy"), requiredString(record, "shieldPolicy"),
+                    record.get("requiresHpDamage").getAsBoolean());
+            if (statusesById.putIfAbsent(status.id(), status) != null) {
+                throw new ContentValidationException("Duplicate status ID " + status.id());
+            }
+        }
         return new ProductionContentCatalog(List.copyOf(codex), Map.copyOf(byId), Map.copyOf(materialsById),
                 Map.copyOf(nonEquipmentItemsById), Map.copyOf(equipmentById), Map.copyOf(facilitiesById), List.copyOf(recipes),
                 Map.copyOf(byOutput), List.copyOf(skills), Map.copyOf(skillsById),
-                List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById),
+                List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById), Map.copyOf(statusesById),
                 Map.copyOf(enemiesById), Map.copyOf(bossesById), Map.copyOf(supportEntitiesById),
                 Map.copyOf(actionBundlesById), Map.copyOf(lootById), Map.copyOf(daysByNumber), Map.copyOf(eventsById),
                 Map.copyOf(mainEventsByDay), Map.copyOf(researchById), Map.copyOf(discoveriesById), Map.copyOf(storyScenesById),
@@ -821,6 +841,30 @@ public final class ProductionBundleValidator {
         }
     }
 
+    private void validateStatusCatalog(ProductionContentCatalog catalog) throws ContentValidationException {
+        Set<String> required = Set.of("STUN", "ROOT", "SILENCE", "DISARM", "AIRBORNE", "SLEEP", "FEAR",
+                "TAUNT", "SLOW", "WEAKNESS", "VULNERABLE", "ARMOR_BREAK", "HEAL_REDUCTION", "BURN",
+                "POISON", "BLEED", "FREEZE", "BLIND", "EXHAUSTION", "MARK", "CORRUPTION");
+        if (!catalog.statusesById().keySet().equals(required)) {
+            throw new ContentValidationException("Status catalog mismatch " + catalog.statusesById().keySet());
+        }
+        Set<String> templateLocked = Set.of("FREEZE", "BLIND", "EXHAUSTION", "MARK");
+        for (ProductionContentCatalog.StatusEntry status : catalog.statusesById().values()) {
+            if (status.name().isBlank() || status.tags().isEmpty() || status.visualPriority() < 1
+                    || status.visualPriority() > 4 || status.maxStacks() < 0 || status.maxStacks() > 64) {
+                throw new ContentValidationException("Invalid status profile " + status.id());
+            }
+            if (templateLocked.contains(status.id()) != "TEMPLATE_LOCKED".equals(status.authorityState())) {
+                throw new ContentValidationException("Status authority mismatch " + status.id());
+            }
+            if (status.executableBaseline() && !"CORRUPTION".equals(status.id())
+                    && (status.standardDurationSeconds() <= 0 || status.chaosDurationSeconds() <= 0
+                    || status.maxStacks() < 1)) {
+                throw new ContentValidationException("Executable status lacks baseline values " + status.id());
+            }
+        }
+    }
+
     private void validateItemCatalog(ProductionContentCatalog catalog) throws ContentValidationException {
         if (catalog.materialsById().size() != 59 || catalog.nonEquipmentItemsById().size() != 61) {
             throw new ContentValidationException("Material/item catalog cardinality mismatch");
@@ -947,8 +991,8 @@ public final class ProductionBundleValidator {
         Set<String> dayProfiles = Set.of("INTRO", "PRESSURE", "ADAPT", "ELITE_SIGNAL", "BOSS_DAY",
                 "STATUS_INTRO", "STATUS_CHAIN", "AUGMENT_ADAPT", "ELITE_STATUS", "STATUS_BOSS_DAY",
                 "CORRUPTION", "BREAK_LINE", "RECONSTRUCTION_PRESSURE");
-        Set<String> statuses = Set.of("", "POISON", "WEAKNESS", "BURN", "BLEED", "ROOT",
-                "SILENCE", "DISARM", "CORRUPTION", "SLOW");
+        Set<String> statuses = new HashSet<>(catalog.statusesById().keySet());
+        statuses.add("");
         long noReward = 0;
         for (ProductionContentCatalog.EnemyEntry enemy : catalog.enemiesById().values()) {
             if (!roles.contains(enemy.role()) || !dayProfiles.contains(enemy.dayProfile())
@@ -969,6 +1013,14 @@ public final class ProductionBundleValidator {
                 if (enemy.activityExp() != 0 || !enemy.flags().containsAll(
                         List.of("NO_REWARD", "NO_SAMPLE", "NO_AUGMENT_TRIGGER"))) {
                     throw new ContentValidationException("No-reward enemy leaks rewards " + enemy.id());
+                }
+            }
+        }
+        for (ProductionContentCatalog.ActionBundleEntry bundle : catalog.actionBundlesById().values()) {
+            for (ProductionContentCatalog.ActionEntry action : bundle.actions()) {
+                if (!statuses.contains(action.statusId())) {
+                    throw new ContentValidationException("Action status missing " + action.id()
+                            + " -> " + action.statusId());
                 }
             }
         }

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "contentRevision", "domain", "records"],
+  "properties": {
+    "schemaVersion": {"const": 2},
+    "contentRevision": {"const": "ws-content-r2"},
+    "domain": {"const": "statuses"},
+    "records": {
+      "type": "array",
+      "minItems": 21,
+      "maxItems": 21,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "canonicalId", "sourceDocumentId", "authorityState", "name", "tags",
+          "standardDurationSeconds", "chaosDurationSeconds", "standardMaxPreResistSeconds",
+          "chaosMaxPreResistSeconds", "baseStrength", "tickIntervalSeconds", "maxStacks",
+          "resistPolicy", "tenacityPolicy", "bossPolicy", "stacking", "cleanseCategory",
+          "visualPriority", "zeroDamagePolicy", "shieldPolicy", "requiresHpDamage"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+          "canonicalId": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+          "sourceDocumentId": {"const": "STATUS-002"},
+          "authorityState": {"enum": ["BASELINE_LOCKED", "TEMPLATE_LOCKED", "SCRIPTED"]},
+          "name": {"type": "string", "minLength": 1},
+          "tags": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "standardDurationSeconds": {"type": "number", "minimum": 0},
+          "chaosDurationSeconds": {"type": "number", "minimum": 0},
+          "standardMaxPreResistSeconds": {"type": "number", "minimum": 0},
+          "chaosMaxPreResistSeconds": {"type": "number", "minimum": 0},
+          "baseStrength": {"type": "number", "minimum": 0},
+          "tickIntervalSeconds": {"type": "number", "minimum": 0},
+          "maxStacks": {"type": "integer", "minimum": 0, "maximum": 64},
+          "resistPolicy": {"enum": ["RESISTIBLE", "GUARANTEED", "CONDITIONAL", "SCRIPTED"]},
+          "tenacityPolicy": {"enum": ["NONE", "DURATION", "ACTION_DURATION"]},
+          "bossPolicy": {"enum": ["FULL", "REDUCED", "BREAK_CONVERT", "SCRIPTED", "IMMUNE"]},
+          "stacking": {"enum": ["REFRESH", "REPLACE_STRONGER", "STACK_INTENSITY", "STACK_INDEPENDENT", "UNIQUE_SOURCE", "SCRIPTED"]},
+          "cleanseCategory": {"enum": ["DISPELLABLE", "CLEANSE_ONLY", "CONTROL_BREAK", "UNDISPELLABLE", "DEATH_ONLY", "SCRIPTED"]},
+          "visualPriority": {"type": "integer", "minimum": 1, "maximum": 4},
+          "zeroDamagePolicy": {"enum": ["DENY", "ALLOW", "SCRIPTED"]},
+          "shieldPolicy": {"enum": ["ALLOW", "DENY", "SCRIPTED"]},
+          "requiresHpDamage": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}

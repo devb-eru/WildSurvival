@@ -75,6 +75,12 @@
       "sha256": "6442e1fbec35875838a9800c5d96a1282899683f28d36f92de9118c988f2e719"
     },
     {
+      "path": "schemas/status.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "3ab99e3ba97482fd2d03220a95e766dfa6f5d8835fa745673e0aa1c8ca61c60a"
+    },
+    {
       "path": "schemas/discovery.schema.json",
       "domain": "schema",
       "schema": "common.schema.json",
@@ -265,6 +271,12 @@
       "domain": "facilities",
       "schema": "facility.schema.json",
       "sha256": "e52bbbefd56aba9bb02c71422c6db34cde2b0636fe6af0641713e318b65449ca"
+    },
+    {
+      "path": "statuses/season1-statuses.json",
+      "domain": "statuses",
+      "schema": "status.schema.json",
+      "sha256": "d55766a0d473c5c1dc255dd8633372063f5d0f92fdb691fcc224005df4553603"
     },
     {
       "path": "research/season1-research.json",

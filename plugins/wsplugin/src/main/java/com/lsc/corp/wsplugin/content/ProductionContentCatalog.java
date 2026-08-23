@@ -18,6 +18,7 @@ public record ProductionContentCatalog(
         List<AugmentEntry> personalAugments,
         List<AugmentEntry> partyAugments,
         Map<String, AugmentEntry> augmentsById,
+        Map<String, StatusEntry> statusesById,
         Map<String, EnemyEntry> enemiesById,
         Map<String, BossEntry> bossesById,
         Map<String, SupportEntityEntry> supportEntitiesById,
@@ -112,6 +113,19 @@ public record ProductionContentCatalog(
                                String weightingText, List<String> exclusiveWith, boolean evolution) {
         public boolean personal() {
             return "PERSONAL".equals(scope);
+        }
+    }
+
+    public record StatusEntry(String id, String canonicalId, String authorityState, String name,
+                              List<String> tags, double standardDurationSeconds,
+                              double chaosDurationSeconds, double standardMaxPreResistSeconds,
+                              double chaosMaxPreResistSeconds, double baseStrength,
+                              double tickIntervalSeconds, int maxStacks, String resistPolicy,
+                              String tenacityPolicy, String bossPolicy, String stacking,
+                              String cleanseCategory, int visualPriority, String zeroDamagePolicy,
+                              String shieldPolicy, boolean requiresHpDamage) {
+        public boolean executableBaseline() {
+            return !"TEMPLATE_LOCKED".equals(authorityState);
         }
     }
 

@@ -12,7 +12,7 @@ class ProductionBundleValidatorTest {
     void validatesAllProductionCatalogCardinalitiesAndReferences() throws Exception {
         var result = new ProductionBundleValidator().validateDirectory(
                 Path.of("src/main/resources/content/ws-content-r2"));
-        assertEquals(68, result.verifiedFileCount());
+        assertEquals(70, result.verifiedFileCount());
         assertEquals(334, result.catalog().codexEntries().size());
         assertEquals(315, result.catalog().recipes().size());
         assertEquals(64, result.catalog().skills().size());
@@ -23,6 +23,9 @@ class ProductionBundleValidatorTest {
         assertEquals(0.65, result.catalog().skillsById().get("ws.bow.barbed_rain.v1").damageCoefficient());
         assertEquals(50, result.catalog().personalAugments().size());
         assertEquals(16, result.catalog().partyAugments().size());
+        assertEquals(21, result.catalog().statusesById().size());
+        assertEquals("WEAKEN", result.catalog().statusesById().get("WEAKNESS").canonicalId());
+        assertEquals("TEMPLATE_LOCKED", result.catalog().statusesById().get("FREEZE").authorityState());
         assertEquals(List.of("AUG-G-002"), result.catalog().augmentsById().get("AUG-G-001").exclusiveWith());
         assertEquals(59, result.catalog().materialsById().size());
         assertEquals(61, result.catalog().nonEquipmentItemsById().size());

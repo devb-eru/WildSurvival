@@ -113,7 +113,7 @@ content/ws-content-r2/
 └─ ops/telemetry-contract.json
 ```
 
-총 목표는 lock 1, manifest 1, schema 23, 데이터 41의 `66개 파일`이다. 파일 분할이 바뀌면 manifest·레지스트리·검증 fixture를 같은 변경 세트에서 갱신한다. fixture도 manifest에 포함되는 실행 데이터이며 테스트 전용이라는 이유로 해시 검증에서 제외하지 않는다.
+현재 목표는 lock 1, manifest 1, schema 25, 데이터 43의 `70개 파일`이다. `STATUS-002`의 개별 상태 권위를 누락 없이 분리하기 위해 `status.schema.json`과 `season1-statuses.json`을 추가했다. 파일 분할이 바뀌면 manifest·레지스트리·검증 fixture를 같은 변경 세트에서 갱신한다. fixture도 manifest에 포함되는 실행 데이터이며 테스트 전용이라는 이유로 해시 검증에서 제외하지 않는다.
 
 ## 4. 도메인 권위 매핑
 
@@ -276,7 +276,7 @@ r1→r2 활성 회차 마이그레이션은 제공하지 않는다. 운영자가
 | 상태 | 의미 |
 |---|---|
 | `CONTRACT_READY` | 본 문서·후보 레지스트리 완료 |
-| `BUNDLE_BUILT` | 66개 목표 파일과 실제 해시 생성 |
+| `BUNDLE_BUILT` | 70개 목표 파일과 실제 해시 생성 |
 | `L0_VALIDATED` | schema·참조·합계 통과 |
 | `L1_TESTED` | 단위·결정론·멱등성 통과 |
 | `L2_SIMULATED` | 1~4인 50 Day 헤드리스 통과 |
@@ -284,7 +284,7 @@ r1→r2 활성 회차 마이그레이션은 제공하지 않는다. 운영자가
 | `RELEASE_CANDIDATE` | 폐쇄 플레이 가능 |
 | `LIVE_LOCKED` | 운영 승인, 신규 회차 포인터 교체 가능 |
 
-현재 상태는 `L0_VALIDATED`다. `ws-content-r2` 66개 파일을 생성했고 manifest SHA-256, 카디널리티, 레시피 산출물, 엔티티→loot 참조 검증을 자동 통과했다. 전투·Day·시설 전체 실행 의미가 아직 프로덕션 런타임으로 전환 중이므로 `L1_TESTED` 이상으로 표시하지 않는다.
+현재 상태는 `L0_VALIDATED`다. `ws-content-r2` 70개 파일을 생성했고 manifest SHA-256, 카디널리티, 레시피 산출물, 엔티티→loot 및 엔티티·행동→status 참조 검증을 자동 통과했다. 전투·Day·시설 전체 실행 의미가 아직 프로덕션 런타임으로 전환 중이므로 `L1_TESTED` 이상으로 표시하지 않는다.
 
 ## 13. 완료 기준
 

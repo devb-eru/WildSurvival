@@ -122,7 +122,7 @@ public final class Main extends JavaPlugin {
             virtualParty.cleanupOrphans();
             testLab.recoverActiveSession();
             runService.startHeartbeat();
-            getLogger().info("WildSurvival Season 1 runtime + ws-content-r2 catalog are ready (68 files, 334 codex entries).");
+            getLogger().info("WildSurvival Season 1 runtime + ws-content-r2 catalog are ready (70 files, 334 codex entries, 21 statuses).");
         } catch (Exception exception) {
             getLogger().log(java.util.logging.Level.SEVERE, "Prototype bootstrap failed; disabling plugin.", exception);
             getServer().getPluginManager().disablePlugin(this);

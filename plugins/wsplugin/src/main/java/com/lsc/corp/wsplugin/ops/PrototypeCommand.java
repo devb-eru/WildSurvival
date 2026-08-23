@@ -92,7 +92,8 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(ChatColor.GREEN + ProductionBundleValidator.REVISION + " production validated: "
                 + production.verifiedFileCount() + " files, codex=" + production.catalog().codexEntries().size()
                 + ", recipes=" + production.catalog().recipes().size() + ", skills=" + production.catalog().skills().size()
-                + ", augments=" + production.catalog().augmentsById().size());
+                + ", augments=" + production.catalog().augmentsById().size()
+                + ", statuses=" + production.catalog().statusesById().size());
     }
 
     private void prototype(CommandSender sender, String[] args) throws Exception {
