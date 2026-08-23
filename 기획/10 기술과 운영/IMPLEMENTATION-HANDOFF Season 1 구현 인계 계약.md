@@ -131,7 +131,7 @@ domain command
 | HUD | ActionBar·BossBar·Title·Scoreboard 채널 우선순위 |
 | 커스텀 몹 | 바닐라 EntityType+속성+AI 목표+PDC, 서버 패턴 실행기 |
 | 커스텀 외형 | 선택 리소스 팩 CustomModelData, 로직 폴백 필수 |
-| 장비 내구도 | `PlayerItemDamageEvent`는 관찰 가능하게 유지하고 적용 damage만 0으로 중화한 뒤 서버 원장 1회 차감, 미러 Damageable 수동 갱신, 0이면 아이템 보존 `BROKEN`과 `EquipmentBrokenEvent` 발행 |
+| 장비 내구도 | `PlayerItemDamageEvent`는 관찰 가능하게 유지하고 적용 damage만 0으로 중화한 뒤 서버 원장 1회 차감, 미러 Damageable 수동 갱신. 0이면 아이템 보존 `BROKEN`, 권위 `EquipmentBrokenEvent`, 감사 `EQUIPMENT_BROKEN`, 전이 직전 복사본을 담은 호환 `PlayerItemBreakEvent`를 각 1회 발행 |
 | 삼지창 | 발사 이벤트 취소, 표시 엔티티/투사체 추적, 서버 충돌·회수 |
 | 상태·브레이크 | 서버 틱 상태 컨테이너와 전용 BossBar |
 | 오염 | 청크 메타데이터·블록 변경 큐, 월드 손상 제한 |
@@ -201,6 +201,8 @@ NMS 직접 접근은 금지하지 않지만 Paper API로 불가능한 경우에�
 | `E2E-27` | FAC-S16 전후 획득·제작·입출고 | 전에는 개인 원장만 사용, 이후 명시 입출고만 공용 반영, 자동 이체 0 |
 | `E2E-28` | 도감 전체 레지스트리·첫 획득·재접속 | 334 고정 ID/위치, 미발견 BLACK_DYE `???`, 조합 표시·권한 분리 |
 | `E2E-29` | 전체 생산 카탈로그 로드 | 재료59·일반61·장비214·조합315·스킬64·증강66·엔티티91·시설46·드롭62 일치 |
+| `E2E-30` | slot0 WS 장비 내구 1에서 공격·스킬·곡괭이 채굴 | ItemStack 보존 `BROKEN`, 원장 1회 차감, `EquipmentBrokenEvent`·호환 `PlayerItemBreakEvent` 각 1회, 재실행 시 중복 0 |
+| `E2E-31` | slot1~8 바닐라 도구 파손 | 합성 이벤트 0, 바닐라 `PlayerItemBreakEvent`와 실제 ItemStack 소멸 유지 |
 
 ## 12. 배포·롤백 인계
 

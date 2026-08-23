@@ -24,6 +24,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -944,7 +945,10 @@ public final class EquipmentService implements Listener {
                 ? null : equipmentInstances(beforeState).get(instanceId);
         if (before == null || before.currentDurability == 0 || amount == 0) return false;
         int expectedCurrent = Math.max(0, before.currentDurability - amount);
-        boolean expectedBreak = !"BROKEN".equals(before.condition) && expectedCurrent == 0;
+        boolean expectedBreak = EquipmentDurabilityPolicy.isBreakTransition(
+                equipmentCondition(before.condition), expectedCurrent == 0
+                        ? EquipmentDurabilityPolicy.Condition.BROKEN : EquipmentDurabilityPolicy.Condition.ACTIVE);
+        ItemStack breakSnapshot = expectedBreak ? compatibilityBreakSnapshot(player, instanceId, before) : null;
         String payload = "{\"instanceId\":\"" + instanceId + "\",\"templateId\":\"" + before.templateId
                 + "\",\"amount\":" + amount + ",\"current\":" + expectedCurrent
                 + ",\"reason\":\"" + reason + "\"}";
@@ -975,8 +979,28 @@ public final class EquipmentService implements Listener {
             player.sendMessage(ChatColor.RED + "장비가 파손되었습니다. 장비는 보존되며 수리 전까지 사용할 수 없습니다.");
             Bukkit.getPluginManager().callEvent(new EquipmentBrokenEvent(
                     player, templateId[0], instanceId, reason));
+            if (breakSnapshot != null) {
+                Bukkit.getPluginManager().callEvent(new PlayerItemBreakEvent(player, breakSnapshot));
+            }
         }
         return changed[0];
+    }
+
+    private ItemStack compatibilityBreakSnapshot(Player player, String instanceId,
+                                                  RunSnapshot.EquipmentInstanceState before) {
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && instanceId.equals(equipmentInstanceId(item))) return item.clone();
+        }
+        ItemStack fallback = weaponItem(before);
+        return fallback == null ? null : fallback.clone();
+    }
+
+    private static EquipmentDurabilityPolicy.Condition equipmentCondition(String condition) {
+        try {
+            return EquipmentDurabilityPolicy.Condition.valueOf(condition);
+        } catch (IllegalArgumentException | NullPointerException ignored) {
+            return EquipmentDurabilityPolicy.Condition.ACTIVE;
+        }
     }
 
     private RunSnapshot.EquipmentInstanceState newEquipmentInstance(String rawWeaponId) {

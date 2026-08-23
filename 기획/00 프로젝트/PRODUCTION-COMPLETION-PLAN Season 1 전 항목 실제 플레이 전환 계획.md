@@ -38,18 +38,19 @@ Season 1의 게임 디자인 원장과 개별 콘텐츠 ID 목록은 작성되�
 | 조합법 | 315 | 315 | 3×3·비용·출력 공통 실행 | `PARTIAL_RUNTIME` |
 | 플레이어 스킬 | 64 | 64 | 공통 opcode 중심 실행 | `PARTIAL_RUNTIME` |
 | 개인·파티 증강 | 50+16 | 66 | 드로우·등급 잠금, 효과 일부 | `PARTIAL_RUNTIME` |
-| 적·보스 행동 묶음 | 53+4 | 57 | 묶음당 주 행동 1개 | `STRUCTURED_ONLY` |
+| 적·보스 행동 묶음 | 53+4 | 57 | 일반 적은 주 행동 중심, 보스 48패턴 ID 실행 | `PARTIAL_RUNTIME` |
 | 지원 엔티티 | 34 | 34 | ID·표현·정리 필드 | `STRUCTURED_ONLY` |
 | 시설 | 46 | 46 | 설치·네트워크·공용 원장 일부 | `PARTIAL_RUNTIME` |
 | 전리품 | 62 | 62 | 일반 적 개인 보상함 일부 | `PARTIAL_RUNTIME` |
 | Day | 50+1 | 51 | Day 번호·Final 잠금 | `PARTIAL_RUNTIME` |
-| 사건 | Day 1~50 권위 원장 | 구간별 스텁 3 | 없음 | `STUB` |
-| 연구 | 연구 노드 25 | 스텁 1 | 없음 | `STUB` |
-| 보스 | 4 | 기본 프로필 4 | Day 10 축약형 일부 | `PARTIAL_RUNTIME` |
-| Final | 3단계·6단계 완료 TX | 스텁 1 | 없음 | `STUB` |
-| Story | 장면 73·선택 기록 9 | 스텁 2 | 없음 | `STUB` |
+| 사건 | Day 1~50 권위 원장 | 구간별 실행 레코드 | 일차 스케줄·압박 웨이브 | `PARTIAL_RUNTIME` |
+| 연구 | 연구 노드 25 | 25 | 10단계 상태·GUI, 비용/증거 미정 안전 정지 | `BLOCKED_DATA` |
+| 보스 | 4 | 기본 프로필 4 | 총 48패턴 ID·3페이즈·보상·복구 | `PARTIAL_RUNTIME` |
+| Final | 3단계·6단계 완료 TX | 실행 원장 1 | 3단계·12패턴·멱등 완료 TX | `RUNTIME_REVIEW` |
+| Story | 장면 73·선택 기록 9 | 장면·로그 레코드 | 큐·재생 기록·폴백 | `RUNTIME_REVIEW` |
+| 상태 | 21 | 21 | 권위 레지스트리와 참조 검증 | `L0_VALIDATED` |
 
-L0 수량 일치는 콘텐츠 존재 증거다. `STUB`과 `STRUCTURED_ONLY`가 하나라도 남아 있으면 실제 플레이 완료로 승격하지 않는다.
+L0 수량 일치는 콘텐츠 존재 증거다. `BLOCKED_DATA`, `STRUCTURED_ONLY`, `PARTIAL_RUNTIME`, `RUNTIME_REVIEW`가 하나라도 남아 있으면 실제 플레이 완료로 승격하지 않는다.
 
 ## 3. 파트별 독립 목록과 개별 완료 계약
 
@@ -213,8 +214,8 @@ L0 수량 일치는 콘텐츠 존재 증거다. `STUB`과 `STRUCTURED_ONLY`가 �
 1. slot 0 좌클릭을 대상 유무와 PICKAXE 채굴 허용으로 분기한다.
 2. WS 미러 ItemStack의 바닐라 파괴 의존을 제거하고 서버 내구 원장을 단일 권위로 만든다.
 3. 곡괭이 채굴은 `PlayerItemDamageEvent`를 정확히 한 번 원장에 반영한다.
-4. 내구 0에서 ItemStack을 삭제하지 않고 `BROKEN`과 `EQUIPMENT_BROKEN`을 발행한다.
-5. 바닐라 아이템의 손상·파괴 이벤트는 취소하지 않는다.
+4. 내구 0에서 ItemStack을 삭제하지 않고 `BROKEN`, `EQUIPMENT_BROKEN`, `EquipmentBrokenEvent`, 호환 `PlayerItemBreakEvent`를 전이당 각 1회 발행한다.
+5. 호환 이벤트는 전이 직전 복사본을 전달하고 실제 삭제 권위로 쓰지 않는다. 바닐라 아이템의 손상·파괴 이벤트는 취소하거나 합성하지 않는다.
 
 이 단계는 이후 모든 장비 테스트의 전제이며 가장 먼저 구현한다.
 

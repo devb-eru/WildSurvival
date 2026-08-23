@@ -128,7 +128,7 @@ test-lab:
 
 무기 공격·W1~W3와 C1~C4·Q1~Q4는 현재 선택 슬롯이 `0`인 전투 자세에서만 해석하고 실행 뒤 `0`을 유지한다. `Shift+F` 플레이어 메뉴는 현재 슬롯과 무관하게 열 수 있으며 닫은 뒤 원래 선택 슬롯을 유지한다. 주무기는 실제 핫바 슬롯 `0`, 보조무기는 오프핸드 `-106`에 서버가 동기화한다. 슬롯 `1~8`은 채굴·설치·섭취를 포함한 바닐라 자유 슬롯이고, 일반 F도 슬롯 `1~8`에서는 바닐라 교환으로 남는다. 권투를 제외한 장착 무기는 바닐라 피해를 사용하지 않으며 두 장착 슬롯이 비면 권투 가상 프로필을 사용한다.
 
-slot `0` 곡괭이로 허용 블록을 채굴하면 Bukkit `PlayerItemDamageEvent`는 취소하지 않는다. 플러그인은 적용 damage를 `0`으로 중화해 ItemStack 삭제를 막고 서버 내구 원장을 한 번 차감한다. 원장 내구가 `0`이면 장비를 `BROKEN`으로 보존하고 `EquipmentBrokenEvent`를 발행한다. 바닐라 아이템은 기존 `PlayerItemDamageEvent`와 `PlayerItemBreakEvent` 동작을 그대로 사용한다.
+slot `0` 곡괭이로 허용 블록을 채굴하면 Bukkit `PlayerItemDamageEvent`는 취소하지 않는다. 플러그인은 적용 damage를 `0`으로 중화해 ItemStack 삭제를 막고 서버 내구 원장을 한 번 차감한다. 원장 내구가 `0`이면 장비를 `BROKEN`으로 보존하고 권위 `EquipmentBrokenEvent`와 Bukkit 호환 `PlayerItemBreakEvent`를 전이당 한 번씩 발행한다. 호환 이벤트에는 파손 직전 ItemStack 복사본이 들어가며 실제 장착 아이템은 삭제되지 않는다. 바닐라 아이템은 기존 `PlayerItemDamageEvent`와 `PlayerItemBreakEvent` 동작을 그대로 사용한다.
 
 ## 기본 플레이어 속성·빈사
 

@@ -29,6 +29,14 @@ public final class EquipmentDurabilityPolicy {
         return new NativeDamageDecision(Math.max(1, requestedDamage), 0);
     }
 
+    /** True only for the single authoritative ACTIVE -> BROKEN transition. */
+    public static boolean isBreakTransition(Condition previous, Condition current) {
+        if (previous == null || current == null) {
+            throw new IllegalArgumentException("Equipment conditions are required");
+        }
+        return previous != Condition.BROKEN && current == Condition.BROKEN;
+    }
+
     public enum Condition { ACTIVE, BROKEN }
 
     public record SpendResult(int current, Condition condition, boolean changed) {

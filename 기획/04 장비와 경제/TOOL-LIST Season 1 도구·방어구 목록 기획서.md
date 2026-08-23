@@ -312,11 +312,13 @@ D10·D20 EP/LG·D30·D40의 `W01-<class>`는 이 표의 Material과 무기군을
 | ABYSSAL | 1500 | ×1.25 | RECONSTRUCTION 2100 |
 
 - `currentDurability/maxDurability`는 서버 원장이 권위다. 실제 ItemStack은 `Unbreakable=false`로 두어 채굴 손상 이벤트를 받을 수 있게 한다.
-- `PlayerItemDamageEvent`는 취소한 뒤 서버 원장을 정확히 한 번 차감하고, 바닐라 damage 표시는 원장 비율로 직접 갱신한다.
+- `PlayerItemDamageEvent`는 관찰 가능하게 두되 적용 damage를 0으로 중화한 뒤 서버 원장을 정확히 한 번 차감하고, 바닐라 damage 표시는 원장 비율로 직접 갱신한다.
 - 표시 damage는 항상 `maxVanillaDamage-1` 이하로 제한한다. 바닐라 삭제를 발생시키지 않고 0에 도달하면 `BROKEN`으로 전환한다.
 - 커스텀 기본 공격은 성공한 실행당 1, 일반 액티브는 1, 강공·투척·영역 핵심기는 실행 데이터의 2~3을 차감한다. 빗나감 비용은 각 스킬 데이터가 명시한다.
 - 방어구는 최종 피해가 1 이상인 피격에서 1을 차감하되 초당 부위별 1회 상한을 둔다. 방패는 가드 피해 흡수·패링 시 실행 데이터 비용을 쓴다.
 - `BROKEN`은 아이템 인스턴스를 보존하고 장비 스탯·공격·세트 효과를 비활성화한다. 장착 미러 클릭 시 수리 GUI로 이동한다.
+- `ACTIVE → BROKEN` 전이마다 권위 `EquipmentBrokenEvent`, 감사 `EQUIPMENT_BROKEN`, Bukkit 호환용 합성 `PlayerItemBreakEvent`를 각각 한 번 발행한다. 합성 이벤트는 전이 직전 ItemStack 복사본을 전달하며 실제 삭제 권위가 아니다.
+- 이미 `BROKEN`인 인스턴스에는 파손 이벤트를 재발행하지 않고, slot 1~8 바닐라 도구에는 합성 이벤트를 발행하지 않는다.
 - 수리·강화·재련·분해는 `instanceUuid` 잠금을 공유하여 동시 실행과 복제를 막는다.
 
 ## 8. 이전 ID와 마이그레이션
@@ -351,6 +353,6 @@ D10·D20 EP/LG·D30·D40의 `W01-<class>`는 이 표의 Material과 무기군을
 - slot 0 전투 장비와 slot 1~8 유틸리티 도구의 입력 충돌 0
 - 곡괭이 전투 대상 우선, 대상 없음 채굴 폴백, 1스윙 1커밋
 - `PlayerItemDamageEvent` 1회당 원장 차감 1회, 바닐라 영구 삭제 0
+- slot 0 파손 전이당 `EquipmentBrokenEvent`·호환 `PlayerItemBreakEvent` 각 1회, 재발행 0
 - BROKEN 장비 효과·공격 0, 수리 뒤 동일 instanceUuid 복구
 - 단검은 IRON_SWORD, 둔기는 MACE, 삼지창은 커스텀 투척 상태 기계
-

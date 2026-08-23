@@ -44,4 +44,16 @@ class EquipmentDurabilityPolicyTest {
         assertThrows(IllegalArgumentException.class,
                 () -> EquipmentDurabilityPolicy.interceptNativeDamage(-1));
     }
+
+    @Test
+    void emitsCompatibilityBreakOnlyForActiveToBrokenTransition() {
+        assertTrue(EquipmentDurabilityPolicy.isBreakTransition(
+                EquipmentDurabilityPolicy.Condition.ACTIVE, EquipmentDurabilityPolicy.Condition.BROKEN));
+        assertFalse(EquipmentDurabilityPolicy.isBreakTransition(
+                EquipmentDurabilityPolicy.Condition.ACTIVE, EquipmentDurabilityPolicy.Condition.ACTIVE));
+        assertFalse(EquipmentDurabilityPolicy.isBreakTransition(
+                EquipmentDurabilityPolicy.Condition.BROKEN, EquipmentDurabilityPolicy.Condition.BROKEN));
+        assertThrows(IllegalArgumentException.class, () -> EquipmentDurabilityPolicy.isBreakTransition(
+                null, EquipmentDurabilityPolicy.Condition.BROKEN));
+    }
 }
