@@ -71,8 +71,8 @@ public final class Main extends JavaPlugin {
             PrototypeBossService boss = new PrototypeBossService(this, runService, content.productionCatalog(),
                     combat, growth, loot, telemetry);
             combat.setBossDamageHandler(boss);
-            PrototypeLoopService loop = new PrototypeLoopService(this, runService, content.content(), economy, combat,
-                    boss, growth, stats, telemetry);
+            PrototypeLoopService loop = new PrototypeLoopService(this, runService,
+                    content.productionCatalog(), economy, combat, boss, growth, stats, telemetry);
 
             TestLabRepository testLabRepository = new TestLabRepository(getDataFolder().toPath());
             TestLabService testLab = new TestLabService(this, runService, testLabRepository, content.content(),
@@ -101,7 +101,7 @@ public final class Main extends JavaPlugin {
             virtualParty.cleanupOrphans();
             testLab.recoverActiveSession();
             runService.startHeartbeat();
-            getLogger().info("WildSurvival prototype runtime + ws-content-r2 catalog are ready (66 files, 334 codex entries).");
+            getLogger().info("WildSurvival Season 1 runtime + ws-content-r2 catalog are ready (66 files, 334 codex entries).");
         } catch (Exception exception) {
             getLogger().log(java.util.logging.Level.SEVERE, "Prototype bootstrap failed; disabling plugin.", exception);
             getServer().getPluginManager().disablePlugin(this);

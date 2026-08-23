@@ -96,6 +96,48 @@ public final class GrowthService implements Listener {
         }
     }
 
+    public void awardSeasonExp(int amount, String sourceKey, boolean activityReward) {
+        if (amount <= 0) return;
+        RunSnapshot snapshot = runs.current().orElseThrow();
+        for (String uuidText : List.copyOf(snapshot.registeredPlayers)) {
+            RunSnapshot.PlayerState before = snapshot.players.get(uuidText);
+            if (before == null) continue;
+            int adjusted = activityReward
+                    ? Math.max(1, (int) Math.floor(amount * PlayerStatPolicy.activityExpMultiplier(before.investedStats)))
+                    : amount;
+            int beforeLevel = before.level;
+            boolean committed = runs.commitOnce("season-exp:" + sourceKey + ":" + uuidText, "EXP_COMMITTED",
+                    "{\"amount\":" + adjusted + ",\"source\":\"" + sourceKey + "\"}", run -> {
+                        RunSnapshot.PlayerState state = run.players.get(uuidText);
+                        state.exp = Math.min(cumulativeExpForLevel(50), state.exp + adjusted);
+                        state.level = levelForExp(state.exp);
+                    });
+            if (!committed) continue;
+            Player player;
+            try {
+                player = Bukkit.getPlayer(UUID.fromString(uuidText));
+            } catch (IllegalArgumentException ignored) {
+                player = null;
+            }
+            if (player == null || !player.isOnline()) continue;
+            RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+            player.setLevel(state.level);
+            player.setExp(levelProgress(state));
+            if (state.level > beforeLevel) {
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1.1f);
+                player.sendMessage(ChatColor.GREEN + "WildSurvival Lv." + state.level + " 달성");
+                for (int milestone : PERSONAL_MILESTONES) {
+                    if (beforeLevel < milestone && state.level >= milestone) {
+                        lockAndOpenPersonalDraw(player, milestone);
+                        break;
+                    }
+                }
+            } else {
+                ActionBarService.notice(player, Component.text("EXP +" + adjusted, NamedTextColor.GREEN), 35);
+            }
+        }
+    }
+
     public void awardCheckpointTarget(int day) {
         Integer target = content.progressExpByDay().get(day);
         if (target == null) {

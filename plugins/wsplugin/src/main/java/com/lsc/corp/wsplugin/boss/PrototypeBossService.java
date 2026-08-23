@@ -301,9 +301,7 @@ public final class PrototypeBossService implements Listener, CombatService.BossD
                 });
         if (!committed) return;
         ProductionContentCatalog.DayEntry day = production.daysByNumber().get(dayNumber);
-        for (Player player : runs.onlineMembers()) {
-            growth.awardExp(player, day.activityExp(), "day-activity:" + dayNumber + ":" + player.getUniqueId());
-        }
+        growth.awardSeasonExp(day.activityExp(), "day-" + dayNumber + "-activity", true);
         loot.rewardBoss("boss-day-" + dayNumber, definition, runs.onlineMembers());
         runs.broadcast(ChatColor.GOLD + definition.name() + " 격파. 재건 증명과 부품이 정산되었습니다.");
         telemetry.event(snapshot.runId, "BOSS_REWARD_COMMITTED", "{\"day\":" + dayNumber + "}");

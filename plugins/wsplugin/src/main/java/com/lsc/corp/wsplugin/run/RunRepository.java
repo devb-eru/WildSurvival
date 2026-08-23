@@ -98,7 +98,7 @@ public final class RunRepository {
             snapshot.seasonDay.state = "PREPARING";
         }
         if (snapshot.seasonDay.lockedBudgetProfileId == null) {
-            snapshot.seasonDay.lockedBudgetProfileId = "BUDGET-STANDARD";
+            snapshot.seasonDay.lockedBudgetProfileId = "STD-BALANCED";
         }
         if (snapshot.seasonDay.lockedResourceBudgets == null) {
             snapshot.seasonDay.lockedResourceBudgets = new ArrayList<>();

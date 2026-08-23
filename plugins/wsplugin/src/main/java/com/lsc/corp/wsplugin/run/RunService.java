@@ -171,7 +171,7 @@ public final class RunService {
                 equipment.syncAuthoritativeEquipment(player);
             }
             loop.startRunWorld();
-            broadcast(ChatColor.GOLD + "[WildSurvival] 프로토타입 회차가 시작되었습니다. Day 1");
+            broadcast(ChatColor.GOLD + "[WildSurvival] Season 1 회차가 시작되었습니다. Day 1");
         }
     }
 
@@ -200,15 +200,19 @@ public final class RunService {
             if (!"RUNNING".equals(current.state)) {
                 return;
             }
+            if (current.day < 50 || current.finalObjective == null
+                    || !current.finalObjective.completionCommitted) {
+                throw new IllegalStateException("Season 1 cannot complete before the Day 50 Final transaction");
+            }
             current.state = "ENDED";
             current.endReason = reason;
             if (loop != null) {
                 loop.cleanupWorldObjects();
             }
-            commitEventLocked("complete:" + current.runId, "RUN_ENDED", "{\"result\":\"PROTOTYPE_COMPLETE\"}");
+            commitEventLocked("complete:" + current.runId, "RUN_ENDED", "{\"result\":\"SEASON_1_COMPLETE\"}");
             saveLocked();
             telemetry.sessionReport(current);
-            broadcast(ChatColor.GREEN + "[WildSurvival] 프로토타입 완주: " + reason);
+            broadcast(ChatColor.GREEN + "[WildSurvival] Season 1 완주: " + reason);
         }
     }
 

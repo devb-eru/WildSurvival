@@ -602,17 +602,14 @@ public final class EconomyService implements Listener {
     private void showClock(Player player) {
         RunSnapshot snapshot = runs.current().orElseThrow();
         long now = runs.clockNowMillis();
-        long elapsedSeconds = Math.max(0L, (now - snapshot.startedAtEpochMs) / 1000L);
-        int targetSeconds = switch (snapshot.day) {
-            case 1 -> plugin.getConfig().getInt("prototype.checkpoint-seconds.day-3", 600);
-            case 3 -> plugin.getConfig().getInt("prototype.checkpoint-seconds.day-6", 1500);
-            case 6 -> plugin.getConfig().getInt("prototype.checkpoint-seconds.day-10", 2700);
-            default -> -1;
-        };
-        String next = targetSeconds < 0 ? "Day 10 · 보스 단계"
-                : "다음 Day까지 " + formatDuration(Math.max(0L, targetSeconds - elapsedSeconds));
+        long dayStarted = snapshot.seasonDay == null ? snapshot.checkpointStartedAtEpochMs
+                : snapshot.seasonDay.startedAtEpochMs;
+        long elapsedSeconds = Math.max(0L, (now - dayStarted) / 1000L);
+        long duration = Math.max(60L, plugin.getConfig().getLong("season.day-duration-seconds", 1200L));
+        String next = snapshot.day >= 50 ? "최종 목표 단계 · 자동 완료 없음"
+                : "다음 Day까지 최소 " + formatDuration(Math.max(0L, duration - elapsedSeconds));
         player.sendMessage(ChatColor.GOLD + "[생존 시계] Day " + snapshot.day + " · 경과 " + formatDuration(elapsedSeconds)
-                + " · " + next);
+                + " · " + next + " · 상태 " + (snapshot.seasonDay == null ? "UNKNOWN" : snapshot.seasonDay.state));
     }
 
     private static String formatDuration(long seconds) {

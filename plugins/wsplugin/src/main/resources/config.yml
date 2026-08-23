@@ -8,6 +8,9 @@ prototype:
   revive-channel-seconds: 3
   spawn-radius: 10
   autosave-ticks: 100
+season:
+  preparation-seconds: 30
+  day-duration-seconds: 1200
 test-lab:
   enabled: false
   max-snapshots: 20

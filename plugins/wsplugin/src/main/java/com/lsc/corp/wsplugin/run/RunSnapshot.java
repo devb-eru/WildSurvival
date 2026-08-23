@@ -228,7 +228,7 @@ public final class RunSnapshot {
         public String dayId = "DAY-01";
         public int day = 1;
         public String state = "PREPARING";
-        public String lockedBudgetProfileId = "BUDGET-STANDARD";
+        public String lockedBudgetProfileId = "STD-BALANCED";
         public int lockedThreatBudget3;
         public List<Integer> lockedResourceBudgets = new ArrayList<>();
         public List<String> eventQueue = new ArrayList<>();
