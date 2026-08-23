@@ -47,6 +47,14 @@ class DeathRuntimePolicyTest {
     }
 
     @Test
+    void onlySafeNonBossDayEndRecoversOneInjury() {
+        assertEquals(1, DeathRuntimePolicy.injuryAfterDayEnd(2, false, false));
+        assertEquals(0, DeathRuntimePolicy.injuryAfterDayEnd(0, false, false));
+        assertEquals(2, DeathRuntimePolicy.injuryAfterDayEnd(2, true, false));
+        assertEquals(2, DeathRuntimePolicy.injuryAfterDayEnd(2, false, true));
+    }
+
+    @Test
     void fourthFatalHitSkipsDowned() {
         assertFalse(DeathRuntimePolicy.fatalInsteadOfDowned(2));
         assertTrue(DeathRuntimePolicy.fatalInsteadOfDowned(3));

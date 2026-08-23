@@ -2,6 +2,7 @@ package com.lsc.corp.wsplugin.world;
 
 import com.lsc.corp.wsplugin.boss.PrototypeBossService;
 import com.lsc.corp.wsplugin.combat.CombatService;
+import com.lsc.corp.wsplugin.combat.DeathRuntimePolicy;
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
 import com.lsc.corp.wsplugin.economy.EconomyService;
 import com.lsc.corp.wsplugin.facility.FacilityStateAccess;
@@ -242,6 +243,7 @@ public final class PrototypeLoopService implements Listener {
             spawnNextWave(encounterId, cap);
             return;
         }
+        if (combat.hasActiveEnemies()) return;
         resolveEncounter(encounterId, day);
     }
 
@@ -283,6 +285,11 @@ public final class PrototypeLoopService implements Listener {
                     run.seasonDay.state = "COMPLETED";
                     run.seasonDay.resolvedAtEpochMs = runs.clockNowMillis();
                     run.seasonDay.activityExpCommitted = true;
+                    run.players.values().stream()
+                            .filter(player -> Set.of("ACTIVE", "DOWNED_GRACE", "DOWNED", "BEING_REVIVED")
+                                    .contains(player.lifeState))
+                            .forEach(player -> player.injuryStacks = DeathRuntimePolicy.injuryAfterDayEnd(
+                                    player.injuryStacks, false, false));
                     if (day.day() == 50) run.finalObjective.state = "AVAILABLE";
                 });
         if (!committed) return;
