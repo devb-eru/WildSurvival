@@ -57,6 +57,28 @@ class ProductionBundleValidatorTest {
         assertEquals(30000, result.catalog().facilitiesById().get("FAC-R06").baseHp());
         assertEquals(49, result.catalog().facilitiesById().get("FAC-R06").firstDay());
         assertEquals(50, result.catalog().facilitiesById().get("FAC-R06").activationDay());
+        assertEquals(53, result.catalog().enemiesById().size());
+        assertEquals(4, result.catalog().bossesById().size());
+        assertEquals(34, result.catalog().supportEntitiesById().size());
+        assertEquals(57, result.catalog().actionBundlesById().size());
+        var day21Carrier = result.catalog().enemiesById().get("EN-D21-01");
+        assertEquals("HUSK", day21Carrier.bukkitType());
+        assertEquals(1200.0, day21Carrier.baseHp());
+        assertEquals(18.0, day21Carrier.penetration());
+        assertEquals("CORRUPTION", day21Carrier.statusId());
+        assertTrue(day21Carrier.rewardsPlayers());
+        var boss20Summon = result.catalog().enemiesById().get("EN-D20-A01");
+        assertEquals(80.0, boss20Summon.attackDamage());
+        assertEquals(0, boss20Summon.activityExp());
+        assertTrue(boss20Summon.flags().containsAll(List.of("NO_REWARD", "NO_SAMPLE", "NO_AUGMENT_TRIGGER")));
+        var boss40 = result.catalog().bossesById().get("BOSS-D40");
+        assertEquals("RAVAGER", boss40.bukkitType());
+        assertEquals(650000.0, boss40.baseHp());
+        assertEquals(30000.0, boss40.breakMax());
+        assertEquals("BLOCK_DISPLAY", result.catalog().supportEntitiesById()
+                .get("ENT-DEPLOY-EMERGENCY-COVER").bukkitType());
+        assertEquals("ENEMY_ACTION_BUNDLE", result.catalog().actionBundlesById()
+                .get("ACT-EN-D21-01").kind());
         assertEquals(91, result.counts().get("enemies") + result.counts().get("bosses") + result.counts().get("support"));
     }
 }

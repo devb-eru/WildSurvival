@@ -235,6 +235,67 @@ function Facility-BaseHp([string]$Id, [string]$Tier, [int]$Threat) {
     if ($Tier -eq 'DEFENSE') { return 1600 + 100 * $Threat }
     return 3300 + 100 * $Threat
 }
+function First-Number([string]$Value, [double]$Fallback = 0) {
+    $match = [regex]::Match(($Value -replace ',',''), '\d+(?:\.\d+)?')
+    return $(if ($match.Success) {[double]$match.Value} else {$Fallback})
+}
+function Max-Number([string]$Value, [double]$Fallback = 0) {
+    $matches = @([regex]::Matches(($Value -replace ',',''), '\d+(?:\.\d+)?') | ForEach-Object { [double]$_.Value })
+    return $(if ($matches.Count) {($matches | Measure-Object -Maximum).Maximum} else {$Fallback})
+}
+function Enemy-Name([string]$Id, [object[]]$Cells) {
+    foreach ($cell in $Cells) {
+        if ($cell -match [regex]::Escape($Id)) {
+            $name = (($cell -replace '`','') -replace [regex]::Escape($Id),'').Trim()
+            if ($name -match '[가-힣]') { return $name }
+        }
+    }
+    return Korean-Name $Cells $Id
+}
+function Enemy-BukkitType([string]$Text) {
+    foreach ($type in @('WITHER_SKELETON','CAVE_SPIDER','PIGLIN_BRUTE','IRON_GOLEM','MAGMA_CUBE','RAVAGER','ZOMBIE','SPIDER','SKELETON','HUSK','CREEPER','DROWNED','PHANTOM','VINDICATOR','WITCH','ENDERMAN','STRAY','BOGGED','BLAZE','SNIFFER','EVOKER','SLIME','ENDERMITE','SHULKER','HOGLIN','ALLAY','SILVERFISH')) {
+        if ($Text -match [regex]::Escape($type)) { return $type }
+    }
+    if ($Text -match '위더 스켈레톤') { return 'WITHER_SKELETON' }
+    if ($Text -match '동굴 거미') { return 'CAVE_SPIDER' }
+    if ($Text -match '피글린 브루트') { return 'PIGLIN_BRUTE' }
+    if ($Text -match '아이언 골렘|철 골렘') { return 'IRON_GOLEM' }
+    if ($Text -match '마그마 큐브') { return 'MAGMA_CUBE' }
+    $map = [ordered]@{
+        '좀비'='ZOMBIE';'거미'='SPIDER';'스켈레톤'='SKELETON';'허스크'='HUSK';'크리퍼'='CREEPER';'드라운드'='DROWNED'
+        '팬텀'='PHANTOM';'빈디케이터'='VINDICATOR';'마녀'='WITCH';'엔더맨'='ENDERMAN';'스트레이'='STRAY';'보그드'='BOGGED'
+        '블레이즈'='BLAZE';'스니퍼'='SNIFFER';'레비저'='RAVAGER';'에보커'='EVOKER';'슬라임'='SLIME';'엔더마이트'='ENDERMITE'
+        '셜커'='SHULKER';'호글린'='HOGLIN';'알레이|allay'='ALLAY';'실버피시'='SILVERFISH'
+    }
+    foreach ($pattern in $map.Keys) { if ($Text -match $pattern) { return $map[$pattern] } }
+    return 'ZOMBIE'
+}
+function Enemy-Status([string]$Id) {
+    $map = @{
+        'EN-D5-01'='POISON';'EN-D11-01'='WEAKNESS';'EN-D11-02'='POISON';'EN-D12-01'='BURN';'EN-D13-01'='BLEED'
+        'EN-D14-02'='ROOT';'EN-D16-02'='BURN';'EN-D17-01'='SILENCE';'EN-D17-02'='DISARM'
+        'EN-D20-A01'='POISON';'EN-D20-A02'='BURN';'EN-D20-A03'='SILENCE';'EN-D20-A04'='BLEED'
+        'EN-D21-01'='CORRUPTION';'EN-D23-01'='SLOW';'EN-D47-01'='ROOT'
+    }
+    return $(if ($map.ContainsKey($Id)) {$map[$Id]} else {''})
+}
+function Enemy-DayProfile([int]$Day) {
+    if ($Day -le 3) { return 'INTRO' }; if ($Day -le 5) { return 'PRESSURE' }; if ($Day -le 7) { return 'ADAPT' }
+    if ($Day -le 9) { return 'ELITE_SIGNAL' }; if ($Day -eq 10) { return 'BOSS_DAY' }; if ($Day -le 12) { return 'STATUS_INTRO' }
+    if ($Day -le 14) { return 'STATUS_CHAIN' }; if ($Day -le 17) { return 'AUGMENT_ADAPT' }; if ($Day -le 19) { return 'ELITE_STATUS' }
+    if ($Day -eq 20) { return 'STATUS_BOSS_DAY' }; if ($Day -le 30) { return 'CORRUPTION' }; if ($Day -le 40) { return 'BREAK_LINE' }
+    return 'RECONSTRUCTION_PRESSURE'
+}
+function Enemy-Day([string]$Id) {
+    if ($Id -match '^EN-D(\d+)') { return [int]$Matches[1] }
+    return 50
+}
+function Enemy-TelegraphTicks([string]$Role) {
+    return @{CHASER=11;FLANKER=15;RANGED=14;BRUISER=22;CONTROLLER=20;ARTILLERY=24;DEFENDER=12;SUPPORT=24;ELITE=24;SIEGE=28;SUMMON=16}[$Role]
+}
+function Enemy-CooldownTicks([string]$Role) {
+    return @{CHASER=40;FLANKER=70;RANGED=60;BRUISER=80;CONTROLLER=90;ARTILLERY=100;DEFENDER=80;SUPPORT=120;ELITE=100;SIEGE=120;SUMMON=60}[$Role]
+}
 function Equipment-SetId([string]$Id) {
     if ($Id -match '^EQL-AR-C0') { return 'EQL-SET-PIONEER' }
     foreach ($set in @('SCOUT','VANGUARD','OBSERVER')) { if ($Id -match "^EQL-AR-.*-$set-") { return "EQL-SET-$set" } }
@@ -400,6 +461,10 @@ $skillRows = Read-TableRows '기획\02 플레이어 성장\SKILL-LIST 스킬 목
 $personalAugmentRows = Read-TableRows '기획\02 플레이어 성장\AUGMENT-PERSONAL-LIST Season 1 개인 증강 목록 기획서.md'
 $partyAugmentRows = Read-TableRows '기획\02 플레이어 성장\AUGMENT-PARTY-LIST Season 1 파티 증강 목록 기획서.md'
 $entityRows = Read-TableRows '기획\06 사건과 적\ENTITY-LIST Season 1 엔티티 목록 기획서.md'
+$enemyBaseRows = Read-TableRows '기획\06 사건과 적\ENEMY 적 역할 및 템플릿 기획서.md'
+$enemyD20Rows = Read-TableRows '기획\06 사건과 적\ENEMY-DATA Day 11-20 적 목록 기획서.md'
+$enemyD50Rows = Read-TableRows '기획\06 사건과 적\ENEMY-DATA Day 21-50 적 실행 데이터 기획서.md'
+$enemyDetailById = Find-IdRows @($enemyBaseRows + $enemyD20Rows + $enemyD50Rows) 'EN-(?:D\d+|F50)-[A-Z0-9]+'
 $facilityRows = Read-TableRows '기획\05 세계와 생존\FACILITY 플레이어 시설 목록 기획서.md'
 $facilityDataRows = Read-TableRows '기획\05 세계와 생존\FACILITY-DATA Day 11-50 시설 실행 데이터 기획서.md'
 $lootRows = Read-TableRows '기획\04 장비와 경제\LOOT-LIST Season 1 획득·드롭 목록 기획서.md'
@@ -696,16 +761,96 @@ $partyById = Find-IdRows $partyAugmentRows '^PAUG-\d{3}$'
 $partyAugments = foreach ($entry in $partyById.GetEnumerator()) { Compile-Augment $entry.Key 'AUG-LIST-002' $entry.Value 'PARTY' }
 
 $enemyById = Find-IdRows $entityRows '^EN-(D\d+|F50)-[A-Z0-9]+$'
-$enemies = foreach ($entry in $enemyById.GetEnumerator()) { Raw-Record $entry.Key 'ENTITY-LIST-001' $entry.Value }
-$bossById = Find-IdRows $entityRows '^BOSS-D(10|20|30|40)$'
-$bosses = foreach ($entry in $bossById.GetEnumerator()) { Raw-Record $entry.Key 'ENTITY-LIST-001' $entry.Value }
-$supportById = Find-IdRows $entityRows '^ENT-[A-Z0-9-]+$'
-$supportEntities = foreach ($entry in $supportById.GetEnumerator()) { Raw-Record $entry.Key 'ENTITY-LIST-001' $entry.Value }
-$actions = foreach ($enemy in $enemies) {
-    $actionId = @($enemy.raw | Where-Object { $_ -match '^ACT-' } | Select-Object -First 1)
-    Raw-Record $(if ($actionId.Count) { $actionId[0] } else { 'ACT-' + $enemy.id }) 'ENTITY-LIST-001' @($enemy.id)
+$enemies = foreach ($entry in $enemyById.GetEnumerator()) {
+    $id = $entry.Key; $registry = $entry.Value; $detail = $enemyDetailById[$id]; $day = Enemy-Day $id
+    if (-not $detail) { throw "Enemy execution data missing: $id" }
+    $isD20Summon = $id -match '^EN-D20-A'; $isFinalSummon = $id -match '^EN-F50-A'
+    $role = 'CHASER'; $budgetCost = 1; $hp = 300.0; $defence = 25.0; $attack = 80.0; $penetration = 0.0
+    $breakMax = 0.0; $augmentSlots = 0; $appearance = ''; $primary = '기본 공격'
+    if ($isFinalSummon) {
+        $appearance = $detail[1]; $hp = First-Number (($detail[2] -split '/')[0]) 1800
+        $attack = First-Number (($detail[2] -split '/')[1]) 120; $primary = $detail[3]; $role = 'SUMMON'; $budgetCost = 0
+    } elseif ($isD20Summon) {
+        $appearance = $detail[2]; $hp = First-Number (($detail[3] -split '/')[0]) 1100
+        $defence = First-Number (($detail[3] -split '/')[1]) 40; $attack = Max-Number $detail[4] 80
+        $primary = $detail[4]; $role = 'SUMMON'; $budgetCost = 0
+    } elseif ($detail[0] -ne $id) {
+        $appearance = $detail[1]; $day = [int](First-Number $detail[2] $day)
+        if ($detail[3] -match '^([A-Z]+)·(\d+)$') { $role = $Matches[1]; $budgetCost = [int]$Matches[2] }
+        $hp = First-Number (($detail[4] -split '/')[0]) 1000; $defence = First-Number (($detail[4] -split '/')[1]) 60
+        $attack = First-Number (($detail[5] -split '/')[0]) 120; $penetration = First-Number (($detail[5] -split '/')[1]) 0
+        $breakMax = First-Number $detail[6] 1000; $augmentSlots = [int](First-Number $detail[7] 0); $primary = $detail[5]
+    } else {
+        $appearance = $detail[2]
+        if ($detail[3] -match '^([A-Z]+)·(\d+)$') { $role = $Matches[1]; $budgetCost = [int]$Matches[2] }
+        $hp = First-Number (($detail[4] -split '/')[0]) 300; $defence = First-Number (($detail[4] -split '/')[1]) 25
+        $attack = First-Number $detail[5] 80; $breakMax = First-Number $detail[6] 0; $day = [int](First-Number $detail[7] $day); $primary = $detail[5]
+    }
+    $elite = $role -eq 'ELITE' -or $id -match '-E\d+'
+    $noReward = $registry[4] -eq 'LOOT-NONE'
+    $range = if ($role -in @('RANGED','ARTILLERY','SUPPORT','CONTROLLER')) {16.0} elseif ($role -eq 'SIEGE') {5.0} else {3.2}
+    $flags = if ($noReward) { @('NO_REWARD','NO_SAMPLE','NO_AUGMENT_TRIGGER') } elseif ($elite) { @('ELITE','SAMPLE_ELIGIBLE') } else { @('COMBAT_REWARD') }
+    [ordered]@{
+        id=$id;sourceDocumentId=$registry[2];enabled=$true;name=(Enemy-Name $id $detail);kind=$registry[1]
+        bukkitType=(Enemy-BukkitType $appearance);displayFallback=$appearance;firstDay=$day;dayProfile=(Enemy-DayProfile $day)
+        role=$role;budgetCost=$budgetCost;baseHp=$hp;defence=$defence;attackDamage=$attack;penetration=$penetration
+        breakMax=$breakMax;augmentSlots=$augmentSlots;elite=$elite;actionBundleId=$registry[3];primaryActionName=$primary
+        telegraphTicks=(Enemy-TelegraphTicks $role);cooldownTicks=(Enemy-CooldownTicks $role);attackRange=$range;statusId=(Enemy-Status $id)
+        spawnPolicy=$(if ($noReward) {'PARENT_OWNED'} else {'ENCOUNTER_BUDGET'});parentId=$(if ($isD20Summon) {'BOSS-D20'} elseif ($isFinalSummon) {'FINAL-D50'} else {''})
+        cleanupPolicy=$registry[5];rewardOwner=$(if ($noReward) {'PARENT'} else {'CONTRIBUTORS'});lootTableId=$registry[4]
+        activityExp=$(if ($noReward) {0} elseif ($elite) {90} elseif ($budgetCost -le 1) {8} elseif ($budgetCost -le 2) {12} else {20})
+        flags=[string[]]$flags;raw=@($detail)
+    }
 }
-foreach ($boss in $bosses) { $actions += Raw-Record ('ACTSET-' + $boss.id) 'ENTITY-LIST-001' @($boss.id) }
+$bossById = Find-IdRows $entityRows '^BOSS-D(10|20|30|40)$'
+$bossStats = @{
+    'BOSS-D10'=@{HP=105000;DEF=70;BREAK=10000;ATK=180;RANGE=5.0;TELEGRAPH=26;COOLDOWN=90}
+    'BOSS-D20'=@{HP=175000;DEF=105;BREAK=14000;ATK=200;RANGE=6.0;TELEGRAPH=28;COOLDOWN=100}
+    'BOSS-D30'=@{HP=360000;DEF=150;BREAK=20000;ATK=260;RANGE=8.0;TELEGRAPH=30;COOLDOWN=110}
+    'BOSS-D40'=@{HP=650000;DEF=190;BREAK=30000;ATK=340;RANGE=9.0;TELEGRAPH=32;COOLDOWN=120}
+}
+$bosses = foreach ($entry in $bossById.GetEnumerator()) {
+    $id = $entry.Key; $cells = $entry.Value; $stats = $bossStats[$id]; $day = [int]($id -replace '^BOSS-D','')
+    [ordered]@{
+        id=$id;sourceDocumentId=('BOSS-D{0:D2}-001' -f $day);enabled=$true;name=$cells[1];kind='BOSS'
+        bukkitType=(Enemy-BukkitType $cells[2]);displayFallback=$cells[2];firstDay=$day;dayProfile='BOSS_DAY'
+        role='BOSS';budgetCost=0;baseHp=$stats.HP;defence=$stats.DEF;attackDamage=$stats.ATK;penetration=0
+        breakMax=$stats.BREAK;augmentSlots=0;elite=$true;actionBundleId=$cells[3];entitySetId=$cells[4]
+        telegraphTicks=$stats.TELEGRAPH;cooldownTicks=$stats.COOLDOWN;attackRange=$stats.RANGE;statusId=''
+        spawnPolicy='BOSS_CALL_TRANSACTION';cleanupPolicy='BOSS_END';rewardOwner='CONTRIBUTORS';lootTableId=$cells[5]
+        activityExp=(1000 + $day * 50);flags=@('BOSS','NO_DYNAMIC_AUGMENT');raw=@($cells)
+    }
+}
+$supportById = Find-IdRows $entityRows '^ENT-[A-Z0-9-]+$'
+$supportEntities = foreach ($entry in $supportById.GetEnumerator()) {
+    $cells = $entry.Value; $fallback = $cells[2]
+    $type = @('ARROW','SNOWBALL','TRIDENT','FIREWORK_ROCKET','BLOCK_DISPLAY','TEXT_DISPLAY','INTERACTION','ITEM_DISPLAY','ZOMBIE','SKELETON','SLIME','AREA_EFFECT_CLOUD','SHULKER_BULLET','IRON_GOLEM') |
+        Where-Object { $fallback -match [regex]::Escape(($_ -replace '_ROCKET','')) } | Select-Object -First 1
+    if (-not $type) { $type = 'INTERACTION' }
+    [ordered]@{
+        id=$entry.Key;sourceDocumentId='ENTITY-LIST-001';enabled=$true;kind=$cells[1];bukkitType=$type
+        displayFallback=$fallback;cleanupPolicy=$cells[3];lootTableId=$cells[4];ownerPolicy=$(if ($entry.Key -like 'ENT-PROJ-PLAYER-*') {'PLAYER'} elseif ($entry.Key -like 'ENT-B*' -or $entry.Key -like 'ENT-F50-*') {'PARENT'} else {'SYSTEM'})
+        persistent=($entry.Key -eq 'ENT-NODE-RECONSTRUCTION');raw=@($cells)
+    }
+}
+$actions = foreach ($enemy in $enemies) {
+    [ordered]@{
+        id=$enemy.actionBundleId;sourceDocumentId=$enemy.sourceDocumentId;enabled=$true;ownerId=$enemy.id;kind='ENEMY_ACTION_BUNDLE'
+        actions=@([ordered]@{id=($enemy.actionBundleId + '-PRIMARY');name=$enemy.primaryActionName;telegraphTicks=$enemy.telegraphTicks;startupTicks=4
+            activeTicks=4;recoveryTicks=10;cooldownTicks=$enemy.cooldownTicks;range=$enemy.attackRange;damage=$enemy.attackDamage
+            penetration=$enemy.penetration;breakDamage=[Math]::Max(0,[Math]::Round($enemy.breakMax * 0.08));statusId=$enemy.statusId})
+        stateMachine=@('READY','TELEGRAPH','STARTUP','ACTIVE','RECOVERY');raw=@($enemy.raw)
+    }
+}
+foreach ($boss in $bosses) {
+    $actions += [ordered]@{
+        id=$boss.actionBundleId;sourceDocumentId=$boss.sourceDocumentId;enabled=$true;ownerId=$boss.id;kind='BOSS_ACTION_SET'
+        actions=@([ordered]@{id=($boss.actionBundleId + '-PRIMARY');name='보스 기본 패턴';telegraphTicks=$boss.telegraphTicks;startupTicks=6
+            activeTicks=6;recoveryTicks=16;cooldownTicks=$boss.cooldownTicks;range=$boss.attackRange;damage=$boss.attackDamage
+            penetration=$boss.penetration;breakDamage=[Math]::Round($boss.breakMax * 0.05);statusId=''})
+        stateMachine=@('READY','TELEGRAPH','STARTUP','ACTIVE','RECOVERY');raw=@($boss.raw)
+    }
+}
 
 $facilityById = Find-IdRows $facilityRows '^FAC-[PCSDR]\d{2}$'
 $facilityDataById = Find-IdRows $facilityDataRows 'FAC-[SD]\d{2}'
@@ -772,10 +917,6 @@ if (@($codex.codexIndex | Group-Object | Where-Object Count -ne 1).Count -ne 0) 
 
 $days = 1..50 | ForEach-Object { [ordered]@{ id=('DAY-{0:D2}' -f $_); sourceDocumentId='CONTENT-DATA-D50-001'; enabled=$true; day=$_; finalAvailable=($_ -ge 50) } }
 $endless = @([ordered]@{ id='DAY-51-PLUS'; sourceDocumentId='CONTENT-DATA-D50-001'; enabled=$true; firstDay=51; repeatPolicy='ENDLESS' })
-function Enemy-Day([string]$Id) {
-    if ($Id -match '^EN-D(\d+)') { return [int]$Matches[1] }
-    return 50
-}
 $enemyD10 = @($enemies | Where-Object { (Enemy-Day $_.id) -le 10 })
 $enemyD20 = @($enemies | Where-Object { (Enemy-Day $_.id) -ge 11 -and (Enemy-Day $_.id) -le 20 })
 $enemyD50 = @($enemies | Where-Object { (Enemy-Day $_.id) -ge 21 })

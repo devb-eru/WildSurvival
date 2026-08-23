@@ -5,458 +5,2254 @@
   "records": [
     {
       "id": "ACT-EN-D1-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D1-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D1-01-PRIMARY",
+          "name": "할퀴기 80",
+          "telegraphTicks": 11,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 40,
+          "range": 3.2,
+          "damage": 80.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D1-01"
+        "EN-D1-01",
+        "굶주린 배회자",
+        "좀비",
+        "CHASER·1",
+        "300/25",
+        "할퀴기 80",
+        "없음",
+        "1"
       ]
     },
     {
       "id": "ACT-EN-D1-02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D1-02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D1-02-PRIMARY",
+          "name": "도약 90",
+          "telegraphTicks": 15,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 70,
+          "range": 3.2,
+          "damage": 90.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D1-02"
+        "EN-D1-02",
+        "측면 거미",
+        "거미",
+        "FLANKER·1",
+        "240/15",
+        "도약 90",
+        "없음",
+        "1"
       ]
     },
     {
       "id": "ACT-EN-D11-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D11-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D11-01-PRIMARY",
+          "name": "할퀴기 92 + WEAKNESS",
+          "telegraphTicks": 11,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 40,
+          "range": 3.2,
+          "damage": 92.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": "WEAKNESS"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D11-01"
+        "EN-D11-01",
+        "쇠약 배회자",
+        "좀비",
+        "CHASER·1",
+        "380/30",
+        "할퀴기 92 + WEAKNESS",
+        "없음",
+        "11"
       ]
     },
     {
       "id": "ACT-EN-D11-02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D11-02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D11-02-PRIMARY",
+          "name": "독침 78 + POISON",
+          "telegraphTicks": 14,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 60,
+          "range": 16.0,
+          "damage": 78.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": "POISON"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D11-02"
+        "EN-D11-02",
+        "독침 사수",
+        "보그드",
+        "RANGED·2",
+        "320/20",
+        "독침 78 + POISON",
+        "없음",
+        "11"
       ]
     },
     {
       "id": "ACT-EN-D12-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D12-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D12-01-PRIMARY",
+          "name": "열핵 125 + BURN 지대",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 100,
+          "range": 16.0,
+          "damage": 125.0,
+          "penetration": 0.0,
+          "breakDamage": 56,
+          "statusId": "BURN"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D12-01"
+        "EN-D12-01",
+        "잔불 포자체",
+        "블레이즈",
+        "ARTILLERY·4",
+        "420/30",
+        "열핵 125 + BURN 지대",
+        "700",
+        "12"
       ]
     },
     {
       "id": "ACT-EN-D12-02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D12-02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D12-02-PRIMARY",
+          "name": "방패 밀기 85, 갑피 강타 135",
+          "telegraphTicks": 12,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 80,
+          "range": 3.2,
+          "damage": 85.0,
+          "penetration": 0.0,
+          "breakDamage": 88,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D12-02"
+        "EN-D12-02",
+        "충격 갑피병",
+        "허스크",
+        "DEFENDER·4",
+        "820/75",
+        "방패 밀기 85, 갑피 강타 135",
+        "1,100",
+        "12"
       ]
     },
     {
       "id": "ACT-EN-D13-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D13-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D13-01-PRIMARY",
+          "name": "열상 도약 105 + BLEED",
+          "telegraphTicks": 15,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 70,
+          "range": 3.2,
+          "damage": 105.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": "BLEED"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D13-01"
+        "EN-D13-01",
+        "혈흔 추적자",
+        "동굴 거미",
+        "FLANKER·2",
+        "430/25",
+        "열상 도약 105 + BLEED",
+        "없음",
+        "13"
       ]
     },
     {
       "id": "ACT-EN-D13-02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D13-02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D13-02-PRIMARY",
+          "name": "분류 구체 60, 상태 증폭",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 120,
+          "range": 16.0,
+          "damage": 60.0,
+          "penetration": 0.0,
+          "breakDamage": 60,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D13-02"
+        "EN-D13-02",
+        "반응 조율자",
+        "마녀",
+        "SUPPORT·4",
+        "500/35",
+        "분류 구체 60, 상태 증폭",
+        "750",
+        "13"
       ]
     },
     {
       "id": "ACT-EN-D14-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D14-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D14-01-PRIMARY",
+          "name": "횡베기 135, 처형 강타 190",
+          "telegraphTicks": 22,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 80,
+          "range": 3.2,
+          "damage": 135.0,
+          "penetration": 0.0,
+          "breakDamage": 112,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D14-01"
+        "EN-D14-01",
+        "붉은 처형자",
+        "빈디케이터",
+        "BRUISER·4",
+        "1,050/70",
+        "횡베기 135, 처형 강타 190",
+        "1,400",
+        "14"
       ]
     },
     {
       "id": "ACT-EN-D14-02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D14-02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D14-02-PRIMARY",
+          "name": "결박선 80 + ROOT",
+          "telegraphTicks": 20,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 90,
+          "range": 16.0,
+          "damage": 80.0,
+          "penetration": 0.0,
+          "breakDamage": 64,
+          "statusId": "ROOT"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D14-02"
+        "EN-D14-02",
+        "구조 결박자",
+        "스트레이",
+        "CONTROLLER·4",
+        "520/35",
+        "결박선 80 + ROOT",
+        "800",
+        "14"
       ]
     },
     {
       "id": "ACT-EN-D15-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D15-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D15-01-PRIMARY",
+          "name": "밀치기 125, 방벽 전개",
+          "telegraphTicks": 12,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 80,
+          "range": 3.2,
+          "damage": 125.0,
+          "penetration": 0.0,
+          "breakDamage": 104,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D15-01"
+        "EN-D15-01",
+        "공명 방벽체",
+        "피글린 브루트",
+        "DEFENDER·4",
+        "980/90",
+        "밀치기 125, 방벽 전개",
+        "1,300",
+        "15"
       ]
     },
     {
       "id": "ACT-EN-D15-02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D15-02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D15-02-PRIMARY",
+          "name": "공명탄 85, 증강 신호",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 120,
+          "range": 16.0,
+          "damage": 85.0,
+          "penetration": 0.0,
+          "breakDamage": 68,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D15-02"
+        "EN-D15-02",
+        "과부하 전령",
+        "필리저",
+        "SUPPORT·4",
+        "560/40",
+        "공명탄 85, 증강 신호",
+        "850",
+        "15"
       ]
     },
     {
       "id": "ACT-EN-D16-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D16-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D16-01-PRIMARY",
+          "name": "출현 충격 145, 상태 구름",
+          "telegraphTicks": 20,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 90,
+          "range": 16.0,
+          "damage": 145.0,
+          "penetration": 0.0,
+          "breakDamage": 100,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D16-01"
+        "EN-D16-01",
+        "잠복 안개체",
+        "스니퍼",
+        "CONTROLLER·6",
+        "900/55",
+        "출현 충격 145, 상태 구름",
+        "1,250",
+        "16"
       ]
     },
     {
       "id": "ACT-EN-D16-02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D16-02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D16-02-PRIMARY",
+          "name": "충돌 105 + BURN",
+          "telegraphTicks": 11,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 40,
+          "range": 3.2,
+          "damage": 105.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": "BURN"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D16-02"
+        "EN-D16-02",
+        "열성 운반체",
+        "마그마 큐브",
+        "CHASER·2",
+        "460/45",
+        "충돌 105 + BURN",
+        "없음",
+        "16"
       ]
     },
     {
       "id": "ACT-EN-D17-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D17-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D17-01-PRIMARY",
+          "name": "음파선 95 + SILENCE",
+          "telegraphTicks": 20,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 90,
+          "range": 16.0,
+          "damage": 95.0,
+          "penetration": 0.0,
+          "breakDamage": 116,
+          "statusId": "SILENCE"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D17-01"
+        "EN-D17-01",
+        "침묵 울음체",
+        "레비저+리소스 팩",
+        "CONTROLLER·4",
+        "1,150/75",
+        "음파선 95 + SILENCE",
+        "1,450",
+        "17"
       ]
     },
     {
       "id": "ACT-EN-D17-02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D17-02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D17-02-PRIMARY",
+          "name": "절단 145 + DISARM 예고",
+          "telegraphTicks": 22,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 80,
+          "range": 3.2,
+          "damage": 145.0,
+          "penetration": 0.0,
+          "breakDamage": 112,
+          "statusId": "DISARM"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D17-02"
+        "EN-D17-02",
+        "무장 절단자",
+        "위더 스켈레톤",
+        "BRUISER·4",
+        "1,080/80",
+        "절단 145 + DISARM 예고",
+        "1,400",
+        "17"
       ]
     },
     {
       "id": "ACT-EN-D18-E01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D18-E01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D18-E01-PRIMARY",
+          "name": "1,800",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 100,
+          "range": 3.2,
+          "damage": 1800.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D18-E01"
+        "EN-D18-E01",
+        "상태 봉합 정예",
+        "엔더맨",
+        "ELITE·10",
+        "4,200/95",
+        "1,800",
+        "MUT_CLING` 2, Lv15 잠금 증강 최대 1",
+        "18"
       ]
     },
     {
       "id": "ACT-EN-D18-E02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D18-E02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D18-E02-PRIMARY",
+          "name": "1,650",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 100,
+          "range": 3.2,
+          "damage": 1650.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D18-E02"
+        "EN-D18-E02",
+        "침묵 군락 정예",
+        "에보커",
+        "ELITE·10",
+        "3,900/80",
+        "1,650",
+        "MUT_SILENCE_CRY` 2, 잠금 증강 최대 1",
+        "18"
       ]
     },
     {
       "id": "ACT-EN-D19-E01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D19-E01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D19-E01-PRIMARY",
+          "name": "2,050",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 100,
+          "range": 3.2,
+          "damage": 2050.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D19-E01"
+        "EN-D19-E01",
+        "신경 호위 정예",
+        "레비저",
+        "ELITE·9",
+        "4,700/110",
+        "2,050",
+        "MUT_BREAK_SHELL` 1, 잠금 증강 최대 2",
+        "19"
       ]
     },
     {
       "id": "ACT-EN-D2-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D2-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D2-01-PRIMARY",
+          "name": "화살 75",
+          "telegraphTicks": 14,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 60,
+          "range": 16.0,
+          "damage": 75.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D2-01"
+        "EN-D2-01",
+        "뼈 사수",
+        "스켈레톤",
+        "RANGED·2",
+        "220/15",
+        "화살 75",
+        "없음",
+        "2"
       ]
     },
     {
       "id": "ACT-EN-D20-A01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D20-A01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D20-A01-PRIMARY",
+          "name": "0.8초 원형 독 분사 80, POISON 1",
+          "telegraphTicks": 16,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 60,
+          "range": 3.2,
+          "damage": 80.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": "POISON"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D20-A01"
+        "EN-D20-A01",
+        "독성 접합편",
+        "슬라임",
+        "1,100/40",
+        "0.8초 원형 독 분사 80, POISON 1",
+        "없음"
       ]
     },
     {
       "id": "ACT-EN-D20-A02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D20-A02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D20-A02-PRIMARY",
+          "name": "0.9초 선형 열파 90, BURN 1",
+          "telegraphTicks": 16,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 60,
+          "range": 3.2,
+          "damage": 90.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": "BURN"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D20-A02"
+        "EN-D20-A02",
+        "열성 접합편",
+        "마그마 큐브",
+        "1,100/40",
+        "0.9초 선형 열파 90, BURN 1",
+        "없음"
       ]
     },
     {
       "id": "ACT-EN-D20-A03",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D20-A03",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D20-A03-PRIMARY",
+          "name": "1.0초 직선 차단 65, SILENCE 0.8초",
+          "telegraphTicks": 16,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 60,
+          "range": 3.2,
+          "damage": 65.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": "SILENCE"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D20-A03"
+        "EN-D20-A03",
+        "신경 접합편",
+        "엔더마이트",
+        "950/35",
+        "1.0초 직선 차단 65, SILENCE 0.8초",
+        "없음"
       ]
     },
     {
       "id": "ACT-EN-D20-A04",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D20-001",
       "enabled": true,
+      "ownerId": "EN-D20-A04",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D20-A04-PRIMARY",
+          "name": "0.7초 도약 85, BLEED 1",
+          "telegraphTicks": 16,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 60,
+          "range": 3.2,
+          "damage": 85.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": "BLEED"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D20-A04"
+        "EN-D20-A04",
+        "혈성 접합편",
+        "동굴 거미",
+        "1,000/35",
+        "0.7초 도약 85, BLEED 1",
+        "없음"
       ]
     },
     {
       "id": "ACT-EN-D21-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D21-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D21-01-PRIMARY",
+          "name": "150/18",
+          "telegraphTicks": 11,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 40,
+          "range": 3.2,
+          "damage": 150.0,
+          "penetration": 18.0,
+          "breakDamage": 104,
+          "statusId": "CORRUPTION"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D21-01"
+        "EN-D21-01` 오염 운반자",
+        "허스크",
+        "21",
+        "CHASER·3",
+        "1,200/90",
+        "150/18",
+        "1,300",
+        "1"
       ]
     },
     {
       "id": "ACT-EN-D22-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D22-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D22-01-PRIMARY",
+          "name": "145/20",
+          "telegraphTicks": 15,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 70,
+          "range": 3.2,
+          "damage": 145.0,
+          "penetration": 20.0,
+          "breakDamage": 88,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D22-01"
+        "EN-D22-01` 변이 모사체",
+        "엔더맨",
+        "22",
+        "FLANKER·4",
+        "1,050/75",
+        "145/20",
+        "1,100",
+        "1"
       ]
     },
     {
       "id": "ACT-EN-D23-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D23-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D23-01-PRIMARY",
+          "name": "90/15",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 120,
+          "range": 16.0,
+          "damage": 90.0,
+          "penetration": 15.0,
+          "breakDamage": 100,
+          "statusId": "SLOW"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D23-01"
+        "EN-D23-01` 정화 기생체",
+        "동굴 거미+Display",
+        "23",
+        "SUPPORT·5",
+        "1,100/70",
+        "90/15",
+        "1,250",
+        "1"
       ]
     },
     {
       "id": "ACT-EN-D24-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D24-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D24-01-PRIMARY",
+          "name": "190/25",
+          "telegraphTicks": 28,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 120,
+          "range": 5.0,
+          "damage": 190.0,
+          "penetration": 25.0,
+          "breakDamage": 176,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D24-01"
+        "EN-D24-01` 저장고 추적자",
+        "레비저 축소",
+        "24",
+        "SIEGE·7",
+        "2,200/120",
+        "190/25",
+        "2,200",
+        "1"
       ]
     },
     {
       "id": "ACT-EN-D27-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D27-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D27-01-PRIMARY",
+          "name": "110/20",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 120,
+          "range": 16.0,
+          "damage": 110.0,
+          "penetration": 20.0,
+          "breakDamage": 128,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D27-01"
+        "EN-D27-01` 정화 방해자",
+        "에보커",
+        "27",
+        "SUPPORT·6",
+        "1,450/85",
+        "110/20",
+        "1,600",
+        "1"
       ]
     },
     {
       "id": "ACT-EN-D28-E01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D28-E01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D28-E01-PRIMARY",
+          "name": "210/30",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 100,
+          "range": 3.2,
+          "damage": 210.0,
+          "penetration": 30.0,
+          "breakDamage": 256,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D28-E01"
+        "EN-D28-E01` 변이 지도 정예",
+        "피글린 브루트+Display",
+        "28",
+        "ELITE·14",
+        "8,500/145",
+        "210/30",
+        "3,200",
+        "2"
       ]
     },
     {
       "id": "ACT-EN-D31-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D31-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D31-01-PRIMARY",
+          "name": "195/30",
+          "telegraphTicks": 12,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 80,
+          "range": 3.2,
+          "damage": 195.0,
+          "penetration": 30.0,
+          "breakDamage": 208,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D31-01"
+        "EN-D31-01` 중장 채널러",
+        "아이언 골렘 축소",
+        "31",
+        "DEFENDER·6",
+        "2,800/160",
+        "195/30",
+        "2,600",
+        "1"
       ]
     },
     {
       "id": "ACT-EN-D33-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D33-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D33-01-PRIMARY",
+          "name": "230/35",
+          "telegraphTicks": 28,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 120,
+          "range": 5.0,
+          "damage": 230.0,
+          "penetration": 35.0,
+          "breakDamage": 272,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D33-01"
+        "EN-D33-01` 시설 천공자",
+        "레비저+철퇴 Display",
+        "33",
+        "SIEGE·10",
+        "4,200/175",
+        "230/35",
+        "3,400",
+        "1"
       ]
     },
     {
       "id": "ACT-EN-D34-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D34-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D34-01-PRIMARY",
+          "name": "215/32",
+          "telegraphTicks": 22,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 80,
+          "range": 3.2,
+          "damage": 215.0,
+          "penetration": 32.0,
+          "breakDamage": 200,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D34-01"
+        "EN-D34-01` 패링 학습체",
+        "빈디케이터",
+        "34",
+        "BRUISER·6",
+        "2,500/145",
+        "215/32",
+        "2,500",
+        "1"
       ]
     },
     {
       "id": "ACT-EN-D37-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D37-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D37-01-PRIMARY",
+          "name": "120/22",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 120,
+          "range": 16.0,
+          "damage": 120.0,
+          "penetration": 22.0,
+          "breakDamage": 168,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D37-01"
+        "EN-D37-01` 브레이크 봉합자",
+        "마녀+공진 Display",
+        "37",
+        "SUPPORT·7",
+        "2,100/105",
+        "120/22",
+        "2,100",
+        "2"
       ]
     },
     {
       "id": "ACT-EN-D38-E01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D38-E01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D38-E01-PRIMARY",
+          "name": "260/42",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 100,
+          "range": 3.2,
+          "damage": 260.0,
+          "penetration": 42.0,
+          "breakDamage": 384,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D38-E01"
+        "EN-D38-E01` 위상 장갑 정예",
+        "셜커+이동 코어",
+        "38",
+        "ELITE·16",
+        "13,000/210",
+        "260/42",
+        "4,800",
+        "2"
       ]
     },
     {
       "id": "ACT-EN-D4-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D4-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D4-01-PRIMARY",
+          "name": "밀치기 115, 강타 150",
+          "telegraphTicks": 22,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 80,
+          "range": 3.2,
+          "damage": 115.0,
+          "penetration": 0.0,
+          "breakDamage": 64,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D4-01"
+        "EN-D4-01",
+        "부패한 강타자",
+        "허스크",
+        "BRUISER·3",
+        "650/45",
+        "밀치기 115, 강타 150",
+        "800",
+        "4"
       ]
     },
     {
       "id": "ACT-EN-D4-02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D4-02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D4-02-PRIMARY",
+          "name": "공명 폭발 180",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 100,
+          "range": 16.0,
+          "damage": 180.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D4-02"
+        "EN-D4-02",
+        "불안정 폭발체",
+        "크리퍼",
+        "ARTILLERY·3",
+        "300/20",
+        "공명 폭발 180",
+        "없음",
+        "4"
       ]
     },
     {
       "id": "ACT-EN-D41-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D41-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D41-01-PRIMARY",
+          "name": "150/28",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 120,
+          "range": 16.0,
+          "damage": 150.0,
+          "penetration": 28.0,
+          "breakDamage": 208,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D41-01"
+        "EN-D41-01` 복합 전령",
+        "에보커",
+        "41",
+        "SUPPORT·8",
+        "2,800/120",
+        "150/28",
+        "2,600",
+        "2"
       ]
     },
     {
       "id": "ACT-EN-D44-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D44-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D44-01-PRIMARY",
+          "name": "280/45",
+          "telegraphTicks": 28,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 120,
+          "range": 5.0,
+          "damage": 280.0,
+          "penetration": 45.0,
+          "breakDamage": 336,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D44-01"
+        "EN-D44-01` 분할 침입체",
+        "호글린",
+        "44",
+        "SIEGE·12",
+        "5,800/205",
+        "280/45",
+        "4,200",
+        "2"
       ]
     },
     {
       "id": "ACT-EN-D46-E01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D46-E01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D46-E01-PRIMARY",
+          "name": "310/50",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 100,
+          "range": 3.2,
+          "damage": 310.0,
+          "penetration": 50.0,
+          "breakDamage": 448,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D46-E01"
+        "EN-D46-E01` 잔향 추적 정예",
+        "레비저+다중 Display",
+        "46",
+        "ELITE·18",
+        "18,000/235",
+        "310/50",
+        "5,600",
+        "3"
       ]
     },
     {
       "id": "ACT-EN-D47-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D47-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D47-01-PRIMARY",
+          "name": "180/35",
+          "telegraphTicks": 20,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 90,
+          "range": 16.0,
+          "damage": 180.0,
+          "penetration": 35.0,
+          "breakDamage": 240,
+          "statusId": "ROOT"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D47-01"
+        "EN-D47-01` 이동 방해자",
+        "스트레이",
+        "47",
+        "CONTROLLER·8",
+        "3,400/135",
+        "180/35",
+        "3,000",
+        "2"
       ]
     },
     {
       "id": "ACT-EN-D49-E01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-D49-E01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D49-E01-PRIMARY",
+          "name": "340/58",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 100,
+          "range": 3.2,
+          "damage": 340.0,
+          "penetration": 58.0,
+          "breakDamage": 544,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D49-E01"
+        "EN-D49-E01` 붕괴 문지기",
+        "워든 미사용, 아이언 골렘+Display",
+        "49",
+        "ELITE·20",
+        "24,000/260",
+        "340/58",
+        "6,800",
+        "3"
       ]
     },
     {
       "id": "ACT-EN-D5-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D5-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D5-01-PRIMARY",
+          "name": "물기 55 + POISON",
+          "telegraphTicks": 20,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 90,
+          "range": 16.0,
+          "damage": 55.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": "POISON"
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D5-01"
+        "EN-D5-01",
+        "오염 송곳니",
+        "동굴 거미",
+        "CONTROLLER·3",
+        "280/20",
+        "물기 55 + POISON",
+        "없음",
+        "5"
       ]
     },
     {
       "id": "ACT-EN-D6-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D6-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D6-01-PRIMARY",
+          "name": "삼지창 선 85, 끌기",
+          "telegraphTicks": 20,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 90,
+          "range": 16.0,
+          "damage": 85.0,
+          "penetration": 0.0,
+          "breakDamage": 52,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D6-01"
+        "EN-D6-01",
+        "침수 견인자",
+        "드라운드",
+        "CONTROLLER·3",
+        "380/35",
+        "삼지창 선 85, 끌기",
+        "650",
+        "6"
       ]
     },
     {
       "id": "ACT-EN-D6-02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D6-02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D6-02-PRIMARY",
+          "name": "급강하 95",
+          "telegraphTicks": 15,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 70,
+          "range": 3.2,
+          "damage": 95.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D6-02"
+        "EN-D6-02",
+        "공중 포착자",
+        "팬텀",
+        "FLANKER·2",
+        "260/20",
+        "급강하 95",
+        "없음",
+        "6"
       ]
     },
     {
       "id": "ACT-EN-D7-01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D7-01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D7-01-PRIMARY",
+          "name": "방패 밀기 70, 베기 120",
+          "telegraphTicks": 12,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 80,
+          "range": 3.2,
+          "damage": 70.0,
+          "penetration": 0.0,
+          "breakDamage": 76,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D7-01"
+        "EN-D7-01",
+        "철편 방어자",
+        "빈디케이터",
+        "DEFENDER·3",
+        "700/70",
+        "방패 밀기 70, 베기 120",
+        "950",
+        "7"
       ]
     },
     {
       "id": "ACT-EN-D7-02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D7-02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D7-02-PRIMARY",
+          "name": "약화 구체 50",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 120,
+          "range": 16.0,
+          "damage": 50.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D7-02"
+        "EN-D7-02",
+        "포자 조율자",
+        "마녀",
+        "SUPPORT·3",
+        "360/30",
+        "약화 구체 50",
+        "없음",
+        "7"
       ]
     },
     {
       "id": "ACT-EN-D8-E01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D8-E01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D8-E01-PRIMARY",
+          "name": "연격 120, 추적 돌진 160",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 100,
+          "range": 3.2,
+          "damage": 120.0,
+          "penetration": 0.0,
+          "breakDamage": 96,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D8-E01"
+        "EN-D8-E01",
+        "공명 추적 정예",
+        "엔더맨",
+        "ELITE·8",
+        "2,600/80",
+        "연격 120, 추적 돌진 160",
+        "1,200",
+        "8"
       ]
     },
     {
       "id": "ACT-EN-D9-E01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-001",
       "enabled": true,
+      "ownerId": "EN-D9-E01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-D9-E01-PRIMARY",
+          "name": "냉각 사격 105, 선형 포화 140",
+          "telegraphTicks": 24,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 100,
+          "range": 3.2,
+          "damage": 105.0,
+          "penetration": 0.0,
+          "breakDamage": 88,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-D9-E01"
+        "EN-D9-E01",
+        "균열 호위 정예",
+        "스트레이",
+        "ELITE·8",
+        "2,300/65",
+        "냉각 사격 105, 선형 포화 140",
+        "1,100",
+        "9"
       ]
     },
     {
       "id": "ACT-EN-F50-A01",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-F50-A01",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-F50-A01-PRIMARY",
+          "name": "말뚝 4초 채널, 진행 -10",
+          "telegraphTicks": 16,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 60,
+          "range": 3.2,
+          "damage": 160.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-F50-A01"
+        "EN-F50-A01` 교정 침입체",
+        "실버피시+Display",
+        "1,800/160",
+        "말뚝 4초 채널, 진행 -10",
+        "없음"
       ]
     },
     {
       "id": "ACT-EN-F50-A02",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-F50-A02",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-F50-A02-PRIMARY",
+          "name": "FAC-R06 출력 -20, 8초",
+          "telegraphTicks": 16,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 60,
+          "range": 3.2,
+          "damage": 120.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-F50-A02"
+        "EN-F50-A02` 출력 방해자",
+        "에보커 송곳니 미사용, 마녀",
+        "2,400/120",
+        "FAC-R06 출력 -20, 8초",
+        "없음"
       ]
     },
     {
       "id": "ACT-EN-F50-A03",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-F50-A03",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-F50-A03-PRIMARY",
+          "name": "공개 패턴 축약 투사체",
+          "telegraphTicks": 16,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 60,
+          "range": 3.2,
+          "damage": 145.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-F50-A03"
+        "EN-F50-A03` 잔향 파편",
+        "vex AI 미사용, allay+Display",
+        "1,500/145",
+        "공개 패턴 축약 투사체",
+        "없음"
       ]
     },
     {
       "id": "ACT-EN-F50-A04",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "ENEMY-DATA-D50-001",
       "enabled": true,
+      "ownerId": "EN-F50-A04",
+      "kind": "ENEMY_ACTION_BUNDLE",
+      "actions": [
+        {
+          "id": "ACT-EN-F50-A04-PRIMARY",
+          "name": "임시 시설 출력 정지",
+          "telegraphTicks": 16,
+          "startupTicks": 4,
+          "activeTicks": 4,
+          "recoveryTicks": 10,
+          "cooldownTicks": 60,
+          "range": 3.2,
+          "damage": 210.0,
+          "penetration": 0.0,
+          "breakDamage": 0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "EN-F50-A04"
+        "EN-F50-A04` 공성 결절",
+        "마그마 큐브",
+        "3,200/210",
+        "임시 시설 출력 정지",
+        "없음"
       ]
     },
     {
       "id": "ACTSET-BOSS-D10",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "BOSS-D10-001",
       "enabled": true,
+      "ownerId": "BOSS-D10",
+      "kind": "BOSS_ACTION_SET",
+      "actions": [
+        {
+          "id": "ACTSET-BOSS-D10-PRIMARY",
+          "name": "보스 기본 패턴",
+          "telegraphTicks": 26,
+          "startupTicks": 6,
+          "activeTicks": 6,
+          "recoveryTicks": 16,
+          "cooldownTicks": 90,
+          "range": 5.0,
+          "damage": 180,
+          "penetration": 0,
+          "breakDamage": 500.0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "BOSS-D10"
+        "BOSS-D10",
+        "공명 추적체",
+        "RAVAGER+Display",
+        "ACTSET-BOSS-D10",
+        "ENTSET-BOSS-D10",
+        "LOOT-BOSS-D10"
       ]
     },
     {
       "id": "ACTSET-BOSS-D20",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "BOSS-D20-001",
       "enabled": true,
+      "ownerId": "BOSS-D20",
+      "kind": "BOSS_ACTION_SET",
+      "actions": [
+        {
+          "id": "ACTSET-BOSS-D20-PRIMARY",
+          "name": "보스 기본 패턴",
+          "telegraphTicks": 28,
+          "startupTicks": 6,
+          "activeTicks": 6,
+          "recoveryTicks": 16,
+          "cooldownTicks": 100,
+          "range": 6.0,
+          "damage": 200,
+          "penetration": 0,
+          "breakDamage": 700.0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "BOSS-D20"
+        "BOSS-D20",
+        "신경 접합체",
+        "IRON_GOLEM+Display",
+        "ACTSET-BOSS-D20",
+        "ENTSET-BOSS-D20",
+        "LOOT-BOSS-D20"
       ]
     },
     {
       "id": "ACTSET-BOSS-D30",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "BOSS-D30-001",
       "enabled": true,
+      "ownerId": "BOSS-D30",
+      "kind": "BOSS_ACTION_SET",
+      "actions": [
+        {
+          "id": "ACTSET-BOSS-D30-PRIMARY",
+          "name": "보스 기본 패턴",
+          "telegraphTicks": 30,
+          "startupTicks": 6,
+          "activeTicks": 6,
+          "recoveryTicks": 16,
+          "cooldownTicks": 110,
+          "range": 8.0,
+          "damage": 260,
+          "penetration": 0,
+          "breakDamage": 1000.0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "BOSS-D30"
+        "BOSS-D30",
+        "오염 섭식핵",
+        "MAGMA_CUBE+Display",
+        "ACTSET-BOSS-D30",
+        "ENTSET-BOSS-D30",
+        "LOOT-BOSS-D30"
       ]
     },
     {
       "id": "ACTSET-BOSS-D40",
-      "sourceDocumentId": "ENTITY-LIST-001",
+      "sourceDocumentId": "BOSS-D40-001",
       "enabled": true,
+      "ownerId": "BOSS-D40",
+      "kind": "BOSS_ACTION_SET",
+      "actions": [
+        {
+          "id": "ACTSET-BOSS-D40-PRIMARY",
+          "name": "보스 기본 패턴",
+          "telegraphTicks": 32,
+          "startupTicks": 6,
+          "activeTicks": 6,
+          "recoveryTicks": 16,
+          "cooldownTicks": 120,
+          "range": 9.0,
+          "damage": 340,
+          "penetration": 0,
+          "breakDamage": 1500.0,
+          "statusId": ""
+        }
+      ],
+      "stateMachine": [
+        "READY",
+        "TELEGRAPH",
+        "STARTUP",
+        "ACTIVE",
+        "RECOVERY"
+      ],
       "raw": [
-        "BOSS-D40"
+        "BOSS-D40",
+        "공진 파괴자",
+        "RAVAGER+Display",
+        "ACTSET-BOSS-D40",
+        "ENTSET-BOSS-D40",
+        "LOOT-BOSS-D40"
       ]
     }
   ]

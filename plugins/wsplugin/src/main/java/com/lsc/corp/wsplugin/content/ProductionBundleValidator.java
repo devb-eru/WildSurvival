@@ -103,6 +103,7 @@ public final class ProductionBundleValidator {
             validateItemCatalog(catalog);
             validateEquipmentProfiles(catalog);
             validateFacilityProfiles(catalog);
+            validateEntityProfiles(catalog);
             return new ValidationResult(catalog, Map.copyOf(counts), paths.size() + 2,
                     ContentBundleValidator.sha256(manifestBytes));
         } catch (ContentValidationException exception) {
@@ -247,10 +248,90 @@ public final class ProductionBundleValidator {
                 throw new ContentValidationException("Duplicate augment ID " + augment.id());
             }
         }
+        Map<String, ProductionContentCatalog.EnemyEntry> enemiesById = new LinkedHashMap<>();
+        for (String path : List.of("enemies/day01-10.json", "enemies/day11-20.json", "enemies/day21-50.json")) {
+            for (JsonObject record : records(reader, path)) {
+                ProductionContentCatalog.EnemyEntry enemy = new ProductionContentCatalog.EnemyEntry(
+                        requiredString(record, "id"), requiredString(record, "name"),
+                        requiredString(record, "bukkitType"), requiredString(record, "displayFallback"),
+                        requiredInt(record, "firstDay"), requiredString(record, "dayProfile"),
+                        requiredString(record, "role"), requiredInt(record, "budgetCost"),
+                        requiredDouble(record, "baseHp"), requiredDouble(record, "defence"),
+                        requiredDouble(record, "attackDamage"), requiredDouble(record, "penetration"),
+                        requiredDouble(record, "breakMax"), requiredInt(record, "augmentSlots"),
+                        record.get("elite").getAsBoolean(), requiredString(record, "actionBundleId"),
+                        requiredInt(record, "telegraphTicks"), requiredInt(record, "cooldownTicks"),
+                        requiredDouble(record, "attackRange"), optionalString(record, "statusId", ""),
+                        requiredString(record, "spawnPolicy"), optionalString(record, "parentId", ""),
+                        requiredString(record, "cleanupPolicy"), requiredString(record, "rewardOwner"),
+                        requiredString(record, "lootTableId"), requiredInt(record, "activityExp"),
+                        stringArray(record, "flags"));
+                if (enemiesById.putIfAbsent(enemy.id(), enemy) != null) {
+                    throw new ContentValidationException("Duplicate enemy profile " + enemy.id());
+                }
+            }
+        }
+        Map<String, ProductionContentCatalog.BossEntry> bossesById = new LinkedHashMap<>();
+        for (String path : List.of("bosses/day10.json", "bosses/day20.json", "bosses/day30.json", "bosses/day40.json")) {
+            for (JsonObject record : records(reader, path)) {
+                ProductionContentCatalog.BossEntry boss = new ProductionContentCatalog.BossEntry(
+                        requiredString(record, "id"), requiredString(record, "name"),
+                        requiredString(record, "bukkitType"), requiredString(record, "displayFallback"),
+                        requiredInt(record, "firstDay"), requiredString(record, "dayProfile"),
+                        requiredDouble(record, "baseHp"), requiredDouble(record, "defence"),
+                        requiredDouble(record, "attackDamage"), requiredDouble(record, "penetration"),
+                        requiredDouble(record, "breakMax"), requiredString(record, "actionBundleId"),
+                        requiredString(record, "entitySetId"), requiredInt(record, "telegraphTicks"),
+                        requiredInt(record, "cooldownTicks"), requiredDouble(record, "attackRange"),
+                        requiredString(record, "spawnPolicy"), requiredString(record, "cleanupPolicy"),
+                        requiredString(record, "rewardOwner"), requiredString(record, "lootTableId"),
+                        requiredInt(record, "activityExp"), stringArray(record, "flags"));
+                if (bossesById.putIfAbsent(boss.id(), boss) != null) {
+                    throw new ContentValidationException("Duplicate boss profile " + boss.id());
+                }
+            }
+        }
+        Map<String, ProductionContentCatalog.SupportEntityEntry> supportEntitiesById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "entities/support-entities.json")) {
+            ProductionContentCatalog.SupportEntityEntry support = new ProductionContentCatalog.SupportEntityEntry(
+                    requiredString(record, "id"), requiredString(record, "kind"),
+                    requiredString(record, "bukkitType"), requiredString(record, "displayFallback"),
+                    requiredString(record, "cleanupPolicy"), requiredString(record, "lootTableId"),
+                    requiredString(record, "ownerPolicy"), record.get("persistent").getAsBoolean());
+            if (supportEntitiesById.putIfAbsent(support.id(), support) != null) {
+                throw new ContentValidationException("Duplicate support entity profile " + support.id());
+            }
+        }
+        Map<String, ProductionContentCatalog.ActionBundleEntry> actionBundlesById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "skills/entity-actions.json")) {
+            List<ProductionContentCatalog.ActionEntry> actions = new ArrayList<>();
+            JsonArray values = record.getAsJsonArray("actions");
+            if (values == null || values.isEmpty()) {
+                throw new ContentValidationException("Entity action bundle is empty " + requiredString(record, "id"));
+            }
+            for (JsonElement value : values) {
+                JsonObject action = value.getAsJsonObject();
+                actions.add(new ProductionContentCatalog.ActionEntry(requiredString(action, "id"),
+                        requiredString(action, "name"), requiredInt(action, "telegraphTicks"),
+                        requiredInt(action, "startupTicks"), requiredInt(action, "activeTicks"),
+                        requiredInt(action, "recoveryTicks"), requiredInt(action, "cooldownTicks"),
+                        requiredDouble(action, "range"), requiredDouble(action, "damage"),
+                        requiredDouble(action, "penetration"), requiredDouble(action, "breakDamage"),
+                        optionalString(action, "statusId", "")));
+            }
+            ProductionContentCatalog.ActionBundleEntry bundle = new ProductionContentCatalog.ActionBundleEntry(
+                    requiredString(record, "id"), requiredString(record, "ownerId"),
+                    requiredString(record, "kind"), List.copyOf(actions), stringArray(record, "stateMachine"));
+            if (actionBundlesById.putIfAbsent(bundle.id(), bundle) != null) {
+                throw new ContentValidationException("Duplicate entity action bundle " + bundle.id());
+            }
+        }
         return new ProductionContentCatalog(List.copyOf(codex), Map.copyOf(byId), Map.copyOf(materialsById),
                 Map.copyOf(nonEquipmentItemsById), Map.copyOf(equipmentById), Map.copyOf(facilitiesById), List.copyOf(recipes),
                 Map.copyOf(byOutput), List.copyOf(skills), Map.copyOf(skillsById),
-                List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById), Map.copyOf(counts));
+                List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById),
+                Map.copyOf(enemiesById), Map.copyOf(bossesById), Map.copyOf(supportEntitiesById),
+                Map.copyOf(actionBundlesById), Map.copyOf(counts));
     }
 
     private List<ProductionContentCatalog.AugmentEntry> loadAugments(ResourceReader reader, String path) throws Exception {
@@ -550,6 +631,83 @@ public final class ProductionBundleValidator {
             }
             if (facility.reconstruction() && !"DOCUMENT_LOCK".equals(facility.hpAuthority())) {
                 throw new ContentValidationException("Reconstruction HP authority mismatch " + facility.id());
+            }
+        }
+    }
+
+    private void validateEntityProfiles(ProductionContentCatalog catalog) throws ContentValidationException {
+        if (catalog.enemiesById().size() != 53 || catalog.bossesById().size() != 4
+                || catalog.supportEntitiesById().size() != 34 || catalog.actionBundlesById().size() != 57) {
+            throw new ContentValidationException("Entity profile cardinality mismatch enemies="
+                    + catalog.enemiesById().size() + " bosses=" + catalog.bossesById().size()
+                    + " support=" + catalog.supportEntitiesById().size() + " actions="
+                    + catalog.actionBundlesById().size());
+        }
+        Set<String> roles = Set.of("CHASER", "FLANKER", "RANGED", "BRUISER", "CONTROLLER",
+                "ARTILLERY", "DEFENDER", "SUPPORT", "ELITE", "SIEGE", "SUMMON");
+        Set<String> dayProfiles = Set.of("INTRO", "PRESSURE", "ADAPT", "ELITE_SIGNAL", "BOSS_DAY",
+                "STATUS_INTRO", "STATUS_CHAIN", "AUGMENT_ADAPT", "ELITE_STATUS", "STATUS_BOSS_DAY",
+                "CORRUPTION", "BREAK_LINE", "RECONSTRUCTION_PRESSURE");
+        Set<String> statuses = Set.of("", "POISON", "WEAKNESS", "BURN", "BLEED", "ROOT",
+                "SILENCE", "DISARM", "CORRUPTION", "SLOW");
+        long noReward = 0;
+        for (ProductionContentCatalog.EnemyEntry enemy : catalog.enemiesById().values()) {
+            if (!roles.contains(enemy.role()) || !dayProfiles.contains(enemy.dayProfile())
+                    || !statuses.contains(enemy.statusId()) || enemy.name().isBlank() || enemy.bukkitType().isBlank()
+                    || enemy.firstDay() < 1 || enemy.firstDay() > 50 || enemy.baseHp() <= 0
+                    || enemy.defence() < 0 || enemy.attackDamage() <= 0 || enemy.penetration() < 0
+                    || enemy.breakMax() < 0 || enemy.augmentSlots() < 0 || enemy.augmentSlots() > 3
+                    || enemy.telegraphTicks() < 5 || enemy.cooldownTicks() <= enemy.telegraphTicks()
+                    || enemy.attackRange() <= 0 || enemy.activityExp() < 0 || enemy.flags().isEmpty()) {
+                throw new ContentValidationException("Invalid enemy profile " + enemy.id());
+            }
+            if (!catalog.actionBundlesById().containsKey(enemy.actionBundleId())) {
+                throw new ContentValidationException("Enemy action bundle missing " + enemy.id()
+                        + " -> " + enemy.actionBundleId());
+            }
+            if (!enemy.rewardsPlayers()) {
+                noReward++;
+                if (enemy.activityExp() != 0 || !enemy.flags().containsAll(
+                        List.of("NO_REWARD", "NO_SAMPLE", "NO_AUGMENT_TRIGGER"))) {
+                    throw new ContentValidationException("No-reward enemy leaks rewards " + enemy.id());
+                }
+            }
+        }
+        if (noReward != 8) throw new ContentValidationException("No-reward summon count must be 8");
+        Map<Integer, Double> expectedBossHp = Map.of(10, 105000.0, 20, 175000.0, 30, 360000.0, 40, 650000.0);
+        for (ProductionContentCatalog.BossEntry boss : catalog.bossesById().values()) {
+            if (!expectedBossHp.containsKey(boss.firstDay())
+                    || Double.compare(expectedBossHp.get(boss.firstDay()), boss.baseHp()) != 0
+                    || boss.name().isBlank() || boss.bukkitType().isBlank() || boss.defence() <= 0
+                    || boss.attackDamage() <= 0 || boss.breakMax() <= 0 || boss.telegraphTicks() < 20
+                    || boss.cooldownTicks() <= boss.telegraphTicks() || boss.attackRange() <= 0
+                    || !catalog.actionBundlesById().containsKey(boss.actionBundleId())) {
+                throw new ContentValidationException("Invalid boss profile " + boss.id());
+            }
+        }
+        Set<String> supportKinds = Set.of("PROJECTILE", "DEPLOYABLE", "UI_TRANSIENT", "RESOURCE_NODE",
+                "SUMMON", "OBJECTIVE", "TELEGRAPH", "AREA", "FINAL_BOSS");
+        for (ProductionContentCatalog.SupportEntityEntry support : catalog.supportEntitiesById().values()) {
+            if (!supportKinds.contains(support.kind()) || support.bukkitType().isBlank()
+                    || support.displayFallback().isBlank() || support.cleanupPolicy().isBlank()
+                    || !Set.of("PLAYER", "PARENT", "SYSTEM").contains(support.ownerPolicy())) {
+                throw new ContentValidationException("Invalid support entity profile " + support.id());
+            }
+        }
+        Set<String> owners = new HashSet<>(catalog.enemiesById().keySet());
+        owners.addAll(catalog.bossesById().keySet());
+        for (ProductionContentCatalog.ActionBundleEntry bundle : catalog.actionBundlesById().values()) {
+            if (!owners.contains(bundle.ownerId()) || bundle.actions().isEmpty()
+                    || !bundle.stateMachine().equals(List.of("READY", "TELEGRAPH", "STARTUP", "ACTIVE", "RECOVERY"))) {
+                throw new ContentValidationException("Invalid entity action bundle " + bundle.id());
+            }
+            for (ProductionContentCatalog.ActionEntry action : bundle.actions()) {
+                if (action.id().isBlank() || action.name().isBlank() || action.telegraphTicks() < 5
+                        || action.startupTicks() < 0 || action.activeTicks() <= 0 || action.recoveryTicks() < 0
+                        || action.cooldownTicks() <= action.telegraphTicks() || action.range() <= 0
+                        || action.damage() <= 0 || action.penetration() < 0 || action.breakDamage() < 0) {
+                    throw new ContentValidationException("Invalid entity action " + bundle.id() + " -> " + action.id());
+                }
             }
         }
     }

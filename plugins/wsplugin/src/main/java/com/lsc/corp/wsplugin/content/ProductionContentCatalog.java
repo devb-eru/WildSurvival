@@ -17,6 +17,10 @@ public record ProductionContentCatalog(
         List<AugmentEntry> personalAugments,
         List<AugmentEntry> partyAugments,
         Map<String, AugmentEntry> augmentsById,
+        Map<String, EnemyEntry> enemiesById,
+        Map<String, BossEntry> bossesById,
+        Map<String, SupportEntityEntry> supportEntitiesById,
+        Map<String, ActionBundleEntry> actionBundlesById,
         Map<String, Integer> counts
 ) {
     public CatalogEntry item(String id) {
@@ -98,4 +102,35 @@ public record ProductionContentCatalog(
             return "PERSONAL".equals(scope);
         }
     }
+
+    public record EnemyEntry(String id, String name, String bukkitType, String displayFallback,
+                             int firstDay, String dayProfile, String role, int budgetCost,
+                             double baseHp, double defence, double attackDamage, double penetration,
+                             double breakMax, int augmentSlots, boolean elite, String actionBundleId,
+                             int telegraphTicks, int cooldownTicks, double attackRange, String statusId,
+                             String spawnPolicy, String parentId, String cleanupPolicy, String rewardOwner,
+                             String lootTableId, int activityExp, List<String> flags) {
+        public boolean rewardsPlayers() {
+            return !"LOOT-NONE".equals(lootTableId) && !flags.contains("NO_REWARD");
+        }
+    }
+
+    public record BossEntry(String id, String name, String bukkitType, String displayFallback,
+                            int firstDay, String dayProfile, double baseHp, double defence,
+                            double attackDamage, double penetration, double breakMax,
+                            String actionBundleId, String entitySetId, int telegraphTicks,
+                            int cooldownTicks, double attackRange, String spawnPolicy,
+                            String cleanupPolicy, String rewardOwner, String lootTableId,
+                            int activityExp, List<String> flags) { }
+
+    public record SupportEntityEntry(String id, String kind, String bukkitType, String displayFallback,
+                                     String cleanupPolicy, String lootTableId, String ownerPolicy,
+                                     boolean persistent) { }
+
+    public record ActionBundleEntry(String id, String ownerId, String kind,
+                                    List<ActionEntry> actions, List<String> stateMachine) { }
+
+    public record ActionEntry(String id, String name, int telegraphTicks, int startupTicks,
+                              int activeTicks, int recoveryTicks, int cooldownTicks, double range,
+                              double damage, double penetration, double breakDamage, String statusId) { }
 }

@@ -180,19 +180,19 @@
       "path": "enemies/day01-10.json",
       "domain": "enemies",
       "schema": "enemy.schema.json",
-      "sha256": "66d1dc461bfc91523ecc0d6e11ef78c60f006f858a1ae00c9e339057ee635cf1"
+      "sha256": "9d38d52ff7c6b055e69a48ea77e9ee86535517c6911828509f1e601aa7178155"
     },
     {
       "path": "enemies/day11-20.json",
       "domain": "enemies",
       "schema": "enemy.schema.json",
-      "sha256": "165cd495d5000a76994ffa58d8e191f9c21d997b28e657822e6f279214f6f86d"
+      "sha256": "8a39530c2e93c0f58d83d492ce74614ef293d071a76e8b50390e778e01905015"
     },
     {
       "path": "enemies/day21-50.json",
       "domain": "enemies",
       "schema": "enemy.schema.json",
-      "sha256": "6b76394748b8d200646de5ac560a914075f04581afeec7cd9fd7261bfe7b4736"
+      "sha256": "581435cf09625e5723112f39347bf28859b1b7250f5904b8efd00c32099b3ba5"
     },
     {
       "path": "resources/day01-10.json",
@@ -288,13 +288,13 @@
       "path": "skills/entity-actions.json",
       "domain": "entity-actions",
       "schema": "action.schema.json",
-      "sha256": "dfd24c896f1d1fa31a4a55eaab74c2e604838492377b706a38aed0657f84c46a"
+      "sha256": "a4868cc499caae3f8323befe053f5eafd67ab0737eb85b8e239cad22a38211e0"
     },
     {
       "path": "entities/support-entities.json",
       "domain": "support-entities",
       "schema": "entity.schema.json",
-      "sha256": "3db20fd833db1c919f2413e9917ec96393495a0637b7f63aa1f70b15dce8acf7"
+      "sha256": "cc6f17c93eb26f8df94907add9dae7972c1fa30816982d08ffc0eebe1fe6ad4a"
     },
     {
       "path": "loot/season1-loot.json",
@@ -306,25 +306,25 @@
       "path": "bosses/day10.json",
       "domain": "bosses",
       "schema": "boss.schema.json",
-      "sha256": "4a8d447bccd9492d847c2308fdaaba825d6774d94dcf33476e2be51d74a34f09"
+      "sha256": "eb4261a8a987396afb87f2c78399669e15c1e5d157e5d4f060acf2936239a7e0"
     },
     {
       "path": "bosses/day20.json",
       "domain": "bosses",
       "schema": "boss.schema.json",
-      "sha256": "0d412de4e85bd6276d195eb3869f578e6e4418537e9921e5f16e021b29ca696b"
+      "sha256": "cb27c12a6e287b51c86fb484c0c024901d982f6bdf7d71564abfd6946059b244"
     },
     {
       "path": "bosses/day30.json",
       "domain": "bosses",
       "schema": "boss.schema.json",
-      "sha256": "b7520cf91ab0caa5d34166492d23c633c9dac9343ffbf933f9101cf88c415c4d"
+      "sha256": "7924de22066882e22bbf9b73bf48b32be405bb0894bf37f1bfb4c937ce76d81c"
     },
     {
       "path": "bosses/day40.json",
       "domain": "bosses",
       "schema": "boss.schema.json",
-      "sha256": "131a847b24a5a74badff8e7863d2398941809d8414c91eceef8ae7bf4cdbe73f"
+      "sha256": "6377bdf386621a8196659986e4e1599f6d4c37a100495af528c99c97e0575db1"
     },
     {
       "path": "final/day50-reconstruction-signal.json",
