@@ -59,7 +59,7 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
             String root = args[0].toLowerCase(Locale.ROOT);
             switch (root) {
                 case "content" -> content(sender, args);
-                case "prototype" -> prototype(sender, args);
+                case "season", "prototype" -> season(sender, args);
                 case "equipment" -> equipment.open(requirePlayer(sender));
                 case "menu" -> menu.open(requirePlayer(sender));
                 case "craft" -> economy.openCraft(requirePlayer(sender));
@@ -96,22 +96,22 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
                 + ", statuses=" + production.catalog().statusesById().size());
     }
 
-    private void prototype(CommandSender sender, String[] args) throws Exception {
-        requirePermission(sender, "wildsurvival.prototype.admin");
+    private void season(CommandSender sender, String[] args) throws Exception {
+        requireSeasonPermission(sender);
         if (args.length < 2) {
-            throw new IllegalArgumentException("/ws prototype <create|start|stop|inspect|advance|boss>");
+            throw new IllegalArgumentException("/ws season <create|start|stop|inspect|advance|boss>");
         }
         String sub = args[1].toLowerCase(Locale.ROOT);
         switch (sub) {
             case "create" -> {
                 Collection<Player> players = resolvePlayers(args);
                 RunSnapshot snapshot = runs.create(players);
-                telemetry.audit(snapshot.runId, sender.getName(), "prototype.create", "members=" + players.size());
+                telemetry.audit(snapshot.runId, sender.getName(), "season.create", "members=" + players.size());
                 sender.sendMessage(ChatColor.GREEN + "Created " + snapshot.runId + " with " + players.stream().map(Player::getName).toList());
             }
             case "start" -> {
                 runs.start();
-                audit(sender, "prototype.start", "confirmed");
+                audit(sender, "season.start", "confirmed");
             }
             case "stop" -> {
                 if (java.util.Arrays.asList(args).contains("--dry-run")) {
@@ -119,7 +119,7 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
                     return;
                 }
                 if (!java.util.Arrays.asList(args).contains("--confirm")) {
-                    throw new IllegalArgumentException("중단은 /ws prototype stop <reason> --confirm 또는 --dry-run을 사용하세요.");
+                    throw new IllegalArgumentException("중단은 /ws season stop <reason> --confirm 또는 --dry-run을 사용하세요.");
                 }
                 String reason = args.length >= 3 ? args[2] : "ADMIN_STOP";
                 runs.stop(reason, sender.getName());
@@ -127,13 +127,13 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
             case "inspect" -> sender.sendMessage(ChatColor.AQUA + runs.inspect());
             case "advance" -> {
                 runs.forceAdvance();
-                audit(sender, "prototype.advance", "manual checkpoint");
+                audit(sender, "season.advance", "manual checkpoint");
             }
             case "boss" -> {
                 boss.spawn();
-                audit(sender, "prototype.boss", "manual spawn");
+                audit(sender, "season.boss", "manual spawn");
             }
-            default -> throw new IllegalArgumentException("Unknown prototype subcommand " + sub);
+            default -> throw new IllegalArgumentException("Unknown Season 1 subcommand " + sub);
         }
     }
 
@@ -183,27 +183,35 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
         }
     }
 
+    private static void requireSeasonPermission(CommandSender sender) {
+        if (!sender.hasPermission("wildsurvival.season.admin")
+                && !sender.hasPermission("wildsurvival.prototype.admin")) {
+            throw new SecurityException("Missing permission wildsurvival.season.admin");
+        }
+    }
+
     private static void help(CommandSender sender, String label) {
-        sender.sendMessage(ChatColor.GOLD + "WildSurvival prototype");
+        sender.sendMessage(ChatColor.GOLD + "WildSurvival Season 1");
         sender.sendMessage(ChatColor.WHITE + "/" + label + " menu | guide | equipment | skills | craft | ledger | status | augment | test");
-        if (sender.hasPermission("wildsurvival.prototype.admin")) {
-            sender.sendMessage(ChatColor.GRAY + "/" + label + " prototype create [players...] | start | inspect | advance | boss");
-            sender.sendMessage(ChatColor.GRAY + "/" + label + " prototype stop <reason> --dry-run|--confirm");
+        if (sender.hasPermission("wildsurvival.season.admin") || sender.hasPermission("wildsurvival.prototype.admin")) {
+            sender.sendMessage(ChatColor.GRAY + "/" + label + " season create [players...] | start | inspect | advance | boss");
+            sender.sendMessage(ChatColor.GRAY + "/" + label + " season stop <reason> --dry-run|--confirm");
         }
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return filter(args[0], List.of("prototype", "content", "menu", "guide", "equipment", "skills", "craft", "codex", "stats", "settings", "ledger", "status", "augment", "test"));
+            return filter(args[0], List.of("season", "content", "menu", "guide", "equipment", "skills", "craft", "codex", "stats", "settings", "ledger", "status", "augment", "test"));
         }
         if (args.length >= 2 && "test".equalsIgnoreCase(args[0])) {
             return testLab.complete(sender, args);
         }
-        if (args.length == 2 && "prototype".equalsIgnoreCase(args[0])) {
+        if (args.length == 2 && ("season".equalsIgnoreCase(args[0]) || "prototype".equalsIgnoreCase(args[0]))) {
             return filter(args[1], List.of("create", "start", "stop", "inspect", "advance", "boss"));
         }
-        if (args.length >= 3 && "prototype".equalsIgnoreCase(args[0]) && "create".equalsIgnoreCase(args[1])) {
+        if (args.length >= 3 && ("season".equalsIgnoreCase(args[0]) || "prototype".equalsIgnoreCase(args[0]))
+                && "create".equalsIgnoreCase(args[1])) {
             return filter(args[args.length - 1], Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
         }
         if (args.length == 2 && "content".equalsIgnoreCase(args[0])) {

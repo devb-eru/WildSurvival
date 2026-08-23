@@ -27,9 +27,11 @@ import org.bukkit.potion.PotionEffectType;
 
 public final class RunService {
     private final JavaPlugin plugin;
-    private final RunRepository prototypeRepository;
+    private final RunRepository seasonRepository;
+    private final RunRepository legacyPrototypeRepository;
     private final RunRepository testRepository;
     private final PrototypeContent content;
+    private final String runtimeRevision;
     private final TelemetryService telemetry;
     private final Object serialQueue = new Object();
     private final AtomicBoolean acceptingCommands = new AtomicBoolean(true);
@@ -40,20 +42,18 @@ public final class RunService {
     private GrowthService growth;
     private int ticksUntilSave;
 
-    public RunService(JavaPlugin plugin, RunRepository prototypeRepository, RunRepository testRepository,
-                      PrototypeContent content, TelemetryService telemetry) {
+    public RunService(JavaPlugin plugin, RunRepository seasonRepository, RunRepository legacyPrototypeRepository,
+                      RunRepository testRepository, PrototypeContent content, String runtimeRevision,
+                      TelemetryService telemetry) {
         this.plugin = plugin;
-        this.prototypeRepository = prototypeRepository;
+        this.seasonRepository = seasonRepository;
+        this.legacyPrototypeRepository = legacyPrototypeRepository;
         this.testRepository = testRepository;
         this.content = content;
+        this.runtimeRevision = runtimeRevision;
         this.telemetry = telemetry;
-        this.ticksUntilSave = plugin.getConfig().getInt("prototype.autosave-ticks", 100);
+        this.ticksUntilSave = autosaveTicks();
         plugin.saveDefaultConfig();
-    }
-
-    public RunService(JavaPlugin plugin, RunRepository prototypeRepository,
-                      PrototypeContent content, TelemetryService telemetry) {
-        this(plugin, prototypeRepository, RunRepository.testLab(plugin.getDataFolder().toPath()), content, telemetry);
     }
 
     public void attach(PrototypeLoopService loop, EquipmentService equipment, GrowthService growth) {
@@ -64,14 +64,14 @@ public final class RunService {
 
     public void restore() throws IOException {
         synchronized (serialQueue) {
-            RunSnapshot prototype = prototypeRepository.load().orElse(null);
+            RunSnapshot season = seasonRepository.load().orElse(null);
+            RunSnapshot prototype = legacyPrototypeRepository.load().orElse(null);
             RunSnapshot test = testRepository.load().orElse(null);
-            boolean prototypeActive = isActive(prototype);
-            boolean testRecoverable = RunRecoveryPolicy.isRecoverableTest(test);
-            if (prototypeActive && testRecoverable) {
-                throw new IOException("An active prototype run conflicts with a recoverable Test Lab session");
+            try {
+                current = RunRecoveryPolicy.select(season, prototype, test);
+            } catch (IllegalStateException exception) {
+                throw new IOException(exception.getMessage(), exception);
             }
-            current = prototypeActive ? prototype : testRecoverable ? test : prototype;
             if (current != null && "RUNNING".equals(current.state)) {
                 telemetry.event(current.runId, "RUN_RESTORED", "{\"version\":" + current.version + "}");
                 Bukkit.getScheduler().runTask(plugin, () -> {
@@ -91,10 +91,10 @@ public final class RunService {
             throw new IllegalStateException("Server is shutting down");
         }
         if (players.size() < content.minimumPlayers() || players.size() > content.maximumPlayers()) {
-            throw new IllegalArgumentException("Prototype run requires 2 to 4 players");
+            throw new IllegalArgumentException("Season 1 run requires 2 to 4 players");
         }
         synchronized (serialQueue) {
-            return createLocked(players, "PROTOTYPE", "proto-", 0L, players.size());
+            return createLocked(players, "SEASON_1", runtimeRevision, "s1-", 0L, players.size());
         }
     }
 
@@ -106,7 +106,8 @@ public final class RunService {
             throw new IllegalArgumentException("Virtual party size must be 1 to " + content.maximumPlayers());
         }
         synchronized (serialQueue) {
-            RunSnapshot snapshot = createLocked(List.of(owner), "TEST", "test-", deterministicSeed, virtualPartySize);
+            RunSnapshot snapshot = createLocked(List.of(owner), "TEST", runtimeRevision,
+                    "test-", deterministicSeed, virtualPartySize);
             snapshot.test = new RunSnapshot.TestState();
             snapshot.test.ownerUuid = owner.getUniqueId().toString();
             snapshot.test.virtualPartySize = virtualPartySize;
@@ -118,7 +119,7 @@ public final class RunService {
         }
     }
 
-    private RunSnapshot createLocked(Collection<Player> players, String runType, String idPrefix,
+    private RunSnapshot createLocked(Collection<Player> players, String runType, String contentRevision, String idPrefix,
                                      long requestedSeed, int effectivePartySize) throws IOException {
         if (current != null && !List.of("ENDED", "ABORTED").contains(current.state)) {
             throw new IllegalStateException("A run already exists: " + current.runId);
@@ -127,7 +128,7 @@ public final class RunService {
         UUID id = UUID.randomUUID();
         snapshot.runId = idPrefix + id;
         snapshot.runType = runType;
-        snapshot.contentRevision = content.contentRevision();
+        snapshot.contentRevision = contentRevision;
         snapshot.createdAtEpochMs = Instant.now().toEpochMilli();
         snapshot.checkpointStartedAtEpochMs = snapshot.createdAtEpochMs;
         snapshot.seed = requestedSeed == 0L ? id.getMostSignificantBits() : requestedSeed;
@@ -188,7 +189,7 @@ public final class RunService {
             }
             commitEventLocked("stop:" + current.runId, "RUN_ENDED", "{\"reason\":\"" + escape(reason) + "\"}");
             saveLocked();
-            telemetry.audit(current.runId, actor, "prototype.stop", reason);
+            telemetry.audit(current.runId, actor, "season.stop", reason);
             telemetry.sessionReport(current);
             broadcast(ChatColor.RED + "[WildSurvival] 회차가 종료되었습니다: " + reason);
         }
@@ -376,7 +377,7 @@ public final class RunService {
             requireTestRun();
             if (replacement == null || !"TEST".equals(replacement.runType)
                     || !current.runId.equals(replacement.runId)
-                    || !content.contentRevision().equals(replacement.contentRevision)) {
+                    || !current.contentRevision.equals(replacement.contentRevision)) {
                 throw new IllegalArgumentException("Snapshot does not belong to the active Test Lab run");
             }
             current = replacement;
@@ -505,7 +506,7 @@ public final class RunService {
     public String inspect() {
         synchronized (serialQueue) {
             if (current == null) {
-                return "No prototype run";
+                return "No Season 1 run";
             }
             long undelivered = current.outbox.stream().filter(event -> !event.delivered).count();
             return "run=" + current.runId + " type=" + current.runType + " state=" + current.state + " day=" + current.day
@@ -538,7 +539,7 @@ public final class RunService {
                     growth.tick();
                     if (--ticksUntilSave <= 0) {
                         saveUnchecked();
-                        ticksUntilSave = plugin.getConfig().getInt("prototype.autosave-ticks", 100);
+                        ticksUntilSave = autosaveTicks();
                     }
                 }
             }
@@ -606,14 +607,14 @@ public final class RunService {
 
     private void requireCurrent() {
         if (current == null) {
-            throw new IllegalStateException("No prototype run exists");
+            throw new IllegalStateException("No run exists");
         }
     }
 
     private void requireRunning() {
         requireCurrent();
         if (!"RUNNING".equals(current.state)) {
-            throw new IllegalStateException("Prototype run is not running");
+            throw new IllegalStateException("Run is not running");
         }
     }
 
@@ -632,12 +633,18 @@ public final class RunService {
         try {
             activeRepositoryLocked().save(current);
         } catch (IOException exception) {
-            throw new IllegalStateException("Cannot persist prototype run", exception);
+            throw new IllegalStateException("Cannot persist run", exception);
         }
     }
 
     private RunRepository activeRepositoryLocked() {
-        return current != null && "TEST".equals(current.runType) ? testRepository : prototypeRepository;
+        if (current == null) throw new IllegalStateException("No run exists");
+        return switch (current.runType) {
+            case "SEASON_1" -> seasonRepository;
+            case "PROTOTYPE" -> legacyPrototypeRepository;
+            case "TEST" -> testRepository;
+            default -> throw new IllegalStateException("Unsupported run type " + current.runType);
+        };
     }
 
     private long clockNowMillisLocked() {
@@ -656,8 +663,9 @@ public final class RunService {
         current.test.logicalTick += Math.max(1L, Math.round(scale));
     }
 
-    private static boolean isActive(RunSnapshot snapshot) {
-        return snapshot != null && !List.of("ENDED", "ABORTED").contains(snapshot.state);
+    private int autosaveTicks() {
+        return plugin.getConfig().getInt("season.autosave-ticks",
+                plugin.getConfig().getInt("prototype.autosave-ticks", 100));
     }
 
     private static double clamp(double value, double minimum, double maximum) {

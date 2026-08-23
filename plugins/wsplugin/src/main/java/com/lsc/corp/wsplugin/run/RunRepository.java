@@ -19,22 +19,30 @@ public final class RunRepository {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Path runsDirectory;
     private final Path currentFile;
-    private final Set<String> allowedRunTypes;
+    private final Set<RunIdentity> allowedIdentities;
     private final String repositoryLabel;
 
     public RunRepository(Path dataDirectory) {
-        this(dataDirectory.resolve("runs"), Set.of("PROTOTYPE"), "prototype");
+        this(dataDirectory.resolve("runs"), Set.of(new RunIdentity("PROTOTYPE", "ws-prototype-r1")),
+                "legacy-prototype");
     }
 
-    private RunRepository(Path runsDirectory, Set<String> allowedRunTypes, String repositoryLabel) {
+    private RunRepository(Path runsDirectory, Set<RunIdentity> allowedIdentities, String repositoryLabel) {
         this.runsDirectory = runsDirectory;
         currentFile = runsDirectory.resolve("current.json");
-        this.allowedRunTypes = Set.copyOf(allowedRunTypes);
+        this.allowedIdentities = Set.copyOf(allowedIdentities);
         this.repositoryLabel = repositoryLabel;
     }
 
+    public static RunRepository season1(Path dataDirectory) {
+        return new RunRepository(dataDirectory.resolve("season-1").resolve("runs"),
+                Set.of(new RunIdentity("SEASON_1", "ws-content-r2")), "season-1");
+    }
+
     public static RunRepository testLab(Path dataDirectory) {
-        return new RunRepository(dataDirectory.resolve("test-lab").resolve("runs"), Set.of("TEST"), "test-lab");
+        return new RunRepository(dataDirectory.resolve("test-lab").resolve("runs"), Set.of(
+                new RunIdentity("TEST", "ws-prototype-r1"),
+                new RunIdentity("TEST", "ws-content-r2")), "test-lab");
     }
 
     public synchronized Optional<RunSnapshot> load() throws IOException {
@@ -155,7 +163,7 @@ public final class RunRepository {
     }
 
     private void validateIdentity(RunSnapshot snapshot) throws IOException {
-        if (!allowedRunTypes.contains(snapshot.runType) || !"ws-prototype-r1".equals(snapshot.contentRevision)) {
+        if (!allowedIdentities.contains(new RunIdentity(snapshot.runType, snapshot.contentRevision))) {
             throw new IOException(repositoryLabel + " repository refuses runType=" + snapshot.runType
                     + " revision=" + snapshot.contentRevision);
         }
@@ -164,4 +172,6 @@ public final class RunRepository {
     public Path currentFile() {
         return currentFile;
     }
+
+    private record RunIdentity(String runType, String contentRevision) { }
 }

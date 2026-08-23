@@ -38,6 +38,37 @@ class RunRepositoryTest {
     }
 
     @Test
+    void persistsSeasonOneInAnIsolatedProductionRepository(@TempDir Path temporary) throws Exception {
+        RunRepository repository = RunRepository.season1(temporary);
+        RunSnapshot snapshot = snapshot();
+        snapshot.runId = "s1-production";
+        snapshot.runType = "SEASON_1";
+        snapshot.contentRevision = "ws-content-r2";
+
+        repository.save(snapshot);
+
+        RunSnapshot restored = repository.load().orElseThrow();
+        assertEquals("SEASON_1", restored.runType);
+        assertEquals("ws-content-r2", restored.contentRevision);
+        assertTrue(new RunRepository(temporary).load().isEmpty());
+        assertThrows(IOException.class, () -> repository.save(snapshot()));
+    }
+
+    @Test
+    void testLabAcceptsLegacyRestoreAndNewProductionRevision(@TempDir Path temporary) throws Exception {
+        RunRepository repository = RunRepository.testLab(temporary);
+        RunSnapshot snapshot = snapshot();
+        snapshot.runId = "test-production";
+        snapshot.runType = "TEST";
+        snapshot.contentRevision = "ws-content-r2";
+        snapshot.test = new RunSnapshot.TestState();
+
+        repository.save(snapshot);
+
+        assertEquals("ws-content-r2", repository.load().orElseThrow().contentRevision);
+    }
+
+    @Test
     void isolatesTestLabRunsFromPrototypeRepository(@TempDir Path temporary) throws Exception {
         RunRepository testRepository = RunRepository.testLab(temporary);
         RunSnapshot snapshot = snapshot();

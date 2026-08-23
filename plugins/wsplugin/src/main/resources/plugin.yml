@@ -7,8 +7,8 @@ load: POSTWORLD
 
 commands:
   wildsurvival:
-    description: WildSurvival prototype command
-    usage: /<command> <menu|guide|prototype|content|equipment|skills|craft|codex|stats|settings|ledger|status|test>
+    description: WildSurvival Season 1 command
+    usage: /<command> <menu|guide|season|content|equipment|skills|craft|codex|stats|settings|ledger|status|test>
     aliases: [ws]
     permission: wildsurvival.use
 
@@ -17,7 +17,10 @@ permissions:
     description: Use the WildSurvival player interface
     default: true
   wildsurvival.prototype.admin:
-    description: Create, control, and inspect prototype runs
+    description: Backward-compatible alias for Season 1 administration
+    default: op
+  wildsurvival.season.admin:
+    description: Create, control, and inspect Season 1 runs
     default: op
   wildsurvival.content.validate:
     description: Validate embedded content bundles

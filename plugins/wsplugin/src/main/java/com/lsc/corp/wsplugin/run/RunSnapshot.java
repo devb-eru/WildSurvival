@@ -12,7 +12,7 @@ public final class RunSnapshot {
     public long version = 0;
     public String runId;
     public String contentRevision;
-    public String runType = "PROTOTYPE";
+    public String runType = "SEASON_1";
     public String state = "LOBBY";
     public int day = 1;
     public long createdAtEpochMs;

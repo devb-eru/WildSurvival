@@ -7,6 +7,9 @@ prototype:
   spawn-radius: 10
   autosave-ticks: 100
 season:
+  day-1-grace-seconds: 90
+  spawn-radius: 10
+  autosave-ticks: 100
   preparation-seconds: 30
   day-duration-seconds: 1200
 test-lab:

@@ -4,6 +4,7 @@ import com.lsc.corp.wsplugin.boss.PrototypeBossService;
 import com.lsc.corp.wsplugin.combat.CombatService;
 import com.lsc.corp.wsplugin.combat.DamageNumberService;
 import com.lsc.corp.wsplugin.content.ContentBundleService;
+import com.lsc.corp.wsplugin.content.ProductionBundleValidator;
 import com.lsc.corp.wsplugin.economy.EconomyService;
 import com.lsc.corp.wsplugin.economy.ItemCodexService;
 import com.lsc.corp.wsplugin.economy.LootService;
@@ -49,9 +50,11 @@ public final class Main extends JavaPlugin {
             content.loadAndValidate();
 
             telemetry = new TelemetryService(getDataFolder().toPath());
-            RunRepository repository = new RunRepository(getDataFolder().toPath());
+            RunRepository seasonRepository = RunRepository.season1(getDataFolder().toPath());
+            RunRepository legacyPrototypeRepository = new RunRepository(getDataFolder().toPath());
             RunRepository testRepository = RunRepository.testLab(getDataFolder().toPath());
-            runService = new RunService(this, repository, testRepository, content.content(), telemetry);
+            runService = new RunService(this, seasonRepository, legacyPrototypeRepository, testRepository,
+                    content.content(), ProductionBundleValidator.REVISION, telemetry);
             tutorial = new TutorialService(this, runService);
 
             ItemCodexService codex = new ItemCodexService(this, runService, content.content(), content.productionCatalog(), telemetry);

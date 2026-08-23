@@ -344,7 +344,8 @@ public final class PrototypeLoopService implements Listener {
 
     private long preparationMillis(int day) {
         int seconds = day == 1
-                ? plugin.getConfig().getInt("prototype.day-1-grace-seconds", 90)
+                ? plugin.getConfig().getInt("season.day-1-grace-seconds",
+                        plugin.getConfig().getInt("prototype.day-1-grace-seconds", 90))
                 : plugin.getConfig().getInt("season.preparation-seconds", 30);
         return Math.max(0L, seconds) * 1000L;
     }
@@ -355,7 +356,8 @@ public final class PrototypeLoopService implements Listener {
 
     private Location encounterLocation(Player anchor, int index, int count) {
         double angle = Math.PI * 2.0 * index / Math.max(1, count);
-        int radius = plugin.getConfig().getInt("prototype.spawn-radius", 10);
+        int radius = plugin.getConfig().getInt("season.spawn-radius",
+                plugin.getConfig().getInt("prototype.spawn-radius", 10));
         Location result = anchor.getLocation().clone().add(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
         result.setY(result.getWorld().getHighestBlockYAt(result) + 1.0);
         return result;
