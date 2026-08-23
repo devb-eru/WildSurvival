@@ -45,7 +45,7 @@ public final class Main extends JavaPlugin {
             tutorial = new TutorialService(this, runService);
 
             ItemCodexService codex = new ItemCodexService(this, runService, content.content(), content.productionCatalog(), telemetry);
-            GrowthService growth = new GrowthService(this, runService, content.content(), telemetry);
+            GrowthService growth = new GrowthService(this, runService, content.content(), content.productionCatalog(), telemetry);
             EquipmentService equipment = new EquipmentService(this, runService, content.content(),
                     content.productionCatalog(), telemetry, codex);
             SkillLoadoutService skills = new SkillLoadoutService(runService, content.content(), content.productionCatalog(), equipment);
@@ -65,7 +65,7 @@ public final class Main extends JavaPlugin {
 
             TestLabRepository testLabRepository = new TestLabRepository(getDataFolder().toPath());
             TestLabService testLab = new TestLabService(this, runService, testLabRepository, content.content(),
-                    equipment, growth, combat, boss, loop, telemetry);
+                    content.productionCatalog(), equipment, growth, combat, boss, loop, telemetry);
             VirtualPartyService virtualParty = new VirtualPartyService(this, runService);
             TestScenarioService scenarios = new TestScenarioService(testLab, runService, growth, combat, boss, virtualParty, economy);
             TestLabGui testLabGui = new TestLabGui(this, testLab, scenarios, virtualParty, runService);

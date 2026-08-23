@@ -1,6 +1,7 @@
 package com.lsc.corp.wsplugin.growth;
 
 import com.lsc.corp.wsplugin.content.PrototypeContent;
+import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.PlayerStatPolicy;
 import com.lsc.corp.wsplugin.run.RunService;
@@ -32,19 +33,27 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class GrowthService implements Listener {
-    private static final Map<Integer, String> FIXED_TIERS = Map.of(3, "SILVER", 6, "GOLD", 10, "PRISM");
+    private static final List<Integer> PERSONAL_MILESTONES = AugmentMilestonePolicy.personalMilestones();
+    private static final List<Integer> PARTY_MILESTONES = AugmentMilestonePolicy.partyMilestones();
     private final JavaPlugin plugin;
     private final RunService runs;
     private final PrototypeContent content;
+    private final ProductionContentCatalog production;
+    private final Map<String, PrototypeContent.AugmentDefinition> runtimeAugments;
     private final TelemetryService telemetry;
     private final Map<UUID, Integer> openMilestones = new HashMap<>();
     private boolean partyVoteOpened;
     private int tickCounter;
 
-    public GrowthService(JavaPlugin plugin, RunService runs, PrototypeContent content, TelemetryService telemetry) {
+    public GrowthService(JavaPlugin plugin, RunService runs, PrototypeContent content,
+                         ProductionContentCatalog production, TelemetryService telemetry) {
         this.plugin = plugin;
         this.runs = runs;
         this.content = content;
+        this.production = production;
+        this.runtimeAugments = production.augmentsById().values().stream().collect(
+                java.util.stream.Collectors.toUnmodifiableMap(ProductionContentCatalog.AugmentEntry::id,
+                        GrowthService::runtimeAugment));
         this.telemetry = telemetry;
     }
 
@@ -76,9 +85,10 @@ public final class GrowthService implements Listener {
             player.sendMessage(ChatColor.GREEN + "WildSurvival Lv." + state.level + " 달성");
             ActionBarService.important(player,
                     Component.text("레벨 상승! Lv." + state.level + " · EXP +" + committedAmount, NamedTextColor.GREEN), 80);
-            for (int milestone : List.of(3, 6, 10)) {
+            for (int milestone : PERSONAL_MILESTONES) {
                 if (beforeLevel < milestone && state.level >= milestone) {
                     lockAndOpenPersonalDraw(player, milestone);
+                    break;
                 }
             }
         } else {
@@ -109,19 +119,27 @@ public final class GrowthService implements Listener {
     }
 
     public boolean partyAugmentSelected() {
-        return runs.current().map(run -> run.partyAugmentId != null).orElse(false);
+        return runs.current().map(run -> {
+            Integer milestone = latestPartyMilestone(run.day);
+            java.util.Set<Integer> resolved = run.resolvedPartyAugmentMilestones == null ? java.util.Set.of()
+                    : run.resolvedPartyAugmentMilestones;
+            return milestone != null && (resolved.contains(milestone)
+                    || milestone == 10 && run.partyAugmentId != null && !run.partyAugmentId.isBlank());
+        }).orElse(false);
     }
 
     public void startPartyVoteWhenReady() {
         RunSnapshot snapshot = runs.current().orElse(null);
-        if (snapshot == null || snapshot.partyAugmentId != null || partyVoteOpened) {
+        if (snapshot == null) {
             return;
         }
+        Integer milestone = nextPartyMilestone(snapshot);
+        if (milestone == null || snapshot.activePartyAugmentMilestone != null || partyVoteOpened) return;
         boolean pending = snapshot.players.values().stream()
                 .filter(state -> !"DEAD".equals(state.lifeState))
-                .anyMatch(state -> state.level < 10 || !state.resolvedPersonalMilestones.contains(10));
+                .anyMatch(this::hasPendingPersonalDraw);
         if (!pending) {
-            startPartyVote();
+            startPartyVote(milestone);
         }
     }
 
@@ -130,7 +148,7 @@ public final class GrowthService implements Listener {
         if (state == null) {
             return;
         }
-        for (int milestone : List.of(3, 6, 10)) {
+        for (int milestone : PERSONAL_MILESTONES) {
             if (state.level >= milestone && !state.resolvedPersonalMilestones.contains(milestone)) {
                 lockAndOpenPersonalDraw(player, milestone);
                 return;
@@ -141,7 +159,7 @@ public final class GrowthService implements Listener {
     public void openAugments(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null) return;
-        for (int milestone : List.of(3, 6, 10)) {
+        for (int milestone : PERSONAL_MILESTONES) {
             if (state.level >= milestone && !state.resolvedPersonalMilestones.contains(milestone)) {
                 openMilestones.remove(player.getUniqueId());
                 lockAndOpenPersonalDraw(player, milestone);
@@ -149,11 +167,12 @@ public final class GrowthService implements Listener {
             }
         }
         RunSnapshot run = runs.current().orElseThrow();
-        if (partyVoteOpened && run.partyAugmentId == null
+        if ((partyVoteOpened || run.activePartyAugmentMilestone != null)
                 && !run.partyAugmentVotes.containsKey(player.getUniqueId().toString())) {
-            List<PrototypeContent.AugmentDefinition> choices = partyChoices(run.seed);
+            int milestone = run.activePartyAugmentMilestone == null ? 10 : run.activePartyAugmentMilestone;
+            List<PrototypeContent.AugmentDefinition> choices = partyChoices(run.seed, milestone, partyAugmentIds(run));
             player.openInventory(createAugmentInventory(
-                    new AugmentHolder(player.getUniqueId(), 10, true, choices), "파티 증강 투표"));
+                    new AugmentHolder(player.getUniqueId(), milestone, true, choices), "Day " + milestone + " 파티 증강 투표"));
             return;
         }
         openOwnedAugments(player);
@@ -161,28 +180,44 @@ public final class GrowthService implements Listener {
 
     public void startPartyVote() {
         RunSnapshot snapshot = runs.current().orElseThrow();
-        if (snapshot.partyAugmentId != null) {
-            return;
-        }
+        Integer milestone = nextPartyMilestone(snapshot);
+        if (milestone == null) return;
+        startPartyVote(milestone);
+    }
+
+    private void startPartyVote(int milestone) {
+        RunSnapshot snapshot = runs.current().orElseThrow();
         partyVoteOpened = true;
-        runs.commitOnce("party-draw:day10", "PARTY_AUGMENT_DRAWN", "{\"day\":10}", run -> run.partyAugmentVotes.clear());
-        List<PrototypeContent.AugmentDefinition> choices = partyChoices(snapshot.seed);
+        runs.commitOnce("party-draw:day" + milestone, "PARTY_AUGMENT_DRAWN", "{\"day\":" + milestone + "}", run -> {
+            run.partyAugmentVotes.clear();
+            run.activePartyAugmentMilestone = milestone;
+        });
+        List<PrototypeContent.AugmentDefinition> choices = partyChoices(snapshot.seed, milestone, partyAugmentIds(snapshot));
         for (Player player : runs.onlineMembers()) {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
             if (!"DEAD".equals(state.lifeState)) {
-                player.openInventory(createAugmentInventory(new AugmentHolder(player.getUniqueId(), 10, true, choices), "파티 증강 투표"));
+                player.openInventory(createAugmentInventory(new AugmentHolder(player.getUniqueId(), milestone, true, choices),
+                        "Day " + milestone + " 파티 증강 투표"));
             }
         }
     }
 
     public double attackMultiplier(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
-        return aggregate(player, PrototypeContent.AugmentDefinition::attackMultiplier)
+        double result = aggregate(player, PrototypeContent.AugmentDefinition::attackMultiplier)
                 * (state == null ? 1.0 : PlayerStatPolicy.attackMultiplier(state.investedStats));
+        if (hasAugment(player, "AUG-P-001") && player.getHealth() / Math.max(1.0, player.getMaxHealth()) <= 0.40) {
+            result *= 1.22;
+        }
+        return result;
     }
 
     public double breakMultiplier(Player player) {
-        return aggregate(player, PrototypeContent.AugmentDefinition::breakMultiplier);
+        double result = aggregate(player, PrototypeContent.AugmentDefinition::breakMultiplier);
+        if (hasAugment(player, "AUG-P-001") && player.getHealth() / Math.max(1.0, player.getMaxHealth()) <= 0.40) {
+            result *= 1.15;
+        }
+        return result;
     }
 
     public double resourceMultiplier(Player player) {
@@ -190,11 +225,16 @@ public final class GrowthService implements Listener {
     }
 
     public double reviveSpeedMultiplier(Player player) {
-        return aggregate(player, PrototypeContent.AugmentDefinition::reviveSpeedMultiplier);
+        return aggregate(player, PrototypeContent.AugmentDefinition::reviveSpeedMultiplier)
+                * (hasAugment(player, "AUG-S-014") ? 1.0 / 0.90 : 1.0);
     }
 
     public void tick() {
         tickCounter++;
+        if (tickCounter % 20 == 0) {
+            RunSnapshot snapshot = runs.current().orElse(null);
+            if (snapshot != null && snapshot.activePartyAugmentMilestone != null) partyVoteOpened = true;
+        }
     }
 
     @EventHandler
@@ -245,9 +285,10 @@ public final class GrowthService implements Listener {
     }
 
     public void setPersonalAugmentForTest(Player player, String augmentId, boolean present) {
-        PrototypeContent.AugmentDefinition augment = content.personalAugments().stream()
-                .filter(value -> value.id().equalsIgnoreCase(augmentId)).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown personal augment " + augmentId));
+        PrototypeContent.AugmentDefinition augment = findAugment(augmentId);
+        if (!production.augmentsById().get(augment.id()).personal()) {
+            throw new IllegalArgumentException("Not a personal augment " + augmentId);
+        }
         runs.mutate(run -> {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
             if (present && !state.personalAugments.contains(augment.id())) {
@@ -270,11 +311,19 @@ public final class GrowthService implements Listener {
     }
 
     public void setPartyAugmentForTest(String augmentId) {
-        PrototypeContent.AugmentDefinition augment = content.partyAugments().stream()
-                .filter(value -> value.id().equalsIgnoreCase(augmentId)).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown party augment " + augmentId));
+        PrototypeContent.AugmentDefinition augment = findAugment(augmentId);
+        if (production.augmentsById().get(augment.id()).personal()) {
+            throw new IllegalArgumentException("Not a party augment " + augmentId);
+        }
         runs.mutate(run -> {
             run.partyAugmentId = augment.id();
+            if (run.partyAugmentIds == null) run.partyAugmentIds = new ArrayList<>();
+            run.partyAugmentIds.clear();
+            run.partyAugmentIds.add(augment.id());
+            if (run.resolvedPartyAugmentMilestones == null) run.resolvedPartyAugmentMilestones = new java.util.LinkedHashSet<>();
+            run.resolvedPartyAugmentMilestones.clear();
+            run.resolvedPartyAugmentMilestones.add(10);
+            run.activePartyAugmentMilestone = null;
             run.partyAugmentVotes.clear();
             run.players.values().forEach(state -> recalculateMaxAp(run, state));
         });
@@ -283,6 +332,11 @@ public final class GrowthService implements Listener {
     public void clearPartyAugmentForTest() {
         runs.mutate(run -> {
             run.partyAugmentId = null;
+            if (run.partyAugmentIds == null) run.partyAugmentIds = new ArrayList<>();
+            run.partyAugmentIds.clear();
+            if (run.resolvedPartyAugmentMilestones == null) run.resolvedPartyAugmentMilestones = new java.util.LinkedHashSet<>();
+            run.resolvedPartyAugmentMilestones.clear();
+            run.activePartyAugmentMilestone = null;
             run.partyAugmentVotes.clear();
             run.players.values().forEach(state -> recalculateMaxAp(run, state));
         });
@@ -290,8 +344,8 @@ public final class GrowthService implements Listener {
     }
 
     public void resetPersonalDrawForTest(Player player, int milestone) {
-        if (!FIXED_TIERS.containsKey(milestone)) {
-            throw new IllegalArgumentException("Prototype personal milestones are 3, 6, and 10");
+        if (!PERSONAL_MILESTONES.contains(milestone)) {
+            throw new IllegalArgumentException("Personal milestones are " + PERSONAL_MILESTONES);
         }
         runs.mutate(run -> {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
@@ -309,8 +363,9 @@ public final class GrowthService implements Listener {
         if (state.resolvedPersonalMilestones.contains(milestone) || openMilestones.getOrDefault(player.getUniqueId(), -1) == milestone) {
             return;
         }
-        String tier = FIXED_TIERS.get(milestone);
         RunSnapshot snapshot = runs.current().orElseThrow();
+        RunSnapshot.MilestoneLock existing = snapshot.milestoneLocks.get("LEVEL_" + milestone);
+        String tier = existing == null ? tierForMilestone(snapshot.seed, milestone) : existing.tier;
         runs.commitOnce("milestone-lock:" + milestone, "MILESTONE_LOCKED",
                 "{\"milestone\":" + milestone + ",\"tier\":\"" + tier + "\"}", run -> {
                     RunSnapshot.MilestoneLock lock = new RunSnapshot.MilestoneLock();
@@ -318,7 +373,7 @@ public final class GrowthService implements Listener {
                     lock.tier = tier;
                     lock.firstPlayer = player.getUniqueId().toString();
                     lock.drawSeed = snapshot.seed ^ milestone;
-                    run.milestoneLocks.put("LEVEL_" + milestone, lock);
+            run.milestoneLocks.put("LEVEL_" + milestone, lock);
                 });
         List<PrototypeContent.AugmentDefinition> choices = personalChoices(player, milestone, tier);
         openMilestones.put(player.getUniqueId(), milestone);
@@ -337,6 +392,7 @@ public final class GrowthService implements Listener {
         if (committed) {
             player.sendMessage(ChatColor.AQUA + "증강 선택: " + augment.name());
             telemetry.event(runs.current().orElseThrow().runId, "AUGMENT_UI_CONFIRMED", "{\"scope\":\"PERSONAL\"}");
+            Bukkit.getScheduler().runTask(plugin, () -> openPendingPersonalDraw(player));
         }
     }
 
@@ -356,27 +412,51 @@ public final class GrowthService implements Listener {
                 .sorted(Map.Entry.<Integer, Long>comparingByValue(Comparator.reverseOrder()).thenComparing(Map.Entry::getKey))
                 .findFirst().orElse(Map.entry(0, 0L)).getKey();
         PrototypeContent.AugmentDefinition selected = choices.get(winner);
-        runs.commitOnce("party-augment:day10", "PARTY_AUGMENT_SELECTED",
+        int milestone = holderMilestone(snapshot);
+        runs.commitOnce("party-augment:day" + milestone, "PARTY_AUGMENT_SELECTED",
                 "{\"augmentId\":\"" + selected.id() + "\"}", run -> {
                     run.partyAugmentId = selected.id();
+                    if (run.partyAugmentIds == null) run.partyAugmentIds = new ArrayList<>();
+                    if (!run.partyAugmentIds.contains(selected.id())) run.partyAugmentIds.add(selected.id());
+                    if (run.resolvedPartyAugmentMilestones == null) run.resolvedPartyAugmentMilestones = new java.util.LinkedHashSet<>();
+                    run.resolvedPartyAugmentMilestones.add(milestone);
+                    run.activePartyAugmentMilestone = null;
+                    run.partyAugmentVotes.clear();
                     for (RunSnapshot.PlayerState state : run.players.values()) {
                         recalculateMaxAp(run, state);
                     }
                 });
+        partyVoteOpened = false;
         runs.broadcast(ChatColor.GOLD + "파티 증강 확정: " + selected.name());
     }
 
     private List<PrototypeContent.AugmentDefinition> personalChoices(Player player, int milestone, String tier) {
-        List<PrototypeContent.AugmentDefinition> choices = new ArrayList<>(content.personalAugments().stream()
-                .filter(augment -> tier.equals(augment.tier())).toList());
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        java.util.Set<String> owned = new java.util.HashSet<>(state.personalAugments);
+        List<ProductionContentCatalog.AugmentEntry> pool = new ArrayList<>(production.personalAugments().stream()
+                .filter(augment -> tier.equals(augment.tier()) && !owned.contains(augment.id()))
+                .filter(augment -> augment.exclusiveWith().stream().noneMatch(owned::contains)).toList());
         long seed = runs.current().orElseThrow().seed ^ player.getUniqueId().getMostSignificantBits() ^ milestone;
-        java.util.Collections.shuffle(choices, new Random(seed));
-        return List.copyOf(choices.subList(0, Math.min(3, choices.size())));
+        java.util.Set<String> buildTags = buildTags(state);
+        List<PrototypeContent.AugmentDefinition> choices = new ArrayList<>();
+        Random random = new Random(seed);
+        while (!pool.isEmpty() && choices.size() < 3) {
+            double total = pool.stream().mapToDouble(augment -> augmentWeight(augment, buildTags)).sum();
+            double roll = random.nextDouble() * total;
+            int selectedIndex = 0;
+            for (int i = 0; i < pool.size(); i++) {
+                roll -= augmentWeight(pool.get(i), buildTags);
+                if (roll <= 0.0) { selectedIndex = i; break; }
+            }
+            choices.add(runtimeAugments.get(pool.remove(selectedIndex).id()));
+        }
+        return List.copyOf(choices);
     }
 
-    private List<PrototypeContent.AugmentDefinition> partyChoices(long seed) {
-        List<PrototypeContent.AugmentDefinition> choices = new ArrayList<>(content.partyAugments());
-        java.util.Collections.shuffle(choices, new Random(seed ^ 10L));
+    private List<PrototypeContent.AugmentDefinition> partyChoices(long seed, int milestone, List<String> owned) {
+        List<PrototypeContent.AugmentDefinition> choices = new ArrayList<>(production.partyAugments().stream()
+                .filter(augment -> !owned.contains(augment.id())).map(augment -> runtimeAugments.get(augment.id())).toList());
+        java.util.Collections.shuffle(choices, new Random(seed ^ milestone));
         return List.copyOf(choices.subList(0, Math.min(3, choices.size())));
     }
 
@@ -398,6 +478,7 @@ public final class GrowthService implements Listener {
 
     private void openOwnedAugments(Player player) {
         RunSnapshot run = runs.current().orElseThrow();
+        List<String> partyIds = partyAugmentIds(run);
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         Inventory inventory = Bukkit.createInventory(new AugmentOverviewHolder(player.getUniqueId()), 54,
                 ChatColor.DARK_PURPLE + "보유 증강");
@@ -405,17 +486,22 @@ public final class GrowthService implements Listener {
         for (int slot = 0; slot < inventory.getSize(); slot++) inventory.setItem(slot, border);
         inventory.setItem(4, named(Material.AMETHYST_SHARD, ChatColor.LIGHT_PURPLE + "증강 현황",
                 List.of(ChatColor.WHITE + "개인 " + state.personalAugments.size() + "개",
-                        ChatColor.WHITE + "파티 " + (run.partyAugmentId == null ? "미보유" : "1개"),
+                        ChatColor.WHITE + "파티 " + partyIds.size() + "/4개",
                         ChatColor.GRAY + (state.detailedTooltips ? "상세 설명 모드" : "간단 설명 모드"))));
         int[] personalSlots = {10, 12, 14, 16, 28, 30, 32, 34, 36, 38};
         for (int i = 0; i < state.personalAugments.size() && i < personalSlots.length; i++) {
             PrototypeContent.AugmentDefinition augment = findAugment(state.personalAugments.get(i));
             inventory.setItem(personalSlots[i], augmentIcon(augment, state.detailedTooltips, ChatColor.AQUA + "개인 증강"));
         }
-        inventory.setItem(22, run.partyAugmentId == null
-                ? named(Material.BARRIER, ChatColor.GRAY + "파티 증강 미보유",
-                List.of(partyVoteOpened ? ChatColor.YELLOW + "파티 투표 진행 중" : ChatColor.DARK_GRAY + "Day 10 보스 이후 결정"))
-                : augmentIcon(findAugment(run.partyAugmentId), state.detailedTooltips, ChatColor.GOLD + "파티 증강"));
+        int[] partySlots = {20, 22, 24, 26};
+        for (int i = 0; i < partySlots.length; i++) {
+            inventory.setItem(partySlots[i], i < partyIds.size()
+                    ? augmentIcon(findAugment(partyIds.get(i)), state.detailedTooltips,
+                    ChatColor.GOLD + "파티 증강 " + (i + 1))
+                    : named(Material.BARRIER, ChatColor.GRAY + "파티 증강 " + (i + 1) + " 미보유",
+                    List.of(partyVoteOpened ? ChatColor.YELLOW + "파티 투표 진행 중"
+                            : ChatColor.DARK_GRAY + "Day " + PARTY_MILESTONES.get(i) + " 보스 이후 결정")));
+        }
         inventory.setItem(49, named(Material.OAK_DOOR, ChatColor.RED + "닫기", List.of()));
         player.openInventory(inventory);
     }
@@ -435,6 +521,13 @@ public final class GrowthService implements Listener {
     private List<String> augmentLore(PrototypeContent.AugmentDefinition augment, boolean detailed, String tail) {
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.WHITE + "등급 " + augment.tier() + " · " + ("PARTY".equals(augment.scope()) ? "파티" : "개인"));
+        ProductionContentCatalog.AugmentEntry productionAugment = production.augmentsById().get(augment.id());
+        if (productionAugment != null) {
+            lore.add(ChatColor.GRAY + productionAugment.effectText());
+            if (detailed && !productionAugment.constraintText().isBlank()) {
+                lore.add(ChatColor.DARK_GRAY + "조건: " + productionAugment.constraintText());
+            }
+        }
         if (detailed) {
             lore.add(ChatColor.GRAY + "공격 배율 x" + augment.attackMultiplier());
             lore.add(ChatColor.GRAY + "브레이크 배율 x" + augment.breakMultiplier());
@@ -473,17 +566,13 @@ public final class GrowthService implements Listener {
             PrototypeContent.AugmentDefinition augment = findAugment(id);
             result *= getter.applyAsDouble(augment);
         }
-        if (snapshot.partyAugmentId != null) {
-            result *= getter.applyAsDouble(findAugment(snapshot.partyAugmentId));
-        }
+        for (String id : partyAugmentIds(snapshot)) result *= getter.applyAsDouble(findAugment(id));
         return result;
     }
 
     private void recalculateMaxAp(RunSnapshot run, RunSnapshot.PlayerState state) {
         int bonus = state.personalAugments.stream().map(this::findAugment).mapToInt(PrototypeContent.AugmentDefinition::maxApBonus).sum();
-        if (run.partyAugmentId != null) {
-            bonus += findAugment(run.partyAugmentId).maxApBonus();
-        }
+        for (String id : partyAugmentIds(run)) bonus += findAugment(id).maxApBonus();
         int base = "TEST".equals(run.runType)
                 ? state.testBaseMaxAp + Math.min(25, PlayerStatPolicy.points(state.investedStats, "AP"))
                 : PlayerStatPolicy.baseMaxAp(state.investedStats);
@@ -495,10 +584,134 @@ public final class GrowthService implements Listener {
         runs.mutate(run -> recalculateMaxAp(run, run.players.get(player.getUniqueId().toString())));
     }
 
+    public boolean hasAugment(Player player, String id) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        return state != null && state.personalAugments.contains(id);
+    }
+
+    public boolean partyHasAugment(String id) {
+        return runs.current().map(run -> partyAugmentIds(run).contains(id)).orElse(false);
+    }
+
+    public double dodgeCost(Player player, double baseCost) {
+        double result = baseCost;
+        if (hasAugment(player, "AUG-S-001")) result -= 4.0;
+        if (partyHasAugment("PAUG-001") && nearbyLivingMembers(player, 12.0) >= 2) result -= 3.0;
+        return Math.max(4.0, result);
+    }
+
+    public double basicAttackApCost(Player player, String weaponClass, double baseCost) {
+        return hasAugment(player, "AUG-P-008") && ("BOW".equals(weaponClass) || "CROSSBOW".equals(weaponClass))
+                ? baseCost * 1.20 : baseCost;
+    }
+
+    public double skillApCost(Player player, String skillId, double baseCost) {
+        double result = baseCost;
+        if (hasAugment(player, "AUG-P-013") && baseCost >= 50.0) result += 15.0;
+        if (hasAugment(player, "AUG-P-009") && skillId.contains("trident.cast_recall")) result += 8.0;
+        return result;
+    }
+
+    public double ammoConserveChance(Player player) {
+        double chance = 0.0;
+        if (hasAugment(player, "AUG-S-008")) chance += 0.15;
+        if (hasAugment(player, "AUG-P-008")) chance += 0.45;
+        return Math.min(0.75, chance);
+    }
+
+    public double apRegenBonusPerSecond(RunSnapshot run, RunSnapshot.PlayerState state, long nowEpochMs) {
+        double bonus = state.personalAugments.contains("AUG-S-002")
+                && nowEpochMs - state.lastDamageAtEpochMs >= 4000L ? 3.0 : 0.0;
+        if (partyAugmentIds(run).contains("PAUG-010")) {
+            boolean lowAlly = run.players.values().stream().filter(other -> other != state && !"DEAD".equals(other.lifeState))
+                    .anyMatch(other -> other.ap <= other.maxAp * 0.20);
+            if (lowAlly) bonus += 2.0;
+        }
+        return bonus;
+    }
+
+    private int nearbyLivingMembers(Player player, double range) {
+        return (int) runs.onlineMembers().stream().filter(member -> sameWorldWithin(player, member, range))
+                .filter(member -> runs.playerState(member.getUniqueId()).map(state -> !"DEAD".equals(state.lifeState)).orElse(false))
+                .count();
+    }
+
+    private static boolean sameWorldWithin(Player source, Player target, double range) {
+        return source.getWorld().equals(target.getWorld())
+                && source.getLocation().distanceSquared(target.getLocation()) <= range * range;
+    }
+
+    private boolean hasPendingPersonalDraw(RunSnapshot.PlayerState state) {
+        return PERSONAL_MILESTONES.stream().anyMatch(milestone -> state.level >= milestone
+                && !state.resolvedPersonalMilestones.contains(milestone));
+    }
+
+    private static Integer latestPartyMilestone(int day) {
+        Integer result = null;
+        for (int milestone : PARTY_MILESTONES) if (day >= milestone) result = milestone;
+        return result;
+    }
+
+    private Integer nextPartyMilestone(RunSnapshot run) {
+        java.util.Set<Integer> resolved = run.resolvedPartyAugmentMilestones == null
+                ? new java.util.HashSet<>() : new java.util.HashSet<>(run.resolvedPartyAugmentMilestones);
+        if (run.partyAugmentId != null && !run.partyAugmentId.isBlank()) resolved.add(10);
+        return PARTY_MILESTONES.stream().filter(milestone -> run.day >= milestone && !resolved.contains(milestone))
+                .findFirst().orElse(null);
+    }
+
+    private static int holderMilestone(RunSnapshot run) {
+        if (run.activePartyAugmentMilestone != null) return run.activePartyAugmentMilestone;
+        Integer latest = latestPartyMilestone(run.day);
+        return latest == null ? 10 : latest;
+    }
+
+    private static List<String> partyAugmentIds(RunSnapshot run) {
+        java.util.LinkedHashSet<String> result = new java.util.LinkedHashSet<>();
+        if (run.partyAugmentIds != null) result.addAll(run.partyAugmentIds);
+        if (run.partyAugmentId != null && !run.partyAugmentId.isBlank()) result.add(run.partyAugmentId);
+        return List.copyOf(result);
+    }
+
+    private static String tierForMilestone(long seed, int milestone) {
+        return AugmentMilestonePolicy.tier(seed, milestone);
+    }
+
+    private java.util.Set<String> buildTags(RunSnapshot.PlayerState state) {
+        java.util.Set<String> tags = new java.util.HashSet<>();
+        if (state.mainWeaponId != null) {
+            ProductionContentCatalog.CatalogEntry weapon = production.itemsById().get(state.mainWeaponId);
+            if (weapon != null) tags.add(switch (weapon.equipmentType()) {
+                case "SW" -> "SWORD"; case "AX" -> "AXE"; case "BO" -> "BOW";
+                case "CB" -> "CROSSBOW"; case "DG" -> "DAGGER"; case "BL" -> "BLUNT";
+                case "ST" -> "MAGIC"; case "PK" -> "PICKAXE"; case "TR" -> "TRIDENT";
+                default -> "UNARMED";
+            });
+        } else tags.add("UNARMED");
+        for (String ownedId : state.personalAugments) {
+            ProductionContentCatalog.AugmentEntry owned = production.augmentsById().get(ownedId);
+            if (owned != null) tags.addAll(owned.tags());
+        }
+        return tags;
+    }
+
+    private static double augmentWeight(ProductionContentCatalog.AugmentEntry augment, java.util.Set<String> buildTags) {
+        long matches = augment.tags().stream().filter(buildTags::contains).count();
+        double weight = 1.0 + Math.min(2.0, matches * 0.75);
+        if (augment.tags().contains("BRIDGE")) weight += 0.35;
+        if (augment.evolution() && matches > 0) weight += 0.5;
+        return weight;
+    }
+
+    private static PrototypeContent.AugmentDefinition runtimeAugment(ProductionContentCatalog.AugmentEntry augment) {
+        return new PrototypeContent.AugmentDefinition(augment.id(), augment.name(), augment.tier(), augment.scope(),
+                1.0, 1.0, 1.0, 0, 1.0);
+    }
+
     private PrototypeContent.AugmentDefinition findAugment(String id) {
-        return java.util.stream.Stream.concat(content.personalAugments().stream(), content.partyAugments().stream())
-                .filter(augment -> augment.id().equals(id)).findFirst()
-                .orElseThrow(() -> new IllegalStateException("Unknown augment " + id));
+        PrototypeContent.AugmentDefinition augment = runtimeAugments.get(id);
+        if (augment == null) throw new IllegalStateException("Unknown augment " + id);
+        return augment;
     }
 
     public static int nextLevelExp(int currentLevel) {

@@ -1,7 +1,7 @@
 schema-version: 2
 content-revision: "ws-content-r2"
 manifest: "manifest.json"
-manifest-sha256: "40b384005bf56113f2e632b992ae9c5d80dd8d5ae41d81757eeb2ed28ca27675"
+manifest-sha256: "5e8bd7ec1f5d6334859502be2b54fe643fa92e374396c7b0712aa1c18c451020"
 activation-policy: "NEW_RUN_ONLY"
 story-revision: "ws-story-s1-r1"
 budget-policy-revision: "budget-live-r2"

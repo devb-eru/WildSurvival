@@ -7,6 +7,19 @@
       "id": "PAUG-001",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "함께 걷는 자",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "MOBILITY",
+        "COOP"
+      ],
+      "effectOpcode": "MOBILITY",
+      "effectText": "생존 파티원 12블록 내 2명 이상이면 이동속도 +6%, 회피 AP -3",
+      "constraintText": "혼자일 때 이동 +3%만 유지",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-001",
         "함께 걷는 자",
@@ -19,6 +32,19 @@
       "id": "PAUG-002",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "교대 방어",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "GUARD",
+        "COOP"
+      ],
+      "effectOpcode": "GUARD",
+      "effectText": "한 플레이어가 방어·패링 후 3초 내 다른 플레이어 공격 피해 +10%",
+      "constraintText": "대상별 4초",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-002",
         "교대 방어",
@@ -31,6 +57,19 @@
       "id": "PAUG-003",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "공동 약점 분석",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "BREAK",
+        "MARK"
+      ],
+      "effectOpcode": "BREAK",
+      "effectText": "서로 다른 플레이어 2명이 같은 적을 4초 내 적중하면 받는 브레이크 +12% 5초",
+      "constraintText": "보스 +8%, 대상별 8초",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-003",
         "공동 약점 분석",
@@ -43,6 +82,19 @@
       "id": "PAUG-004",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "구조 연쇄",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "RESCUE",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "PARTY_REVIVE",
+      "effectText": "구조 완료 시 모든 생존 파티원 AP 10, 구조자·대상 HP 8% 회복",
+      "constraintText": "구조당 1회",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-004",
         "구조 연쇄",
@@ -55,6 +107,19 @@
       "id": "PAUG-005",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "분산 보급",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "RESOURCE",
+        "UTILITY"
+      ],
+      "effectOpcode": "PARTY_RESOURCE",
+      "effectText": "서로 다른 획득 범주 기여자가 2명 이상인 Day의 공용 일반 재료 +10%",
+      "constraintText": "보스·고유 재료 제외",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-005",
         "분산 보급",
@@ -67,6 +132,19 @@
       "id": "PAUG-006",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "상태 공유 연구",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "STATUS",
+        "COOP"
+      ],
+      "effectOpcode": "STATUS",
+      "effectText": "파티가 서로 다른 약화 3종을 대상에 적용하면 5초간 상태 피해 +15%",
+      "constraintText": "대상별 10초, 강한 CC 제외",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-006",
         "상태 공유 연구",
@@ -79,6 +157,19 @@
       "id": "PAUG-007",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "방어선 없는 방어",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "NOMAD",
+        "FACILITY"
+      ],
+      "effectOpcode": "NOMAD",
+      "effectText": "추적 압박에서는 파티 이동 중 받는 피해 -6%, 시설 습격에서는 시설 받는 피해 -10%",
+      "constraintText": "압박 모드별 자동 변환",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-007",
         "방어선 없는 방어",
@@ -91,6 +182,19 @@
       "id": "PAUG-008",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "정화 순환망",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "CORRUPTION",
+        "FACILITY"
+      ],
+      "effectOpcode": "CORRUPTION",
+      "effectText": "파티원이 정화될 때 가장 오염 높은 생존자 오염 1%p 추가 감소",
+      "constraintText": "8초, 시설 없어도 소모품 발동",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-008",
         "정화 순환망",
@@ -103,6 +207,19 @@
       "id": "PAUG-009",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "탄약 공방",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "AMMO",
+        "CRAFT"
+      ],
+      "effectOpcode": "PARTY_AMMO_CRAFT",
+      "effectText": "일반 탄약 제작량 +20%, 특수 탄약 비용 -10%",
+      "constraintText": "고유·보스 탄약 제외",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-009",
         "탄약 공방",
@@ -115,6 +232,19 @@
       "id": "PAUG-010",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "전술 예비력",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "AP",
+        "COOP"
+      ],
+      "effectOpcode": "PARTY_AP_REGEN",
+      "effectText": "파티원 한 명이 AP 20% 아래면 다른 생존자 AP 회복 +2/초",
+      "constraintText": "대상 1명, 중첩 없음",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-010",
         "전술 예비력",
@@ -127,6 +257,19 @@
       "id": "PAUG-011",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "패턴 인계",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "PATTERN",
+        "COOP"
+      ],
+      "effectOpcode": "PATTERN",
+      "effectText": "한 플레이어가 패턴 대응에 성공하면 4초간 다른 파티원의 같은 패턴 받는 피해 -12%",
+      "constraintText": "패턴별 8초",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-011",
         "패턴 인계",
@@ -139,6 +282,19 @@
       "id": "PAUG-012",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "잔존 압박 해체",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "ENCOUNTER",
+        "BREAK"
+      ],
+      "effectOpcode": "ENCOUNTER",
+      "effectText": "잔존 주요 적 브레이크 -10%, 잔존 오염 증가 -20%",
+      "constraintText": "일반 공세만",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-012",
         "잔존 압박 해체",
@@ -151,6 +307,19 @@
       "id": "PAUG-013",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "고유 장비 공방",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "EQUIPMENT",
+        "CRAFT"
+      ],
+      "effectOpcode": "EQUIPMENT",
+      "effectText": "해금된 보스 고유 장비 최초 제작의 일반 재료 비용 -15%",
+      "constraintText": "템플릿별 1회",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-013",
         "고유 장비 공방",
@@ -163,6 +332,19 @@
       "id": "PAUG-014",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "재건의 합의",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "RECONSTRUCTION",
+        "COOP"
+      ],
+      "effectOpcode": "RECONSTRUCTION",
+      "effectText": "서로 다른 기여 범주 3개 달성 시 재건 시설 작업속도 +12%",
+      "constraintText": "Day 41 이후, 1인 잔존 시 +4%",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-014",
         "재건의 합의",
@@ -175,6 +357,19 @@
       "id": "PAUG-015",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "마지막 대형",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "SURVIVAL",
+        "RISK"
+      ],
+      "effectOpcode": "SURVIVAL",
+      "effectText": "생존자가 절반 이하가 되면 남은 파티원 최대 HP +10%, AP 회복 +10%",
+      "constraintText": "보상 배율 증가 없음",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-015",
         "마지막 대형",
@@ -187,6 +382,19 @@
       "id": "PAUG-016",
       "sourceDocumentId": "AUG-LIST-002",
       "enabled": true,
+      "name": "다중 전선",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "AREA",
+        "COOP"
+      ],
+      "effectOpcode": "AREA",
+      "effectText": "서로 10블록 이상 떨어진 생존자들이 각자 전투 중이면 주는 피해 +6%",
+      "constraintText": "최대 +6%, 분산 강요 패턴에는 비활성",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "PAUG-016",
         "다중 전선",

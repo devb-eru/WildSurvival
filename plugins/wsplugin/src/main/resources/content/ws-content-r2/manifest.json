@@ -270,13 +270,13 @@
       "path": "augments/personal-augments.json",
       "domain": "personal-augments",
       "schema": "augment.schema.json",
-      "sha256": "cc71de06d671a2c68915b5d75de0786bea8df3fc6f81df21a16efb4e90634ca6"
+      "sha256": "cd924e7b6fb09d6a09a3addbc3b5755511ceb087bf39333c68b7e26b08e97a81"
     },
     {
       "path": "augments/party-augments.json",
       "domain": "party-augments",
       "schema": "augment.schema.json",
-      "sha256": "2d74d651d661b6f9680b6c74aac4a58b845fa0c82eacdafa97b67b139c2d7929"
+      "sha256": "fba58e2abaf2434c904e929532edec1473cc7c2b79d8b048d7737fb170397858"
     },
     {
       "path": "skills/player-skills.json",

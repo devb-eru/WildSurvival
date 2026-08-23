@@ -564,6 +564,7 @@ public final class RunService {
             if ("TEST".equals(current.runType)) {
                 perTick *= clamp(state.testApRegenMultiplier, 0.0, 20.0);
             }
+            if (growth != null) perTick += growth.apRegenBonusPerSecond(current, state, now) / 20.0;
             state.ap = Math.min(state.maxAp, state.ap + perTick);
         }
     }

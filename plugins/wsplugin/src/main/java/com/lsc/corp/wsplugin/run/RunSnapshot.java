@@ -26,6 +26,9 @@ public final class RunSnapshot {
     public List<OutboxEvent> outbox = new ArrayList<>();
     public Map<String, MilestoneLock> milestoneLocks = new LinkedHashMap<>();
     public String partyAugmentId;
+    public List<String> partyAugmentIds = new ArrayList<>();
+    public Set<Integer> resolvedPartyAugmentMilestones = new LinkedHashSet<>();
+    public Integer activePartyAugmentMilestone;
     public Map<String, Integer> partyAugmentVotes = new LinkedHashMap<>();
     public boolean craftUnlocked;
     public boolean sharedLedgerUnlocked;
@@ -43,6 +46,7 @@ public final class RunSnapshot {
         public double ap = 100.0;
         public int maxAp = 100;
         public long apRegenBlockedUntilEpochMs;
+        public long lastDamageAtEpochMs;
         public String mainWeaponId;
         public String mainWeaponInstanceId;
         public String offhandId;

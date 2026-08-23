@@ -91,7 +91,8 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
                 + result.verifiedFileCount() + " files, promotionForbidden=" + result.manifest().promotionForbidden());
         sender.sendMessage(ChatColor.GREEN + ProductionBundleValidator.REVISION + " production validated: "
                 + production.verifiedFileCount() + " files, codex=" + production.catalog().codexEntries().size()
-                + ", recipes=" + production.catalog().recipes().size() + ", skills=" + production.catalog().skills().size());
+                + ", recipes=" + production.catalog().recipes().size() + ", skills=" + production.catalog().skills().size()
+                + ", augments=" + production.catalog().augmentsById().size());
     }
 
     private void prototype(CommandSender sender, String[] args) throws Exception {

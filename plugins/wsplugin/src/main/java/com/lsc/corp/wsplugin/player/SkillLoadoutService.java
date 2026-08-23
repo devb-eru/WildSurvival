@@ -72,6 +72,12 @@ public final class SkillLoadoutService implements Listener {
         return entry == null ? 0 : entry.cooldownTicks();
     }
 
+    public PrototypeContent.SkillDefinition basicAttack(String weaponClass) {
+        return production.skills().stream().filter(skill -> "BASIC".equals(skill.kind())
+                && weaponClass.equals(skill.weaponClass())).findFirst()
+                .map(skill -> runtimeSkills.get(skill.id())).orElse(null);
+    }
+
     public String consumableId(String skillId) {
         ProductionContentCatalog.SkillEntry entry = production.skillsById().get(skillId);
         return entry == null ? "" : entry.consumableId();

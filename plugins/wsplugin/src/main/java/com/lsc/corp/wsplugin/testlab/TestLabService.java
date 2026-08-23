@@ -3,6 +3,7 @@ package com.lsc.corp.wsplugin.testlab;
 import com.lsc.corp.wsplugin.boss.PrototypeBossService;
 import com.lsc.corp.wsplugin.combat.CombatService;
 import com.lsc.corp.wsplugin.content.PrototypeContent;
+import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
@@ -50,6 +51,7 @@ public final class TestLabService implements Listener {
     private final RunService runs;
     private final TestLabRepository repository;
     private final PrototypeContent content;
+    private final ProductionContentCatalog production;
     private final EquipmentService equipment;
     private final GrowthService growth;
     private final CombatService combat;
@@ -60,13 +62,15 @@ public final class TestLabService implements Listener {
     private final NamespacedKey testSessionKey;
 
     public TestLabService(JavaPlugin plugin, RunService runs, TestLabRepository repository,
-                          PrototypeContent content, EquipmentService equipment, GrowthService growth,
+                          PrototypeContent content, ProductionContentCatalog production,
+                          EquipmentService equipment, GrowthService growth,
                           CombatService combat, PrototypeBossService boss, PrototypeLoopService loop,
                           TelemetryService telemetry) {
         this.plugin = plugin;
         this.runs = runs;
         this.repository = repository;
         this.content = content;
+        this.production = production;
         this.equipment = equipment;
         this.growth = growth;
         this.combat = combat;
@@ -707,6 +711,8 @@ public final class TestLabService implements Listener {
         result.put("quickItems", Map.copyOf(state.quickItems));
         result.put("personalAugments", List.copyOf(state.personalAugments));
         result.put("partyAugment", runs.current().orElseThrow().partyAugmentId);
+        result.put("partyAugments", runs.current().orElseThrow().partyAugmentIds == null
+                ? List.of() : List.copyOf(runs.current().orElseThrow().partyAugmentIds));
         result.put("damageDealtMultiplier", state.testDamageDealtMultiplier);
         result.put("breakMultiplier", state.testBreakMultiplier);
         result.put("damageTakenMultiplier", state.testDamageTakenMultiplier);
@@ -745,11 +751,11 @@ public final class TestLabService implements Listener {
     }
 
     public Collection<String> personalAugmentIds() {
-        return content.personalAugments().stream().map(PrototypeContent.AugmentDefinition::id).toList();
+        return production.personalAugments().stream().map(ProductionContentCatalog.AugmentEntry::id).toList();
     }
 
     public Collection<String> partyAugmentIds() {
-        return content.partyAugments().stream().map(PrototypeContent.AugmentDefinition::id).toList();
+        return production.partyAugments().stream().map(ProductionContentCatalog.AugmentEntry::id).toList();
     }
 
     public boolean enabled() {

@@ -77,6 +77,7 @@ public final class TelemetryService implements AutoCloseable {
         report.put("survivorCount", snapshot.players.values().stream().filter(value -> "ACTIVE".equals(value.lifeState)).count());
         report.put("resources", snapshot.resources);
         report.put("partyAugmentId", snapshot.partyAugmentId);
+        report.put("partyAugmentIds", snapshot.partyAugmentIds == null ? List.of() : snapshot.partyAugmentIds);
         report.put("bossRewardCommitted", snapshot.boss != null && snapshot.boss.rewardCommitted);
         report.put("ledgerCommitCount", snapshot.committedKeys.size());
         report.put("pluginTickP95Ms", p95PluginTickMs());

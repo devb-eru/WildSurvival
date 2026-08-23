@@ -531,7 +531,11 @@ public final class CombatService implements Listener {
             }
             case ALLOW -> {
                 if (event.getFinalDamage() > 0.0) {
-                    runs.mutate(run -> run.players.get(player.getUniqueId().toString()).apRegenBlockedUntilEpochMs = now + 1500L);
+                    runs.mutate(run -> {
+                        RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                        state.lastDamageAtEpochMs = now;
+                        state.apRegenBlockedUntilEpochMs = now + 1500L;
+                    });
                 }
             }
         }
@@ -806,6 +810,7 @@ public final class CombatService implements Listener {
         String weaponId = equipment.resolveWeaponId(player);
         if (!requireUsableWeapon(player)) return false;
         PrototypeContent.WeaponDefinition weapon = contentWeapon(player, weaponId);
+        PrototypeContent.SkillDefinition basic = skills.basicAttack(weaponId);
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         if ("TRIDENT".equals(weaponId) && !"HELD".equals(state.tridentState)) {
             ActionBarService.notice(player, Component.text("삼지창을 먼저 회수하세요 (Shift+R)", NamedTextColor.RED), 40);
@@ -815,10 +820,20 @@ public final class CombatService implements Listener {
         if (attackReadyAtNanos.getOrDefault(player.getUniqueId(), 0L) > now) {
             return false;
         }
+        if (usesArrowAmmo(weaponId) && !hasArrowAmmo(player, weaponId)) {
+            ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
+            return false;
+        }
+        double apCost = growth.basicAttackApCost(player, weaponId, basic == null ? 0.0 : basic.apCost());
+        if (!runs.consumeAp(player, apCost)) {
+            apFailure(player, apCost);
+            return false;
+        }
         double cooldownMultiplier = runs.isTestRun()
                 ? clamp(state.testCooldownMultiplier, 0.05, 10.0) : 1.0;
+        int intervalTicks = basic == null ? weapon.intervalTicks() : skills.cooldownTicks(basic.id());
         attackReadyAtNanos.put(player.getUniqueId(), now
-                + CombatMath.cooldownTicks(weapon.intervalTicks(), cooldownMultiplier) * 50_000_000L);
+                + CombatMath.cooldownTicks(intervalTicks, cooldownMultiplier) * 50_000_000L);
         ComboState combo = combos.computeIfAbsent(player.getUniqueId(), ignored -> new ComboState());
         if (!weaponId.equals(combo.weaponId) || Instant.now().toEpochMilli() - combo.lastAttackAtEpochMs > 1250L) {
             combo.weaponId = weaponId;
@@ -831,6 +846,10 @@ public final class CombatService implements Listener {
         if (usesArrowAmmo(weaponId)) {
             if (!consumeArrowAmmo(player, weaponId)) {
                 attackReadyAtNanos.remove(player.getUniqueId());
+                runs.mutate(run -> {
+                    RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
+                    mutable.ap = Math.min(mutable.maxAp, mutable.ap + apCost);
+                });
                 ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
                 return false;
             }
@@ -867,10 +886,12 @@ public final class CombatService implements Listener {
             return false;
         }
         if (!requireSkillReady(player, skill)) return false;
+        double apCost = growth.skillApCost(player, skill.id(), skill.apCost());
         if ("TRIDENT_TOGGLE".equals(skill.effect())) {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
             boolean success = "HELD".equals(state.tridentState)
-                    ? throwTrident(player, skill.apCost()) : recallTrident(player, Math.min(20.0, skill.apCost()));
+                    ? throwTrident(player, apCost)
+                    : recallTrident(player, growth.skillApCost(player, skill.id(), Math.min(20.0, skill.apCost())));
             if (success) {
                 startSkillCooldown(player, skill);
                 equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
@@ -883,8 +904,8 @@ public final class CombatService implements Listener {
                 ActionBarService.notice(player, Component.text("순간 장전에는 화살 2개가 필요합니다", NamedTextColor.RED), 30);
                 return false;
             }
-            if (!runs.consumeAp(player, skill.apCost())) {
-                apFailure(player, skill.apCost());
+            if (!runs.consumeAp(player, apCost)) {
+                apFailure(player, apCost);
                 return false;
             }
             takeMaterial(player, Material.ARROW, 2);
@@ -901,8 +922,8 @@ public final class CombatService implements Listener {
             ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
             return false;
         }
-        if (!runs.consumeAp(player, skill.apCost())) {
-            apFailure(player, skill.apCost());
+        if (!runs.consumeAp(player, apCost)) {
+            apFailure(player, apCost);
             return false;
         }
         if (usesArrowAmmo(weaponId)) consumeArrowAmmo(player, weaponId);
@@ -918,7 +939,7 @@ public final class CombatService implements Listener {
         applyCasterSkillEffect(player, skill, targets);
         showSkillEffect(player, skill, targets);
         runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tutorialSignals.add("USED_SKILL"));
-        ActionBarService.notice(player, Component.text("W" + slot + " " + skill.name() + " / AP -" + Math.round(skill.apCost()), NamedTextColor.AQUA), 30);
+        ActionBarService.notice(player, Component.text("W" + slot + " " + skill.name() + " / AP -" + Math.round(apCost), NamedTextColor.AQUA), 30);
         return true;
     }
 
@@ -946,14 +967,15 @@ public final class CombatService implements Listener {
             ActionBarService.notice(player, Component.text("필요 소모품이 없습니다: " + consumableId, NamedTextColor.RED), 40);
             return;
         }
-        if (!runs.consumeAp(player, skill.apCost())) {
-            apFailure(player, skill.apCost());
+        double apCost = growth.skillApCost(player, skill.id(), skill.apCost());
+        if (!runs.consumeAp(player, apCost)) {
+            apFailure(player, apCost);
             return;
         }
         if (!consumableId.isBlank() && !equipment.consumeQuickItem(player, consumableId)) {
             runs.mutate(run -> {
                 RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-                state.ap = Math.min(state.maxAp, state.ap + skill.apCost());
+                state.ap = Math.min(state.maxAp, state.ap + apCost);
             });
             return;
         }
@@ -961,7 +983,7 @@ public final class CombatService implements Listener {
         executeCommonEffect(player, skill, target);
         showSkillEffect(player, skill, target == null ? List.of() : List.of(target));
         ActionBarService.notice(player, Component.text("C" + slot + " " + skill.name()
-                + " / AP -" + Math.round(skill.apCost()), NamedTextColor.LIGHT_PURPLE), 35);
+                + " / AP -" + Math.round(apCost), NamedTextColor.LIGHT_PURPLE), 35);
     }
 
     private void executeQuickItem(Player player, int slot) {
@@ -1002,7 +1024,7 @@ public final class CombatService implements Listener {
 
     private void executeDodge(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
-        double cost = PlayerStatPolicy.dodgeCost(state.investedStats);
+        double cost = growth.dodgeCost(player, PlayerStatPolicy.dodgeCost(state.investedStats));
         if (!runs.consumeAp(player, cost)) {
             apFailure(player, cost);
             return;
@@ -1695,6 +1717,7 @@ public final class CombatService implements Listener {
     }
 
     private boolean consumeArrowAmmo(Player player, String weaponId) {
+        if (java.util.concurrent.ThreadLocalRandom.current().nextDouble() < growth.ammoConserveChance(player)) return true;
         if ("CROSSBOW".equals(weaponId)) {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
             if (state != null && state.crossbowLoadedAmmo > 0) {

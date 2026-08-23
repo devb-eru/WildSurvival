@@ -7,6 +7,20 @@
       "id": "AUG-S-001",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "가벼운 발걸음",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "DODGE",
+        "AP",
+        "BRIDGE"
+      ],
+      "effectOpcode": "DODGE_COST",
+      "effectText": "회피 AP 비용 -4",
+      "constraintText": "최소 비용 하한 적용",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-001",
         "가벼운 발걸음",
@@ -20,6 +34,20 @@
       "id": "AUG-S-002",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "숨 고르기",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "AP",
+        "RECOVERY",
+        "BRIDGE"
+      ],
+      "effectOpcode": "AP_REGEN",
+      "effectText": "피해를 받지 않은 4초 후 AP 회복 +3/초",
+      "constraintText": "전투 중에도 조건 검사",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-002",
         "숨 고르기",
@@ -33,6 +61,20 @@
       "id": "AUG-S-003",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "응급 지혈",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "SURVIVAL",
+        "BLEED",
+        "BRIDGE"
+      ],
+      "effectOpcode": "SURVIVAL",
+      "effectText": "받는 출혈 지속시간 -25%, 출혈 해제 시 HP 2% 회복",
+      "constraintText": "8초",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-003",
         "응급 지혈",
@@ -46,6 +88,19 @@
       "id": "AUG-S-004",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "정화 호흡",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "CORRUPTION",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "CORRUPTION",
+      "effectText": "개인 오염 획득 -10%, 정화 소모품 효과 +10%",
+      "constraintText": "오염 감소 하한 적용",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-004",
         "정화 호흡",
@@ -59,6 +114,19 @@
       "id": "AUG-S-005",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "견고한 중심",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "GUARD",
+        "PARRY"
+      ],
+      "effectOpcode": "GUARD",
+      "effectText": "가드 충격 AP -12%, 패링 실패 후 가드 전환 비용 -3",
+      "constraintText": "행동당 1회",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-005",
         "견고한 중심",
@@ -72,6 +140,19 @@
       "id": "AUG-S-006",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "약점 기록",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "BREAK",
+        "MARK"
+      ],
+      "effectOpcode": "BREAK",
+      "effectText": "같은 대상 3회 유효 적중 시 4초간 브레이크 피해 +12%",
+      "constraintText": "대상별 6초",
+      "weightingText": "브레이크 비적용 대상 제외",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-006",
         "약점 기록",
@@ -85,6 +166,19 @@
       "id": "AUG-S-007",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "정밀 반복",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "COMBO",
+        "HIT"
+      ],
+      "effectOpcode": "COMBO",
+      "effectText": "콤보 마지막 단계 명중 시 다음 일반 공격 HIT +12",
+      "constraintText": "4초, 중첩 없음",
+      "weightingText": "콤보 무기 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-007",
         "정밀 반복",
@@ -98,6 +192,19 @@
       "id": "AUG-S-008",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "예비 탄약",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "AMMO",
+        "RANGED"
+      ],
+      "effectOpcode": "AMMO_CONSERVE",
+      "effectText": "일반 탄약 소비 시 15% 확률로 미소비",
+      "constraintText": "시전당 1회",
+      "weightingText": "활·석궁 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-008",
         "예비 탄약",
@@ -111,6 +218,19 @@
       "id": "AUG-S-009",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "빠른 손질",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "RELOAD",
+        "RANGED"
+      ],
+      "effectOpcode": "RELOAD",
+      "effectText": "장전시간 -10%, 장전 중 이동 페널티 -10%",
+      "constraintText": "장전 하한 적용",
+      "weightingText": "석궁 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-009",
         "빠른 손질",
@@ -124,6 +244,19 @@
       "id": "AUG-S-010",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "잔류 마력",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "MAGIC",
+        "AREA"
+      ],
+      "effectOpcode": "MAGIC",
+      "effectText": "지속 영역 종료 시 최대 AP 4% 회복",
+      "constraintText": "영역별 1회, 6초",
+      "weightingText": "지팡이 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-010",
         "잔류 마력",
@@ -137,6 +270,19 @@
       "id": "AUG-S-011",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "충격 흡수",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "SHIELD",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "SHIELD",
+      "effectText": "보호막이 전부 소모될 때 받는 다음 피해 -10%",
+      "constraintText": "6초",
+      "weightingText": "보호막 출처 보유 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-011",
         "충격 흡수",
@@ -150,6 +296,19 @@
       "id": "AUG-S-012",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "짧은 반격",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "COUNTER",
+        "DODGE"
+      ],
+      "effectOpcode": "COUNTER",
+      "effectText": "정확 회피 후 2초 내 첫 공격 피해 +8%",
+      "constraintText": "회피당 1회",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-012",
         "짧은 반격",
@@ -163,6 +322,20 @@
       "id": "AUG-S-013",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "상처 관찰",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "STATUS",
+        "BLEED",
+        "POISON"
+      ],
+      "effectOpcode": "STATUS",
+      "effectText": "DOT가 있는 적에게 HIT +8, 브레이크 +5%",
+      "constraintText": "상시",
+      "weightingText": "DOT 태그 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-013",
         "상처 관찰",
@@ -176,6 +349,19 @@
       "id": "AUG-S-014",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "구조 본능",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "RESCUE",
+        "SUPPORT"
+      ],
+      "effectOpcode": "REVIVE_SPEED",
+      "effectText": "구조 채널링 시간 -10%, 구조 완료 후 두 플레이어 AP 5 회복",
+      "constraintText": "구조당 1회",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-014",
         "구조 본능",
@@ -189,6 +375,19 @@
       "id": "AUG-S-015",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "현장 수리",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "UTILITY",
+        "FACILITY"
+      ],
+      "effectOpcode": "UTILITY",
+      "effectText": "긴급 수리 자원 비용 -8%, 피격 중단 임계 피해 +10%",
+      "constraintText": "상시",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-015",
         "현장 수리",
@@ -202,6 +401,19 @@
       "id": "AUG-S-016",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "전투 관측",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "MARK",
+        "UTILITY"
+      ],
+      "effectOpcode": "MARK",
+      "effectText": "엘리트·보스 패턴을 처음 회피/방어하면 5초간 대상 받는 브레이크 +6%",
+      "constraintText": "대상 패턴별 1회",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-016",
         "전투 관측",
@@ -215,6 +427,19 @@
       "id": "AUG-S-017",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "낮은 자세",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "TENACITY",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "TENACITY",
+      "effectText": "강한 CC 지속시간 -10%, 강제 이동 세기 -8%",
+      "constraintText": "저항 하드캡 적용",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-017",
         "낮은 자세",
@@ -228,6 +453,19 @@
       "id": "AUG-S-018",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "절약 가공",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "RESOURCE",
+        "UTILITY"
+      ],
+      "effectOpcode": "CRAFT_CONSERVE",
+      "effectText": "휴대 가공 시 일반 재료 8% 확률 미소비",
+      "constraintText": "작업당 1회",
+      "weightingText": "전투 보상 아님",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-S-018",
         "절약 가공",
@@ -241,6 +479,21 @@
       "id": "AUG-G-001",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "완벽한 간격",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "DODGE",
+        "COUNTER"
+      ],
+      "effectOpcode": "DODGE",
+      "effectText": "정확 회피 시 다음 공격 피해 +18%, 브레이크 +15%",
+      "constraintText": "4초, 회피당 1회",
+      "weightingText": "AUG-G-002` 강한 배타",
+      "exclusiveWith": [
+        "AUG-G-002"
+      ],
+      "evolution": false,
       "raw": [
         "AUG-G-001",
         "완벽한 간격",
@@ -254,6 +507,21 @@
       "id": "AUG-G-002",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "연속 기동",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "DODGE",
+        "MOBILITY"
+      ],
+      "effectOpcode": "DODGE",
+      "effectText": "회피 성공 시 회피 AP 30% 환급, 연속 발동마다 절반 감소",
+      "constraintText": "6초 내 3단 감쇠",
+      "weightingText": "AUG-G-001` 강한 배타",
+      "exclusiveWith": [
+        "AUG-G-001"
+      ],
+      "evolution": false,
       "raw": [
         "AUG-G-002",
         "연속 기동",
@@ -267,6 +535,19 @@
       "id": "AUG-G-003",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "방패 너머",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "PARRY",
+        "BREAK"
+      ],
+      "effectOpcode": "PARRY",
+      "effectText": "패링 성공 시 대상 브레이크 +20%, 다음 스킬 AP -8",
+      "constraintText": "5초",
+      "weightingText": "방어·패링 가능 장비 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-003",
         "방패 너머",
@@ -280,6 +561,19 @@
       "id": "AUG-G-004",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "파열 계산",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "BREAK",
+        "BURST"
+      ],
+      "effectOpcode": "BREAK",
+      "effectText": "브레이크 성공 시 대상에게 6초간 받는 피해 +8%",
+      "constraintText": "대상별 12초",
+      "weightingText": "보스 상한 +5%",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-004",
         "파열 계산",
@@ -293,6 +587,19 @@
       "id": "AUG-G-005",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "상태 촉매",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "STATUS",
+        "CONSUME"
+      ],
+      "effectOpcode": "STATUS",
+      "effectText": "서로 다른 약화 2종 대상 공격 시 하나의 남은 시간을 1초 소비해 추가 피해 ATK 35%",
+      "constraintText": "대상별 4초",
+      "weightingText": "강한 CC 소비 불가",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-005",
         "상태 촉매",
@@ -306,6 +613,19 @@
       "id": "AUG-G-006",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "잔혹한 누적",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "BLEED",
+        "MULTIHIT"
+      ],
+      "effectOpcode": "BLEED",
+      "effectText": "출혈 최대 중첩 대상에게 일반 공격 마지막 타격 +22%",
+      "constraintText": "실행당 1회",
+      "weightingText": "출혈 빌드 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-006",
         "잔혹한 누적",
@@ -319,6 +639,19 @@
       "id": "AUG-G-007",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "독성 순환",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "POISON",
+        "AP"
+      ],
+      "effectOpcode": "POISON",
+      "effectText": "독 틱이 실제 HP 피해를 줄 때 AP 1 회복",
+      "constraintText": "초당 최대 4",
+      "weightingText": "보상 비적용 대상 제외",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-007",
         "독성 순환",
@@ -332,6 +665,19 @@
       "id": "AUG-G-008",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "연소 확산",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "BURN",
+        "AREA"
+      ],
+      "effectOpcode": "BURN",
+      "effectText": "화상 대상 처치가 아닌 화상 3중첩 도달 시 주변 3블록에 1중첩 전이",
+      "constraintText": "5초",
+      "weightingText": "소환물·훈련 제외",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-008",
         "연소 확산",
@@ -345,6 +691,19 @@
       "id": "AUG-G-009",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "탄약 조율",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "AMMO",
+        "STATUS"
+      ],
+      "effectOpcode": "AMMO",
+      "effectText": "특수 탄약의 상태 적중 +12, 기본 피해 -5%",
+      "constraintText": "상시",
+      "weightingText": "탄약 무기만",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-009",
         "탄약 조율",
@@ -358,6 +717,19 @@
       "id": "AUG-G-010",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "관통 궤도",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "RANGED",
+        "PIERCE"
+      ],
+      "effectOpcode": "RANGED",
+      "effectText": "투사체 첫 관통 후 다음 대상 피해 감소를 20%p 완화",
+      "constraintText": "투사체당 1회",
+      "weightingText": "활·석궁·삼지창 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-010",
         "관통 궤도",
@@ -371,6 +743,19 @@
       "id": "AUG-G-011",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "마력 환류",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "MAGIC",
+        "AP"
+      ],
+      "effectOpcode": "MAGIC",
+      "effectText": "AP 30 이상 스킬이 2명 이상 유효 적중하면 AP 8 환급",
+      "constraintText": "시전당 1회, 4초",
+      "weightingText": "지팡이 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-011",
         "마력 환류",
@@ -384,6 +769,20 @@
       "id": "AUG-G-012",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "충격 연쇄",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "HEAVY",
+        "AREA",
+        "BREAK"
+      ],
+      "effectOpcode": "HEAVY",
+      "effectText": "단일 타격 브레이크 20 이상이면 주변 3블록에 원래 브레이크의 25%",
+      "constraintText": "5초",
+      "weightingText": "둔기·도끼·곡괭이 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-012",
         "충격 연쇄",
@@ -397,6 +796,19 @@
       "id": "AUG-G-013",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "응급 보호막",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "SURVIVAL",
+        "SHIELD"
+      ],
+      "effectOpcode": "SURVIVAL",
+      "effectText": "HP 30% 아래 진입 시 최대 HP 12% 보호막 5초",
+      "constraintText": "35초",
+      "weightingText": "중첩 없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-013",
         "응급 보호막",
@@ -410,6 +822,19 @@
       "id": "AUG-G-014",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "정화 전환",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "CORRUPTION",
+        "AP"
+      ],
+      "effectOpcode": "CORRUPTION",
+      "effectText": "개인 오염 단계 하락 시 AP 20 회복, 다음 상태 저항 +15",
+      "constraintText": "15초",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-014",
         "정화 전환",
@@ -423,6 +848,19 @@
       "id": "AUG-G-015",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "구조 파동",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "RESCUE",
+        "SUPPORT"
+      ],
+      "effectOpcode": "RESCUE",
+      "effectText": "구조 완료 시 5블록 파티원에게 최대 HP 5% 회복",
+      "constraintText": "구조당 1회",
+      "weightingText": "자기 구조 미적용",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-015",
         "구조 파동",
@@ -436,6 +874,19 @@
       "id": "AUG-G-016",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "장비 적응",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "EQUIPMENT",
+        "BRIDGE"
+      ],
+      "effectOpcode": "EQUIPMENT",
+      "effectText": "현재 무기 태그와 일치하는 증강 2개 이상이면 ATK +7%, 불일치 시 DEF +7",
+      "constraintText": "2초마다 재평가",
+      "weightingText": "단일 출처",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-016",
         "장비 적응",
@@ -449,6 +900,19 @@
       "id": "AUG-G-017",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "예측 관측",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "PATTERN",
+        "UTILITY"
+      ],
+      "effectOpcode": "PATTERN",
+      "effectText": "같은 패턴을 처음 대응한 뒤 해당 패턴 전조 UI 0.15초 조기 표시",
+      "constraintText": "패턴별",
+      "weightingText": "보스 데이터 안전선 적용",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-017",
         "예측 관측",
@@ -462,6 +926,19 @@
       "id": "AUG-G-018",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "불굴의 흐름",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "TENACITY",
+        "AP"
+      ],
+      "effectOpcode": "TENACITY",
+      "effectText": "강한 CC 종료 시 AP 10, 다음 회피 비용 -5",
+      "constraintText": "8초",
+      "weightingText": "면역된 CC 미발동",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-G-018",
         "불굴의 흐름",
@@ -475,6 +952,21 @@
       "id": "AUG-P-001",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "한계 돌파",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "BURST",
+        "RISK"
+      ],
+      "effectOpcode": "LOW_HP_BURST",
+      "effectText": "HP 40% 이하에서 주는 피해 +22%, 브레이크 +15%",
+      "constraintText": "받는 회복 -20%",
+      "weightingText": "AUG-P-002` 강한 배타",
+      "exclusiveWith": [
+        "AUG-P-002"
+      ],
+      "evolution": false,
       "raw": [
         "AUG-P-001",
         "한계 돌파",
@@ -488,6 +980,21 @@
       "id": "AUG-P-002",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "불가침 궤도",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "DODGE",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "DODGE",
+      "effectText": "정확 회피 2회 후 다음 피격 70% 감소",
+      "constraintText": "주는 피해 -8%, 12초",
+      "weightingText": "AUG-P-001` 강한 배타",
+      "exclusiveWith": [
+        "AUG-P-001"
+      ],
+      "evolution": false,
       "raw": [
         "AUG-P-002",
         "불가침 궤도",
@@ -501,6 +1008,20 @@
       "id": "AUG-P-003",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "영점 반격",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "PARRY",
+        "COUNTER",
+        "BREAK"
+      ],
+      "effectOpcode": "PARRY",
+      "effectText": "보스 패링 성공 시 패턴 브레이크 +35% 및 파티 AP 5 회복",
+      "constraintText": "패턴별 10초, 같은 실행 1회",
+      "weightingText": "보상·아군 공격 제외",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-P-003",
         "영점 반격",
@@ -514,6 +1035,19 @@
       "id": "AUG-P-004",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "붕괴 설계",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "BREAK",
+        "EVOLUTION"
+      ],
+      "effectOpcode": "BREAK",
+      "effectText": "브레이크 성공 후 8초간 대상 약점 태그 하나를 추가 공개하고 개인 피해 +16%",
+      "constraintText": "보스 피해 +10% 상한",
+      "weightingText": "진화 계열 F01",
+      "exclusiveWith": [],
+      "evolution": true,
       "raw": [
         "AUG-P-004",
         "붕괴 설계",
@@ -527,6 +1061,19 @@
       "id": "AUG-P-005",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "만성 독성체",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "POISON",
+        "RISK"
+      ],
+      "effectOpcode": "POISON",
+      "effectText": "독 최대 중첩 +2, 독 피해 +25%",
+      "constraintText": "자신의 정화 효과 -15%",
+      "weightingText": "독 빌드 가중",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-P-005",
         "만성 독성체",
@@ -540,6 +1087,19 @@
       "id": "AUG-P-006",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "피의 박동",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "BLEED",
+        "HEALING"
+      ],
+      "effectOpcode": "BLEED",
+      "effectText": "출혈 피해의 8%를 회복, 최대 HP 초과분은 4초 보호막",
+      "constraintText": "초당 최대 HP 2%, 광역 감쇠",
+      "weightingText": "생명력 흡수 상한 공유",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-P-006",
         "피의 박동",
@@ -553,6 +1113,20 @@
       "id": "AUG-P-007",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "원소 융합",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "MAGIC",
+        "ELEMENT",
+        "EVOLUTION"
+      ],
+      "effectOpcode": "MAGIC",
+      "effectText": "화상·빙결·감전 계열 중 서로 다른 2종이 만나면 융합 폭발 ATK 65%",
+      "constraintText": "대상별 6초",
+      "weightingText": "강한 CC 추가 없음",
+      "exclusiveWith": [],
+      "evolution": true,
       "raw": [
         "AUG-P-007",
         "원소 융합",
@@ -566,6 +1140,19 @@
       "id": "AUG-P-008",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "무한 탄창의 역설",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "AMMO",
+        "RISK"
+      ],
+      "effectOpcode": "AMMO_PARADOX",
+      "effectText": "탄약 미소비 확률 +45%",
+      "constraintText": "재장전·발사 AP 비용 +20%, 최종 미소비 상한 75%",
+      "weightingText": "원거리 탄약 무기만",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-P-008",
         "무한 탄창의 역설",
@@ -579,6 +1166,20 @@
       "id": "AUG-P-009",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "회귀하는 창",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "TRIDENT",
+        "RECALL",
+        "EVOLUTION"
+      ],
+      "effectOpcode": "TRIDENT_RECALL",
+      "effectText": "삼지창 회수 경로 적에게 60% 계수로 1회 재적중",
+      "constraintText": "회수 AP +8, 대상별 1회",
+      "weightingText": "삼지창 전용",
+      "exclusiveWith": [],
+      "evolution": true,
       "raw": [
         "AUG-P-009",
         "회귀하는 창",
@@ -592,6 +1193,20 @@
       "id": "AUG-P-010",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "맨손의 증명",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "UNARMED",
+        "COUNTER",
+        "EVOLUTION"
+      ],
+      "effectOpcode": "UNARMED_COUNTER",
+      "effectText": "권투 정확 회피 반격이 대상 DEF 35% 무시, 브레이크 2배",
+      "constraintText": "반격 외 일반 피해 -8%",
+      "weightingText": "권투 전용",
+      "exclusiveWith": [],
+      "evolution": true,
       "raw": [
         "AUG-P-010",
         "맨손의 증명",
@@ -605,6 +1220,19 @@
       "id": "AUG-P-011",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "이동하는 요새",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "GUARD",
+        "SUPPORT"
+      ],
+      "effectOpcode": "GUARD",
+      "effectText": "방어 중 4블록 뒤 파티원의 받는 투사체 피해 -25%",
+      "constraintText": "자신의 이동속도 -20%, 초당 AP 4 추가",
+      "weightingText": "보조 방패 요구",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-P-011",
         "이동하는 요새",
@@ -618,6 +1246,19 @@
       "id": "AUG-P-012",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "오염 공생",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "CORRUPTION",
+        "RISK"
+      ],
+      "effectOpcode": "CORRUPTION",
+      "effectText": "개인 오염 단계당 ATK·상태 적중 +4%, 최대 +16%",
+      "constraintText": "받는 정화 -25%, 단계 5에서는 추가 증가 없음",
+      "weightingText": "정화 전환과 약한 충돌",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-P-012",
         "오염 공생",
@@ -631,6 +1272,19 @@
       "id": "AUG-P-013",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "시간 압축",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "COOLDOWN",
+        "RISK"
+      ],
+      "effectOpcode": "COOLDOWN",
+      "effectText": "AP 50 이상 스킬 적중 시 다른 스킬 쿨다운 1초 감소",
+      "constraintText": "8초, 해당 스킬 AP +15",
+      "weightingText": "자기 쿨다운 미감소",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-P-013",
         "시간 압축",
@@ -644,6 +1298,20 @@
       "id": "AUG-P-014",
       "sourceDocumentId": "AUG-LIST-001",
       "enabled": true,
+      "name": "마지막 구조선",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "RESCUE",
+        "PARTY",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "RESCUE",
+      "effectText": "다른 파티원 구조 시작 시 구조자·대상 50% 피해 감소",
+      "constraintText": "구조 후 자신 AP 0, 45초",
+      "weightingText": "자기 구조 제외",
+      "exclusiveWith": [],
+      "evolution": false,
       "raw": [
         "AUG-P-014",
         "마지막 구조선",

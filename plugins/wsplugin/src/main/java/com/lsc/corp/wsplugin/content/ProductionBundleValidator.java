@@ -99,6 +99,7 @@ public final class ProductionBundleValidator {
             validateReferences(reader, catalog);
             validateEquipmentCatalog(catalog);
             validateSkillCatalog(catalog);
+            validateAugmentCatalog(catalog);
             return new ValidationResult(catalog, Map.copyOf(counts), paths.size() + 2,
                     ContentBundleValidator.sha256(manifestBytes));
         } catch (ContentValidationException exception) {
@@ -179,8 +180,43 @@ public final class ProductionBundleValidator {
             }
             skills.add(skill);
         }
+        List<ProductionContentCatalog.AugmentEntry> personalAugments = loadAugments(reader,
+                "augments/personal-augments.json");
+        List<ProductionContentCatalog.AugmentEntry> partyAugments = loadAugments(reader,
+                "augments/party-augments.json");
+        Map<String, ProductionContentCatalog.AugmentEntry> augmentsById = new LinkedHashMap<>();
+        for (ProductionContentCatalog.AugmentEntry augment : personalAugments) augmentsById.put(augment.id(), augment);
+        for (ProductionContentCatalog.AugmentEntry augment : partyAugments) {
+            if (augmentsById.putIfAbsent(augment.id(), augment) != null) {
+                throw new ContentValidationException("Duplicate augment ID " + augment.id());
+            }
+        }
         return new ProductionContentCatalog(List.copyOf(codex), Map.copyOf(byId), List.copyOf(recipes),
-                Map.copyOf(byOutput), List.copyOf(skills), Map.copyOf(skillsById), Map.copyOf(counts));
+                Map.copyOf(byOutput), List.copyOf(skills), Map.copyOf(skillsById),
+                List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById), Map.copyOf(counts));
+    }
+
+    private List<ProductionContentCatalog.AugmentEntry> loadAugments(ResourceReader reader, String path) throws Exception {
+        List<ProductionContentCatalog.AugmentEntry> result = new ArrayList<>();
+        for (JsonObject record : records(reader, path)) {
+            List<String> tags = stringArray(record, "tags");
+            List<String> exclusiveWith = stringArray(record, "exclusiveWith");
+            result.add(new ProductionContentCatalog.AugmentEntry(requiredString(record, "id"),
+                    requiredString(record, "name"), requiredString(record, "tier"),
+                    requiredString(record, "scope"), tags, requiredString(record, "effectOpcode"),
+                    requiredString(record, "effectText"), optionalString(record, "constraintText", ""),
+                    optionalString(record, "weightingText", ""), exclusiveWith,
+                    record.has("evolution") && record.get("evolution").getAsBoolean()));
+        }
+        return result;
+    }
+
+    private static List<String> stringArray(JsonObject object, String key) {
+        JsonArray array = object.getAsJsonArray(key);
+        if (array == null) return List.of();
+        List<String> result = new ArrayList<>();
+        array.forEach(value -> result.add(value.getAsString()));
+        return List.copyOf(result);
     }
 
     private void validateReferences(ResourceReader reader, ProductionContentCatalog catalog) throws Exception {
@@ -298,6 +334,34 @@ public final class ProductionBundleValidator {
             if (basics != 1 || actives != 4) {
                 throw new ContentValidationException("Weapon skill set mismatch " + weaponClass
                         + " basics=" + basics + " actives=" + actives);
+            }
+        }
+    }
+
+    private void validateAugmentCatalog(ProductionContentCatalog catalog) throws ContentValidationException {
+        if (catalog.personalAugments().size() != 50 || catalog.partyAugments().size() != 16
+                || catalog.augmentsById().size() != 66) {
+            throw new ContentValidationException("Augment catalog cardinality mismatch");
+        }
+        Map<String, Long> tiers = catalog.personalAugments().stream().collect(java.util.stream.Collectors.groupingBy(
+                ProductionContentCatalog.AugmentEntry::tier, java.util.stream.Collectors.counting()));
+        if (!tiers.equals(Map.of("SILVER", 18L, "GOLD", 18L, "PRISM", 14L))) {
+            throw new ContentValidationException("Personal augment tier mismatch " + tiers);
+        }
+        for (ProductionContentCatalog.AugmentEntry augment : catalog.augmentsById().values()) {
+            if (augment.name().isBlank() || augment.effectOpcode().isBlank() || augment.effectText().isBlank()
+                    || augment.tags().isEmpty()) {
+                throw new ContentValidationException("Incomplete augment " + augment.id());
+            }
+            if (augment.personal() != augment.id().startsWith("AUG-")
+                    || (!augment.personal() && !"PARTY".equals(augment.tier()))) {
+                throw new ContentValidationException("Augment scope/tier mismatch " + augment.id());
+            }
+            for (String exclusive : augment.exclusiveWith()) {
+                ProductionContentCatalog.AugmentEntry other = catalog.augmentsById().get(exclusive);
+                if (other == null || !other.exclusiveWith().contains(augment.id())) {
+                    throw new ContentValidationException("Asymmetric augment exclusion " + augment.id() + " -> " + exclusive);
+                }
             }
         }
     }

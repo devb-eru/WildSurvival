@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class ProductionBundleValidatorTest {
@@ -20,6 +21,9 @@ class ProductionBundleValidatorTest {
         assertEquals("TRIDENT_TOGGLE", result.catalog().skillsById().get("ws.trident.cast_recall.v1").effect());
         assertEquals("WSI-CONS-BANDAGE", result.catalog().skillsById().get("ws.common.field_bandage.v1").consumableId());
         assertEquals(0.65, result.catalog().skillsById().get("ws.bow.barbed_rain.v1").damageCoefficient());
+        assertEquals(50, result.catalog().personalAugments().size());
+        assertEquals(16, result.catalog().partyAugments().size());
+        assertEquals(List.of("AUG-G-002"), result.catalog().augmentsById().get("AUG-G-001").exclusiveWith());
         assertTrue(result.catalog().recipes().stream().allMatch(recipe -> !recipe.ingredients().isEmpty()));
         assertTrue(result.catalog().recipes().stream().noneMatch(recipe -> recipe.layout().contains("AUTHORITY_DEFINED")));
         assertTrue(result.catalog().recipes().stream().flatMap(recipe -> recipe.ingredients().stream())

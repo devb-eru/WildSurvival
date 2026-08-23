@@ -400,10 +400,28 @@ $skills = foreach ($entry in $skillsById.GetEnumerator()) {
         apCost=$apCost;cooldownTicks=$cooldownTicks;damageCoefficient=$damage;breakDamage=$breakDamage;range=$range;arcDegrees=$arc
         maxTargets=$maxTargets;effect=$effect;tags=@($tags);unlockLevel=$unlockLevel;consumableId=$consumableId;description=$effectText;raw=@($cells)}
 }
+function Compile-Augment([string]$Id, [string]$Source, [string[]]$Cells, [string]$Scope) {
+    $tier = if ($Id.StartsWith('AUG-S-')) {'SILVER'} elseif ($Id.StartsWith('AUG-G-')) {'GOLD'} elseif ($Id.StartsWith('AUG-P-')) {'PRISM'} else {'PARTY'}
+    $tags = @($Cells[2] -replace '`','' -split ',' | ForEach-Object {$_.Trim()} | Where-Object {$_})
+    $effectText = $Cells[3]
+    $constraintText = if ($Cells.Count -gt 4) {$Cells[4]} else {''}
+    $weightingText = if ($Cells.Count -gt 5) {$Cells[5]} else {''}
+    $exclusive = @([regex]::Matches(($Cells -join ' '), 'AUG-[SGP]-\d{3}') | ForEach-Object {$_.Value} | Where-Object {$_ -ne $Id} | Select-Object -Unique)
+    $opcode = if ($Id -eq 'AUG-S-001') {'DODGE_COST'} elseif ($Id -eq 'AUG-S-002') {'AP_REGEN'}
+        elseif ($Id -eq 'AUG-S-008') {'AMMO_CONSERVE'} elseif ($Id -eq 'AUG-S-014') {'REVIVE_SPEED'}
+        elseif ($Id -eq 'AUG-S-018') {'CRAFT_CONSERVE'} elseif ($Id -eq 'AUG-P-001') {'LOW_HP_BURST'}
+        elseif ($Id -eq 'AUG-P-008') {'AMMO_PARADOX'} elseif ($Id -eq 'AUG-P-009') {'TRIDENT_RECALL'}
+        elseif ($Id -eq 'AUG-P-010') {'UNARMED_COUNTER'} elseif ($Id -eq 'PAUG-004') {'PARTY_REVIVE'}
+        elseif ($Id -eq 'PAUG-005') {'PARTY_RESOURCE'} elseif ($Id -eq 'PAUG-009') {'PARTY_AMMO_CRAFT'}
+        elseif ($Id -eq 'PAUG-010') {'PARTY_AP_REGEN'} elseif ($tags.Count) {$tags[0]} else {'GENERAL'}
+    [ordered]@{id=$Id;sourceDocumentId=$Source;enabled=$true;name=$Cells[1];tier=$tier;scope=$Scope
+        tags=@($tags);effectOpcode=$opcode;effectText=$effectText;constraintText=$constraintText;weightingText=$weightingText
+        exclusiveWith=@($exclusive);evolution=($tags -contains 'EVOLUTION');raw=@($Cells)}
+}
 $personalById = Find-IdRows $personalAugmentRows '^AUG-[SGP]-\d{3}$'
-$personalAugments = foreach ($entry in $personalById.GetEnumerator()) { Raw-Record $entry.Key 'AUG-LIST-001' $entry.Value }
+$personalAugments = foreach ($entry in $personalById.GetEnumerator()) { Compile-Augment $entry.Key 'AUG-LIST-001' $entry.Value 'PERSONAL' }
 $partyById = Find-IdRows $partyAugmentRows '^PAUG-\d{3}$'
-$partyAugments = foreach ($entry in $partyById.GetEnumerator()) { Raw-Record $entry.Key 'AUG-LIST-002' $entry.Value }
+$partyAugments = foreach ($entry in $partyById.GetEnumerator()) { Compile-Augment $entry.Key 'AUG-LIST-002' $entry.Value 'PARTY' }
 
 $enemyById = Find-IdRows $entityRows '^EN-(D\d+|F50)-[A-Z0-9]+$'
 $enemies = foreach ($entry in $enemyById.GetEnumerator()) { Raw-Record $entry.Key 'ENTITY-LIST-001' $entry.Value }

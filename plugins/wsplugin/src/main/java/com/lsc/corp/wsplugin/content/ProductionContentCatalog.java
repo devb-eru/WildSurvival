@@ -10,6 +10,9 @@ public record ProductionContentCatalog(
         Map<String, List<RecipeEntry>> recipesByOutput,
         List<SkillEntry> skills,
         Map<String, SkillEntry> skillsById,
+        List<AugmentEntry> personalAugments,
+        List<AugmentEntry> partyAugments,
+        Map<String, AugmentEntry> augmentsById,
         Map<String, Integer> counts
 ) {
     public CatalogEntry item(String id) {
@@ -42,6 +45,14 @@ public record ProductionContentCatalog(
 
         public boolean commonActive() {
             return "COMMON_ACTIVE".equals(kind);
+        }
+    }
+
+    public record AugmentEntry(String id, String name, String tier, String scope, List<String> tags,
+                               String effectOpcode, String effectText, String constraintText,
+                               String weightingText, List<String> exclusiveWith, boolean evolution) {
+        public boolean personal() {
+            return "PERSONAL".equals(scope);
         }
     }
 }
