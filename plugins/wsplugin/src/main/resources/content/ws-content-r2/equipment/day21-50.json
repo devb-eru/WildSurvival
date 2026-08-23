@@ -10,7 +10,7 @@
       "codexIndex": 1142,
       "name": "EQD50-AC-CALIBRATE",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
@@ -86,7 +86,7 @@
       "codexIndex": 1146,
       "name": "EQD50-B30-AC01",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
@@ -106,7 +106,7 @@
       "name": "EQD50-B30-AR01",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_CHEST",
-      "displayMaterial": "ARMOR_CHEST",
+      "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1147",
@@ -143,8 +143,8 @@
       "codexIndex": 1149,
       "name": "EQD50-B30-UA01",
       "equipmentType": "UNARMED_SUPPORT",
-      "equipmentSlot": "ACCESSORY/CHARM",
-      "displayMaterial": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY",
+      "displayMaterial": "TRIPWIRE_HOOK",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1149",
@@ -162,7 +162,7 @@
       "codexIndex": 1150,
       "name": "EQD50-B40-AC01",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
@@ -182,7 +182,7 @@
       "name": "EQD50-B40-AR01",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_CHEST",
-      "displayMaterial": "ARMOR_CHEST",
+      "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1151",
@@ -219,8 +219,8 @@
       "codexIndex": 1153,
       "name": "EQD50-B40-UA01",
       "equipmentType": "UNARMED_SUPPORT",
-      "equipmentSlot": "ACCESSORY/CHARM",
-      "displayMaterial": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY",
+      "displayMaterial": "TRIPWIRE_HOOK",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1153",
@@ -409,7 +409,7 @@
       "codexIndex": 1163,
       "name": "EQD50-CH-RELAY",
       "equipmentType": "CHARM",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "CHARM",
       "displayMaterial": "AMETHYST_SHARD",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
@@ -751,8 +751,8 @@
       "codexIndex": 1181,
       "name": "EQD50-UA-A41",
       "equipmentType": "UNARMED_SUPPORT",
-      "equipmentSlot": "ACCESSORY/CHARM",
-      "displayMaterial": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY",
+      "displayMaterial": "TRIPWIRE_HOOK",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1181",
@@ -770,8 +770,8 @@
       "codexIndex": 1182,
       "name": "EQD50-UA-E21",
       "equipmentType": "UNARMED_SUPPORT",
-      "equipmentSlot": "ACCESSORY/CHARM",
-      "displayMaterial": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY",
+      "displayMaterial": "TRIPWIRE_HOOK",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1182",
@@ -789,8 +789,8 @@
       "codexIndex": 1183,
       "name": "EQD50-UA-L31",
       "equipmentType": "UNARMED_SUPPORT",
-      "equipmentSlot": "ACCESSORY/CHARM",
-      "displayMaterial": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY",
+      "displayMaterial": "TRIPWIRE_HOOK",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1183",
@@ -1151,7 +1151,7 @@
       "name": "EQD50-AR-PURIFIER-HEAD",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_HEAD",
-      "displayMaterial": "ARMOR_HEAD",
+      "displayMaterial": "IRON_HELMET",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1202",
@@ -1169,7 +1169,7 @@
       "codexIndex": 1203,
       "name": "EQD50-AR-PURIFIER-CHEST",
       "equipmentType": "ARMOR",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ARMOR_CHEST",
       "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
@@ -1189,7 +1189,7 @@
       "name": "EQD50-AR-PURIFIER-LEGS",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_LEGS",
-      "displayMaterial": "ARMOR_LEGS",
+      "displayMaterial": "IRON_LEGGINGS",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1204",
@@ -1208,7 +1208,7 @@
       "name": "EQD50-AR-PURIFIER-FEET",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_FEET",
-      "displayMaterial": "ARMOR_FEET",
+      "displayMaterial": "IRON_BOOTS",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1205",
@@ -1227,7 +1227,7 @@
       "name": "EQD50-AR-INTERRUPT-HEAD",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_HEAD",
-      "displayMaterial": "ARMOR_HEAD",
+      "displayMaterial": "IRON_HELMET",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1206",
@@ -1245,7 +1245,7 @@
       "codexIndex": 1207,
       "name": "EQD50-AR-INTERRUPT-CHEST",
       "equipmentType": "ARMOR",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ARMOR_CHEST",
       "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
@@ -1265,7 +1265,7 @@
       "name": "EQD50-AR-INTERRUPT-LEGS",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_LEGS",
-      "displayMaterial": "ARMOR_LEGS",
+      "displayMaterial": "IRON_LEGGINGS",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1208",
@@ -1284,7 +1284,7 @@
       "name": "EQD50-AR-INTERRUPT-FEET",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_FEET",
-      "displayMaterial": "ARMOR_FEET",
+      "displayMaterial": "IRON_BOOTS",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1209",
@@ -1303,7 +1303,7 @@
       "name": "EQD50-AR-REBUILD-HEAD",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_HEAD",
-      "displayMaterial": "ARMOR_HEAD",
+      "displayMaterial": "IRON_HELMET",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1210",
@@ -1321,7 +1321,7 @@
       "codexIndex": 1211,
       "name": "EQD50-AR-REBUILD-CHEST",
       "equipmentType": "ARMOR",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ARMOR_CHEST",
       "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
@@ -1341,7 +1341,7 @@
       "name": "EQD50-AR-REBUILD-LEGS",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_LEGS",
-      "displayMaterial": "ARMOR_LEGS",
+      "displayMaterial": "IRON_LEGGINGS",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1212",
@@ -1360,7 +1360,7 @@
       "name": "EQD50-AR-REBUILD-FEET",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_FEET",
-      "displayMaterial": "ARMOR_FEET",
+      "displayMaterial": "IRON_BOOTS",
       "definition": "EQUIP-DATA-D50-001",
       "raw": [
         "1213",

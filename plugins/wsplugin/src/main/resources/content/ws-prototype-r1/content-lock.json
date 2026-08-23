@@ -5,5 +5,5 @@
   "activationPolicy": "DEVELOPMENT_ONLY",
   "promotionForbidden": true,
   "manifest": "manifest.json",
-  "manifestSha256": "492df6e72f7d5b2ba59fcf5d9216c49ae7efd834e5c34ba1e7f5c18e2716a23e"
+  "manifestSha256": "f65857f7a5978a14199400f785806d2c9eb44c9ffe36ac7bee68ea4cb446798c"
 }

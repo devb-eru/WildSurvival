@@ -10,7 +10,7 @@
       "codexIndex": 1087,
       "name": "EQD20-AC-R01",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
@@ -29,7 +29,7 @@
       "codexIndex": 1088,
       "name": "EQD20-AC-R02",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
@@ -124,7 +124,7 @@
       "codexIndex": 1093,
       "name": "EQD20-CH-R01",
       "equipmentType": "CHARM",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "CHARM",
       "displayMaterial": "AMETHYST_SHARD",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
@@ -143,7 +143,7 @@
       "codexIndex": 1094,
       "name": "EQD20-CH-R02",
       "equipmentType": "CHARM",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "CHARM",
       "displayMaterial": "AMETHYST_SHARD",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
@@ -181,7 +181,7 @@
       "codexIndex": 1096,
       "name": "EQD20-EP-AC01",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
@@ -201,7 +201,7 @@
       "name": "EQD20-EP-AR01",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_CHEST",
-      "displayMaterial": "ARMOR_CHEST",
+      "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1097",
@@ -219,7 +219,7 @@
       "codexIndex": 1098,
       "name": "EQD20-EP-CH01",
       "equipmentType": "CHARM",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "CHARM",
       "displayMaterial": "AMETHYST_SHARD",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
@@ -257,8 +257,8 @@
       "codexIndex": 1100,
       "name": "EQD20-EP-UA01",
       "equipmentType": "UNARMED_SUPPORT",
-      "equipmentSlot": "ACCESSORY/CHARM",
-      "displayMaterial": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY",
+      "displayMaterial": "TRIPWIRE_HOOK",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1100",
@@ -276,7 +276,7 @@
       "codexIndex": 1101,
       "name": "EQD20-LG-AC01",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
@@ -296,7 +296,7 @@
       "name": "EQD20-LG-AR01",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_CHEST",
-      "displayMaterial": "ARMOR_CHEST",
+      "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1102",
@@ -314,7 +314,7 @@
       "codexIndex": 1103,
       "name": "EQD20-LG-CH01",
       "equipmentType": "CHARM",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "CHARM",
       "displayMaterial": "AMETHYST_SHARD",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
@@ -352,8 +352,8 @@
       "codexIndex": 1105,
       "name": "EQD20-LG-UA01",
       "equipmentType": "UNARMED_SUPPORT",
-      "equipmentSlot": "ACCESSORY/CHARM",
-      "displayMaterial": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY",
+      "displayMaterial": "TRIPWIRE_HOOK",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1105",
@@ -466,8 +466,8 @@
       "codexIndex": 1111,
       "name": "EQD20-UA-R01",
       "equipmentType": "UNARMED_SUPPORT",
-      "equipmentSlot": "ACCESSORY/CHARM",
-      "displayMaterial": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY",
+      "displayMaterial": "TRIPWIRE_HOOK",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1111",
@@ -828,7 +828,7 @@
       "name": "EQD20-AR-MED-HEAD",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_HEAD",
-      "displayMaterial": "ARMOR_HEAD",
+      "displayMaterial": "IRON_HELMET",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1130",
@@ -846,7 +846,7 @@
       "codexIndex": 1131,
       "name": "EQD20-AR-MED-CHEST",
       "equipmentType": "ARMOR",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ARMOR_CHEST",
       "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
@@ -866,7 +866,7 @@
       "name": "EQD20-AR-MED-LEGS",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_LEGS",
-      "displayMaterial": "ARMOR_LEGS",
+      "displayMaterial": "IRON_LEGGINGS",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1132",
@@ -885,7 +885,7 @@
       "name": "EQD20-AR-MED-FEET",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_FEET",
-      "displayMaterial": "ARMOR_FEET",
+      "displayMaterial": "IRON_BOOTS",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1133",
@@ -904,7 +904,7 @@
       "name": "EQD20-AR-CTRL-HEAD",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_HEAD",
-      "displayMaterial": "ARMOR_HEAD",
+      "displayMaterial": "IRON_HELMET",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1134",
@@ -922,7 +922,7 @@
       "codexIndex": 1135,
       "name": "EQD20-AR-CTRL-CHEST",
       "equipmentType": "ARMOR",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ARMOR_CHEST",
       "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
@@ -942,7 +942,7 @@
       "name": "EQD20-AR-CTRL-LEGS",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_LEGS",
-      "displayMaterial": "ARMOR_LEGS",
+      "displayMaterial": "IRON_LEGGINGS",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1136",
@@ -961,7 +961,7 @@
       "name": "EQD20-AR-CTRL-FEET",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_FEET",
-      "displayMaterial": "ARMOR_FEET",
+      "displayMaterial": "IRON_BOOTS",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1137",
@@ -980,7 +980,7 @@
       "name": "EQD20-AR-GUARD-HEAD",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_HEAD",
-      "displayMaterial": "ARMOR_HEAD",
+      "displayMaterial": "IRON_HELMET",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1138",
@@ -998,7 +998,7 @@
       "codexIndex": 1139,
       "name": "EQD20-AR-GUARD-CHEST",
       "equipmentType": "ARMOR",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ARMOR_CHEST",
       "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
@@ -1018,7 +1018,7 @@
       "name": "EQD20-AR-GUARD-LEGS",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_LEGS",
-      "displayMaterial": "ARMOR_LEGS",
+      "displayMaterial": "IRON_LEGGINGS",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1140",
@@ -1037,7 +1037,7 @@
       "name": "EQD20-AR-GUARD-FEET",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_FEET",
-      "displayMaterial": "ARMOR_FEET",
+      "displayMaterial": "IRON_BOOTS",
       "definition": "EQUIP-DATA-D20-001",
       "raw": [
         "1141",

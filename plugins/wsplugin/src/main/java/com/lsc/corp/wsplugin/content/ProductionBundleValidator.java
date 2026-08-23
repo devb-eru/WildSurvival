@@ -97,6 +97,7 @@ public final class ProductionBundleValidator {
 
             ProductionContentCatalog catalog = loadCatalog(reader, counts);
             validateReferences(reader, catalog);
+            validateEquipmentCatalog(catalog);
             return new ValidationResult(catalog, Map.copyOf(counts), paths.size() + 2,
                     ContentBundleValidator.sha256(manifestBytes));
         } catch (ContentValidationException exception) {
@@ -125,7 +126,8 @@ public final class ProductionBundleValidator {
             String material = optionalString(record, "displayMaterial", optionalString(detail, "displayMaterial", "PAPER"));
             String domain = optionalString(record, "domain", "UNKNOWN");
             int firstDay = optionalInt(detail, "firstDay", inferFirstDay(id));
-            codex.add(new ProductionContentCatalog.CatalogEntry(id, index, name, material, domain, firstDay));
+            codex.add(new ProductionContentCatalog.CatalogEntry(id, index, name, material, domain, firstDay,
+                    optionalString(detail, "equipmentType", ""), optionalString(detail, "equipmentSlot", "")));
         }
         codex.sort(Comparator.comparingInt(ProductionContentCatalog.CatalogEntry::codexIndex));
         Map<String, ProductionContentCatalog.CatalogEntry> byId = new LinkedHashMap<>();
@@ -170,6 +172,31 @@ public final class ProductionBundleValidator {
                 }
             }
         }
+    }
+
+    private void validateEquipmentCatalog(ProductionContentCatalog catalog) throws ContentValidationException {
+        List<ProductionContentCatalog.CatalogEntry> equipment = catalog.codexEntries().stream()
+                .filter(ProductionContentCatalog.CatalogEntry::equipment).toList();
+        if (equipment.size() != 214) throw new ContentValidationException("Equipment catalog must contain 214 templates");
+        Set<String> types = Set.of("UTILITY", "SW", "AX", "BO", "CB", "DG", "BL", "ST", "PK", "TR",
+                "UNARMED_SUPPORT", "OFF", "ARMOR", "ACCESSORY", "CHARM");
+        Set<String> slots = Set.of("INVENTORY", "MAIN_WEAPON", "OFF_WEAPON", "ARMOR_HEAD", "ARMOR_CHEST",
+                "ARMOR_LEGS", "ARMOR_FEET", "ACCESSORY", "CHARM");
+        for (ProductionContentCatalog.CatalogEntry entry : equipment) {
+            if (!types.contains(entry.equipmentType())) {
+                throw new ContentValidationException("Unsupported equipment type " + entry.id() + " -> " + entry.equipmentType());
+            }
+            if (!slots.contains(entry.equipmentSlot())) {
+                throw new ContentValidationException("Unsupported equipment slot " + entry.id() + " -> " + entry.equipmentSlot());
+            }
+        }
+        Map<String, Long> slotCounts = equipment.stream().collect(java.util.stream.Collectors.groupingBy(
+                ProductionContentCatalog.CatalogEntry::equipmentSlot, java.util.stream.Collectors.counting()));
+        Map<String, Long> expected = Map.ofEntries(
+                Map.entry("MAIN_WEAPON", 108L), Map.entry("OFF_WEAPON", 11L), Map.entry("INVENTORY", 16L),
+                Map.entry("ARMOR_HEAD", 10L), Map.entry("ARMOR_CHEST", 15L), Map.entry("ARMOR_LEGS", 10L),
+                Map.entry("ARMOR_FEET", 10L), Map.entry("ACCESSORY", 24L), Map.entry("CHARM", 10L));
+        if (!slotCounts.equals(expected)) throw new ContentValidationException("Equipment slot cardinality mismatch " + slotCounts);
     }
 
     private int count(ResourceReader reader, String path) throws Exception { return records(reader, path).size(); }

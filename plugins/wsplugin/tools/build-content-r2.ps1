@@ -51,7 +51,8 @@ function Find-IdRows([object[]]$Rows, [string]$Pattern) {
 function First-Material([object[]]$Cells, [string]$Slot) {
     $excluded = @('ACTIVE','HOSTILE','UTILITY','ACCESSORY','ARMOR','OFF','CHARM','PARTY_BOUND',
         'PARTY_RESOURCE','BOUND_PROOF','CRAFT','PROCESS','BOSS_CALL','FACILITY_KIT','EQUIPMENT_FORGE',
-        'UTILITY_FORGE','VIRTUAL_BUILD','MAIN_WEAPON','OFF_WEAPON','INVENTORY')
+        'UTILITY_FORGE','VIRTUAL_BUILD','MAIN_WEAPON','OFF_WEAPON','INVENTORY','ARMOR_HEAD','ARMOR_CHEST',
+        'ARMOR_LEGS','ARMOR_FEET','ACCESSORY/CHARM','UNARMED_SUPPORT')
     $candidate = $Cells | Where-Object { $_ -match '^[A-Z][A-Z0-9_]+$' -and $_ -notin $excluded } | Select-Object -First 1
     if ($candidate -eq 'IRON_ARMOR') {
         if ($Slot -match 'HEAD') { return 'IRON_HELMET' }
@@ -115,10 +116,20 @@ $items = foreach ($cells in $itemRows) {
 
 $tools = foreach ($cells in $toolRows) {
     if ($cells.Count -lt 6 -or $cells[0] -notmatch '^\d{4}$' -or $cells[1] -notmatch '^(EQL-|EQD(20|50)-)') { continue }
+    $equipmentSlot = $cells[3]
+    if ($cells[2] -eq 'ARMOR') {
+        foreach ($part in @('HEAD','CHEST','LEGS','FEET')) {
+            if ($cells[1].EndsWith("-$part")) { $equipmentSlot = "ARMOR_$part"; break }
+        }
+    } elseif ($cells[2] -eq 'CHARM') {
+        $equipmentSlot = 'CHARM'
+    } elseif ($cells[2] -in @('ACCESSORY','UNARMED_SUPPORT')) {
+        $equipmentSlot = 'ACCESSORY'
+    }
     [ordered]@{
         id = $cells[1]; sourceDocumentId = 'TOOL-LIST-001'; enabled = $true
-        codexIndex = [int]$cells[0]; name = $cells[1]; equipmentType = $cells[2]; equipmentSlot = $cells[3]
-        displayMaterial = First-Material $cells $cells[3]; definition = $cells[5]; raw = @($cells)
+        codexIndex = [int]$cells[0]; name = $cells[1]; equipmentType = $cells[2]; equipmentSlot = $equipmentSlot
+        displayMaterial = First-Material $cells $equipmentSlot; definition = $cells[5]; raw = @($cells)
     }
 }
 

@@ -17,7 +17,10 @@ public record ProductionContentCatalog(
     }
 
     public record CatalogEntry(String id, int codexIndex, String name, String displayMaterial,
-                               String domain, int firstDay) {
+                               String domain, int firstDay, String equipmentType, String equipmentSlot) {
+        public boolean equipment() {
+            return equipmentType != null && !equipmentType.isBlank();
+        }
     }
 
     public record RecipeEntry(String id, String outputId, String recipeType, String inputAuthority,

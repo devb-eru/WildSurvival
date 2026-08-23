@@ -56,7 +56,8 @@ public final class PlayerMenuService implements Listener {
                 List.of(run.craftUnlocked ? ChatColor.GREEN + "해금됨" : ChatColor.RED + "원목 4개로 해금")));
         inventory.setItem(21, named(Material.KNOWLEDGE_BOOK, ChatColor.AQUA + "아이템 도감", List.of(ChatColor.GRAY + "고정 ID 항목 확인")));
         inventory.setItem(23, named(Material.NETHER_STAR, ChatColor.AQUA + "스탯 찍기", List.of(ChatColor.GRAY + "남은 포인트와 효과 확인")));
-        inventory.setItem(25, named(Material.IRON_CHESTPLATE, ChatColor.AQUA + "장비 장착", List.of(ChatColor.GRAY + "주무기·보조·Q1~Q4")));
+        inventory.setItem(25, named(Material.IRON_CHESTPLATE, ChatColor.AQUA + "장비 장착",
+                List.of(ChatColor.GRAY + "주무기·보조무기·방어구·장신구·부적", ChatColor.GRAY + "Q1~Q4 커스텀 소모품 바인딩")));
         inventory.setItem(27, named(Material.BLAZE_POWDER, ChatColor.LIGHT_PURPLE + "스킬",
                 List.of(ChatColor.GRAY + "W1~W3 무기 스킬 · C1~C4 공용 액티브")));
         inventory.setItem(29, named(Material.AMETHYST_SHARD, ChatColor.LIGHT_PURPLE + "증강",

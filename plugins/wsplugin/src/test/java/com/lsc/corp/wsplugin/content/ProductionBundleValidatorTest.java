@@ -13,6 +13,8 @@ class ProductionBundleValidatorTest {
         assertEquals(66, result.verifiedFileCount());
         assertEquals(334, result.catalog().codexEntries().size());
         assertEquals(315, result.catalog().recipes().size());
+        assertEquals(214, result.catalog().codexEntries().stream().filter(ProductionContentCatalog.CatalogEntry::equipment).count());
+        assertEquals(108, result.catalog().codexEntries().stream().filter(entry -> "MAIN_WEAPON".equals(entry.equipmentSlot())).count());
         assertEquals(91, result.counts().get("enemies") + result.counts().get("bosses") + result.counts().get("support"));
     }
 }

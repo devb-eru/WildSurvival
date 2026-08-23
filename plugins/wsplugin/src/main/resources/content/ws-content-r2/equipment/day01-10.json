@@ -314,7 +314,7 @@
       "codexIndex": 1016,
       "name": "EQL-AC-C01",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -333,7 +333,7 @@
       "codexIndex": 1017,
       "name": "EQL-AC-R01",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -352,7 +352,7 @@
       "codexIndex": 1018,
       "name": "EQL-AC-R02",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -371,7 +371,7 @@
       "codexIndex": 1019,
       "name": "EQL-AC-U01",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -390,7 +390,7 @@
       "codexIndex": 1020,
       "name": "EQL-AC-U02",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -410,7 +410,7 @@
       "name": "EQL-AR-C01",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_HEAD",
-      "displayMaterial": "ARMOR_HEAD",
+      "displayMaterial": "IRON_HELMET",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1021",
@@ -429,7 +429,7 @@
       "name": "EQL-AR-C02",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_CHEST",
-      "displayMaterial": "ARMOR_CHEST",
+      "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1022",
@@ -448,7 +448,7 @@
       "name": "EQL-AR-C03",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_LEGS",
-      "displayMaterial": "ARMOR_LEGS",
+      "displayMaterial": "IRON_LEGGINGS",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1023",
@@ -467,7 +467,7 @@
       "name": "EQL-AR-C04",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_FEET",
-      "displayMaterial": "ARMOR_FEET",
+      "displayMaterial": "IRON_BOOTS",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1024",
@@ -637,7 +637,7 @@
       "codexIndex": 1033,
       "name": "EQL-CH-C01",
       "equipmentType": "CHARM",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "CHARM",
       "displayMaterial": "AMETHYST_SHARD",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -656,7 +656,7 @@
       "codexIndex": 1034,
       "name": "EQL-CH-R01",
       "equipmentType": "CHARM",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "CHARM",
       "displayMaterial": "AMETHYST_SHARD",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -675,7 +675,7 @@
       "codexIndex": 1035,
       "name": "EQL-CH-U01",
       "equipmentType": "CHARM",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "CHARM",
       "displayMaterial": "AMETHYST_SHARD",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -694,7 +694,7 @@
       "codexIndex": 1036,
       "name": "EQL-CH-U02",
       "equipmentType": "CHARM",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "CHARM",
       "displayMaterial": "AMETHYST_SHARD",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -713,7 +713,7 @@
       "codexIndex": 1037,
       "name": "EQL-D10-AC",
       "equipmentType": "ACCESSORY",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ACCESSORY",
       "displayMaterial": "RECOVERY_COMPASS",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -733,7 +733,7 @@
       "name": "EQL-D10-AR",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_CHEST",
-      "displayMaterial": "ARMOR_CHEST",
+      "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1038",
@@ -751,7 +751,7 @@
       "codexIndex": 1039,
       "name": "EQL-D10-CH",
       "equipmentType": "CHARM",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "CHARM",
       "displayMaterial": "AMETHYST_SHARD",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -789,8 +789,8 @@
       "codexIndex": 1041,
       "name": "EQL-D10-UA",
       "equipmentType": "UNARMED_SUPPORT",
-      "equipmentSlot": "ACCESSORY/CHARM",
-      "displayMaterial": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY",
+      "displayMaterial": "TRIPWIRE_HOOK",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1041",
@@ -1055,8 +1055,8 @@
       "codexIndex": 1055,
       "name": "EQL-UA-R01",
       "equipmentType": "UNARMED_SUPPORT",
-      "equipmentSlot": "ACCESSORY/CHARM",
-      "displayMaterial": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY",
+      "displayMaterial": "TRIPWIRE_HOOK",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1055",
@@ -1074,8 +1074,8 @@
       "codexIndex": 1056,
       "name": "EQL-UA-U01",
       "equipmentType": "UNARMED_SUPPORT",
-      "equipmentSlot": "ACCESSORY/CHARM",
-      "displayMaterial": "UNARMED_SUPPORT",
+      "equipmentSlot": "ACCESSORY",
+      "displayMaterial": "TRIPWIRE_HOOK",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1056",
@@ -1265,7 +1265,7 @@
       "name": "EQL-AR-U-SCOUT-HEAD",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_HEAD",
-      "displayMaterial": "ARMOR_HEAD",
+      "displayMaterial": "IRON_HELMET",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1066",
@@ -1283,7 +1283,7 @@
       "codexIndex": 1067,
       "name": "EQL-AR-U-SCOUT-CHEST",
       "equipmentType": "ARMOR",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ARMOR_CHEST",
       "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -1303,7 +1303,7 @@
       "name": "EQL-AR-U-SCOUT-LEGS",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_LEGS",
-      "displayMaterial": "ARMOR_LEGS",
+      "displayMaterial": "IRON_LEGGINGS",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1068",
@@ -1322,7 +1322,7 @@
       "name": "EQL-AR-U-SCOUT-FEET",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_FEET",
-      "displayMaterial": "ARMOR_FEET",
+      "displayMaterial": "IRON_BOOTS",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1069",
@@ -1341,7 +1341,7 @@
       "name": "EQL-AR-U-VANGUARD-HEAD",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_HEAD",
-      "displayMaterial": "ARMOR_HEAD",
+      "displayMaterial": "IRON_HELMET",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1070",
@@ -1359,7 +1359,7 @@
       "codexIndex": 1071,
       "name": "EQL-AR-U-VANGUARD-CHEST",
       "equipmentType": "ARMOR",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ARMOR_CHEST",
       "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -1379,7 +1379,7 @@
       "name": "EQL-AR-U-VANGUARD-LEGS",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_LEGS",
-      "displayMaterial": "ARMOR_LEGS",
+      "displayMaterial": "IRON_LEGGINGS",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1072",
@@ -1398,7 +1398,7 @@
       "name": "EQL-AR-U-VANGUARD-FEET",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_FEET",
-      "displayMaterial": "ARMOR_FEET",
+      "displayMaterial": "IRON_BOOTS",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1073",
@@ -1417,7 +1417,7 @@
       "name": "EQL-AR-R-OBSERVER-HEAD",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_HEAD",
-      "displayMaterial": "ARMOR_HEAD",
+      "displayMaterial": "IRON_HELMET",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1074",
@@ -1435,7 +1435,7 @@
       "codexIndex": 1075,
       "name": "EQL-AR-R-OBSERVER-CHEST",
       "equipmentType": "ARMOR",
-      "equipmentSlot": "ACCESSORY/CHARM",
+      "equipmentSlot": "ARMOR_CHEST",
       "displayMaterial": "IRON_CHESTPLATE",
       "definition": "EQUIP-LIST-001",
       "raw": [
@@ -1455,7 +1455,7 @@
       "name": "EQL-AR-R-OBSERVER-LEGS",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_LEGS",
-      "displayMaterial": "ARMOR_LEGS",
+      "displayMaterial": "IRON_LEGGINGS",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1076",
@@ -1474,7 +1474,7 @@
       "name": "EQL-AR-R-OBSERVER-FEET",
       "equipmentType": "ARMOR",
       "equipmentSlot": "ARMOR_FEET",
-      "displayMaterial": "ARMOR_FEET",
+      "displayMaterial": "IRON_BOOTS",
       "definition": "EQUIP-LIST-001",
       "raw": [
         "1077",

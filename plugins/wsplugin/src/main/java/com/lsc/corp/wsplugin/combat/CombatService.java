@@ -817,20 +817,22 @@ public final class CombatService implements Listener {
         combo.stage = (stage + 1) % weapon.attackCoefficients().size();
         combo.lastAttackAtEpochMs = Instant.now().toEpochMilli();
         String executionId = UUID.randomUUID().toString();
-        if ("BOW".equals(weaponId)) {
+        if (usesArrowAmmo(weaponId)) {
             if (!takeOneMaterial(player, Material.ARROW)) {
                 attackReadyAtNanos.remove(player.getUniqueId());
                 ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
                 return false;
             }
-            Arrow arrow = player.getWorld().spawnArrow(player.getEyeLocation(), player.getEyeLocation().getDirection(), 2.8f, 0.0f);
+            float velocity = "CROSSBOW".equals(weaponId) ? 3.4f : 2.8f;
+            Arrow arrow = player.getWorld().spawnArrow(player.getEyeLocation(), player.getEyeLocation().getDirection(), velocity, 0.0f);
             arrow.setShooter(player);
             arrow.setDamage(0.0);
             arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
             arrow.getPersistentDataContainer().set(projectileOwnerKey, PersistentDataType.STRING, player.getUniqueId().toString());
             arrow.getPersistentDataContainer().set(projectileWeaponKey, PersistentDataType.STRING, weaponId);
             equipment.consumeMainWeaponDurability(player, 1, "BASIC_ATTACK");
-            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 0.7f, 1.1f);
+            player.getWorld().playSound(player.getLocation(), "CROSSBOW".equals(weaponId)
+                    ? Sound.ITEM_CROSSBOW_SHOOT : Sound.ENTITY_ARROW_SHOOT, 0.7f, 1.1f);
             return true;
         }
         equipment.consumeMainWeaponDurability(player, 1, "BASIC_ATTACK");
@@ -869,7 +871,7 @@ public final class CombatService implements Listener {
             }
             return success;
         }
-        if ("BOW".equals(weaponId) && !hasMaterial(player, Material.ARROW)) {
+        if (usesArrowAmmo(weaponId) && !hasMaterial(player, Material.ARROW)) {
             ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
             return false;
         }
@@ -877,7 +879,7 @@ public final class CombatService implements Listener {
             apFailure(player, skill.apCost());
             return false;
         }
-        if ("BOW".equals(weaponId)) takeOneMaterial(player, Material.ARROW);
+        if (usesArrowAmmo(weaponId)) takeOneMaterial(player, Material.ARROW);
         equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
         List<LivingEntity> targets = coneTargets(player, skill.range(), skill.arcDegrees(), skill.maxTargets());
         String executionId = "skill:" + skill.id() + ":" + UUID.randomUUID();
@@ -1446,6 +1448,10 @@ public final class CombatService implements Listener {
             if (item != null && item.getType() == material && item.getAmount() > 0) return true;
         }
         return false;
+    }
+
+    private static boolean usesArrowAmmo(String weaponId) {
+        return "BOW".equals(weaponId) || "CROSSBOW".equals(weaponId);
     }
 
     private boolean takeOneMaterial(Player player, Material material) {

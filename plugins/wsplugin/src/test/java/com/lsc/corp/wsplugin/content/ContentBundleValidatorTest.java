@@ -23,9 +23,9 @@ class ContentBundleValidatorTest {
         assertTrue(result.manifest().promotionForbidden());
         assertEquals(6, result.content().resources().size());
         assertEquals(11, result.content().items().size());
-        assertEquals(7, result.content().weapons().size());
-        assertEquals(13, result.content().skills().size());
-        assertEquals(16, result.content().recipes().size());
+        assertEquals(10, result.content().weapons().size());
+        assertEquals(22, result.content().skills().size());
+        assertEquals(19, result.content().recipes().size());
     }
 
     @Test

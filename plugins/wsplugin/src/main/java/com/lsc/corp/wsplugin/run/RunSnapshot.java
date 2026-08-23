@@ -47,6 +47,8 @@ public final class RunSnapshot {
         public String mainWeaponInstanceId;
         public String offhandId;
         public String offhandInstanceId;
+        public Map<String, String> equippedTemplateBySlot = new LinkedHashMap<>();
+        public Map<String, String> equippedInstanceBySlot = new LinkedHashMap<>();
         public Set<String> ownedEquipment = new LinkedHashSet<>();
         public Map<String, EquipmentInstanceState> equipmentInstances = new LinkedHashMap<>();
         public Map<String, Integer> quickItems = new LinkedHashMap<>();

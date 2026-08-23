@@ -853,25 +853,25 @@
       "id": "EQL-AR-C01",
       "codexIndex": 1021,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_HEAD"
+      "displayMaterial": "IRON_HELMET"
     },
     {
       "id": "EQL-AR-C02",
       "codexIndex": 1022,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_CHEST"
+      "displayMaterial": "IRON_CHESTPLATE"
     },
     {
       "id": "EQL-AR-C03",
       "codexIndex": 1023,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_LEGS"
+      "displayMaterial": "IRON_LEGGINGS"
     },
     {
       "id": "EQL-AR-C04",
       "codexIndex": 1024,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_FEET"
+      "displayMaterial": "IRON_BOOTS"
     },
     {
       "id": "EQL-AX-R01",
@@ -955,7 +955,7 @@
       "id": "EQL-D10-AR",
       "codexIndex": 1038,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_CHEST"
+      "displayMaterial": "IRON_CHESTPLATE"
     },
     {
       "id": "EQL-D10-CH",
@@ -973,7 +973,7 @@
       "id": "EQL-D10-UA",
       "codexIndex": 1041,
       "domain": "EQUIPMENT",
-      "displayMaterial": "UNARMED_SUPPORT"
+      "displayMaterial": "TRIPWIRE_HOOK"
     },
     {
       "id": "EQL-DG-R01",
@@ -1057,13 +1057,13 @@
       "id": "EQL-UA-R01",
       "codexIndex": 1055,
       "domain": "EQUIPMENT",
-      "displayMaterial": "UNARMED_SUPPORT"
+      "displayMaterial": "TRIPWIRE_HOOK"
     },
     {
       "id": "EQL-UA-U01",
       "codexIndex": 1056,
       "domain": "EQUIPMENT",
-      "displayMaterial": "UNARMED_SUPPORT"
+      "displayMaterial": "TRIPWIRE_HOOK"
     },
     {
       "id": "EQL-W01",
@@ -1123,7 +1123,7 @@
       "id": "EQL-AR-U-SCOUT-HEAD",
       "codexIndex": 1066,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_HEAD"
+      "displayMaterial": "IRON_HELMET"
     },
     {
       "id": "EQL-AR-U-SCOUT-CHEST",
@@ -1135,19 +1135,19 @@
       "id": "EQL-AR-U-SCOUT-LEGS",
       "codexIndex": 1068,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_LEGS"
+      "displayMaterial": "IRON_LEGGINGS"
     },
     {
       "id": "EQL-AR-U-SCOUT-FEET",
       "codexIndex": 1069,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_FEET"
+      "displayMaterial": "IRON_BOOTS"
     },
     {
       "id": "EQL-AR-U-VANGUARD-HEAD",
       "codexIndex": 1070,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_HEAD"
+      "displayMaterial": "IRON_HELMET"
     },
     {
       "id": "EQL-AR-U-VANGUARD-CHEST",
@@ -1159,19 +1159,19 @@
       "id": "EQL-AR-U-VANGUARD-LEGS",
       "codexIndex": 1072,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_LEGS"
+      "displayMaterial": "IRON_LEGGINGS"
     },
     {
       "id": "EQL-AR-U-VANGUARD-FEET",
       "codexIndex": 1073,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_FEET"
+      "displayMaterial": "IRON_BOOTS"
     },
     {
       "id": "EQL-AR-R-OBSERVER-HEAD",
       "codexIndex": 1074,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_HEAD"
+      "displayMaterial": "IRON_HELMET"
     },
     {
       "id": "EQL-AR-R-OBSERVER-CHEST",
@@ -1183,13 +1183,13 @@
       "id": "EQL-AR-R-OBSERVER-LEGS",
       "codexIndex": 1076,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_LEGS"
+      "displayMaterial": "IRON_LEGGINGS"
     },
     {
       "id": "EQL-AR-R-OBSERVER-FEET",
       "codexIndex": 1077,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_FEET"
+      "displayMaterial": "IRON_BOOTS"
     },
     {
       "id": "EQL-D10-W-SW",
@@ -1309,7 +1309,7 @@
       "id": "EQD20-EP-AR01",
       "codexIndex": 1097,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_CHEST"
+      "displayMaterial": "IRON_CHESTPLATE"
     },
     {
       "id": "EQD20-EP-CH01",
@@ -1327,7 +1327,7 @@
       "id": "EQD20-EP-UA01",
       "codexIndex": 1100,
       "domain": "EQUIPMENT",
-      "displayMaterial": "UNARMED_SUPPORT"
+      "displayMaterial": "TRIPWIRE_HOOK"
     },
     {
       "id": "EQD20-LG-AC01",
@@ -1339,7 +1339,7 @@
       "id": "EQD20-LG-AR01",
       "codexIndex": 1102,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_CHEST"
+      "displayMaterial": "IRON_CHESTPLATE"
     },
     {
       "id": "EQD20-LG-CH01",
@@ -1357,7 +1357,7 @@
       "id": "EQD20-LG-UA01",
       "codexIndex": 1105,
       "domain": "EQUIPMENT",
-      "displayMaterial": "UNARMED_SUPPORT"
+      "displayMaterial": "TRIPWIRE_HOOK"
     },
     {
       "id": "EQD20-OH-R01",
@@ -1393,7 +1393,7 @@
       "id": "EQD20-UA-R01",
       "codexIndex": 1111,
       "domain": "EQUIPMENT",
-      "displayMaterial": "UNARMED_SUPPORT"
+      "displayMaterial": "TRIPWIRE_HOOK"
     },
     {
       "id": "EQD20-EP-W01-SW",
@@ -1507,7 +1507,7 @@
       "id": "EQD20-AR-MED-HEAD",
       "codexIndex": 1130,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_HEAD"
+      "displayMaterial": "IRON_HELMET"
     },
     {
       "id": "EQD20-AR-MED-CHEST",
@@ -1519,19 +1519,19 @@
       "id": "EQD20-AR-MED-LEGS",
       "codexIndex": 1132,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_LEGS"
+      "displayMaterial": "IRON_LEGGINGS"
     },
     {
       "id": "EQD20-AR-MED-FEET",
       "codexIndex": 1133,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_FEET"
+      "displayMaterial": "IRON_BOOTS"
     },
     {
       "id": "EQD20-AR-CTRL-HEAD",
       "codexIndex": 1134,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_HEAD"
+      "displayMaterial": "IRON_HELMET"
     },
     {
       "id": "EQD20-AR-CTRL-CHEST",
@@ -1543,19 +1543,19 @@
       "id": "EQD20-AR-CTRL-LEGS",
       "codexIndex": 1136,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_LEGS"
+      "displayMaterial": "IRON_LEGGINGS"
     },
     {
       "id": "EQD20-AR-CTRL-FEET",
       "codexIndex": 1137,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_FEET"
+      "displayMaterial": "IRON_BOOTS"
     },
     {
       "id": "EQD20-AR-GUARD-HEAD",
       "codexIndex": 1138,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_HEAD"
+      "displayMaterial": "IRON_HELMET"
     },
     {
       "id": "EQD20-AR-GUARD-CHEST",
@@ -1567,13 +1567,13 @@
       "id": "EQD20-AR-GUARD-LEGS",
       "codexIndex": 1140,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_LEGS"
+      "displayMaterial": "IRON_LEGGINGS"
     },
     {
       "id": "EQD20-AR-GUARD-FEET",
       "codexIndex": 1141,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_FEET"
+      "displayMaterial": "IRON_BOOTS"
     },
     {
       "id": "EQD50-AC-CALIBRATE",
@@ -1609,7 +1609,7 @@
       "id": "EQD50-B30-AR01",
       "codexIndex": 1147,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_CHEST"
+      "displayMaterial": "IRON_CHESTPLATE"
     },
     {
       "id": "EQD50-B30-OH01",
@@ -1621,7 +1621,7 @@
       "id": "EQD50-B30-UA01",
       "codexIndex": 1149,
       "domain": "EQUIPMENT",
-      "displayMaterial": "UNARMED_SUPPORT"
+      "displayMaterial": "TRIPWIRE_HOOK"
     },
     {
       "id": "EQD50-B40-AC01",
@@ -1633,7 +1633,7 @@
       "id": "EQD50-B40-AR01",
       "codexIndex": 1151,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_CHEST"
+      "displayMaterial": "IRON_CHESTPLATE"
     },
     {
       "id": "EQD50-B40-OH01",
@@ -1645,7 +1645,7 @@
       "id": "EQD50-B40-UA01",
       "codexIndex": 1153,
       "domain": "EQUIPMENT",
-      "displayMaterial": "UNARMED_SUPPORT"
+      "displayMaterial": "TRIPWIRE_HOOK"
     },
     {
       "id": "EQD50-BL-A41",
@@ -1813,19 +1813,19 @@
       "id": "EQD50-UA-A41",
       "codexIndex": 1181,
       "domain": "EQUIPMENT",
-      "displayMaterial": "UNARMED_SUPPORT"
+      "displayMaterial": "TRIPWIRE_HOOK"
     },
     {
       "id": "EQD50-UA-E21",
       "codexIndex": 1182,
       "domain": "EQUIPMENT",
-      "displayMaterial": "UNARMED_SUPPORT"
+      "displayMaterial": "TRIPWIRE_HOOK"
     },
     {
       "id": "EQD50-UA-L31",
       "codexIndex": 1183,
       "domain": "EQUIPMENT",
-      "displayMaterial": "UNARMED_SUPPORT"
+      "displayMaterial": "TRIPWIRE_HOOK"
     },
     {
       "id": "EQD50-B30-W01-SW",
@@ -1939,7 +1939,7 @@
       "id": "EQD50-AR-PURIFIER-HEAD",
       "codexIndex": 1202,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_HEAD"
+      "displayMaterial": "IRON_HELMET"
     },
     {
       "id": "EQD50-AR-PURIFIER-CHEST",
@@ -1951,19 +1951,19 @@
       "id": "EQD50-AR-PURIFIER-LEGS",
       "codexIndex": 1204,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_LEGS"
+      "displayMaterial": "IRON_LEGGINGS"
     },
     {
       "id": "EQD50-AR-PURIFIER-FEET",
       "codexIndex": 1205,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_FEET"
+      "displayMaterial": "IRON_BOOTS"
     },
     {
       "id": "EQD50-AR-INTERRUPT-HEAD",
       "codexIndex": 1206,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_HEAD"
+      "displayMaterial": "IRON_HELMET"
     },
     {
       "id": "EQD50-AR-INTERRUPT-CHEST",
@@ -1975,19 +1975,19 @@
       "id": "EQD50-AR-INTERRUPT-LEGS",
       "codexIndex": 1208,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_LEGS"
+      "displayMaterial": "IRON_LEGGINGS"
     },
     {
       "id": "EQD50-AR-INTERRUPT-FEET",
       "codexIndex": 1209,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_FEET"
+      "displayMaterial": "IRON_BOOTS"
     },
     {
       "id": "EQD50-AR-REBUILD-HEAD",
       "codexIndex": 1210,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_HEAD"
+      "displayMaterial": "IRON_HELMET"
     },
     {
       "id": "EQD50-AR-REBUILD-CHEST",
@@ -1999,13 +1999,13 @@
       "id": "EQD50-AR-REBUILD-LEGS",
       "codexIndex": 1212,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_LEGS"
+      "displayMaterial": "IRON_LEGGINGS"
     },
     {
       "id": "EQD50-AR-REBUILD-FEET",
       "codexIndex": 1213,
       "domain": "EQUIPMENT",
-      "displayMaterial": "ARMOR_FEET"
+      "displayMaterial": "IRON_BOOTS"
     }
   ]
 }
