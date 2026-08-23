@@ -43,13 +43,22 @@
       "type": "object", "additionalProperties": false,
       "required": [
         "lockFiles", "manifestFiles", "schemaFiles", "dataFiles", "totalFiles",
-        "seasonDays", "personalAugmentMilestones", "partyAugmentMilestones",
+        "seasonDays", "materialRecords", "nonEquipmentItems", "equipmentAndTools",
+        "recipes", "codexRecords", "playerSkills", "personalAugments", "partyAugments",
+        "entityTemplates", "enemyTemplates", "facilities", "lootTables",
+        "personalAugmentMilestones", "partyAugmentMilestones",
         "weaponClasses", "seasonBosses", "finalObjectives"
       ],
       "properties": {
         "lockFiles": { "const": 1 }, "manifestFiles": { "const": 1 },
-        "schemaFiles": { "const": 16 }, "dataFiles": { "const": 29 },
-        "totalFiles": { "const": 47 }, "seasonDays": { "const": 50 },
+        "schemaFiles": { "const": 23 }, "dataFiles": { "const": 41 },
+        "totalFiles": { "const": 66 }, "seasonDays": { "const": 50 },
+        "materialRecords": { "const": 59 }, "nonEquipmentItems": { "const": 61 },
+        "equipmentAndTools": { "const": 214 }, "recipes": { "const": 315 },
+        "codexRecords": { "const": 334 }, "playerSkills": { "const": 64 },
+        "personalAugments": { "const": 50 }, "partyAugments": { "const": 16 },
+        "entityTemplates": { "const": 91 }, "enemyTemplates": { "const": 53 },
+        "facilities": { "const": 46 }, "lootTables": { "const": 62 },
         "personalAugmentMilestones": { "const": 10 },
         "partyAugmentMilestones": { "const": 4 }, "weaponClasses": { "const": 10 },
         "seasonBosses": { "const": 4 }, "finalObjectives": { "const": 1 }

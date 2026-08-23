@@ -23,10 +23,11 @@
 - 커스텀 GUI 외 직접 장착 변경은 다음 틱에 권위 장비로 복원하고 감사 로그를 남긴다.
 - 주무기 실제 슬롯은 `0`, 보조무기는 `-106`이다. 둘이 비면 권투를 자동 활성화한다.
 - 핫바 `1~8`은 바닐라 자유 슬롯이다. 전투 입력과 Shift+숫자 C/Q 입력은 현재 선택 슬롯이 `0`일 때만 해석한다.
-- 커스텀 자원은 개인 인벤토리에 먼저 지급하고 공용 보급 저장소가 활성화된 뒤에만 공용 원장 입출고를 허용한다.
+- 커스텀 자원은 `FAC-S16` 완공 전 개인 자원 원장에 지급·소비하고, 완공 뒤 명시적 입출고를 거쳐야만 공용 원장을 사용한다. 획득 즉시 공용 원장으로 보내지 않는다.
 - 커스텀 제작은 원목 4개로 파티 해금한 Craft GUI의 3×3 고정 조합으로만 커밋한다.
-- 무기 기본 공격과 W1~W3은 슬롯 `0`에서만 서버 실행하고 스킬 종료 뒤 슬롯 `0`을 복원한다. 무기별 로드아웃은 장착·해제를 지원한다.
+- 무기 기본 공격과 W1~W3은 슬롯 `0`에서만 서버 실행한다. `Shift+2~9`의 C/Q 실행은 완료·실패와 무관하게 입력 시퀀스 가드 후 슬롯 `0`으로 복원하고, L/R/Shift+L/Shift+R/F는 이미 슬롯 `0`이므로 별도 슬롯 변경을 만들지 않는다.
 - 아이템 도감의 ID·위치는 리비전에 고정하며 최초 획득 전에는 검은 염료 `???`만 노출한다.
+- 도감 해금은 최초 획득 커밋으로 한 번만 발생한다. 해금하면 등록된 조합 정보는 보이되 실제 제작 권한·시설·Day 조건은 별도로 검사한다.
 - 초반 목표는 바닐라 Advancement의 별도 `WildSurvival` 탭으로 제공하고 회차 상태에서 완료를 복구한다.
 - 곡괭이는 전투 표적 판정 우선, 삼지창은 바닐라 피해 취소 후 커스텀 투척·회수, 단검은 검·둔기는 철퇴 기반이다.
 - 모든 파티는 한 팀이며 PvP·경쟁 보상·개인 승리 조건을 만들지 않는다.
@@ -38,11 +39,14 @@
 | 모듈 | 소유 상태 | 발행 이벤트 | 금지 |
 |---|---|---|---|
 | `content` | 리비전·manifest·레지스트리 | `CONTENT_VALIDATED` | 부분 번들 활성 |
+| `input` | 현재 슬롯·클릭·웅크림·F·숫자 입력 중재 | `INPUT_INTENT` | 전투 결과 직접 확정 |
 | `run` | 회차·Day·난이도·인원 스냅샷 | `DAY_STARTED`, `RUN_ENDED` | 콘텐츠 수치 직접 변경 |
 | `player` | 생존·다운·사망·장착 의미 슬롯 | `PLAYER_STATE_CHANGED` | 보상 직접 지급 |
 | `combat` | AP·회피·패링·상태·브레이크·패턴 | `COMBAT_RESULT` | Story 결과 승인 |
 | `growth` | EXP·레벨·개인/파티 증강 드로우 | `MILESTONE_LOCKED` | 등급 재추첨 |
-| `economy` | 자원·제작·장비·보상 원장 | `LEDGER_COMMITTED` | 클라이언트 수치 신뢰 |
+| `economy` | 개인/공용 자원·제작·장비·내구도·보상 원장 | `LEDGER_COMMITTED`, `EQUIPMENT_BROKEN` | 클라이언트 수치 신뢰 |
+| `catalog` | 아이템·도감·조합·스킬·엔티티·드롭 레지스트리 | `DISCOVERY_COMMITTED` | 회차 중 ID 재배치 |
+| `ui` | 메뉴·Craft·도감·스탯·장비·설정·피해 표시 | `UI_INTENT` | 도메인 원장 직접 변경 |
 | `world` | 오염·노드·시설·연구·발견 | `WORLD_OBJECTIVE_COMMITTED` | 영구 월드 직접 손상 |
 | `encounter` | 사건·적·공세·잔여 예산 | `ENCOUNTER_COMMITTED` | 활성 상한 우회 |
 | `boss` | Day10·20·30·40 상태기계 | `BOSS_DEFEATED` | 개별 소환체 보상 |
@@ -56,15 +60,15 @@
 
 | ID | 작업 | 입력 문서 | 산출물 | 핵심 승인 |
 |---|---|---|---|---|
-| `IMP-001` | r2 schema·loader·manifest | DATA-REVISION-002 | 47파일 번들 골격·validator | L0 |
+| `IMP-001` | r2 schema·loader·manifest | DATA-REVISION-002 | 66파일 번들 골격·validator | L0 |
 | `IMP-002` | 회차 잠금·DB migration | TECH-001, GAME-001~003 | 잠금 튜플·복구 | 재시작 fixture |
-| `IMP-003` | 통합 GUI·HUD | UX-001 | 화면·PENDING·접근성 | GUI 상태 테스트 |
-| `IMP-004` | 장착·10무기 실행 | EQUIP-001, WEAPON-002 | 슬롯 동기화·실행기 | 무기 판정 10종 |
+| `IMP-003` | 통합 메뉴·Craft·도감·HUD·피해 표시 | UX-001, ITEM-LIST-001 | Shift+F 메뉴·고정 도감·TextDisplay | GUI·표시 상한 테스트 |
+| `IMP-004` | 입력 중재·장착·10무기·내구도 | EQUIP-001, WEAPON-002, TOOL-LIST-001, SKILL-LIST-001 | slot0 판정·실행기·BROKEN 원장 | 무기 판정 10종·이중 소비 0 |
 | `IMP-005` | 상태·브레이크·패턴 | STATUS/BREAK/COMBAT | 전투 파이프라인 | 순서·상한 테스트 |
-| `IMP-006` | 성장·드로우 | PROG/AUG/PARTY-SYNERGY | 마일스톤 잠금·후보 | 결정론 fixture |
-| `IMP-007` | 자원·제작·장비 원장 | RESOURCE/EQUIP/ECONOMY | 거래·예약·NEED | 멱등·음수 차단 |
-| `IMP-008` | 시설·연구·발견 | FACILITY/RESEARCH/DISC | 큐·네트워크·도감 | 소프트락 fixture |
-| `IMP-009` | Day1~50 사건·적 | EVENT/ENEMY DATA | 스케줄러·웨이브 | Day 누락 0 |
+| `IMP-006` | 성장·개인 50·파티 16 드로우 | PROG/AUG/PARTY-SYNERGY, AUG-LIST-001/002 | 마일스톤 잠금·후보 | 결정론 fixture |
+| `IMP-007` | 재료 59·일반 아이템 61·제작 315·장비 214 원장 | MATERIAL/ITEM/RECIPE/TOOL-LIST | 거래·3×3 예약·NEED | 카디널리티·멱등·음수 차단 |
+| `IMP-008` | 시설 46·연구·발견·공용 원장 게이트 | FACILITY-LIST/FACILITY/RESEARCH/DISC | 큐·네트워크·도감·FAC-S16 | 소프트락 fixture |
+| `IMP-009` | Day1~50 사건·엔티티 91·드롭 62 | EVENT/ENEMY DATA, ENTITY/LOOT-LIST | 스케줄러·웨이브·행동·분배 | Day 누락·미해석 참조 0 |
 | `IMP-010` | Day10~40 보스 | BOSS DATA | 상태기계 4종 | 재접속·보상 1회 |
 | `IMP-011` | Final | FINAL-DATA-001 | 활성·3단계·6단계 TX | Day50·멱등 |
 | `IMP-012` | Story | STORY-DATA-S1-001 | FULL/REDUCED·큐·로그 | 도메인 비침범 |
@@ -100,6 +104,11 @@ domain command
 | `runs` | runId, 잠금 튜플, day, difficulty, mode, state |
 | `run_players` | registered/survivable/active, deathState, equipment snapshot |
 | `player_loadouts` | W1~W3, C1~C4, Q1~Q4, commonInputMode, version |
+| `equipment_instances` | instanceId, templateId, owner, slot, current/max durability, condition, version |
+| `player_discoveries` | playerId, codexId, discoveredAt, sourceEventId |
+| `recipe_permissions` | runId, recipeId, unlockState, sourceEventId |
+| `personal_resources` | runId, playerId, resourceId, balance, version |
+| `public_resources` | runId, resourceId, balance, facilityStateVersion |
 | `budget_snapshots` | day, profile, domain base/multiplier/locked/residual |
 | `milestone_locks` | milestone, tier, firstPlayer, draw seed/revision |
 | `ledgers` | domain, delta, balance, idempotencyKey |
@@ -121,10 +130,12 @@ domain command
 | HUD | ActionBar·BossBar·Title·Scoreboard 채널 우선순위 |
 | 커스텀 몹 | 바닐라 EntityType+속성+AI 목표+PDC, 서버 패턴 실행기 |
 | 커스텀 외형 | 선택 리소스 팩 CustomModelData, 로직 폴백 필수 |
+| 장비 내구도 | `PlayerItemDamageEvent` 취소 후 서버 원장 1회 차감, 미러 Damageable 수동 갱신, 0이면 아이템 보존 `BROKEN` |
 | 삼지창 | 발사 이벤트 취소, 표시 엔티티/투사체 추적, 서버 충돌·회수 |
 | 상태·브레이크 | 서버 틱 상태 컨테이너와 전용 BossBar |
 | 오염 | 청크 메타데이터·블록 변경 큐, 월드 손상 제한 |
 | 구조·시설 | 보호된 월드 오브젝트와 GUI 상호작용 |
+| 피해 숫자 | 피해 확정 뒤 victim 근처 TextDisplay, 4틱 다단 집계·14틱 수명·개인/청크 상한 |
 
 NMS 직접 접근은 금지하지 않지만 Paper API로 불가능한 경우에만 어댑터 뒤에 둔다. 서버 버전 변경 시 어댑터 실패가 콘텐츠 원장을 손상시키지 않아야 한다.
 
@@ -180,6 +191,15 @@ NMS 직접 접근은 금지하지 않지만 Paper API로 불가능한 경우에�
 | `E2E-18` | 무기별 W1~W3 장착·해제·재접속·시전 | 무기별 저장 유지, 빈 슬롯 거부, AP/화살 1회 소비, 식별 가능한 효과 |
 | `E2E-19` | L키 초반 길잡이 진행·재접속 | 18단계 고정 순서, 완료 복구, 미완료 다음 목표 표시 |
 | `E2E-20` | 신규 월드 Day1 시작 보급 없음 | 90초 준비 안에 원목→Craft→급조 곡괭이→첫 무기 경로가 소프트락 없이 성립 |
+| `E2E-21` | slot0 곡괭이·적대 표적 없음·허용 블록 | 바닐라 채굴 성립, AP 0소비, 서버 내구도 정확히 1회 차감 |
+| `E2E-22` | slot0 곡괭이·적대 표적과 블록 겹침 | 커스텀 기본 공격만 실행, 블록 보존, AP·내구도 각 1회 소비 |
+| `E2E-23` | 장비 내구도 1에서 실행·수리 | 아이템 미삭제, BROKEN 전환·효과/공격 차단, 같은 instanceId로 수리 |
+| `E2E-24` | slot0/slot1~8에서 Shift+2~9 | slot0에서만 C/Q 실행 후 0 복원, 나머지 슬롯은 바닐라 선택·행동 유지 |
+| `E2E-25` | 어느 핫바 슬롯에서든 Shift+F | 플레이어 메뉴 1회 열림, 전투 F 오발 0 |
+| `E2E-26` | 단타·4틱 내 다단·흡수 피해 | victim 근처 실제 HP 피해량 표시, 다단 집계·14틱 제거·상한 준수 |
+| `E2E-27` | FAC-S16 전후 획득·제작·입출고 | 전에는 개인 원장만 사용, 이후 명시 입출고만 공용 반영, 자동 이체 0 |
+| `E2E-28` | 도감 전체 레지스트리·첫 획득·재접속 | 334 고정 ID/위치, 미발견 BLACK_DYE `???`, 조합 표시·권한 분리 |
+| `E2E-29` | 전체 생산 카탈로그 로드 | 재료59·일반61·장비214·조합315·스킬64·증강66·엔티티91·시설46·드롭62 일치 |
 
 ## 12. 배포·롤백 인계
 

@@ -12,7 +12,7 @@
 | 활성 정책 | `NEW_RUN_ONLY` |
 | 이전 번들 | `ws-content-r1`, 불변·동시 로드 가능 |
 | 후보 레지스트리 | `기획/10 기술과 운영/contracts/ws-content-r2-registry.json` |
-| 최종 수정일 | 2026-08-21 |
+| 최종 수정일 | 2026-08-23 |
 
 ## 1. 계약 목적
 
@@ -53,11 +53,18 @@ content/ws-content-r2/
 │  ├─ event.schema.json
 │  ├─ enemy.schema.json
 │  ├─ resource.schema.json
+│  ├─ item.schema.json
 │  ├─ recipe.schema.json
 │  ├─ equipment.schema.json
 │  ├─ facility.schema.json
 │  ├─ research.schema.json
 │  ├─ augment.schema.json
+│  ├─ skill.schema.json
+│  ├─ action.schema.json
+│  ├─ entity.schema.json
+│  ├─ loot.schema.json
+│  ├─ codex.schema.json
+│  ├─ migration.schema.json
 │  ├─ boss.schema.json
 │  ├─ final.schema.json
 │  ├─ story.schema.json
@@ -74,6 +81,9 @@ content/ws-content-r2/
 ├─ resources/day01-10.json
 ├─ resources/day11-20.json
 ├─ resources/day21-50.json
+├─ items/materials.json
+├─ items/non-equipment-items.json
+├─ items/codex-index.json
 ├─ recipes/season1-recipes.json
 ├─ equipment/day01-10.json
 ├─ equipment/day11-20.json
@@ -82,6 +92,10 @@ content/ws-content-r2/
 ├─ research/season1-research.json
 ├─ augments/personal-augments.json
 ├─ augments/party-augments.json
+├─ skills/player-skills.json
+├─ skills/entity-actions.json
+├─ entities/support-entities.json
+├─ loot/season1-loot.json
 ├─ bosses/day10.json
 ├─ bosses/day20.json
 ├─ bosses/day30.json
@@ -90,11 +104,16 @@ content/ws-content-r2/
 ├─ story/season1-scenes.json
 ├─ story/season1-logs.json
 ├─ budget/live-profiles.json
+├─ migrations/id-aliases.json
+├─ fixtures/cardinality.json
+├─ fixtures/reference-graph.json
+├─ fixtures/draw-locks.json
+├─ fixtures/softlock-scenarios.json
 ├─ ops/admin-commands.json
 └─ ops/telemetry-contract.json
 ```
 
-총 목표는 lock 1, manifest 1, schema 16, 데이터 29의 `47개 파일`이다. 파일 분할이 바뀌면 manifest·레지스트리·검증 fixture를 같은 변경 세트에서 갱신한다.
+총 목표는 lock 1, manifest 1, schema 23, 데이터 41의 `66개 파일`이다. 파일 분할이 바뀌면 manifest·레지스트리·검증 fixture를 같은 변경 세트에서 갱신한다. fixture도 manifest에 포함되는 실행 데이터이며 테스트 전용이라는 이유로 해시 검증에서 제외하지 않는다.
 
 ## 4. 도메인 권위 매핑
 
@@ -104,15 +123,21 @@ content/ws-content-r2/
 | 사건 | `EVENT-DATA-001`, `EVENT-DATA-D20-001`, `EVENT-DATA-D50-001` | 단계·웨이브·보상·실패 |
 | 적 | `ENEMY-DATA-001`, `ENEMY-DATA-D20-001`, `ENEMY-DATA-D50-001` | 템플릿·기술·변이·그룹 |
 | 자원·가공 | `RESOURCE-DATA-001`, `RESOURCE-DATA-D20-001`, `RESOURCE-DATA-D50-001` | 노드·가치·가공·복구 |
-| 장비 | `EQUIP-LIST-001`, `EQUIP-DATA-D20-001`, `EQUIP-DATA-D50-001` | 템플릿·옵션·대가·드롭 |
-| 시설 | `FACILITY-001`, `FACILITY-DATA-D50-001` | 상태·비용·큐·네트워크 |
+| 재료·일반 아이템 | `MATERIAL-LIST-001`, `ITEM-LIST-001` | 고정 ID·획득·소모·도감 위치 |
+| 도구·장비 | `TOOL-LIST-001`, `EQUIP-LIST-001`, `EQUIP-DATA-D20-001`, `EQUIP-DATA-D50-001` | 214 템플릿·옵션·내구도·BROKEN |
+| 제작 | `RECIPE-LIST-001` | 315 조합·해금·시설 조건·3×3 배치 |
+| 시설 | `FACILITY-LIST-001`, `FACILITY-001`, `FACILITY-DATA-D50-001` | 46 상태·비용·큐·네트워크·공용 원장 게이트 |
 | 연구 | `RESEARCH-001` | 표본·노드·대응책·도감 |
-| 증강 | `AUG-001`, `AUG-LIST-001`, `PARTY-SYNERGY-001` | 드로우·등급 잠금·1~4인 분기 |
+| 플레이어 스킬 | `SKILL-LIST-001`, `SKILL-001` | 64 실행 레코드·입력·AP·탄약·내구도 |
+| 증강 | `AUG-001`, `AUG-LIST-001`, `AUG-LIST-002`, `PARTY-SYNERGY-001` | 개인 50·파티 16·등급 잠금·1~4인 분기 |
+| 엔티티·행동 | `ENTITY-LIST-001`, `ENEMY-DATA-001`, `ENEMY-DATA-D20-001`, `ENEMY-DATA-D50-001` | 적 53·보스 4·지원 34·행동 번들 |
+| 획득·드롭 | `LOOT-LIST-001` | 62 테이블·기여자 분배·중복 차단 |
 | 보스 | `BOSS-DATA-001`, `BOSS-DATA-D20-001`, `BOSS-DATA-D50-001` | Day10·20·30·40 상태기계 |
 | Final | `FINAL-001`, `FINAL-DATA-001` | 활성·3단계·완료 TX |
 | Story | `STORY-DATA-S1-001` | 장면·로그·큐·이관 스냅샷 |
 | 예산 | `BUDGET-001`, `BUDGET-PROFILE-001` | 라이브 프로필·잠금·잔여 |
 | 운영·관측 | `OPS-001`, `QA-BALANCE-001` | 명령·감사·텔레메트리 |
+| 생산 그래프 검증 | `CONTENT-GRAPH-AUDIT-001` | 카디널리티·참조·Day 접근성·소프트락 fixture |
 
 충돌 시 `DOC-AUTHORITY-001`의 우선순위를 사용한다. 이 문서는 원본 수치를 임의 복제해 새 권위를 만들지 않는다.
 
@@ -196,6 +221,14 @@ story ─ domain result event keys only
 | `RV2-C13` | 파일 경로·크기·SHA-256이 manifest와 완전 일치 |
 | `RV2-C14` | admin 명령이 권한·dry-run·확인·감사 정책을 가짐 |
 | `RV2-C15` | 모든 완료·보상 단계에 멱등키 생성 규칙 존재 |
+| `RV2-C16` | 재료 59, 일반 아이템 61, 도구·장비 214가 정확히 존재 |
+| `RV2-C17` | 제작법 315개가 유일하며 산출물 314개와 의도된 대체 조합 1개가 일치 |
+| `RV2-C18` | 도감 레코드 334개가 고정 ID·고정 위치로 유일하며 모든 대상 아이템을 해석 |
+| `RV2-C19` | 플레이어 스킬 64, 개인 증강 50, 파티 증강 16이 정확히 존재 |
+| `RV2-C20` | 엔티티 91개가 적 53·보스 4·지원 34로 정확히 분해되고 행동 참조가 해석됨 |
+| `RV2-C21` | 시설 46, 획득·드롭 테이블 62가 정확히 존재하고 미해석 참조가 없음 |
+| `RV2-C22` | Craft는 원목 4개 파티 해금, FAC-S16 전 개인 원장·이후 공용 원장이라는 접근 그래프를 위반하지 않음 |
+| `RV2-C23` | slot 0 전투/채굴 중재와 서버 내구도·BROKEN 상태가 이중 소비·바닐라 파괴 없이 결정론적임 |
 
 ## 9. 검증 순서
 
@@ -243,7 +276,7 @@ r1→r2 활성 회차 마이그레이션은 제공하지 않는다. 운영자가
 | 상태 | 의미 |
 |---|---|
 | `CONTRACT_READY` | 본 문서·후보 레지스트리 완료 |
-| `BUNDLE_BUILT` | 47개 목표 파일과 실제 해시 생성 |
+| `BUNDLE_BUILT` | 66개 목표 파일과 실제 해시 생성 |
 | `L0_VALIDATED` | schema·참조·합계 통과 |
 | `L1_TESTED` | 단위·결정론·멱등성 통과 |
 | `L2_SIMULATED` | 1~4인 50 Day 헤드리스 통과 |

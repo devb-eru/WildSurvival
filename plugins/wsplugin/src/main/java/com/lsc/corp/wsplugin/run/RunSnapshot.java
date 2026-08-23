@@ -44,8 +44,11 @@ public final class RunSnapshot {
         public int maxAp = 100;
         public long apRegenBlockedUntilEpochMs;
         public String mainWeaponId;
+        public String mainWeaponInstanceId;
         public String offhandId;
+        public String offhandInstanceId;
         public Set<String> ownedEquipment = new LinkedHashSet<>();
+        public Map<String, EquipmentInstanceState> equipmentInstances = new LinkedHashMap<>();
         public Map<String, Integer> quickItems = new LinkedHashMap<>();
         public Map<Integer, String> quickBindings = new LinkedHashMap<>();
         public Map<String, Map<Integer, String>> weaponSkillLoadouts = new LinkedHashMap<>();
@@ -83,6 +86,14 @@ public final class RunSnapshot {
         public double z;
         public float yaw;
         public float pitch;
+    }
+
+    public static final class EquipmentInstanceState {
+        public String instanceId;
+        public String templateId;
+        public int currentDurability;
+        public int maxDurability;
+        public String condition = "ACTIVE";
     }
 
     public static final class MilestoneLock {

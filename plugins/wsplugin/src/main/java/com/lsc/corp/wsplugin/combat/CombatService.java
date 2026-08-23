@@ -103,7 +103,7 @@ public final class CombatService implements Listener {
     private final Map<UUID, ComboState> combos = new HashMap<>();
     private final Map<UUID, Long> attackReadyAtNanos = new HashMap<>();
     private final Map<UUID, Long> lastLeftInputTick = new HashMap<>();
-    private final Map<UUID, Boolean> lastLeftHit = new HashMap<>();
+    private final Map<UUID, CombatInputPolicy.LeftDisposition> lastLeftDisposition = new HashMap<>();
     private final Map<UUID, Long> invulnerableUntilEpochMs = new HashMap<>();
     private final Map<UUID, Long> lastSneakAtEpochMs = new HashMap<>();
     private final Map<UUID, ReviveChannel> reviveChannels = new HashMap<>();
@@ -558,10 +558,8 @@ public final class CombatService implements Listener {
         }
         Action action = event.getAction();
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            routeLeft(player);
-            if (action == Action.LEFT_CLICK_BLOCK) {
-                event.setCancelled(true);
-            }
+            CombatInputPolicy.LeftDisposition disposition = routeLeft(player);
+            if (action == Action.LEFT_CLICK_BLOCK && disposition.cancelsBlockDamage()) event.setCancelled(true);
             return;
         }
         if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
@@ -769,31 +767,33 @@ public final class CombatService implements Listener {
         ActionBarService.critical(target, Component.text(reviver.getName() + "이(가) 구조 중", NamedTextColor.YELLOW), 30);
     }
 
-    private boolean routeLeft(Player player) {
-        if (!inCombatStance(player) || !requireActiveAction(player)) return false;
+    private CombatInputPolicy.LeftDisposition routeLeft(Player player) {
+        if (!inCombatStance(player)) return CombatInputPolicy.LeftDisposition.VANILLA;
         long tick = Bukkit.getCurrentTick();
         if (lastLeftInputTick.getOrDefault(player.getUniqueId(), Long.MIN_VALUE) == tick) {
-            return lastLeftHit.getOrDefault(player.getUniqueId(), false);
+            return lastLeftDisposition.getOrDefault(player.getUniqueId(), CombatInputPolicy.LeftDisposition.BASIC_ATTACK);
         }
         lastLeftInputTick.put(player.getUniqueId(), tick);
-        boolean result;
-        if (player.isSneaking()) {
-            result = executeWeaponActive(player, 2);
-        } else {
-            if ("PICKAXE".equals(equipment.resolveWeaponId(player)) && player.getTargetBlockExact(4) != null
-                    && nearestTarget(player, content.weapon("PICKAXE").range()).isEmpty()) {
-                lastLeftHit.put(player.getUniqueId(), false);
-                return false;
-            }
-            result = executeBasicAttack(player);
+        String weaponId = equipment.resolveWeaponId(player);
+        double targetRange = content.weapon(weaponId).range();
+        CombatInputPolicy.LeftDisposition disposition = CombatInputPolicy.leftClick(
+                player.getInventory().getHeldItemSlot(), isActionRestricted(player), player.isSneaking(), weaponId,
+                nearestTarget(player, targetRange).isPresent(), player.getTargetBlockExact(4) != null);
+        lastLeftDisposition.put(player.getUniqueId(), disposition);
+        switch (disposition) {
+            case BASIC_ATTACK -> executeBasicAttack(player);
+            case WEAPON_SKILL -> executeWeaponActive(player, 2);
+            case RESTRICTED -> showRestrictedAction(player);
+            case VANILLA, VANILLA_MINING -> { }
         }
-        lastLeftHit.put(player.getUniqueId(), result);
-        returnToCombatStance(player);
-        return result;
+        if (disposition != CombatInputPolicy.LeftDisposition.VANILLA
+                && disposition != CombatInputPolicy.LeftDisposition.VANILLA_MINING) returnToCombatStance(player);
+        return disposition;
     }
 
     private boolean executeBasicAttack(Player player) {
         String weaponId = equipment.resolveWeaponId(player);
+        if (!requireUsableWeapon(player)) return false;
         PrototypeContent.WeaponDefinition weapon = contentWeapon(player, weaponId);
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         if ("TRIDENT".equals(weaponId) && !"HELD".equals(state.tridentState)) {
@@ -829,9 +829,11 @@ public final class CombatService implements Listener {
             arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
             arrow.getPersistentDataContainer().set(projectileOwnerKey, PersistentDataType.STRING, player.getUniqueId().toString());
             arrow.getPersistentDataContainer().set(projectileWeaponKey, PersistentDataType.STRING, weaponId);
+            equipment.consumeMainWeaponDurability(player, 1, "BASIC_ATTACK");
             player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 0.7f, 1.1f);
             return true;
         }
+        equipment.consumeMainWeaponDurability(player, 1, "BASIC_ATTACK");
         List<LivingEntity> targets = coneTargets(player, weapon.range(), weapon.arcDegrees(), "UNARMED".equals(weaponId) ? 2 : 3);
         for (LivingEntity target : targets) {
             double raw = 100.0 * weapon.attackCoefficients().get(stage);
@@ -844,7 +846,7 @@ public final class CombatService implements Listener {
     }
 
     private boolean executeWeaponActive(Player player, int slot) {
-        if (!requireActiveAction(player)) return false;
+        if (!requireActiveAction(player) || !requireUsableWeapon(player)) return false;
         String weaponId = equipment.resolveWeaponId(player);
         PrototypeContent.SkillDefinition skill = skills.resolve(player, slot);
         if (skill == null) {
@@ -853,12 +855,18 @@ public final class CombatService implements Listener {
         }
         if ("TRIDENT_THROW".equals(skill.effect())) {
             boolean success = throwTrident(player, skill.apCost());
-            if (success) showSkillEffect(player, skill, List.of());
+            if (success) {
+                equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
+                showSkillEffect(player, skill, List.of());
+            }
             return success;
         }
         if ("TRIDENT_RECALL".equals(skill.effect())) {
             boolean success = recallTrident(player, skill.apCost());
-            if (success) showSkillEffect(player, skill, List.of());
+            if (success) {
+                equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
+                showSkillEffect(player, skill, List.of());
+            }
             return success;
         }
         if ("BOW".equals(weaponId) && !hasMaterial(player, Material.ARROW)) {
@@ -870,6 +878,7 @@ public final class CombatService implements Listener {
             return false;
         }
         if ("BOW".equals(weaponId)) takeOneMaterial(player, Material.ARROW);
+        equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
         List<LivingEntity> targets = coneTargets(player, skill.range(), skill.arcDegrees(), skill.maxTargets());
         String executionId = "skill:" + skill.id() + ":" + UUID.randomUUID();
         for (LivingEntity target : targets) {
@@ -1243,7 +1252,7 @@ public final class CombatService implements Listener {
         RayTraceResult result = player.getWorld().rayTraceEntities(player.getEyeLocation(), player.getEyeLocation().getDirection(),
                 range, 0.8, entity -> entity instanceof LivingEntity living && isCombatEntity(living));
         return result != null && result.getHitEntity() instanceof LivingEntity living
-                ? java.util.Optional.of(living) : java.util.Optional.empty();
+                && player.hasLineOfSight(living) ? java.util.Optional.of(living) : java.util.Optional.empty();
     }
 
     private void updateHud() {
@@ -1354,6 +1363,14 @@ public final class CombatService implements Listener {
     private boolean requireActiveAction(Player player) {
         if (!isActionRestricted(player)) return true;
         showRestrictedAction(player);
+        return false;
+    }
+
+    private boolean requireUsableWeapon(Player player) {
+        if (equipment.isMainWeaponUsable(player)) return true;
+        ActionBarService.notice(player,
+                Component.text("장비가 파손되었습니다. 장비 메뉴에서 수리해야 합니다.", NamedTextColor.RED), 45);
+        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.35f, 0.55f);
         return false;
     }
 

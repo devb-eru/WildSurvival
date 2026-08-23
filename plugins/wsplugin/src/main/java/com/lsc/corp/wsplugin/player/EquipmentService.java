@@ -22,6 +22,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -31,6 +32,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -45,6 +47,7 @@ public final class EquipmentService implements Listener {
     private final TelemetryService telemetry;
     private final ItemCodexService codex;
     private final NamespacedKey weaponIdKey;
+    private final NamespacedKey equipmentInstanceIdKey;
     private int tickCounter;
 
     public EquipmentService(JavaPlugin plugin, RunService runs, PrototypeContent content,
@@ -55,6 +58,7 @@ public final class EquipmentService implements Listener {
         this.telemetry = telemetry;
         this.codex = codex;
         this.weaponIdKey = new NamespacedKey(plugin, "weapon_id");
+        this.equipmentInstanceIdKey = new NamespacedKey(plugin, "equipment_instance_id");
     }
 
     public void open(Player player) {
@@ -62,6 +66,7 @@ public final class EquipmentService implements Listener {
             player.sendMessage(ChatColor.RED + "현재 회차 멤버가 아닙니다.");
             return;
         }
+        syncAuthoritativeEquipment(player);
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         EquipmentHolder holder = new EquipmentHolder(player.getUniqueId());
         Inventory inventory = Bukkit.createInventory(holder, 54, ChatColor.DARK_GREEN + "WildSurvival 장비");
@@ -70,11 +75,11 @@ public final class EquipmentService implements Listener {
         inventory.setItem(GUI_MAIN_WEAPON, state.mainWeaponId == null
                 ? named(Material.PLAYER_HEAD, ChatColor.YELLOW + "주무기: 권투(빈 슬롯)",
                 List.of(ChatColor.GRAY + "실제 슬롯 0", ChatColor.WHITE + "장착 아이템은 아래 인벤토리 목록에서 선택"))
-                : equippedIcon(state.mainWeaponId, "주무기", "클릭: 해제"));
+                : equippedIcon(state.mainWeaponId, state.mainWeaponInstanceId, "주무기", "클릭: 해제"));
         inventory.setItem(GUI_OFFHAND, state.offhandId == null
                 ? named(Material.SHIELD, ChatColor.GRAY + "보조무기: 비어 있음",
                 List.of(ChatColor.GRAY + "실제 슬롯 -106", ChatColor.WHITE + "후보 우클릭: 보조무기 장착"))
-                : equippedIcon(state.offhandId, "보조무기", "클릭: 해제"));
+                : equippedIcon(state.offhandId, state.offhandInstanceId, "보조무기", "클릭: 해제"));
 
         for (int storageSlot = 0; storageSlot <= 35; storageSlot++) {
             int guiSlot = GUI_CANDIDATE_START + storageSlot;
@@ -119,8 +124,13 @@ public final class EquipmentService implements Listener {
     public void grantEquipment(Player player, String rawWeaponId) {
         String weaponId = rawWeaponId.toUpperCase(java.util.Locale.ROOT);
         content.weapon(weaponId);
-        if (!storeInventory(player, weaponItem(weaponId))) throw new IllegalStateException("장비를 받을 인벤토리 공간이 없습니다.");
-        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).ownedEquipment.add(weaponId));
+        RunSnapshot.EquipmentInstanceState instance = newEquipmentInstance(weaponId);
+        if (!storeInventory(player, weaponItem(instance))) throw new IllegalStateException("장비를 받을 인벤토리 공간이 없습니다.");
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            state.ownedEquipment.add(weaponId);
+            equipmentInstances(state).put(instance.instanceId, instance);
+        });
         codex.discover(player, weaponId, "CRAFT");
         player.sendMessage(ChatColor.GREEN + content.weapon(weaponId).name() + " 제작 완료. 인벤토리에서 보관하거나 장비 GUI로 장착하세요.");
     }
@@ -143,8 +153,9 @@ public final class EquipmentService implements Listener {
         runs.mutate(run -> {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
             state.ownedEquipment.remove(weaponId);
-            if (weaponId.equals(state.mainWeaponId)) state.mainWeaponId = null;
-            if (weaponId.equals(state.offhandId)) state.offhandId = null;
+            equipmentInstances(state).entrySet().removeIf(entry -> weaponId.equals(entry.getValue().templateId));
+            if (weaponId.equals(state.mainWeaponId)) { state.mainWeaponId = null; state.mainWeaponInstanceId = null; }
+            if (weaponId.equals(state.offhandId)) { state.offhandId = null; state.offhandInstanceId = null; }
         });
         syncAuthoritativeEquipment(player);
     }
@@ -176,8 +187,11 @@ public final class EquipmentService implements Listener {
         runs.mutate(run -> {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
             state.mainWeaponId = null;
+            state.mainWeaponInstanceId = null;
             state.offhandId = null;
+            state.offhandInstanceId = null;
             state.ownedEquipment.clear();
+            equipmentInstances(state).clear();
             state.quickItems.clear();
             state.quickBindings.clear();
         });
@@ -226,11 +240,28 @@ public final class EquipmentService implements Listener {
         return state == null || state.mainWeaponId == null || state.mainWeaponId.isBlank() ? "UNARMED" : state.mainWeaponId;
     }
 
+    public boolean isMainWeaponUsable(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || state.mainWeaponId == null) return true;
+        RunSnapshot.EquipmentInstanceState instance = equipmentInstances(state).get(state.mainWeaponInstanceId);
+        return instance == null || !"BROKEN".equals(instance.condition);
+    }
+
+    public boolean consumeMainWeaponDurability(Player player, int amount, String reason) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || state.mainWeaponId == null || state.mainWeaponInstanceId == null) return true;
+        return consumeDurability(player, state.mainWeaponInstanceId, amount, reason);
+    }
+
     public void syncAuthoritativeEquipment(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null) return;
-        repairSlot(player, false, state.mainWeaponId);
-        repairSlot(player, true, state.offhandId);
+        ensureEquippedInstance(player, false, state.mainWeaponId, state.mainWeaponInstanceId);
+        state = runs.playerState(player.getUniqueId()).orElseThrow();
+        ensureEquippedInstance(player, true, state.offhandId, state.offhandInstanceId);
+        state = runs.playerState(player.getUniqueId()).orElseThrow();
+        repairSlot(player, false, state.mainWeaponId, state.mainWeaponInstanceId);
+        repairSlot(player, true, state.offhandId, state.offhandInstanceId);
     }
 
     public void tick() {
@@ -240,7 +271,11 @@ public final class EquipmentService implements Listener {
 
     public ItemStack weaponItem(String rawWeaponId) {
         String weaponId = rawWeaponId.toUpperCase(java.util.Locale.ROOT);
-        PrototypeContent.WeaponDefinition weapon = content.weapon(weaponId);
+        return weaponItem(newEquipmentInstance(weaponId));
+    }
+
+    private ItemStack weaponItem(RunSnapshot.EquipmentInstanceState instance) {
+        PrototypeContent.WeaponDefinition weapon = content.weapon(instance.templateId);
         Material material = Material.matchMaterial(weapon.material());
         if (material == null || material.isAir()) return null;
         ItemStack item = new ItemStack(material);
@@ -248,17 +283,29 @@ public final class EquipmentService implements Listener {
         meta.setDisplayName(ChatColor.GOLD + "[WS] " + weapon.name());
         meta.setLore(List.of(ChatColor.GRAY + "등록 장비 · 장비 GUI에서 장착",
                 ChatColor.WHITE + "간격 " + weapon.intervalTicks() + "틱 / 사거리 " + weapon.range(),
+                ("BROKEN".equals(instance.condition) ? ChatColor.RED + "BROKEN · 수리가 필요합니다."
+                        : ChatColor.GREEN + "내구 " + instance.currentDurability + "/" + instance.maxDurability),
                 ChatColor.DARK_GRAY + "ID: " + weapon.id()));
-        meta.setUnbreakable(true);
-        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
-        meta.getPersistentDataContainer().set(weaponIdKey, PersistentDataType.STRING, weaponId);
+        meta.setUnbreakable(false);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        meta.getPersistentDataContainer().set(weaponIdKey, PersistentDataType.STRING, weapon.id());
+        meta.getPersistentDataContainer().set(equipmentInstanceIdKey, PersistentDataType.STRING, instance.instanceId);
+        if (meta instanceof Damageable damageable && material.getMaxDurability() > 0) {
+            damageable.setDamage(EquipmentDurabilityPolicy.mirrorDamage(instance.currentDurability,
+                    instance.maxDurability, material.getMaxDurability()));
+        }
         item.setItemMeta(meta);
-        return codex.tagRegisteredItem(item, weaponId);
+        return codex.tagRegisteredItem(item, weapon.id());
     }
 
     public String weaponId(ItemStack item) {
         if (item == null || !item.hasItemMeta()) return null;
         return item.getItemMeta().getPersistentDataContainer().get(weaponIdKey, PersistentDataType.STRING);
+    }
+
+    public String equipmentInstanceId(ItemStack item) {
+        if (item == null || !item.hasItemMeta()) return null;
+        return item.getItemMeta().getPersistentDataContainer().get(equipmentInstanceIdKey, PersistentDataType.STRING);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -313,6 +360,19 @@ public final class EquipmentService implements Listener {
             Bukkit.getScheduler().runTask(plugin, () -> syncAuthoritativeEquipment(event.getPlayer()));
         }
     }
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onItemDamage(PlayerItemDamageEvent event) {
+        if (!runs.isRunningMember(event.getPlayer()) || weaponId(event.getItem()) == null) return;
+        event.setCancelled(true);
+        String instanceId = equipmentInstanceId(event.getItem());
+        if (instanceId == null) {
+            syncAuthoritativeEquipment(event.getPlayer());
+            instanceId = equipmentInstanceId(event.getPlayer().getInventory().getItemInMainHand());
+        }
+        if (instanceId != null) {
+            consumeDurability(event.getPlayer(), instanceId, Math.max(1, event.getDamage()), "VANILLA_ITEM_DAMAGE");
+        }
+    }
     @EventHandler public void onJoin(PlayerJoinEvent event) {
         if (runs.isMember(event.getPlayer())) runs.restorePlayer(event.getPlayer());
     }
@@ -331,12 +391,20 @@ public final class EquipmentService implements Listener {
             player.sendMessage(ChatColor.RED + "해당 인벤토리 칸에는 장착 가능한 장비가 없습니다.");
             return;
         }
+        String instanceId = equipmentInstanceId(candidate);
+        if (instanceId == null) {
+            RunSnapshot.EquipmentInstanceState migrated = newEquipmentInstance(weaponId);
+            instanceId = migrated.instanceId;
+            String finalInstanceId = instanceId;
+            runs.mutate(run -> equipmentInstances(run.players.get(player.getUniqueId().toString())).put(finalInstanceId, migrated));
+        }
+        String equippedInstanceId = instanceId;
         player.getInventory().setItem(inventorySlot, null);
         runs.mutate(run -> {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
             state.ownedEquipment.add(weaponId);
-            if (offhand) state.offhandId = weaponId;
-            else state.mainWeaponId = weaponId;
+            if (offhand) { state.offhandId = weaponId; state.offhandInstanceId = equippedInstanceId; }
+            else { state.mainWeaponId = weaponId; state.mainWeaponInstanceId = equippedInstanceId; }
         });
         syncAuthoritativeEquipment(player);
         player.sendMessage(ChatColor.GREEN + (offhand ? "보조무기" : "주무기") + " 장착: " + content.weapon(weaponId).name());
@@ -354,18 +422,27 @@ public final class EquipmentService implements Listener {
         }
         runs.mutate(run -> {
             RunSnapshot.PlayerState value = run.players.get(player.getUniqueId().toString());
-            if (offhand) value.offhandId = null;
-            else value.mainWeaponId = null;
+            if (offhand) { value.offhandId = null; value.offhandInstanceId = null; }
+            else { value.mainWeaponId = null; value.mainWeaponInstanceId = null; }
         });
         syncAuthoritativeEquipment(player);
         player.sendMessage(ChatColor.YELLOW + content.weapon(equipped).name() + " 장착 해제");
     }
 
-    private void repairSlot(Player player, boolean offhand, String expectedWeaponId) {
+    private void repairSlot(Player player, boolean offhand, String expectedWeaponId, String expectedInstanceId) {
         PlayerInventory inventory = player.getInventory();
         ItemStack actual = offhand ? inventory.getItemInOffHand() : inventory.getItem(0);
-        ItemStack expected = expectedWeaponId == null ? null : weaponItem(expectedWeaponId);
-        if (sameAuthoritativeItem(actual, expected)) return;
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        RunSnapshot.EquipmentInstanceState instance = expectedInstanceId == null
+                ? null : equipmentInstances(state).get(expectedInstanceId);
+        ItemStack expected = expectedWeaponId == null || instance == null ? null : weaponItem(instance);
+        if (sameAuthoritativeItem(actual, expected)) {
+            if (actual != null && expected != null && !actual.isSimilar(expected)) {
+                if (offhand) inventory.setItemInOffHand(expected);
+                else inventory.setItem(0, expected);
+            }
+            return;
+        }
         if (actual != null && !actual.getType().isAir() && !storeInventory(player, actual)) {
             player.sendMessage(ChatColor.RED + "장착 슬롯을 복구할 인벤토리 공간이 없습니다.");
             return;
@@ -392,8 +469,12 @@ public final class EquipmentService implements Listener {
         });
     }
 
-    private ItemStack equippedIcon(String weaponId, String slotName, String instruction) {
-        ItemStack item = weaponItem(weaponId);
+    private ItemStack equippedIcon(String weaponId, String instanceId, String slotName, String instruction) {
+        RunSnapshot.EquipmentInstanceState instance = runs.current().stream()
+                .flatMap(run -> run.players.values().stream())
+                .map(state -> equipmentInstances(state).get(instanceId))
+                .filter(Objects::nonNull).findFirst().orElseGet(() -> newEquipmentInstance(weaponId));
+        ItemStack item = weaponItem(instance);
         ItemMeta meta = item.getItemMeta();
         List<String> lore = new ArrayList<>(Objects.requireNonNull(meta.getLore()));
         lore.add(ChatColor.GREEN + slotName + " 장착 중");
@@ -441,7 +522,68 @@ public final class EquipmentService implements Listener {
         if (expected == null || expected.getType().isAir()) return false;
         String actualWeapon = weaponId(actual);
         String expectedWeapon = weaponId(expected);
-        return actualWeapon != null || expectedWeapon != null ? Objects.equals(actualWeapon, expectedWeapon) : actual.isSimilar(expected);
+        if (actualWeapon != null || expectedWeapon != null) {
+            return Objects.equals(actualWeapon, expectedWeapon)
+                    && Objects.equals(equipmentInstanceId(actual), equipmentInstanceId(expected));
+        }
+        return actual.isSimilar(expected);
+    }
+
+    private void ensureEquippedInstance(Player player, boolean offhand, String weaponId, String instanceId) {
+        if (weaponId == null) return;
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        if (instanceId != null && equipmentInstances(state).containsKey(instanceId)) return;
+        RunSnapshot.EquipmentInstanceState created = newEquipmentInstance(weaponId);
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState value = run.players.get(player.getUniqueId().toString());
+            equipmentInstances(value).put(created.instanceId, created);
+            if (offhand) value.offhandInstanceId = created.instanceId;
+            else value.mainWeaponInstanceId = created.instanceId;
+        });
+    }
+
+    private boolean consumeDurability(Player player, String instanceId, int amount, String reason) {
+        if (amount < 0) throw new IllegalArgumentException("Durability amount cannot be negative");
+        boolean[] changed = {false};
+        boolean[] broke = {false};
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            RunSnapshot.EquipmentInstanceState instance = equipmentInstances(state).get(instanceId);
+            if (instance == null) return;
+            boolean wasBroken = "BROKEN".equals(instance.condition);
+            EquipmentDurabilityPolicy.SpendResult result = EquipmentDurabilityPolicy.spend(
+                    instance.currentDurability, instance.maxDurability, amount);
+            instance.currentDurability = result.current();
+            instance.condition = result.condition().name();
+            changed[0] = result.changed();
+            broke[0] = !wasBroken && result.condition() == EquipmentDurabilityPolicy.Condition.BROKEN;
+        });
+        syncAuthoritativeEquipment(player);
+        if (broke[0]) {
+            player.sendMessage(ChatColor.RED + "장비가 파손되었습니다. 장비는 보존되며 수리 전까지 사용할 수 없습니다.");
+            telemetry.event(runs.current().orElseThrow().runId, "EQUIPMENT_BROKEN",
+                    "{\"instanceId\":\"" + instanceId + "\",\"reason\":\"" + reason + "\"}");
+        }
+        return changed[0];
+    }
+
+    private RunSnapshot.EquipmentInstanceState newEquipmentInstance(String rawWeaponId) {
+        String weaponId = rawWeaponId.toUpperCase(java.util.Locale.ROOT);
+        PrototypeContent.WeaponDefinition weapon = content.weapon(weaponId);
+        Material material = Material.matchMaterial(weapon.material());
+        int maximum = material == null || material.getMaxDurability() < 1 ? 100 : material.getMaxDurability();
+        RunSnapshot.EquipmentInstanceState state = new RunSnapshot.EquipmentInstanceState();
+        state.instanceId = UUID.randomUUID().toString();
+        state.templateId = weaponId;
+        state.currentDurability = maximum;
+        state.maxDurability = maximum;
+        state.condition = "ACTIVE";
+        return state;
+    }
+
+    private static java.util.Map<String, RunSnapshot.EquipmentInstanceState> equipmentInstances(RunSnapshot.PlayerState state) {
+        if (state.equipmentInstances == null) state.equipmentInstances = new java.util.LinkedHashMap<>();
+        return state.equipmentInstances;
     }
 
     private void auditSlotRepair(Player player, String slot) {
