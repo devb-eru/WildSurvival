@@ -11,10 +11,10 @@
       "executionOpcode": "FINAL_STATE_MACHINE",
       "minimumDay": 50,
       "requiredBossIds": [
-        "BOSS-001",
-        "BOSS-002",
-        "BOSS-003",
-        "BOSS-004"
+        "BOSS-D10",
+        "BOSS-D20",
+        "BOSS-D30",
+        "BOSS-D40"
       ],
       "requiredPartIds": [
         "A",

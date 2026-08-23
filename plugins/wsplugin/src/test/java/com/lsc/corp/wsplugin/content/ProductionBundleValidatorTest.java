@@ -12,7 +12,7 @@ class ProductionBundleValidatorTest {
     void validatesAllProductionCatalogCardinalitiesAndReferences() throws Exception {
         var result = new ProductionBundleValidator().validateDirectory(
                 Path.of("src/main/resources/content/ws-content-r2"));
-        assertEquals(66, result.verifiedFileCount());
+        assertEquals(68, result.verifiedFileCount());
         assertEquals(334, result.catalog().codexEntries().size());
         assertEquals(315, result.catalog().recipes().size());
         assertEquals(64, result.catalog().skills().size());
@@ -103,6 +103,15 @@ class ProductionBundleValidatorTest {
         assertEquals(107, result.catalog().eventsById().size());
         assertEquals("PR50-FINAL-WAIT", result.catalog().mainEventsByDay().get(50).getFirst().pressureProfileId());
         assertEquals(25, result.catalog().researchById().size());
+        assertEquals(49, result.catalog().discoveriesById().size());
+        assertEquals(30, result.catalog().discoveriesById().values().stream()
+                .filter(discovery -> "CORE".equals(discovery.kind())).count());
+        assertEquals(4, result.catalog().discoveriesById().values().stream()
+                .filter(discovery -> "CORE_SUB".equals(discovery.kind())).count());
+        assertEquals(15, result.catalog().discoveriesById().values().stream()
+                .filter(discovery -> "OPTIONAL".equals(discovery.kind())).count());
+        assertEquals(List.of("C28-A", "C28-B", "C28-C", "C28-D"),
+                result.catalog().discoveriesById().get("C29").prerequisiteIds());
         assertEquals(73, result.catalog().storyScenesById().size());
         assertEquals(9, result.catalog().storyLogsById().size());
         assertEquals(32, result.catalog().finalRecordsById().size());

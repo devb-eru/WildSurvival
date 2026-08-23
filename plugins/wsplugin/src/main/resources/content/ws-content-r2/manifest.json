@@ -12,7 +12,7 @@
       "path": "schemas/manifest.schema.json",
       "domain": "schema",
       "schema": "common.schema.json",
-      "sha256": "62d807bf8a54fefb5c2c012c3a67b8e9b99ad32c400baaebf2b6b7824bf7e478"
+      "sha256": "56d5a9139a79af2b370eeaddf90c7c8b9089fb9f2d325c0369e417fc0568b9fc"
     },
     {
       "path": "schemas/common.schema.json",
@@ -73,6 +73,12 @@
       "domain": "schema",
       "schema": "common.schema.json",
       "sha256": "58fb9931bb71696a150300a714c37c27c661f066f19c6883e186443c367cef6a"
+    },
+    {
+      "path": "schemas/discovery.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "7f4935c3d72e8fdd709c2557cfe708c14d1a970b0bb155902803b6f0dafbf7f7"
     },
     {
       "path": "schemas/augment.schema.json",
@@ -267,6 +273,12 @@
       "sha256": "4389c63e3fe57ef68db9bd153e9fa4139c9f7119919087c25224c4e075389f5b"
     },
     {
+      "path": "discoveries/season1-discoveries.json",
+      "domain": "discoveries",
+      "schema": "discovery.schema.json",
+      "sha256": "7b44ecd8f581e0b014bb4eb1247adcd8a14b5ef7d2138c8abe5d0ec181fea42f"
+    },
+    {
       "path": "augments/personal-augments.json",
       "domain": "personal-augments",
       "schema": "augment.schema.json",
@@ -330,7 +342,7 @@
       "path": "final/day50-reconstruction-signal.json",
       "domain": "final",
       "schema": "final.schema.json",
-      "sha256": "de2ec085a690719bf78179a2f0fa7edeb490473f1727dee4469b422af8df8f53"
+      "sha256": "55a19d4e88266bb41f3f819b2704dcaef9557010a751c7628b8d00c5b92993ae"
     },
     {
       "path": "story/season1-scenes.json",
@@ -360,7 +372,7 @@
       "path": "fixtures/cardinality.json",
       "domain": "fixture-cardinality",
       "schema": "common.schema.json",
-      "sha256": "f13d14c58c57984c978920d0ef8ff1bfb942988372b26786dbf4196c31382318"
+      "sha256": "98e3142d28df3d8961d5db3cc7a54c5606b391a94e5e9f455231622a3d775904"
     },
     {
       "path": "fixtures/reference-graph.json",

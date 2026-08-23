@@ -28,8 +28,8 @@
     },
     "files": {
       "type": "array",
-      "minItems": 64,
-      "maxItems": 64,
+      "minItems": 66,
+      "maxItems": 66,
       "items": {
         "type": "object"
       }

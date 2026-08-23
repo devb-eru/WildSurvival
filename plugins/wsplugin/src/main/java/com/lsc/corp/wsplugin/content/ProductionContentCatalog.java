@@ -27,6 +27,7 @@ public record ProductionContentCatalog(
         Map<String, EventEntry> eventsById,
         Map<Integer, List<EventEntry>> mainEventsByDay,
         Map<String, ResearchEntry> researchById,
+        Map<String, DiscoveryEntry> discoveriesById,
         Map<String, StorySceneEntry> storyScenesById,
         Map<String, StoryLogEntry> storyLogsById,
         Map<String, FinalRecordEntry> finalRecordsById,
@@ -184,6 +185,16 @@ public record ProductionContentCatalog(
     public record ResearchEntry(String id, int minimumDay, String prerequisiteText,
                                 String comparisonInput, Map<String, Integer> cost,
                                 int durationSeconds, String unlockText, List<String> stateMachine) { }
+
+    public record DiscoveryEntry(String id, String canonicalId, String kind, String name,
+                                 int recommendedDayMin, int recommendedDayMax,
+                                 List<String> prerequisiteIds, String primaryPath,
+                                 String alternativePath, String unlockText, String clueText,
+                                 List<String> stateMachine) {
+        public boolean core() {
+            return !"OPTIONAL".equals(kind);
+        }
+    }
 
     public record StorySceneEntry(String id, String sceneGroup, String triggerKey,
                                   String triggerEvent, String triggerRef, String priority,

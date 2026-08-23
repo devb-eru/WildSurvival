@@ -469,6 +469,9 @@ $facilityRows = Read-TableRows '기획\05 세계와 생존\FACILITY 플레이어
 $facilityDataRows = Read-TableRows '기획\05 세계와 생존\FACILITY-DATA Day 11-50 시설 실행 데이터 기획서.md'
 $lootRows = Read-TableRows '기획\04 장비와 경제\LOOT-LIST Season 1 획득·드롭 목록 기획서.md'
 $researchRows = Read-TableRows '기획\05 세계와 생존\RESEARCH 연구·분석·대응책 시스템 상세 기획서.md'
+$discoveryPath = Join-Path $repoRoot '기획\05 세계와 생존\DISC-LIST 발견 노드 목록 기획서.md'
+$discoveryLines = [IO.File]::ReadAllLines($discoveryPath, $utf8)
+$discoveryRows = Read-TableRows '기획\05 세계와 생존\DISC-LIST 발견 노드 목록 기획서.md'
 $storyRows = Read-TableRows '기획\08 스토리\STORY-DATA Season 1 런타임 데이터 기획서.md'
 $eventD10Rows = Read-TableRows '기획\06 사건과 적\EVENT-DATA Day 1-10 사건·공세·자원 데이터 기획서.md'
 $eventD20Rows = Read-TableRows '기획\06 사건과 적\EVENT-DATA Day 11-20 사건 실행 데이터 기획서.md'
@@ -1027,6 +1030,55 @@ $storyLogs = foreach ($cells in $storyRows) {
     }
 }
 
+function Discovery-DayRange([string]$Text, [int]$Fallback) {
+    $values = @([regex]::Matches($Text, '\d+') | ForEach-Object {[int]$_.Value})
+    if(-not $values.Count) { return @($Fallback,$Fallback) }
+    return @($values[0],$(if($values.Count -gt 1){$values[1]}else{$values[0]}))
+}
+function Discovery-Prerequisites([string]$Text) {
+    $values = @([regex]::Matches($Text, 'C\d{2}(?:-[A-D])?') | ForEach-Object {$_.Value} | Select-Object -Unique)
+    if($Text -match 'C28-A~D') {$values=@('C28-A','C28-B','C28-C','C28-D')}
+    return [string[]]$values
+}
+$discoveries = [Collections.Generic.List[object]]::new()
+for($lineIndex=0;$lineIndex -lt $discoveryLines.Count;$lineIndex++) {
+    $line=$discoveryLines[$lineIndex]
+    if($line -notmatch '^## DISC-(C\d{2})\s+(.+)$') { continue }
+    $id=$Matches[1];$name=$Matches[2].Trim();$fields=[ordered]@{}
+    for($cursor=$lineIndex+1;$cursor -lt $discoveryLines.Count -and $discoveryLines[$cursor] -notmatch '^#{1,2}\s';$cursor++) {
+        if($discoveryLines[$cursor] -match '^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|$') {
+            $key=$Matches[1].Trim();$value=$Matches[2].Trim()
+            if($key -notin @('항목','---') -and $value -ne '내용') {$fields[$key]=$value}
+        }
+    }
+    $range=Discovery-DayRange $fields['권장 Day'] $(if($id -eq 'C30'){50}else{1})
+    $discoveries.Add([ordered]@{
+        id=$id;canonicalId=('DISC-'+$id);sourceDocumentId='DISC-LIST-001';enabled=$true;kind='CORE';name=$name
+        recommendedDayMin=$range[0];recommendedDayMax=$range[1];prerequisiteIds=[string[]]@(Discovery-Prerequisites $fields['선행'])
+        primaryPath=$(if($fields['주 경로']){$fields['주 경로']}elseif($fields['완료 조건']){$fields['완료 조건']}else{''})
+        alternativePath=$(if($fields['대체 경로']){$fields['대체 경로']}else{''});unlockText=$(if($fields['해금']){$fields['해금']}else{'없음'})
+        clueText=$(if($fields['첫 단서']){$fields['첫 단서']}elseif($fields['지연 힌트']){$fields['지연 힌트']}else{''})
+        stateMachine=@('HIDDEN','CLUE','HYPOTHESIS','EXPERIMENT','DISCOVERED','MASTERED')
+    })
+}
+for($lineIndex=0;$lineIndex -lt $discoveryLines.Count;$lineIndex++) {
+    if($discoveryLines[$lineIndex] -notmatch '^### (C28-[A-D])\s+(.+)$') { continue }
+    $id=$Matches[1];$name=$Matches[2].Trim();$primary='';$alternative='';$verification=''
+    for($cursor=$lineIndex+1;$cursor -lt $discoveryLines.Count -and $discoveryLines[$cursor] -notmatch '^#{1,3}\s';$cursor++) {
+        if($discoveryLines[$cursor] -match '^- 주 경로:\s*(.+)$') {$primary=$Matches[1].Trim()}
+        elseif($discoveryLines[$cursor] -match '^- 대체 경로:\s*(.+)$') {$alternative=$Matches[1].Trim()}
+        elseif($discoveryLines[$cursor] -match '^- 검증:\s*(.+)$') {$verification=$Matches[1].Trim()}
+    }
+    $discoveries.Add([ordered]@{id=$id;canonicalId=('DISC-'+$id);sourceDocumentId='DISC-LIST-001';enabled=$true;kind='CORE_SUB';name=$name
+        recommendedDayMin=42;recommendedDayMax=46;prerequisiteIds=@('C27');primaryPath=$primary;alternativePath=$alternative;unlockText=$verification;clueText='재건 하위 계통 검증';stateMachine=@('HIDDEN','CLUE','HYPOTHESIS','EXPERIMENT','DISCOVERED','MASTERED')})
+}
+foreach($cells in $discoveryRows) {
+    if($cells.Count -ne 4 -or $cells[0] -notmatch '^DISC-(O\d{2})$') { continue }
+    $id=$Matches[1];$range=Discovery-DayRange $cells[1] 1
+    $discoveries.Add([ordered]@{id=$id;canonicalId=$cells[0];sourceDocumentId='DISC-LIST-001';enabled=$true;kind='OPTIONAL';name=$cells[3]
+        recommendedDayMin=$range[0];recommendedDayMax=$range[1];prerequisiteIds=@();primaryPath=$cells[2];alternativePath='';unlockText=$cells[3];clueText='선택 발견';stateMachine=@('HIDDEN','CLUE','HYPOTHESIS','EXPERIMENT','DISCOVERED','MASTERED')})
+}
+
 function Threat-Values([string]$Text) {
     $values = @($Text.Split('/') | ForEach-Object { if ($_ -match '(\d+)') {[int]$Matches[1]} })
     return [int[]]$values
@@ -1124,7 +1176,7 @@ $eventsD50 += @($eventD50Rows | ForEach-Object {
 $finalRecords = @(
     [ordered]@{
         id='FINAL-D50-FIRST-RECONSTRUCTION-SIGNAL';sourceDocumentId='FINAL-DATA-001';enabled=$true;recordKind='OBJECTIVE';executionOpcode='FINAL_STATE_MACHINE';minimumDay=50
-        requiredBossIds=@('BOSS-001','BOSS-002','BOSS-003','BOSS-004');requiredPartIds=@('A','B','C','D');requiredDiscoveryIds=@('C27','C28-A','C28-B','C28-C','C28-D','C29')
+        requiredBossIds=@('BOSS-D10','BOSS-D20','BOSS-D30','BOSS-D40');requiredPartIds=@('A','B','C','D');requiredDiscoveryIds=@('C27','C28-A','C28-B','C28-C','C28-D','C29')
         facilityRequirements=[ordered]@{'FAC-R01'='READY';'FAC-R02'='READY';'FAC-R03'='READY';'FAC-R04'='READY';'FAC-R05'='CALIBRATED:3';'FAC-R06'='READY'}
         uniqueInputId='WSR-FINAL_SIGNAL_KEY';forbiddenActive=@('BOSS','SIEGE','BLOCKING_TRANSACTION')
         stateMachine=@('LOCKED','AVAILABLE','ACTIVATING','ACTIVE_STAGE_1','ACTIVE_STAGE_2','ACTIVE_STAGE_3','RESOLVING','COMPLETED')
@@ -1253,8 +1305,8 @@ $opsTelemetry = @([ordered]@{
     eventTypes=@('RUN_CREATED','DAY_BUDGET_LOCKED','DAY_COMPLETED','ENCOUNTER_STARTED','ENCOUNTER_ENDED','BOSS_PHASE','COMBAT_ACTION','AUGMENT_TRIGGER','PLAYER_DOWN','PLAYER_DEATH','PLAYER_REVIVE','FACILITY_STATE_CHANGED','SOFTLOCK_RECOVERY','PERFORMANCE_STATE','FINAL_TRANSACTION','RUN_ENDED')
     kpiIds=@('KPI-01','KPI-02','KPI-03','KPI-04','KPI-05','KPI-06','KPI-07','KPI-08','KPI-09','KPI-10','KPI-11','KPI-12');testLevels=@('L0','L1','L2','L3','L4','L5');activeRunHotTuning=$false;activationPolicy='NEW_RUN_ONLY'})
 
-$expected = [ordered]@{ materials=59; items=61; tools=214; recipes=315; codex=334; skills=64; personalAugments=50; partyAugments=16; enemies=53; bosses=4; support=34; facilities=46; loot=62; research=25; storyScenes=73; storyLogs=9; eventsD10=34; eventsD20=18; eventsD50=55; final=32; budget=19; drawLocks=14; softlocks=7 }
-$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; facilities=@($facilities).Count; loot=@($loot).Count; research=@($research).Count; storyScenes=@($storyScenes).Count; storyLogs=@($storyLogs).Count; eventsD10=@($eventsD10).Count; eventsD20=@($eventsD20).Count; eventsD50=@($eventsD50).Count; final=@($finalRecords).Count; budget=@($budgetRecords).Count; drawLocks=@($drawLocks).Count; softlocks=@($softlockRecords).Count }
+$expected = [ordered]@{ materials=59; items=61; tools=214; recipes=315; codex=334; skills=64; personalAugments=50; partyAugments=16; enemies=53; bosses=4; support=34; facilities=46; loot=62; research=25; discoveries=49; storyScenes=73; storyLogs=9; eventsD10=34; eventsD20=18; eventsD50=55; final=32; budget=19; drawLocks=14; softlocks=7 }
+$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; facilities=@($facilities).Count; loot=@($loot).Count; research=@($research).Count; discoveries=@($discoveries).Count; storyScenes=@($storyScenes).Count; storyLogs=@($storyLogs).Count; eventsD10=@($eventsD10).Count; eventsD20=@($eventsD20).Count; eventsD50=@($eventsD50).Count; final=@($finalRecords).Count; budget=@($budgetRecords).Count; drawLocks=@($drawLocks).Count; softlocks=@($softlockRecords).Count }
 foreach ($key in $expected.Keys) {
     if ($actual[$key] -ne $expected[$key]) { throw "Cardinality mismatch $key expected=$($expected[$key]) actual=$($actual[$key])" }
 }
@@ -1326,7 +1378,7 @@ $equipmentEarly = @($tools | Where-Object { $_.id -like 'EQL-*' })
 $equipmentD20 = @($tools | Where-Object { $_.id -like 'EQD20-*' })
 $equipmentD50 = @($tools | Where-Object { $_.id -like 'EQD50-*' })
 
-$schemaNames = @('manifest','common','day','event','enemy','resource','item','recipe','equipment','facility','research','augment','skill','action','entity','loot','codex','migration','boss','final','story','budget','ops')
+$schemaNames = @('manifest','common','day','event','enemy','resource','item','recipe','equipment','facility','research','discovery','augment','skill','action','entity','loot','codex','migration','boss','final','story','budget','ops')
 $genericSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema'; type='object'; additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
@@ -1341,7 +1393,7 @@ $manifestSchema = [ordered]@{
     properties=[ordered]@{
         schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; activationPolicy=[ordered]@{const='NEW_RUN_ONLY'}
         storyRevision=[ordered]@{const='ws-story-s1-r1'}; budgetPolicyRevision=[ordered]@{const='budget-live-r2'}
-        files=[ordered]@{type='array';minItems=64;maxItems=64;items=[ordered]@{type='object'}}
+        files=[ordered]@{type='array';minItems=66;maxItems=66;items=[ordered]@{type='object'}}
     }
 }
 $daySchema = [ordered]@{
@@ -1400,6 +1452,17 @@ $researchSchema = [ordered]@{
         }}
     }
 }
+$discoverySchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{const='discoveries'}
+        records=[ordered]@{type='array';minItems=49;maxItems=49;items=[ordered]@{type='object';additionalProperties=$false
+            required=@('id','canonicalId','sourceDocumentId','enabled','kind','name','recommendedDayMin','recommendedDayMax','prerequisiteIds','primaryPath','alternativePath','unlockText','clueText','stateMachine')
+            properties=[ordered]@{id=[ordered]@{type='string';pattern='^(?:C\d{2}(?:-[A-D])?|O\d{2})$'};canonicalId=[ordered]@{type='string';pattern='^DISC-'};sourceDocumentId=[ordered]@{const='DISC-LIST-001'};enabled=[ordered]@{const=$true};kind=[ordered]@{enum=@('CORE','CORE_SUB','OPTIONAL')};name=[ordered]@{type='string';minLength=1};recommendedDayMin=[ordered]@{type='integer';minimum=1;maximum=50};recommendedDayMax=[ordered]@{type='integer';minimum=1;maximum=50};prerequisiteIds=[ordered]@{type='array';items=[ordered]@{type='string'}};primaryPath=[ordered]@{type='string'};alternativePath=[ordered]@{type='string'};unlockText=[ordered]@{type='string';minLength=1};clueText=[ordered]@{type='string'};stateMachine=[ordered]@{type='array';minItems=6;maxItems=6;items=[ordered]@{type='string'}}}
+        }}
+    }
+}
 $storySchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
@@ -1428,7 +1491,7 @@ $finalSchema = [ordered]@{
     }
 }
 foreach ($name in $schemaNames) {
-    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'day') { $daySchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } else { $genericSchema }
+    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'day') { $daySchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'discovery') { $discoverySchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } else { $genericSchema }
     Write-Json "schemas/$name.schema.json" $schema
 }
 
@@ -1453,6 +1516,7 @@ $data['equipment/day11-20.json'] = Domain 'equipment' $equipmentD20
 $data['equipment/day21-50.json'] = Domain 'equipment' $equipmentD50
 $data['facilities/season1-facilities.json'] = Domain 'facilities' $facilities
 $data['research/season1-research.json'] = Domain 'research' $research
+$data['discoveries/season1-discoveries.json'] = Domain 'discoveries' $discoveries
 $data['augments/personal-augments.json'] = Domain 'personal-augments' $personalAugments
 $data['augments/party-augments.json'] = Domain 'party-augments' $partyAugments
 $data['skills/player-skills.json'] = Domain 'player-skills' $skills
@@ -1473,7 +1537,7 @@ $data['fixtures/draw-locks.json'] = Domain 'fixture-draw-locks' $drawLocks
 $data['fixtures/softlock-scenarios.json'] = Domain 'fixture-softlocks' $softlockRecords
 $data['ops/admin-commands.json'] = Domain 'ops-admin' $opsAdmin
 $data['ops/telemetry-contract.json'] = Domain 'ops-telemetry' $opsTelemetry
-if ($data.Count -ne 41) { throw "Expected 41 data files, got $($data.Count)" }
+if ($data.Count -ne 42) { throw "Expected 42 data files, got $($data.Count)" }
 foreach ($entry in $data.GetEnumerator()) { Write-Json $entry.Key $entry.Value }
 
 function Sha256([string]$Path) {
@@ -1483,7 +1547,7 @@ function Sha256([string]$Path) {
 }
 $schemaForDomain = [ordered]@{
     days='day'; 'days-endless'='day'; events='event'; enemies='enemy'; resources='resource'; materials='resource'; items='item'; codex='codex'; recipes='recipe'
-    equipment='equipment'; facilities='facility'; research='research'; 'personal-augments'='augment'; 'party-augments'='augment'; 'player-skills'='skill'; 'entity-actions'='action'
+    equipment='equipment'; facilities='facility'; research='research'; discoveries='discovery'; 'personal-augments'='augment'; 'party-augments'='augment'; 'player-skills'='skill'; 'entity-actions'='action'
     'support-entities'='entity'; loot='loot'; bosses='boss'; final='final'; 'story-scenes'='story'; 'story-logs'='story'; budget='budget'; migrations='migration'
     'fixture-cardinality'='common'; 'fixture-reference-graph'='common'; 'fixture-draw-locks'='common'; 'fixture-softlocks'='common'; 'ops-admin'='ops'; 'ops-telemetry'='ops'
 }
@@ -1497,7 +1561,7 @@ foreach ($entry in $data.GetEnumerator()) {
     $domainName = $entry.Value.domain
     $files.Add([ordered]@{path=$relative;domain=$domainName;schema=($schemaForDomain[$domainName] + '.schema.json');sha256=Sha256 (Join-Path $OutputRoot $relative)})
 }
-if ($files.Count -ne 64) { throw "Expected 64 manifest entries, got $($files.Count)" }
+if ($files.Count -ne 66) { throw "Expected 66 manifest entries, got $($files.Count)" }
 $manifest = [ordered]@{
     schemaVersion=2;contentRevision='ws-content-r2';activationPolicy='NEW_RUN_ONLY';storyRevision='ws-story-s1-r1'
     budgetPolicyRevision='budget-live-r2';drawRevision='draw-s1-r2';rulesRevision='rules-s1-r2';resourcePackContract='ws-rp-s1-r1';files=@($files)
@@ -1520,4 +1584,4 @@ reject-unknown-fields: true
 "@
 Write-Utf8Lf (Join-Path $OutputRoot 'content-lock.yaml') $lock
 
-[ordered]@{ outputRoot=$OutputRoot; totalFiles=66; manifestEntries=$files.Count; counts=$actual; manifestSha256=$manifestHash } | ConvertTo-Json -Depth 5
+[ordered]@{ outputRoot=$OutputRoot; totalFiles=68; manifestEntries=$files.Count; counts=$actual; manifestSha256=$manifestHash } | ConvertTo-Json -Depth 5

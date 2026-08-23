@@ -19,7 +19,7 @@ import java.util.Set;
 
 public final class ProductionBundleValidator {
     public static final String REVISION = "ws-content-r2";
-    private static final int MANIFEST_ENTRIES = 64;
+    private static final int MANIFEST_ENTRIES = 66;
 
     public ValidationResult validateDirectory(Path root) throws ContentValidationException {
         Path normalized = root.toAbsolutePath().normalize();
@@ -46,7 +46,8 @@ public final class ProductionBundleValidator {
             requireString(manifest, "storyRevision", "ws-story-s1-r1");
             JsonArray files = manifest.getAsJsonArray("files");
             if (files == null || files.size() != MANIFEST_ENTRIES) {
-                throw new ContentValidationException("Production manifest must contain 64 schema/data entries");
+                throw new ContentValidationException("Production manifest must contain " + MANIFEST_ENTRIES
+                        + " schema/data entries");
             }
             Set<String> paths = new HashSet<>();
             int schemaFiles = 0;
@@ -60,8 +61,8 @@ public final class ProductionBundleValidator {
                 if (path.startsWith("schemas/")) schemaFiles++; else dataFiles++;
                 requireHash(path, requiredString(entry, "sha256"), reader.read(path));
             }
-            if (schemaFiles != 23 || dataFiles != 41) {
-                throw new ContentValidationException("Production bundle must contain schema=23 and data=41");
+            if (schemaFiles != 24 || dataFiles != 42) {
+                throw new ContentValidationException("Production bundle must contain schema=24 and data=42");
             }
 
             Map<String, Integer> counts = new LinkedHashMap<>();
@@ -83,6 +84,7 @@ public final class ProductionBundleValidator {
             counts.put("loot", count(reader, "loot/season1-loot.json"));
             counts.put("days", count(reader, "days/season1-days-01-50.json"));
             counts.put("research", count(reader, "research/season1-research.json"));
+            counts.put("discoveries", count(reader, "discoveries/season1-discoveries.json"));
             counts.put("storyScenes", count(reader, "story/season1-scenes.json"));
             counts.put("storyLogs", count(reader, "story/season1-logs.json"));
             counts.put("eventsD10", count(reader, "events/day01-10.json"));
@@ -99,6 +101,7 @@ public final class ProductionBundleValidator {
                     Map.entry("enemies", 53), Map.entry("bosses", 4), Map.entry("support", 34),
                     Map.entry("facilities", 46), Map.entry("loot", 62), Map.entry("days", 50),
                     Map.entry("research", 25), Map.entry("storyScenes", 73), Map.entry("storyLogs", 9),
+                    Map.entry("discoveries", 49),
                     Map.entry("eventsD10", 34), Map.entry("eventsD20", 18), Map.entry("eventsD50", 55),
                     Map.entry("final", 32), Map.entry("budget", 19), Map.entry("drawLocks", 14),
                     Map.entry("softlocks", 7));
@@ -115,6 +118,7 @@ public final class ProductionBundleValidator {
             validateFinalData(reader);
             validateOperationalData(reader);
             validateDayData(catalog);
+            validateDiscoveryCatalog(catalog);
             validateReferences(reader, catalog);
             validateEquipmentCatalog(catalog);
             validateSkillCatalog(catalog);
@@ -425,6 +429,20 @@ public final class ProductionBundleValidator {
             researchById.put(research.id(), research);
         }
 
+        Map<String, ProductionContentCatalog.DiscoveryEntry> discoveriesById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "discoveries/season1-discoveries.json")) {
+            ProductionContentCatalog.DiscoveryEntry discovery = new ProductionContentCatalog.DiscoveryEntry(
+                    requiredString(record, "id"), requiredString(record, "canonicalId"),
+                    requiredString(record, "kind"), requiredString(record, "name"),
+                    requiredInt(record, "recommendedDayMin"), requiredInt(record, "recommendedDayMax"),
+                    stringArray(record, "prerequisiteIds"), requiredString(record, "primaryPath"),
+                    requiredString(record, "alternativePath"), requiredString(record, "unlockText"),
+                    requiredString(record, "clueText"), stringArray(record, "stateMachine"));
+            if (discoveriesById.putIfAbsent(discovery.id(), discovery) != null) {
+                throw new ContentValidationException("Duplicate discovery " + discovery.id());
+            }
+        }
+
         Map<String, ProductionContentCatalog.StorySceneEntry> storyScenesById = new LinkedHashMap<>();
         for (JsonObject record : records(reader, "story/season1-scenes.json")) {
             ProductionContentCatalog.StorySceneEntry scene = new ProductionContentCatalog.StorySceneEntry(
@@ -476,7 +494,7 @@ public final class ProductionBundleValidator {
                 List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById),
                 Map.copyOf(enemiesById), Map.copyOf(bossesById), Map.copyOf(supportEntitiesById),
                 Map.copyOf(actionBundlesById), Map.copyOf(lootById), Map.copyOf(daysByNumber), Map.copyOf(eventsById),
-                Map.copyOf(mainEventsByDay), Map.copyOf(researchById), Map.copyOf(storyScenesById),
+                Map.copyOf(mainEventsByDay), Map.copyOf(researchById), Map.copyOf(discoveriesById), Map.copyOf(storyScenesById),
                 Map.copyOf(storyLogsById), Map.copyOf(finalRecordsById), Map.copyOf(budgetProfilesById),
                 Map.copyOf(drawLocksById), Map.copyOf(counts));
     }
@@ -593,6 +611,56 @@ public final class ProductionBundleValidator {
         }
         if (cumulative != 224_420 || catalog.daysByNumber().get(50).expectedEndLevel() != 50) {
             throw new ContentValidationException("Season 1 final progression ledger mismatch");
+        }
+    }
+
+    private void validateDiscoveryCatalog(ProductionContentCatalog catalog) throws ContentValidationException {
+        Map<String, ProductionContentCatalog.DiscoveryEntry> discoveries = catalog.discoveriesById();
+        if (discoveries.size() != 49) {
+            throw new ContentValidationException("Discovery catalog must contain 49 unique nodes");
+        }
+        Map<String, Long> kinds = discoveries.values().stream().collect(java.util.stream.Collectors.groupingBy(
+                ProductionContentCatalog.DiscoveryEntry::kind, java.util.stream.Collectors.counting()));
+        if (!kinds.equals(Map.of("CORE", 30L, "CORE_SUB", 4L, "OPTIONAL", 15L))) {
+            throw new ContentValidationException("Discovery kind cardinality mismatch " + kinds);
+        }
+        List<String> expectedStates = List.of(
+                "HIDDEN", "CLUE", "HYPOTHESIS", "EXPERIMENT", "DISCOVERED", "MASTERED");
+        Set<String> expectedIds = new HashSet<>();
+        for (int index = 1; index <= 30; index++) expectedIds.add("C%02d".formatted(index));
+        for (char suffix = 'A'; suffix <= 'D'; suffix++) expectedIds.add("C28-" + suffix);
+        for (int index = 1; index <= 15; index++) expectedIds.add("O%02d".formatted(index));
+        if (!discoveries.keySet().equals(expectedIds)) {
+            throw new ContentValidationException("Discovery ID authority mismatch");
+        }
+        for (ProductionContentCatalog.DiscoveryEntry discovery : discoveries.values()) {
+            if (!discovery.canonicalId().equals("DISC-" + discovery.id())
+                    || discovery.name().isBlank() || discovery.unlockText().isBlank()
+                    || discovery.recommendedDayMin() < 1 || discovery.recommendedDayMax() > 50
+                    || discovery.recommendedDayMin() > discovery.recommendedDayMax()
+                    || !discovery.stateMachine().equals(expectedStates)) {
+                throw new ContentValidationException("Invalid discovery node " + discovery.id());
+            }
+            for (String prerequisiteId : discovery.prerequisiteIds()) {
+                if (prerequisiteId.equals(discovery.id()) || !discoveries.containsKey(prerequisiteId)) {
+                    throw new ContentValidationException("Invalid discovery prerequisite "
+                            + discovery.id() + " -> " + prerequisiteId);
+                }
+            }
+        }
+        requireDiscoveryPrerequisites(discoveries, "C28", Set.of("C27"));
+        for (char suffix = 'A'; suffix <= 'D'; suffix++) {
+            requireDiscoveryPrerequisites(discoveries, "C28-" + suffix, Set.of("C27"));
+        }
+        requireDiscoveryPrerequisites(discoveries, "C29", Set.of("C28-A", "C28-B", "C28-C", "C28-D"));
+        requireDiscoveryPrerequisites(discoveries, "C30", Set.of("C29"));
+    }
+
+    private static void requireDiscoveryPrerequisites(
+            Map<String, ProductionContentCatalog.DiscoveryEntry> discoveries,
+            String id, Set<String> expected) throws ContentValidationException {
+        if (!new HashSet<>(discoveries.get(id).prerequisiteIds()).equals(expected)) {
+            throw new ContentValidationException("Discovery prerequisite authority mismatch " + id);
         }
     }
 
@@ -1196,9 +1264,11 @@ public final class ProductionBundleValidator {
                     requireOpcode(record, "FINAL_STATE_MACHINE");
                     if (!"FINAL-D50-FIRST-RECONSTRUCTION-SIGNAL".equals(id)
                             || requiredInt(record, "minimumDay") != 50
-                            || stringArray(record, "requiredBossIds").size() != 4
-                            || stringArray(record, "requiredPartIds").size() != 4
-                            || stringArray(record, "requiredDiscoveryIds").size() != 6
+                            || !new HashSet<>(stringArray(record, "requiredBossIds")).equals(
+                                    Set.of("BOSS-D10", "BOSS-D20", "BOSS-D30", "BOSS-D40"))
+                            || !new HashSet<>(stringArray(record, "requiredPartIds")).equals(Set.of("A", "B", "C", "D"))
+                            || !new HashSet<>(stringArray(record, "requiredDiscoveryIds")).equals(
+                                    Set.of("C27", "C28-A", "C28-B", "C28-C", "C28-D", "C29"))
                             || stringArray(record, "forbiddenActive").size() != 3
                             || stringArray(record, "stateMachine").size() != 8
                             || record.getAsJsonObject("facilityRequirements").size() != 6
