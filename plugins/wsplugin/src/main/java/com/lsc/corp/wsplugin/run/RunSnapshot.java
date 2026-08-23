@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 public final class RunSnapshot {
-    public int schemaVersion = 1;
+    public int schemaVersion = 2;
     public long version = 0;
     public String runId;
     public String contentRevision;
@@ -39,6 +39,14 @@ public final class RunSnapshot {
     public Map<String, Integer> facilityRecoveryLedger = new LinkedHashMap<>();
     public Map<String, LootTransactionState> lootTransactions = new LinkedHashMap<>();
     public Map<String, Integer> lootPityCounters = new LinkedHashMap<>();
+    public DayState seasonDay = new DayState();
+    public Map<String, EncounterState> encounters = new LinkedHashMap<>();
+    public Map<String, ResearchNodeState> researchNodes = new LinkedHashMap<>();
+    public StoryState story = new StoryState();
+    public Set<String> defeatedBossIds = new LinkedHashSet<>();
+    public Set<String> reconstructionPartIds = new LinkedHashSet<>();
+    public Set<String> discoveryIds = new LinkedHashSet<>();
+    public FinalState finalObjective = new FinalState();
     public TestState test;
     public String endReason;
 
@@ -214,6 +222,74 @@ public final class RunSnapshot {
         public int amount;
         public String ownerUuid;
         public boolean queued;
+    }
+
+    public static final class DayState {
+        public String dayId = "DAY-01";
+        public int day = 1;
+        public String state = "PREPARING";
+        public String lockedBudgetProfileId = "BUDGET-STANDARD";
+        public int lockedThreatBudget3;
+        public List<Integer> lockedResourceBudgets = new ArrayList<>();
+        public List<String> eventQueue = new ArrayList<>();
+        public String activeEventId;
+        public long startedAtEpochMs;
+        public long pressureStartedAtEpochMs;
+        public long resolvedAtEpochMs;
+        public long sequence;
+        public boolean progressionExpCommitted;
+        public boolean activityExpCommitted;
+    }
+
+    public static final class EncounterState {
+        public String encounterId;
+        public String eventId;
+        public int day;
+        public String executionOpcode;
+        public String state = "QUEUED";
+        public String budgetProfileId;
+        public int threatBudget;
+        public int waveIndex;
+        public int waveCount;
+        public Set<String> spawnedEntityUuids = new LinkedHashSet<>();
+        public Set<String> participantUuids = new LinkedHashSet<>();
+        public long startedAtEpochMs;
+        public long resolvedAtEpochMs;
+        public boolean rewardCommitted;
+        public String failureReason;
+    }
+
+    public static final class ResearchNodeState {
+        public String researchId;
+        public String state = "LOCKED";
+        public String startedByUuid;
+        public long startedAtEpochMs;
+        public long completesAtEpochMs;
+        public long completedAtEpochMs;
+        public Map<String, Integer> reservedCost = new LinkedHashMap<>();
+        public boolean unlockCommitted;
+    }
+
+    public static final class StoryState {
+        public Set<String> queuedSceneIds = new LinkedHashSet<>();
+        public Set<String> playedSceneIds = new LinkedHashSet<>();
+        public Set<String> unlockedLogIds = new LinkedHashSet<>();
+        public String activeSceneId;
+        public long sequence;
+    }
+
+    public static final class FinalState {
+        public String objectiveId = "FINAL-D50-FIRST-RECONSTRUCTION-SIGNAL";
+        public String state = "LOCKED";
+        public int stage;
+        public Map<String, Integer> componentProgress = new LinkedHashMap<>();
+        public Set<String> activeEntityUuids = new LinkedHashSet<>();
+        public Set<String> completedTransactionSteps = new LinkedHashSet<>();
+        public long activatedAtEpochMs;
+        public long resolvedAtEpochMs;
+        public boolean uniqueInputReserved;
+        public boolean completionCommitted;
+        public String failureReason;
     }
 
     public static final class TestState {

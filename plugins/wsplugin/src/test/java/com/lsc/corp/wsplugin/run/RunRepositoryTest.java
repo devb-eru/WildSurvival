@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -23,6 +25,7 @@ class RunRepositoryTest {
         assertEquals(6, restored.resources.get("WSR-IRON"));
         assertTrue(restored.committedKeys.contains("reward-1"));
         assertEquals(1, restored.version);
+        assertEquals(2, restored.schemaVersion);
     }
 
     @Test
@@ -62,6 +65,65 @@ class RunRepositoryTest {
 
         assertTrue(repository.load().isEmpty());
         assertTrue(java.nio.file.Files.list(temporary.resolve("test-lab/runs/history")).findAny().isPresent());
+    }
+
+    @Test
+    void migratesLegacyPrototypeIntoRecoverableSeasonState(@TempDir Path temporary) throws Exception {
+        Path current = temporary.resolve("runs/current.json");
+        Files.createDirectories(current.getParent());
+        Files.writeString(current, """
+                {
+                  "schemaVersion": 1,
+                  "runId": "legacy-proto",
+                  "contentRevision": "ws-prototype-r1",
+                  "runType": "PROTOTYPE",
+                  "state": "RUNNING",
+                  "day": 20
+                }
+                """, StandardCharsets.UTF_8);
+
+        RunSnapshot restored = new RunRepository(temporary).load().orElseThrow();
+
+        assertEquals(2, restored.schemaVersion);
+        assertEquals(20, restored.seasonDay.day);
+        assertEquals("DAY-20", restored.seasonDay.dayId);
+        assertEquals("LOCKED", restored.finalObjective.state);
+        assertTrue(restored.encounters.isEmpty());
+        assertTrue(restored.researchNodes.isEmpty());
+        assertTrue(restored.story.playedSceneIds.isEmpty());
+        assertTrue(restored.defeatedBossIds.isEmpty());
+    }
+
+    @Test
+    void persistsSeasonExecutionDomains(@TempDir Path temporary) throws Exception {
+        RunRepository repository = new RunRepository(temporary);
+        RunSnapshot snapshot = snapshot();
+        snapshot.day = 50;
+        snapshot.seasonDay.day = 50;
+        snapshot.seasonDay.dayId = "DAY-50";
+        snapshot.seasonDay.state = "ACTIVE";
+        snapshot.seasonDay.eventQueue.add("EV50-D50-LAST-SIGNAL");
+        RunSnapshot.EncounterState encounter = new RunSnapshot.EncounterState();
+        encounter.encounterId = "encounter-50";
+        encounter.eventId = "EV50-D50-LAST-SIGNAL";
+        encounter.day = 50;
+        snapshot.encounters.put(encounter.encounterId, encounter);
+        snapshot.defeatedBossIds.add("BOSS-D40");
+        snapshot.reconstructionPartIds.add("D");
+        snapshot.discoveryIds.add("C29");
+        snapshot.story.playedSceneIds.add("ST5-FINAL-READY");
+        snapshot.finalObjective.state = "AVAILABLE";
+        repository.save(snapshot);
+
+        RunSnapshot restored = repository.load().orElseThrow();
+
+        assertEquals("ACTIVE", restored.seasonDay.state);
+        assertEquals("EV50-D50-LAST-SIGNAL", restored.encounters.get("encounter-50").eventId);
+        assertTrue(restored.defeatedBossIds.contains("BOSS-D40"));
+        assertTrue(restored.reconstructionPartIds.contains("D"));
+        assertTrue(restored.discoveryIds.contains("C29"));
+        assertTrue(restored.story.playedSceneIds.contains("ST5-FINAL-READY"));
+        assertEquals("AVAILABLE", restored.finalObjective.state);
     }
 
     private static RunSnapshot snapshot() {
