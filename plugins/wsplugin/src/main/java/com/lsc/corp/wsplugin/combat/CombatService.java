@@ -12,6 +12,7 @@ import com.lsc.corp.wsplugin.player.SkillLoadoutService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import com.lsc.corp.wsplugin.status.StatusService;
+import com.lsc.corp.wsplugin.status.StatusRuntimePolicy;
 import com.lsc.corp.wsplugin.ui.ActionBarService;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -305,6 +306,11 @@ public final class CombatService implements Listener {
 
     public double damageCombatEntity(Player attacker, LivingEntity target, double rawAttack, double breakDamage, String executionId) {
         if (!isCombatEntity(target)) {
+            return 0.0;
+        }
+        UUID tauntTarget = statuses.tauntTarget(attacker).orElse(null);
+        if (!StatusRuntimePolicy.tauntAllows(tauntTarget, target.getUniqueId())) {
+            ActionBarService.notice(attacker, Component.text("도발 대상 외에는 공격할 수 없습니다.", NamedTextColor.RED), 24);
             return 0.0;
         }
         String id = enemyId(target);
@@ -1703,6 +1709,14 @@ public final class CombatService implements Listener {
 
     private java.util.Optional<Player> nearestProductionTarget(LivingEntity enemy, double range) {
         double maximum = Math.max(3.0, range);
+        UUID forcedTarget = statuses.tauntTarget(enemy).orElse(null);
+        if (forcedTarget != null) {
+            Player forced = Bukkit.getPlayer(forcedTarget);
+            if (forced != null && forced.isOnline() && forced.getWorld().equals(enemy.getWorld())
+                    && runs.playerState(forced.getUniqueId()).map(state -> "ACTIVE".equals(state.lifeState)).orElse(false)
+                    && forced.getLocation().distanceSquared(enemy.getLocation()) <= maximum * maximum
+                    && enemy.hasLineOfSight(forced)) return java.util.Optional.of(forced);
+        }
         return runs.onlineMembers().stream().filter(player -> player.getWorld().equals(enemy.getWorld()))
                 .filter(player -> runs.playerState(player.getUniqueId())
                         .map(state -> "ACTIVE".equals(state.lifeState)).orElse(false))

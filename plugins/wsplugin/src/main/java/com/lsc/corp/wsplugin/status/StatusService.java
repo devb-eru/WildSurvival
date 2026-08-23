@@ -14,6 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -84,6 +86,14 @@ public final class StatusService implements Listener {
         TargetState state = state(target);
         expire(target, state, now);
         if (state.allStatusImmunityUntilEpochMs > now) return ApplyResult.rejected("ALL_STATUS_IMMUNE");
+
+        if ("TAUNT".equals(definition.id()) && sourceEntityId != null) {
+            Entity source = Bukkit.getEntity(sourceEntityId);
+            if (target instanceof Player targetPlayer && source instanceof Player sourcePlayer
+                    && runs.isMember(targetPlayer) && runs.isMember(sourcePlayer)) {
+                return ApplyResult.rejected("SAME_TEAM");
+            }
+        }
 
         boolean hardControl = isHardControl(definition);
         boolean actionLock = definition.tags().contains("ACTION_LOCK");
@@ -206,6 +216,25 @@ public final class StatusService implements Listener {
 
     public boolean blocksCommonSkill(Player target) {
         return blocksAllActions(target) || active(target, "SILENCE");
+    }
+
+    /** Returns the server-authoritative hostile target locked by TAUNT, if the source still has a UUID. */
+    public Optional<UUID> tauntTarget(LivingEntity target) {
+        if (target == null) return Optional.empty();
+        TargetState state = state(target);
+        boolean changed = expire(target, state, runs.clockNowMillis());
+        if (changed) save(target, state);
+        return state.active.getOrDefault("TAUNT", List.of()).stream()
+                .sorted(Comparator.comparingDouble((InstanceState value) -> value.strength).reversed()
+                        .thenComparingLong(value -> value.appliedAtEpochMs))
+                .map(value -> value.sourceEntityId)
+                .filter(value -> value != null && !value.isBlank() && !"SYSTEM".equals(value))
+                .map(value -> {
+                    try { return UUID.fromString(value); }
+                    catch (IllegalArgumentException ignored) { return null; }
+                })
+                .filter(Objects::nonNull)
+                .findFirst();
     }
 
     public int remove(LivingEntity target, String rawStatusId, int maximumStacks) {

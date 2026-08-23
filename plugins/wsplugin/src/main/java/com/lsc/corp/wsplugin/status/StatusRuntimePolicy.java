@@ -1,6 +1,7 @@
 package com.lsc.corp.wsplugin.status;
 
 import java.util.Locale;
+import java.util.UUID;
 
 /** Pure calculations shared by the server-authoritative status runtime. */
 public final class StatusRuntimePolicy {
@@ -68,6 +69,10 @@ public final class StatusRuntimePolicy {
         }
         return (chaos ? 0.010 : 0.015) * preResistDurationSeconds
                 * clamp(strengthMultiplier, 0.50, 2.00);
+    }
+
+    public static boolean tauntAllows(UUID lockedTarget, UUID attemptedTarget) {
+        return lockedTarget == null || lockedTarget.equals(attemptedTarget);
     }
 
     private static String normalize(String value) {

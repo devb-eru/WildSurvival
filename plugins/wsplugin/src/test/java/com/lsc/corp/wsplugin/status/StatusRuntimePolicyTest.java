@@ -1,8 +1,11 @@
 package com.lsc.corp.wsplugin.status;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class StatusRuntimePolicyTest {
@@ -39,5 +42,13 @@ class StatusRuntimePolicyTest {
         assertEquals(1, StatusRuntimePolicy.cleansePriority(1, true, false));
         assertEquals(12, StatusRuntimePolicy.cleansePriority(2, false, true));
         assertEquals(23, StatusRuntimePolicy.cleansePriority(3, false, false));
+    }
+
+    @Test
+    void tauntOnlyAllowsTheLockedHostileTarget() {
+        UUID locked = UUID.randomUUID();
+        assertTrue(StatusRuntimePolicy.tauntAllows(null, UUID.randomUUID()));
+        assertTrue(StatusRuntimePolicy.tauntAllows(locked, locked));
+        assertFalse(StatusRuntimePolicy.tauntAllows(locked, UUID.randomUUID()));
     }
 }
