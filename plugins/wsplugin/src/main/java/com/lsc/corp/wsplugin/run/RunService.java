@@ -480,7 +480,7 @@ public final class RunService {
                 } else if ("DOWNED".equals(state.lifeState)) {
                     player.setGameMode(GameMode.SURVIVAL);
                     player.setHealth(Math.max(1.0, Math.min(player.getHealth(), 1.0)));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 9, false, false));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 4, false, false));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false));
                 }
                 equipment.syncAuthoritativeEquipment(player);

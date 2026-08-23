@@ -19,7 +19,7 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
 public final class TestPlayerBackup {
-    public int schemaVersion = 2;
+    public int schemaVersion = 3;
     public String playerUuid;
     public String world;
     public double x;
@@ -43,6 +43,8 @@ public final class TestPlayerBackup {
     public boolean flying;
     public double maxHealthBase;
     public double movementSpeedBase;
+    public double blockInteractionRangeBase;
+    public double entityInteractionRangeBase;
     public String storageItems;
     public String armorItems;
     public String offhandItem;
@@ -75,6 +77,12 @@ public final class TestPlayerBackup {
         backup.flying = player.isFlying();
         backup.maxHealthBase = player.getAttribute(Attribute.MAX_HEALTH).getBaseValue();
         backup.movementSpeedBase = player.getAttribute(Attribute.MOVEMENT_SPEED).getBaseValue();
+        if (player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE) != null) {
+            backup.blockInteractionRangeBase = player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE).getBaseValue();
+        }
+        if (player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE) != null) {
+            backup.entityInteractionRangeBase = player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE).getBaseValue();
+        }
         backup.storageItems = encode(player.getInventory().getStorageContents());
         backup.armorItems = encode(player.getInventory().getArmorContents());
         backup.offhandItem = encode(new ItemStack[]{player.getInventory().getItemInOffHand()});
@@ -112,6 +120,12 @@ public final class TestPlayerBackup {
         }
         player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(maxHealthBase);
         player.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(movementSpeedBase);
+        if (blockInteractionRangeBase > 0.0 && player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE) != null) {
+            player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE).setBaseValue(blockInteractionRangeBase);
+        }
+        if (entityInteractionRangeBase > 0.0 && player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE) != null) {
+            player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE).setBaseValue(entityInteractionRangeBase);
+        }
         player.setGameMode(GameMode.valueOf(gameMode));
         player.setAllowFlight(allowFlight);
         player.setFlying(flying && allowFlight);

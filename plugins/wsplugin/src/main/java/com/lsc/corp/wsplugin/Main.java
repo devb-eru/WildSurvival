@@ -58,7 +58,8 @@ public final class Main extends JavaPlugin {
             combat.setDamageNumbers(damageNumbers);
             PrototypeBossService boss = new PrototypeBossService(this, runService, content.content(), combat, growth, telemetry);
             combat.setBossDamageHandler(boss);
-            PrototypeLoopService loop = new PrototypeLoopService(this, runService, content.content(), economy, combat, boss, growth, telemetry);
+            PrototypeLoopService loop = new PrototypeLoopService(this, runService, content.content(), economy, combat,
+                    boss, growth, stats, telemetry);
 
             TestLabRepository testLabRepository = new TestLabRepository(getDataFolder().toPath());
             TestLabService testLab = new TestLabService(this, runService, testLabRepository, content.content(),

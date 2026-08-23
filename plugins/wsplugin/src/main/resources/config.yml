@@ -12,4 +12,4 @@ test-lab:
   enabled: false
   max-snapshots: 20
   virtual-revive-ticks: 60
-  default-movement-speed: 0.1
+  default-movement-speed: 0.11

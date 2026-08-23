@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 public final class PlayerStatPolicy {
+    private static final double VANILLA_MOVEMENT_SPEED = 0.10;
+    private static final double VANILLA_BLOCK_INTERACTION_RANGE = 4.50;
+    private static final double VANILLA_ENTITY_INTERACTION_RANGE = 3.00;
+    private static final double BASE_MOVEMENT_SPEED_MULTIPLIER = 1.10;
+    private static final double BASE_INTERACTION_RANGE_MULTIPLIER = 1.30;
     public static final List<String> IDS = List.of("HP", "AP", "ATK", "DEF", "HIT", "EVA", "SPD", "EXP");
     private static final Map<String, Integer> CAPS = Map.of(
             "AP", 25,
@@ -74,7 +79,16 @@ public final class PlayerStatPolicy {
     }
 
     public static double movementSpeed(Map<String, Integer> allocation) {
-        return Math.min(0.16, 0.10 * (1.0 + points(allocation, "SPD") * 0.005));
+        return Math.min(0.16,
+                VANILLA_MOVEMENT_SPEED * (BASE_MOVEMENT_SPEED_MULTIPLIER + points(allocation, "SPD") * 0.005));
+    }
+
+    public static double blockInteractionRange() {
+        return VANILLA_BLOCK_INTERACTION_RANGE * BASE_INTERACTION_RANGE_MULTIPLIER;
+    }
+
+    public static double entityInteractionRange() {
+        return VANILLA_ENTITY_INTERACTION_RANGE * BASE_INTERACTION_RANGE_MULTIPLIER;
     }
 
     public static double activityExpMultiplier(Map<String, Integer> allocation) {

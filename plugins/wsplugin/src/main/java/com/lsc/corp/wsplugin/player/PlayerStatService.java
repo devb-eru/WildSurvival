@@ -57,6 +57,10 @@ public final class PlayerStatService implements Listener {
         }
         var speed = player.getAttribute(Attribute.MOVEMENT_SPEED);
         if (speed != null) speed.setBaseValue(PlayerStatPolicy.movementSpeed(state.investedStats));
+        var blockRange = player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE);
+        if (blockRange != null) blockRange.setBaseValue(PlayerStatPolicy.blockInteractionRange());
+        var entityRange = player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE);
+        if (entityRange != null) entityRange.setBaseValue(PlayerStatPolicy.entityInteractionRange());
         growth.recalculateMaxAp(player);
     }
 
@@ -99,7 +103,8 @@ public final class PlayerStatService implements Listener {
     private void render(Inventory inventory, StatHolder holder, int level) {
         int available = PlayerStatPolicy.availablePoints(level, holder.draft);
         inventory.setItem(4, named(Material.NETHER_STAR, ChatColor.GOLD + "사용 가능 포인트: " + available,
-                List.of(ChatColor.GRAY + "좌클릭 +1 / 우클릭은 이번 창에서만 -1")));
+                List.of(ChatColor.GRAY + "좌클릭 +1 / 우클릭은 이번 창에서만 -1",
+                        ChatColor.WHITE + "기본 보정: 이동속도 +10% · 블록/개체 상호작용 거리 +30%")));
         Material[] materials = {Material.RED_DYE, Material.LIGHT_BLUE_DYE, Material.IRON_SWORD, Material.SHIELD,
                 Material.SPECTRAL_ARROW, Material.FEATHER, Material.SUGAR, Material.EXPERIENCE_BOTTLE};
         for (int i = 0; i < SLOTS.length; i++) {

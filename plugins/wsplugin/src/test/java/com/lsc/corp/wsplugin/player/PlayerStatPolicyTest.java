@@ -16,6 +16,9 @@ class PlayerStatPolicyTest {
         assertEquals(22.0, PlayerStatPolicy.maxHealth(allocation));
         assertEquals(105, PlayerStatPolicy.baseMaxAp(allocation));
         assertEquals(1.08, PlayerStatPolicy.attackMultiplier(allocation));
+        assertEquals(0.11, PlayerStatPolicy.movementSpeed(Map.of()), 1.0e-9);
+        assertEquals(5.85, PlayerStatPolicy.blockInteractionRange(), 1.0e-9);
+        assertEquals(3.90, PlayerStatPolicy.entityInteractionRange(), 1.0e-9);
     }
 
     @Test

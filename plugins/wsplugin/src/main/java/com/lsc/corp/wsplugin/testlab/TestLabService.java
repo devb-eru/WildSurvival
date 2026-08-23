@@ -6,6 +6,7 @@ import com.lsc.corp.wsplugin.content.PrototypeContent;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
+import com.lsc.corp.wsplugin.player.PlayerStatPolicy;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import com.lsc.corp.wsplugin.world.PrototypeLoopService;
@@ -227,10 +228,19 @@ public final class TestLabService implements Listener {
         });
         if ("DEAD".equals(life)) {
             actor.setGameMode(GameMode.SPECTATOR);
+            actor.removePotionEffect(PotionEffectType.SLOWNESS);
+            actor.removePotionEffect(PotionEffectType.GLOWING);
         } else {
             actor.setGameMode(GameMode.SURVIVAL);
             actor.setHealth("DOWNED".equals(life) ? 1.0 : Math.max(1.0,
                     actor.getAttribute(Attribute.MAX_HEALTH).getValue() * 0.25));
+            if ("DOWNED".equals(life)) {
+                actor.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 4, false, false));
+                actor.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false));
+            } else {
+                actor.removePotionEffect(PotionEffectType.SLOWNESS);
+                actor.removePotionEffect(PotionEffectType.GLOWING);
+            }
         }
         afterMutation(actor, "player.life", life);
     }
@@ -942,9 +952,14 @@ public final class TestLabService implements Listener {
         RunSnapshot.PlayerState state = playerState(player);
         player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(
                 TestValuePolicy.statValue("max-health", state.testMaxHealth));
-        double defaultMovement = plugin.getConfig().getDouble("test-lab.default-movement-speed", 0.1);
+        double defaultMovement = Math.max(PlayerStatPolicy.movementSpeed(Map.of()),
+                plugin.getConfig().getDouble("test-lab.default-movement-speed", 0.11));
         player.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(
                 Math.max(0.01, Math.min(1.0, defaultMovement * state.testMoveSpeedMultiplier)));
+        var blockRange = player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE);
+        if (blockRange != null) blockRange.setBaseValue(PlayerStatPolicy.blockInteractionRange());
+        var entityRange = player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE);
+        if (entityRange != null) entityRange.setBaseValue(PlayerStatPolicy.entityInteractionRange());
         player.setHealth(Math.min(player.getHealth(), player.getAttribute(Attribute.MAX_HEALTH).getValue()));
         runs.restorePlayer(player);
         equipment.syncAuthoritativeEquipment(player);

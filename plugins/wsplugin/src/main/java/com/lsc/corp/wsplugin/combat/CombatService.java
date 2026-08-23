@@ -41,23 +41,33 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerAnimationType;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.PlayerToggleSprintEvent;
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -70,6 +80,7 @@ import org.bukkit.util.Vector;
 
 public final class CombatService implements Listener {
     private static final double PLAYER_HP_SCALE = 5.0;
+    private static final double REVIVE_RANGE_SQUARED = 2.5 * 2.5;
     private final JavaPlugin plugin;
     private final RunService runs;
     private final PrototypeContent content;
@@ -447,7 +458,7 @@ public final class CombatService implements Listener {
         });
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onVanillaPlayerDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player && runs.isRunningMember(player)) {
             event.setCancelled(true);
@@ -458,23 +469,28 @@ public final class CombatService implements Listener {
         if (event.getDamager() instanceof Trident trident && trident.getPersistentDataContainer().has(projectileOwnerKey, PersistentDataType.STRING)) {
             event.setCancelled(true);
         }
-        if (event.getEntity() instanceof Player victim && event.getDamager() instanceof LivingEntity attacker
-                && runs.isRunningMember(victim) && isCombatEntity(attacker)) {
-            event.setDamage(enemyAttackDamage(attacker) / PLAYER_HP_SCALE);
-            runs.mutate(run -> run.players.get(victim.getUniqueId().toString()).apRegenBlockedUntilEpochMs = Instant.now().plusMillis(1500).toEpochMilli());
-        }
         if (event.getEntity() instanceof Player victim && event.getDamager() instanceof Player attacker
                 && runs.isMember(victim) && runs.isMember(attacker)) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player player) || !runs.isRunningMember(player)) {
             return;
         }
         RunSnapshot.PlayerState playerState = runs.playerState(player.getUniqueId()).orElse(null);
+        if (playerState == null) {
+            event.setCancelled(true);
+            return;
+        }
+        if (event instanceof EntityDamageByEntityEvent byEntity) {
+            LivingEntity attacker = combatAttacker(byEntity);
+            if (attacker != null) {
+                event.setDamage(enemyAttackDamage(attacker) / PLAYER_HP_SCALE);
+            }
+        }
         if (runs.isTestRun() && playerState != null) {
             if (playerState.testInvulnerable) {
                 event.setCancelled(true);
@@ -484,9 +500,7 @@ public final class CombatService implements Listener {
             double reduction = clamp(playerState.testDamageReductionRate, 0.0, 0.95);
             event.setDamage(CombatMath.incomingDamage(event.getDamage(), multiplier, reduction));
         }
-        if (playerState != null) {
-            event.setDamage(event.getDamage() * PlayerStatPolicy.incomingDamageMultiplier(playerState.investedStats));
-        }
+        event.setDamage(event.getDamage() * PlayerStatPolicy.incomingDamageMultiplier(playerState.investedStats));
         long now = Instant.now().toEpochMilli();
         if (invulnerableUntilEpochMs.getOrDefault(player.getUniqueId(), 0L) >= now) {
             event.setCancelled(true);
@@ -498,11 +512,17 @@ public final class CombatService implements Listener {
             telemetry.event(runs.current().orElseThrow().runId, "DODGE_SUCCESS", "{\"refund\":10}");
             return;
         }
-        if (event.getFinalDamage() >= player.getHealth()) {
-            event.setCancelled(true);
-            enterDowned(player);
-        } else if (event.getFinalDamage() > 0.0) {
-            runs.mutate(run -> run.players.get(player.getUniqueId().toString()).apRegenBlockedUntilEpochMs = now + 1500L);
+        switch (PlayerLifePolicy.evaluate(playerState.lifeState, player.getHealth(), event.getFinalDamage())) {
+            case BLOCK -> event.setCancelled(true);
+            case ENTER_DOWNED -> {
+                event.setCancelled(true);
+                enterDowned(player);
+            }
+            case ALLOW -> {
+                if (event.getFinalDamage() > 0.0) {
+                    runs.mutate(run -> run.players.get(player.getUniqueId().toString()).apRegenBlockedUntilEpochMs = now + 1500L);
+                }
+            }
         }
     }
 
@@ -528,14 +548,19 @@ public final class CombatService implements Listener {
         if (!runs.isRunningMember(player)) {
             return;
         }
+        if (isActionRestricted(player)) {
+            event.setCancelled(true);
+            showRestrictedAction(player);
+            return;
+        }
         if (!inCombatStance(player)) {
             return;
         }
         Action action = event.getAction();
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            boolean hit = routeLeft(player);
+            routeLeft(player);
             if (action == Action.LEFT_CLICK_BLOCK) {
-                if (hit) event.setCancelled(true);
+                event.setCancelled(true);
             }
             return;
         }
@@ -547,11 +572,84 @@ public final class CombatService implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRestrictedBlockBreak(BlockBreakEvent event) {
+        if (runs.isRunningMember(event.getPlayer()) && isActionRestricted(event.getPlayer())) {
+            event.setCancelled(true);
+            showRestrictedAction(event.getPlayer());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRestrictedBlockPlace(BlockPlaceEvent event) {
+        if (runs.isRunningMember(event.getPlayer()) && isActionRestricted(event.getPlayer())) {
+            event.setCancelled(true);
+            showRestrictedAction(event.getPlayer());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRestrictedPickup(EntityPickupItemEvent event) {
+        if (event.getEntity() instanceof Player player && runs.isRunningMember(player) && isActionRestricted(player)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRestrictedDrop(PlayerDropItemEvent event) {
+        if (runs.isRunningMember(event.getPlayer()) && isActionRestricted(event.getPlayer())) {
+            event.setCancelled(true);
+            showRestrictedAction(event.getPlayer());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRestrictedInventoryOpen(InventoryOpenEvent event) {
+        if (event.getPlayer() instanceof Player player && runs.isRunningMember(player) && isActionRestricted(player)) {
+            event.setCancelled(true);
+            showRestrictedAction(player);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRestrictedInventoryClick(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player player && runs.isRunningMember(player) && isActionRestricted(player)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRestrictedInventoryDrag(InventoryDragEvent event) {
+        if (event.getWhoClicked() instanceof Player player && runs.isRunningMember(player) && isActionRestricted(player)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRestrictedSprint(PlayerToggleSprintEvent event) {
+        if (event.isSprinting() && runs.isRunningMember(event.getPlayer()) && isActionRestricted(event.getPlayer())) {
+            event.setCancelled(true);
+            event.getPlayer().setSprinting(false);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onRestrictedJump(PlayerJumpEvent event) {
+        if (runs.isRunningMember(event.getPlayer()) && isActionRestricted(event.getPlayer())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onSwapHand(PlayerSwapHandItemsEvent event) {
         if (!runs.isRunningMember(event.getPlayer())) {
             return;
         }
         Player player = event.getPlayer();
+        if (isActionRestricted(player)) {
+            event.setCancelled(true);
+            showRestrictedAction(player);
+            return;
+        }
         int originalSlot = player.getInventory().getHeldItemSlot();
         if (player.isSneaking()) {
             event.setCancelled(true);
@@ -575,25 +673,25 @@ public final class CombatService implements Listener {
             return;
         }
         int slot = event.getNewSlot();
-        if (!player.isSneaking()) {
+        if (!player.isSneaking() || event.getPreviousSlot() != 0) {
             return;
         }
-        int originalSlot = event.getPreviousSlot();
         if (slot >= 1 && slot <= 4) {
             event.setCancelled(true);
             executeCommonActive(player, slot);
-            Bukkit.getScheduler().runTask(plugin, () -> player.getInventory().setHeldItemSlot(originalSlot));
+            returnToCombatStance(player);
         } else if (slot >= 5 && slot <= 8) {
             event.setCancelled(true);
             executeQuickItem(player, slot - 4);
-            Bukkit.getScheduler().runTask(plugin, () -> player.getInventory().setHeldItemSlot(originalSlot));
+            returnToCombatStance(player);
         }
     }
 
     @EventHandler
     public void onToggleSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        if (!event.isSneaking() || !runs.isRunningMember(player) || !inCombatStance(player)) {
+        if (!event.isSneaking() || !runs.isRunningMember(player) || !inCombatStance(player)
+                || !requireActiveAction(player)) {
             return;
         }
         long now = Instant.now().toEpochMilli();
@@ -642,15 +740,24 @@ public final class CombatService implements Listener {
 
     @EventHandler
     public void onReviveInteract(PlayerInteractEntityEvent event) {
-        if (event.getHand() != EquipmentSlot.HAND || !(event.getRightClicked() instanceof Player target)) {
+        Player reviver = event.getPlayer();
+        if (runs.isRunningMember(reviver) && isActionRestricted(reviver)) {
+            event.setCancelled(true);
+            showRestrictedAction(reviver);
             return;
         }
-        Player reviver = event.getPlayer();
-        if (!runs.isRunningMember(reviver) || !runs.isRunningMember(target)) {
+        if (event.getHand() != EquipmentSlot.HAND) {
+            return;
+        }
+        if (!(event.getRightClicked() instanceof Player target)
+                || !runs.isRunningMember(reviver) || !runs.isRunningMember(target)) {
             return;
         }
         RunSnapshot.PlayerState targetState = runs.playerState(target.getUniqueId()).orElseThrow();
         if (!"DOWNED".equals(targetState.lifeState)) {
+            return;
+        }
+        if (!withinReviveRange(reviver, target)) {
             return;
         }
         event.setCancelled(true);
@@ -663,7 +770,7 @@ public final class CombatService implements Listener {
     }
 
     private boolean routeLeft(Player player) {
-        if (!inCombatStance(player)) return false;
+        if (!inCombatStance(player) || !requireActiveAction(player)) return false;
         long tick = Bukkit.getCurrentTick();
         if (lastLeftInputTick.getOrDefault(player.getUniqueId(), Long.MIN_VALUE) == tick) {
             return lastLeftHit.getOrDefault(player.getUniqueId(), false);
@@ -737,6 +844,7 @@ public final class CombatService implements Listener {
     }
 
     private boolean executeWeaponActive(Player player, int slot) {
+        if (!requireActiveAction(player)) return false;
         String weaponId = equipment.resolveWeaponId(player);
         PrototypeContent.SkillDefinition skill = skills.resolve(player, slot);
         if (skill == null) {
@@ -776,6 +884,7 @@ public final class CombatService implements Listener {
     }
 
     private void executeCommonActive(Player player, int slot) {
+        if (!requireActiveAction(player)) return;
         switch (slot) {
             case 1 -> executeDodge(player);
             case 2 -> {
@@ -809,6 +918,7 @@ public final class CombatService implements Listener {
     }
 
     private void executeQuickItem(Player player, int slot) {
+        if (!requireActiveAction(player)) return;
         String bound = equipment.quickBinding(player, slot);
         if (bound == null || !equipment.consumeQuickItem(player, bound)) {
             ActionBarService.notice(player, Component.text("Q" + slot + " 소모품 없음", NamedTextColor.RED), 30);
@@ -984,7 +1094,7 @@ public final class CombatService implements Listener {
             value.ap = 0.0;
         });
         player.setHealth(1.0);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 9, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 4, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false));
         runs.broadcast(ChatColor.RED + "[빈사] " + player.getName() + " — 우클릭 유지로 구조하세요.");
         for (Player member : runs.onlineMembers()) {
@@ -998,7 +1108,7 @@ public final class CombatService implements Listener {
         for (ReviveChannel channel : reviveChannels.values()) {
             Player reviver = Bukkit.getPlayer(channel.reviver);
             Player target = Bukkit.getPlayer(channel.target);
-            if (reviver == null || target == null || reviver.getLocation().distanceSquared(target.getLocation()) > 9.0
+            if (reviver == null || target == null || !withinReviveRange(reviver, target)
                     || !reviver.isSneaking()) {
                 if (reviver != null) ActionBarService.critical(reviver, Component.text("구조 취소", NamedTextColor.RED), 30);
                 complete.add(channel.target);
@@ -1030,6 +1140,11 @@ public final class CombatService implements Listener {
         ActionBarService.critical(reviver, Component.text(target.getName() + " 구조 완료", NamedTextColor.GREEN), 60);
         ActionBarService.critical(target, Component.text("구조 완료 · 전투 복귀", NamedTextColor.GREEN), 60);
         telemetry.event(runs.current().orElseThrow().runId, "PLAYER_STATE_CHANGED", "{\"state\":\"ACTIVE\",\"reason\":\"REVIVED\"}");
+    }
+
+    private boolean withinReviveRange(Player reviver, Player target) {
+        return reviver.getWorld().equals(target.getWorld())
+                && reviver.getLocation().distanceSquared(target.getLocation()) <= REVIVE_RANGE_SQUARED;
     }
 
     private void processDownedTimeouts(long now) {
@@ -1193,6 +1308,17 @@ public final class CombatService implements Listener {
         return contentEnemy(id).attackDamage();
     }
 
+    private LivingEntity combatAttacker(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof LivingEntity living && isCombatEntity(living)) {
+            return living;
+        }
+        if (event.getDamager() instanceof Projectile projectile
+                && projectile.getShooter() instanceof LivingEntity living && isCombatEntity(living)) {
+            return living;
+        }
+        return null;
+    }
+
     private PrototypeContent.EnemyDefinition contentEnemy(String id) {
         return content.enemy(id);
     }
@@ -1223,6 +1349,22 @@ public final class CombatService implements Listener {
         double current = runs.playerState(player.getUniqueId()).map(state -> state.ap).orElse(0.0);
         ActionBarService.notice(player, Component.text("AP 부족: 필요 " + Math.round(required) + " / 현재 " + Math.round(current), NamedTextColor.RED), 35);
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.5f, 0.7f);
+    }
+
+    private boolean requireActiveAction(Player player) {
+        if (!isActionRestricted(player)) return true;
+        showRestrictedAction(player);
+        return false;
+    }
+
+    private boolean isActionRestricted(Player player) {
+        return runs.playerState(player.getUniqueId())
+                .map(state -> !"ACTIVE".equals(state.lifeState)).orElse(true);
+    }
+
+    private void showRestrictedAction(Player player) {
+        ActionBarService.notice(player,
+                Component.text("빈사·사망 상태에서는 이동과 도움 요청 외 행동을 할 수 없습니다.", NamedTextColor.RED), 30);
     }
 
     private void applySkillEffect(LivingEntity target, PrototypeContent.SkillDefinition skill) {

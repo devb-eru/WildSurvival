@@ -6,6 +6,7 @@ import com.lsc.corp.wsplugin.content.PrototypeContent;
 import com.lsc.corp.wsplugin.economy.EconomyService;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
+import com.lsc.corp.wsplugin.player.PlayerStatService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import com.lsc.corp.wsplugin.ui.ActionBarService;
@@ -33,6 +34,7 @@ public final class PrototypeLoopService implements Listener {
     private final CombatService combat;
     private final PrototypeBossService boss;
     private final GrowthService growth;
+    private final PlayerStatService stats;
     private final TelemetryService telemetry;
     private long nextCheckpointAtEpochMs;
     private long dayTenBossAtEpochMs;
@@ -42,7 +44,8 @@ public final class PrototypeLoopService implements Listener {
     private BukkitTask dayOneEncounterTask;
 
     public PrototypeLoopService(JavaPlugin plugin, RunService runs, PrototypeContent content, EconomyService economy,
-                                CombatService combat, PrototypeBossService boss, GrowthService growth, TelemetryService telemetry) {
+                                CombatService combat, PrototypeBossService boss, GrowthService growth,
+                                PlayerStatService stats, TelemetryService telemetry) {
         this.plugin = plugin;
         this.runs = runs;
         this.content = content;
@@ -50,6 +53,7 @@ public final class PrototypeLoopService implements Listener {
         this.combat = combat;
         this.boss = boss;
         this.growth = growth;
+        this.stats = stats;
         this.telemetry = telemetry;
     }
 
@@ -57,6 +61,7 @@ public final class PrototypeLoopService implements Listener {
         combat.cleanupForeignCombatEntities();
         for (Player player : runs.onlineMembers()) {
             player.setGameMode(GameMode.SURVIVAL);
+            stats.apply(player);
             player.setHealth(player.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue());
             player.setFoodLevel(20);
             economy.grantPersonalItem(player, "SURVIVAL-CLOCK", 1);
