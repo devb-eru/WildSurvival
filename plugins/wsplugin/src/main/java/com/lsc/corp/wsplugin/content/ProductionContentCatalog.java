@@ -9,6 +9,7 @@ public record ProductionContentCatalog(
         Map<String, MaterialEntry> materialsById,
         Map<String, ItemEntry> nonEquipmentItemsById,
         Map<String, EquipmentEntry> equipmentById,
+        Map<String, FacilityEntry> facilitiesById,
         List<RecipeEntry> recipes,
         Map<String, List<RecipeEntry>> recipesByOutput,
         List<SkillEntry> skills,
@@ -52,6 +53,21 @@ public record ProductionContentCatalog(
 
         public boolean utility() {
             return "UTILITY".equals(equipmentType);
+        }
+    }
+
+    public record FacilityEntry(String id, String name, String facilityTier, String representation,
+                                String coreMaterial, String networkPolicy, String itemId, String recipeId,
+                                int firstDay, int activationDay, int maxLevel, int baseHp, String hpAuthority, int workSlots,
+                                int threatValue, String costProfile, String unlockText, String effectOpcode,
+                                String effectText, String maintenanceText, String portableFallback,
+                                String stateMachine) {
+        public boolean portableDevice() {
+            return "PORTABLE".equals(facilityTier);
+        }
+
+        public boolean reconstruction() {
+            return "RECONSTRUCTION".equals(facilityTier);
         }
     }
 

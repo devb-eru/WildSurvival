@@ -34,6 +34,9 @@ public final class RunSnapshot {
     public boolean sharedLedgerUnlocked;
     public BossState boss;
     public FacilityState facility;
+    public Map<String, FacilityInstanceState> facilities = new LinkedHashMap<>();
+    public Set<String> facilityTypesEverActivated = new LinkedHashSet<>();
+    public Map<String, Integer> facilityRecoveryLedger = new LinkedHashMap<>();
     public TestState test;
     public String endReason;
 
@@ -152,6 +155,41 @@ public final class RunSnapshot {
         public int y;
         public int z;
         public boolean active;
+    }
+
+    public static final class FacilityInstanceState {
+        public String instanceId;
+        public String facilityType;
+        public String revision = "facility-data-d11-d50-r1";
+        public int level = 1;
+        public String state = "ACTIVE";
+        public double hp;
+        public double maxHp;
+        public String networkId;
+        public String world;
+        public int x;
+        public int y;
+        public int z;
+        public String coreMaterial;
+        public String installedBy;
+        public long installedAtEpochMs;
+        public long lastUsedAtEpochMs;
+        public long expiresAtEpochMs;
+        public int triggerCharges;
+        public List<FacilityWorkState> queue = new ArrayList<>();
+        public Map<String, Integer> outputLedger = new LinkedHashMap<>();
+    }
+
+    public static final class FacilityWorkState {
+        public String workId;
+        public String operation;
+        public String ownerUuid;
+        public String state = "QUEUED";
+        public long queuedAtEpochMs;
+        public long processingStartedAtEpochMs;
+        public long durationMillis;
+        public Map<String, Integer> reservedInputs = new LinkedHashMap<>();
+        public Map<String, Integer> outputs = new LinkedHashMap<>();
     }
 
     public static final class TestState {

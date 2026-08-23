@@ -2,6 +2,8 @@ package com.lsc.corp.wsplugin.combat;
 
 import com.lsc.corp.wsplugin.content.PrototypeContent;
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
+import com.lsc.corp.wsplugin.facility.FacilityService;
+import com.lsc.corp.wsplugin.facility.FacilityStateAccess;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
@@ -118,6 +120,7 @@ public final class CombatService implements Listener {
     private Consumer<Player> menuOpener = player -> { };
     private ItemRewardHandler itemRewardHandler = (player, resourceId, amount) -> { };
     private DamageNumberService damageNumbers;
+    private FacilityService facilityService;
     private boolean scannedPersistedEntities;
     private int hudTick;
 
@@ -148,6 +151,10 @@ public final class CombatService implements Listener {
 
     public void setBossDamageHandler(BossDamageHandler bossDamageHandler) {
         this.bossDamageHandler = bossDamageHandler;
+    }
+
+    public void setFacilityService(FacilityService facilityService) {
+        this.facilityService = facilityService;
     }
 
     public void setMenuOpener(Consumer<Player> menuOpener) {
@@ -788,6 +795,9 @@ public final class CombatService implements Listener {
         }
         event.setCancelled(true);
         double multiplier = growth.reviveSpeedMultiplier(reviver);
+        RunSnapshot run = runs.current().orElseThrow();
+        if (FacilityStateAccess.activeNear(run, "FAC-P07", target.getWorld().getName(),
+                target.getX(), target.getY(), target.getZ(), 12.0)) multiplier *= 1.15;
         long duration = Math.max(1000L, Math.round(plugin.getConfig().getInt("prototype.revive-channel-seconds", 3) * 1000L / multiplier));
         reviveChannels.put(target.getUniqueId(), new ReviveChannel(reviver.getUniqueId(), target.getUniqueId(), Instant.now().toEpochMilli() + duration));
         reviver.sendMessage(ChatColor.YELLOW + target.getName() + " 구조 시작 — " + (duration / 1000.0) + "초");
@@ -1017,8 +1027,7 @@ public final class CombatService implements Listener {
             return;
         }
         if ("WSI-CONS-PORTABLE_PURIFIER_CHARGE".equals(bound)
-                && runs.current().map(run -> run.facility == null || !run.facility.active
-                || !"FAC-P05".equals(run.facility.id)).orElse(true)) {
+                && (facilityService == null || !facilityService.hasActivePortablePurifier(player))) {
             ActionBarService.notice(player, Component.text("가동할 FAC-P05 휴대 정화기가 없습니다", NamedTextColor.RED), 40);
             return;
         }
@@ -1069,7 +1078,10 @@ public final class CombatService implements Listener {
                 runs.mutate(run -> run.players.get(player.getUniqueId().toString()).rescueBraceCharges++);
                 result = "다음 구조 중단 저항 1회";
             }
-            case "WSI-CONS-PORTABLE_PURIFIER_CHARGE" -> { result = "FAC-P05 가동시간 +60초"; }
+            case "WSI-CONS-PORTABLE_PURIFIER_CHARGE" -> {
+                facilityService.extendPortablePurifier(player, 60_000L);
+                result = "FAC-P05 가동시간 +60초";
+            }
             case "WSI-CONS-ANTIDOTE_INJECTION" -> {
                 player.removePotionEffect(PotionEffectType.POISON); removePlayerStatus(player, "poison"); result = "POISON 제거";
             }

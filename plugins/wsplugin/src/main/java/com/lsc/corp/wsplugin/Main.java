@@ -6,6 +6,7 @@ import com.lsc.corp.wsplugin.combat.DamageNumberService;
 import com.lsc.corp.wsplugin.content.ContentBundleService;
 import com.lsc.corp.wsplugin.economy.EconomyService;
 import com.lsc.corp.wsplugin.economy.ItemCodexService;
+import com.lsc.corp.wsplugin.facility.FacilityService;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.PrototypeCommand;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
@@ -55,11 +56,15 @@ public final class Main extends JavaPlugin {
                     content.productionCatalog(), equipment, growth, telemetry, codex);
             PlayerStatService stats = new PlayerStatService(this, runService, growth, equipment);
             equipment.setStatRefresher(stats::apply);
+            FacilityService facility = new FacilityService(this, runService, content.productionCatalog(), codex, equipment, telemetry);
+            facility.setOpeners(economy::openCraft, economy::openLedger, codex::open, stats::open);
+            economy.setVirtualFacilityHandler(facility::canAssembleVirtual, facility::assembleVirtual);
             PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, skills, growth, tutorial);
             damageNumbers = new DamageNumberService(this, runService);
             combat.setMenuOpener(menu::open);
             combat.setItemRewardHandler((player, resourceId, amount) -> codex.grantResource(player, resourceId, amount));
             combat.setDamageNumbers(damageNumbers);
+            combat.setFacilityService(facility);
             PrototypeBossService boss = new PrototypeBossService(this, runService, content.content(), combat, growth, telemetry);
             combat.setBossDamageHandler(boss);
             PrototypeLoopService loop = new PrototypeLoopService(this, runService, content.content(), economy, combat,
@@ -74,13 +79,15 @@ public final class Main extends JavaPlugin {
             TestLabCommand testLabCommand = new TestLabCommand(testLab, testLabGui, scenarios, virtualParty, combat, runService);
 
             runService.attach(loop, equipment, growth);
-            registerListeners(equipment, skills, combat, economy, codex, stats, menu, tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
+            registerListeners(equipment, skills, combat, economy, facility, codex, stats, menu, tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
 
             PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand, menu);
             Objects.requireNonNull(getCommand("wildsurvival"), "wildsurvival command").setExecutor(command);
             Objects.requireNonNull(getCommand("wildsurvival"), "wildsurvival command").setTabCompleter(command);
 
             runService.restore();
+            facility.restore();
+            getServer().getScheduler().runTaskTimer(this, facility::tick, 20L, 20L);
             tutorial.start();
             for (org.bukkit.entity.Player player : runService.onlineMembers()) {
                 codex.reconcile(player);

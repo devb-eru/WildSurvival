@@ -731,8 +731,8 @@
       "setId": "EQL-SET-PIONEER",
       "tags": [],
       "stats": {
-        "EVA": 2.0,
-        "DEF": 4.0
+        "DEF": 4.0,
+        "EVA": 2.0
       },
       "effectText": "EQL-AR-C04 | 발 | DEF +4, EVA +2 | 동일 | WSRCP-E04",
       "raw": [
@@ -1741,8 +1741,8 @@
         "GUARD"
       ],
       "stats": {
-        "DEF": 2.0,
-        "ATK": 8.0
+        "ATK": 8.0,
+        "DEF": 2.0
       },
       "effectText": "EQL-W01 | 개척 검 | SWORD | ATK +8, DEF +2 | WSRCP-W01 | COMBO`, `GUARD",
       "raw": [
@@ -1812,8 +1812,8 @@
         "AIM"
       ],
       "stats": {
-        "HIT": 4.0,
-        "ATK": 8.0
+        "ATK": 8.0,
+        "HIT": 4.0
       },
       "effectText": "EQL-W03 | 개척 활 | BOW | ATK +8, HIT +4 | WSRCP-W03 | RANGED`, `AIM",
       "raw": [
@@ -1883,8 +1883,8 @@
         "BLEED"
       ],
       "stats": {
-        "EVA": 4.0,
-        "ATK": 5.0
+        "ATK": 5.0,
+        "EVA": 4.0
       },
       "effectText": "EQL-W05 | 개척 단검 | DAGGER | ATK +5, EVA +4 | WSRCP-W05 | AGILE`, `BLEED",
       "raw": [
@@ -1919,8 +1919,8 @@
         "BREAK"
       ],
       "stats": {
-        "BREAK_DAMAGE": 4.0,
-        "ATK": 10.0
+        "ATK": 10.0,
+        "BREAK_DAMAGE": 4.0
       },
       "effectText": "EQL-W06 | 개척 둔기 | BLUNT | ATK +10, BREAK_DAMAGE +4% | WSRCP-W06 | IMPACT`, `BREAK",
       "raw": [
@@ -1955,8 +1955,8 @@
         "AREA"
       ],
       "stats": {
-        "ATK": 8.0,
-        "AP": 4.0
+        "AP": 4.0,
+        "ATK": 8.0
       },
       "effectText": "EQL-W07 | 개척 지팡이 | STAFF | ATK +8, 최대 AP +4 | WSRCP-W07 | MAGIC`, `AREA",
       "raw": [
@@ -1991,8 +1991,8 @@
         "BREAK"
       ],
       "stats": {
-        "PEN": 6.0,
-        "ATK": 10.0
+        "ATK": 10.0,
+        "PEN": 6.0
       },
       "effectText": "EQL-W08 | 개척 전투 곡괭이 | PICKAXE | ATK +10, PEN +6 | WSRCP-W08 | PENETRATE`, `BREAK",
       "raw": [
@@ -2027,8 +2027,8 @@
         "RECALL"
       ],
       "stats": {
-        "HIT": 4.0,
-        "ATK": 9.0
+        "ATK": 9.0,
+        "HIT": 4.0
       },
       "effectText": "EQL-W09 | 개척 삼지창 | TRIDENT | ATK +9, HIT +4 | WSRCP-W09 | THROW`, `RECALL",
       "raw": [
@@ -2155,8 +2155,8 @@
       "setId": "EQL-SET-SCOUT",
       "tags": [],
       "stats": {
-        "EVA": 2.0,
-        "DEF": 4.0
+        "DEF": 4.0,
+        "EVA": 2.0
       },
       "effectText": "EQL-AR-U-SCOUT-* | 개척자 기본값 + EVA 2~4, HIT 2~4 | 이동 중 첫 피격 피해 -4%, 8초 | 동적 자원 노드 측정시간 -15% | 코일 1, 보강 천 1",
       "raw": [
@@ -2283,8 +2283,8 @@
       "setId": "EQL-SET-VANGUARD",
       "tags": [],
       "stats": {
-        "EVA": 2.0,
-        "DEF": 8.0
+        "DEF": 8.0,
+        "EVA": 2.0
       },
       "effectText": "EQL-AR-U-VANGUARD-* | 개척자 기본값 + DEF 4~8 | 가드 충격 AP -5% | 구조 중 받는 피해 -8% | 판재 2, 골재 1",
       "raw": [
@@ -2414,8 +2414,8 @@
       "setId": "EQL-SET-OBSERVER",
       "tags": [],
       "stats": {
-        "EVA": 2.0,
         "DEF": 4.0,
+        "EVA": 2.0,
         "RES": 4.0
       },
       "effectText": "EQL-AR-R-OBSERVER-* | 개척자 기본값 + RES 4~8, HP 20~40 | 개인 오염 획득 -6% | 표본 채취 중 피격 중단 임계 +20% | 촉매 1, 결정 1, 정밀 부품 1",

@@ -47,6 +47,16 @@ class ProductionBundleValidatorTest {
         assertEquals(40.0, pioneerChest.stat("HP"));
         assertEquals(10.0, pioneerChest.stat("DEF"));
         assertEquals("ABYSSAL", result.catalog().equipmentById().get("EQD50-AX-A41").rarity());
+        assertEquals(46, result.catalog().facilitiesById().size());
+        assertEquals(8, result.catalog().facilitiesById().values().stream()
+                .filter(ProductionContentCatalog.FacilityEntry::portableDevice).count());
+        assertEquals(6, result.catalog().facilitiesById().values().stream()
+                .filter(ProductionContentCatalog.FacilityEntry::reconstruction).count());
+        assertEquals("SHARED_LEDGER", result.catalog().facilitiesById().get("FAC-S16").effectOpcode());
+        assertEquals(4200, result.catalog().facilitiesById().get("FAC-S06").baseHp());
+        assertEquals(30000, result.catalog().facilitiesById().get("FAC-R06").baseHp());
+        assertEquals(49, result.catalog().facilitiesById().get("FAC-R06").firstDay());
+        assertEquals(50, result.catalog().facilitiesById().get("FAC-R06").activationDay());
         assertEquals(91, result.counts().get("enemies") + result.counts().get("bosses") + result.counts().get("support"));
     }
 }

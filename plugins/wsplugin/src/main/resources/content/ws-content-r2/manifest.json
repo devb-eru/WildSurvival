@@ -240,7 +240,7 @@
       "path": "equipment/day01-10.json",
       "domain": "equipment",
       "schema": "equipment.schema.json",
-      "sha256": "c9fc550245e3e6fe52682fb35f0a0a3daa95bfc22c65c97c1176a34982b2a139"
+      "sha256": "40a313c5b81d8917b83f7bf6fe57811aa1655666d25294352d92a6327db5cb1c"
     },
     {
       "path": "equipment/day11-20.json",
@@ -258,7 +258,7 @@
       "path": "facilities/season1-facilities.json",
       "domain": "facilities",
       "schema": "facility.schema.json",
-      "sha256": "17572fe5293f303c1e4fbf77ec70abf7f54fc1418506056b081456e379778c32"
+      "sha256": "e52bbbefd56aba9bb02c71422c6db34cde2b0636fe6af0641713e318b65449ca"
     },
     {
       "path": "research/season1-research.json",

@@ -186,6 +186,55 @@ function Equipment-ToolTier([string]$Id) {
     }
     return -1
 }
+function Facility-Tier([string]$Id) {
+    if ($Id.StartsWith('FAC-P')) { return 'PORTABLE' }
+    if ($Id.StartsWith('FAC-C')) { return 'CAMP' }
+    if ($Id.StartsWith('FAC-S')) { return 'SETTLEMENT' }
+    if ($Id.StartsWith('FAC-D')) { return 'DEFENSE' }
+    return 'RECONSTRUCTION'
+}
+function Facility-MaxLevel([string]$Id) {
+    $levels = @{
+        'FAC-S01'=5;'FAC-S02'=5;'FAC-S03'=5;'FAC-S04'=4;'FAC-S05'=4;'FAC-S06'=5;'FAC-S07'=5;'FAC-S08'=5
+        'FAC-S09'=4;'FAC-S10'=3;'FAC-S11'=5;'FAC-S12'=3;'FAC-S13'=5;'FAC-S14'=4;'FAC-S15'=4;'FAC-S16'=5
+        'FAC-S17'=5;'FAC-S18'=4;'FAC-S19'=3;'FAC-S20'=4
+    }
+    if ($levels.ContainsKey($Id)) { return $levels[$Id] }
+    if ($Id.StartsWith('FAC-D')) { return 3 }
+    return 1
+}
+function Facility-Opcode([string]$Id) {
+    $opcodes = @{
+        'FAC-P01'='CRAFT_PORTABLE';'FAC-P02'='REPAIR_FIELD';'FAC-P03'='SAMPLE_EXTRACT';'FAC-P04'='ANALYZE_PORTABLE'
+        'FAC-P05'='PURIFY_PORTABLE';'FAC-P06'='SIGNAL_STAKE';'FAC-P07'='RESCUE_BEACON';'FAC-P08'='LEDGER_REMOTE'
+        'FAC-C01'='CRAFT_BASIC';'FAC-C02'='SMELT';'FAC-C03'='STORAGE';'FAC-C04'='REST';'FAC-C05'='ALERT'
+        'FAC-C06'='MEDICAL_BASIC';'FAC-C07'='AMMO_BASIC';'FAC-C08'='BARRICADE'
+        'FAC-S01'='CRAFT_ADVANCED';'FAC-S02'='REPAIR_FULL';'FAC-S03'='REFORGE';'FAC-S04'='SALVAGE'
+        'FAC-S05'='AMMO_ADVANCED';'FAC-S06'='RESEARCH';'FAC-S07'='FORECAST';'FAC-S08'='PATTERN_ANALYZE'
+        'FAC-S09'='AUGMENT_MANAGE';'FAC-S10'='TRAINING';'FAC-S11'='MEDICAL';'FAC-S12'='GRAVE_RECOVERY'
+        'FAC-S13'='PURIFY';'FAC-S14'='PURIFY_RELAY';'FAC-S15'='ENVIRONMENT_SHIELD';'FAC-S16'='SHARED_LEDGER'
+        'FAC-S17'='POWER_DISTRIBUTE';'FAC-S18'='TRAVEL';'FAC-S19'='SESSION_RELAY';'FAC-S20'='ASSAULT_OBSERVE'
+        'FAC-D01'='WALL_REGISTER';'FAC-D02'='SLOW_TRAP';'FAC-D03'='IMPACT_TRAP';'FAC-D04'='TAUNT_BEACON'
+        'FAC-R01'='REBUILD_FRAME';'FAC-R02'='REBUILD_POWER';'FAC-R03'='REBUILD_LENS';'FAC-R04'='REBUILD_PURIFY'
+        'FAC-R05'='REBUILD_STAKES';'FAC-R06'='REBUILD_FINAL'
+    }
+    return $opcodes[$Id]
+}
+function Facility-CoreMaterial([string]$Id, [string]$ItemMaterial) {
+    if ($ItemMaterial) { return $ItemMaterial }
+    return @{
+        'FAC-R01'='SMITHING_TABLE';'FAC-R02'='REDSTONE_LAMP';'FAC-R03'='BEACON'
+        'FAC-R04'='TINTED_GLASS';'FAC-R05'='LODESTONE';'FAC-R06'='RESPAWN_ANCHOR'
+    }[$Id]
+}
+function Facility-BaseHp([string]$Id, [string]$Tier, [int]$Threat) {
+    $rebuild = @{'FAC-R01'=18000;'FAC-R02'=16000;'FAC-R03'=14000;'FAC-R04'=16000;'FAC-R05'=5000;'FAC-R06'=30000}
+    if ($rebuild.ContainsKey($Id)) { return $rebuild[$Id] }
+    if ($Tier -eq 'PORTABLE') { return 1 }
+    if ($Tier -eq 'CAMP') { return 800 + 100 * $Threat }
+    if ($Tier -eq 'DEFENSE') { return 1600 + 100 * $Threat }
+    return 3300 + 100 * $Threat
+}
 function Equipment-SetId([string]$Id) {
     if ($Id -match '^EQL-AR-C0') { return 'EQL-SET-PIONEER' }
     foreach ($set in @('SCOUT','VANGUARD','OBSERVER')) { if ($Id -match "^EQL-AR-.*-$set-") { return "EQL-SET-$set" } }
@@ -203,14 +252,14 @@ function Equipment-Stats([string]$Id) {
         'EQL-W05'=@{ATK=5;EVA=4};'EQL-W06'=@{ATK=10;BREAK_DAMAGE=4};'EQL-W07'=@{ATK=8;AP=4}
         'EQL-W08'=@{ATK=10;PEN=6};'EQL-W09'=@{ATK=9;HIT=4}
     }
-    if ($baseWeapons.ContainsKey($Id)) { foreach ($key in $baseWeapons[$Id].Keys) { Add-EquipmentStat $stats $key $baseWeapons[$Id][$key] } }
+    if ($baseWeapons.ContainsKey($Id)) { foreach ($key in @($baseWeapons[$Id].Keys | Sort-Object)) { Add-EquipmentStat $stats $key $baseWeapons[$Id][$key] } }
     $armorBase = @{
         HEAD=@{DEF=5;HP=20};CHEST=@{DEF=10;HP=40};LEGS=@{DEF=8;HP=30};FEET=@{DEF=4;EVA=2}
     }
     $part = @('HEAD','CHEST','LEGS','FEET') | Where-Object { $Id.EndsWith("-$_") } | Select-Object -First 1
     if (-not $part -and $Id -match '^EQL-AR-C0([1-4])$') { $part = @('HEAD','CHEST','LEGS','FEET')[[int]$Matches[1]-1] }
     if ($Id -match '^EQL-AR-(C0|U-|R-)' -and $part) {
-        foreach ($key in $armorBase[$part].Keys) { Add-EquipmentStat $stats $key $armorBase[$part][$key] }
+        foreach ($key in @($armorBase[$part].Keys | Sort-Object)) { Add-EquipmentStat $stats $key $armorBase[$part][$key] }
     }
     $partIndex = @{HEAD=0;CHEST=1;LEGS=2;FEET=3}
     if ($Id -match '^EQL-AR-U-VANGUARD-' -and $part) { Add-EquipmentStat $stats 'DEF' @(4,8,6,4)[$partIndex[$part]] }
@@ -228,7 +277,7 @@ function Equipment-Stats([string]$Id) {
         'EQL-SW-U01'=@{DEF=6};'EQL-BO-U01'=@{HIT=4};'EQL-UA-U01'=@{DEF=4};'EQL-AC-C01'=@{RES=2}
         'EQL-AC-U01'=@{HIT=4};'EQL-CH-C01'=@{HP=40};'EQL-CH-U02'=@{BREAK_DAMAGE=4}
     }
-    if ($exact.ContainsKey($Id)) { foreach ($key in $exact[$Id].Keys) { Add-EquipmentStat $stats $key $exact[$Id][$key] } }
+    if ($exact.ContainsKey($Id)) { foreach ($key in @($exact[$Id].Keys | Sort-Object)) { Add-EquipmentStat $stats $key $exact[$Id][$key] } }
     return $stats
 }
 function Base-WeaponId([string]$Code) {
@@ -659,7 +708,51 @@ $actions = foreach ($enemy in $enemies) {
 foreach ($boss in $bosses) { $actions += Raw-Record ('ACTSET-' + $boss.id) 'ENTITY-LIST-001' @($boss.id) }
 
 $facilityById = Find-IdRows $facilityRows '^FAC-[PCSDR]\d{2}$'
-$facilities = foreach ($entry in $facilityById.GetEnumerator()) { Raw-Record $entry.Key 'FACILITY-LIST-001' $entry.Value }
+$facilityDataById = Find-IdRows $facilityDataRows 'FAC-[SD]\d{2}'
+$facilityExecutionById = [ordered]@{}
+foreach ($cells in $facilityRows) {
+    if ($cells.Count -ge 5 -and $cells[0] -match '^FAC-[PCSDR]\d{2}$' -and
+            ($cells[2] -match '^WSI-' -or $cells[2] -eq 'VIRTUAL_BUILD')) {
+        $facilityExecutionById[$cells[0]] = $cells
+    }
+}
+$itemById = [ordered]@{}
+foreach ($item in $items) { $itemById[$item.id] = $item }
+$facilities = foreach ($entry in $facilityById.GetEnumerator()) {
+    $id = $entry.Key; $cells = $entry.Value; $tier = Facility-Tier $id
+    $execution = $facilityExecutionById[$id]
+    if (-not $execution) { throw "Facility execution mapping missing: $id" }
+    $itemId = if ($execution[2] -eq 'VIRTUAL_BUILD') { '' } else { $execution[2] }
+    $recipeId = $execution[3]
+    $stateMachine = $execution[4]
+    $item = if ($itemId -and $itemById.Contains($itemId)) { $itemById[$itemId] } else { $null }
+    $firstDay = if ($item) { [int]$item.firstDay } elseif ($id -eq 'FAC-R06') { 49 } else { 41 }
+    $threatCell = if ($tier -eq 'CAMP') { $cells[4] } elseif ($tier -in @('SETTLEMENT','DEFENSE','RECONSTRUCTION')) { $cells[5] } else { '0' }
+    $threatMatch = [regex]::Match($threatCell, '\d+')
+    $threat = if ($threatMatch.Success) { [int]$threatMatch.Value } else { 0 }
+    $workSlots = if ($tier -eq 'SETTLEMENT' -and $cells[4] -match '^\d+$') { [int]$cells[4] }
+        elseif ($id -eq 'FAC-C01') { 1 } elseif ($id -eq 'FAC-R01') { 2 }
+        elseif ($tier -eq 'RECONSTRUCTION') { 1 } else { 0 }
+    $profile = if ($facilityDataById.Contains($id)) { $facilityDataById[$id] } else { $null }
+    $costProfile = if ($tier -eq 'SETTLEMENT') { 'FP-' + $profile[1] }
+        elseif ($tier -eq 'DEFENSE') { 'FP-DEFENSE' }
+        elseif ($tier -eq 'RECONSTRUCTION') { 'RECONSTRUCTION' }
+        elseif ($tier -eq 'CAMP') { 'CAMP' } else { 'PORTABLE' }
+    $unlockText = if ($profile) { $profile[2] } elseif ($tier -eq 'RECONSTRUCTION') { $cells[4] } else { 'BASIC' }
+    $maintenanceText = if ($profile) { $profile[4] } else { $cells[4] }
+    $fallback = if ($profile -and $profile.Count -gt 5) { $profile[5] }
+        elseif ($tier -eq 'CAMP' -and $cells.Count -gt 5) { $cells[5] } else { '' }
+    $coreMaterial = Facility-CoreMaterial $id $(if ($item) {$item.displayMaterial} else {''})
+    [ordered]@{
+        id=$id;sourceDocumentId='FACILITY-LIST-001';enabled=$true;name=$cells[1];facilityTier=$tier
+        representation=$cells[2];coreMaterial=$coreMaterial;networkPolicy=$(if ($tier -in @('PORTABLE','CAMP')) {'INDEPENDENT'} elseif ($tier -eq 'RECONSTRUCTION') {'CONNECTED_96'} else {'CONNECTED_24'})
+        itemId=$itemId;recipeId=$recipeId;firstDay=$firstDay;activationDay=$(if ($id -eq 'FAC-R06') {50} else {$firstDay});maxLevel=(Facility-MaxLevel $id)
+        baseHp=(Facility-BaseHp $id $tier $threat);hpAuthority=$(if ($tier -eq 'RECONSTRUCTION') {'DOCUMENT_LOCK'} else {'IMPLEMENTATION_BASELINE'})
+        workSlots=$workSlots;threatValue=$threat;costProfile=$costProfile;unlockText=$unlockText
+        effectOpcode=(Facility-Opcode $id);effectText=$cells[3];maintenanceText=$maintenanceText
+        portableFallback=$fallback;stateMachine=$stateMachine;raw=@($cells)
+    }
+}
 $lootById = Find-IdRows $lootRows '^LOOT-[A-Z0-9-]+$'
 $lootById.Remove('LOOT-LIST-001')
 $lootById.Remove('loot-s1-r1')

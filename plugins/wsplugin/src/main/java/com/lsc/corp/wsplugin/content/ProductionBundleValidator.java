@@ -102,6 +102,7 @@ public final class ProductionBundleValidator {
             validateAugmentCatalog(catalog);
             validateItemCatalog(catalog);
             validateEquipmentProfiles(catalog);
+            validateFacilityProfiles(catalog);
             return new ValidationResult(catalog, Map.copyOf(counts), paths.size() + 2,
                     ContentBundleValidator.sha256(manifestBytes));
         } catch (ContentValidationException exception) {
@@ -145,6 +146,24 @@ public final class ProductionBundleValidator {
                 if (equipmentById.putIfAbsent(equipment.id(), equipment) != null) {
                     throw new ContentValidationException("Duplicate equipment profile " + equipment.id());
                 }
+            }
+        }
+        Map<String, ProductionContentCatalog.FacilityEntry> facilitiesById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "facilities/season1-facilities.json")) {
+            ProductionContentCatalog.FacilityEntry facility = new ProductionContentCatalog.FacilityEntry(
+                    requiredString(record, "id"), requiredString(record, "name"),
+                    requiredString(record, "facilityTier"), requiredString(record, "representation"),
+                    requiredString(record, "coreMaterial"), requiredString(record, "networkPolicy"),
+                    optionalString(record, "itemId", ""), requiredString(record, "recipeId"),
+                    requiredInt(record, "firstDay"), requiredInt(record, "activationDay"), requiredInt(record, "maxLevel"),
+                    requiredInt(record, "baseHp"), requiredString(record, "hpAuthority"),
+                    requiredInt(record, "workSlots"), requiredInt(record, "threatValue"),
+                    requiredString(record, "costProfile"), requiredString(record, "unlockText"),
+                    requiredString(record, "effectOpcode"), requiredString(record, "effectText"),
+                    requiredString(record, "maintenanceText"), optionalString(record, "portableFallback", ""),
+                    requiredString(record, "stateMachine"));
+            if (facilitiesById.putIfAbsent(facility.id(), facility) != null) {
+                throw new ContentValidationException("Duplicate facility profile " + facility.id());
             }
         }
         Map<String, JsonObject> details = new HashMap<>();
@@ -229,7 +248,7 @@ public final class ProductionBundleValidator {
             }
         }
         return new ProductionContentCatalog(List.copyOf(codex), Map.copyOf(byId), Map.copyOf(materialsById),
-                Map.copyOf(nonEquipmentItemsById), Map.copyOf(equipmentById), List.copyOf(recipes),
+                Map.copyOf(nonEquipmentItemsById), Map.copyOf(equipmentById), Map.copyOf(facilitiesById), List.copyOf(recipes),
                 Map.copyOf(byOutput), List.copyOf(skills), Map.copyOf(skillsById),
                 List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById), Map.copyOf(counts));
     }
@@ -487,6 +506,50 @@ public final class ProductionBundleValidator {
             if (equipment.utility() && (!"INVENTORY".equals(equipment.equipmentSlot())
                     || equipment.toolTier() < 3 || equipment.toolTier() > 6)) {
                 throw new ContentValidationException("Invalid utility profile " + equipment.id());
+            }
+        }
+    }
+
+    private void validateFacilityProfiles(ProductionContentCatalog catalog) throws ContentValidationException {
+        if (catalog.facilitiesById().size() != 46) {
+            throw new ContentValidationException("Facility profile cardinality mismatch");
+        }
+        Set<String> tiers = Set.of("PORTABLE", "CAMP", "SETTLEMENT", "DEFENSE", "RECONSTRUCTION");
+        Set<String> networks = Set.of("INDEPENDENT", "CONNECTED_24", "CONNECTED_96");
+        Map<String, Long> expectedTiers = Map.of("PORTABLE", 8L, "CAMP", 8L,
+                "SETTLEMENT", 20L, "DEFENSE", 4L, "RECONSTRUCTION", 6L);
+        Map<String, Long> actualTiers = catalog.facilitiesById().values().stream().collect(
+                java.util.stream.Collectors.groupingBy(ProductionContentCatalog.FacilityEntry::facilityTier,
+                        java.util.stream.Collectors.counting()));
+        if (!expectedTiers.equals(actualTiers)) {
+            throw new ContentValidationException("Facility tier cardinality mismatch " + actualTiers);
+        }
+        Set<String> recipeIds = catalog.recipes().stream().map(ProductionContentCatalog.RecipeEntry::id)
+                .collect(java.util.stream.Collectors.toSet());
+        Set<String> itemIds = new HashSet<>();
+        for (ProductionContentCatalog.FacilityEntry facility : catalog.facilitiesById().values()) {
+            if (!tiers.contains(facility.facilityTier()) || !networks.contains(facility.networkPolicy())
+                    || facility.name().isBlank() || facility.effectOpcode().isBlank() || facility.effectText().isBlank()
+                    || facility.coreMaterial().isBlank() || facility.firstDay() < 1 || facility.firstDay() > 50
+                    || facility.activationDay() < facility.firstDay() || facility.activationDay() > 50
+                    || facility.maxLevel() < 1 || facility.maxLevel() > 5 || facility.baseHp() < 1
+                    || facility.workSlots() < 0 || facility.workSlots() > 4 || facility.threatValue() < 0) {
+                throw new ContentValidationException("Invalid facility profile " + facility.id());
+            }
+            if (!recipeIds.contains(facility.recipeId())) {
+                throw new ContentValidationException("Unknown facility recipe " + facility.id() + " -> " + facility.recipeId());
+            }
+            if (facility.portableDevice() || !facility.reconstruction()) {
+                if (facility.itemId().isBlank() || !catalog.nonEquipmentItemsById().containsKey(facility.itemId())
+                        || !itemIds.add(facility.itemId())) {
+                    throw new ContentValidationException("Invalid/duplicate facility item " + facility.id()
+                            + " -> " + facility.itemId());
+                }
+            } else if (!facility.itemId().isBlank()) {
+                throw new ContentValidationException("Reconstruction facility must be virtual " + facility.id());
+            }
+            if (facility.reconstruction() && !"DOCUMENT_LOCK".equals(facility.hpAuthority())) {
+                throw new ContentValidationException("Reconstruction HP authority mismatch " + facility.id());
             }
         }
     }

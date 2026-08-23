@@ -42,6 +42,23 @@ PLANNED → PLACING → ACTIVE ↔ DEGRADED ↔ DISABLED
 - `FAC-S06` 연구 단말의 슬롯·시간은 `RESEARCH-001` 수치가 우선한다.
 - 방어 시설 D01~D04는 Lv3이 상한이며 재건 시설은 일반 레벨 체계를 쓰지 않는다.
 
+### 2.1 기본 HP 구현 기준
+
+일반 시설의 목록에는 개별 기본 HP가 누락되어 있으므로 `facility-data-d11-d50-r1`의 구현 기준값을 다음 계산으로 고정한다. 이 계산 결과는 콘텐츠 번들에 펼쳐 저장하며 런타임에서 다시 추론하지 않는다.
+
+```text
+PORTABLE 기본 HP = 1 (월드 피해 대상이 아닌 상태 표식)
+CAMP 기본 HP = 800 + 위협값 × 100
+SETTLEMENT 기본 HP = 3300 + 위협값 × 100
+DEFENSE 기본 HP = 1600 + 위협값 × 100
+RECONSTRUCTION 기본 HP = §5 확정값
+```
+
+- HP가 최대치의 50% 미만이면 `DEGRADED`, 25% 이하이면 `DISABLED`, 그 외에는 `ACTIVE`다.
+- 레벨 HP 배율은 §2의 100/115/130/145/160%를 사용한다.
+- 대표 기준인 `FAC-S06`은 위협 9이므로 Lv1 HP 4,200이다.
+- `FAC-R06`은 Day 49에 조립해 `READY_LOCKED`까지 만들 수 있고 Day 50부터만 `READY` 전환과 최종 출력을 허용한다.
+
 ## 3. 업그레이드 비용 프로필
 
 | 프로필 | Lv1 건설 | Lv2 | Lv3 | Lv4 | Lv5 |

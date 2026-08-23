@@ -340,6 +340,22 @@ public final class EquipmentService implements Listener {
         return true;
     }
 
+    public boolean repairMostDamagedFull(Player player) {
+        String instanceId = mostDamagedEquipped(player);
+        if (instanceId == null) return false;
+        runs.mutate(run -> {
+            RunSnapshot.EquipmentInstanceState target = equipmentInstances(
+                    run.players.get(player.getUniqueId().toString())).get(instanceId);
+            if (target == null) return;
+            target.currentDurability = target.maxDurability;
+            target.condition = "ACTIVE";
+        });
+        syncAuthoritativeEquipment(player);
+        telemetry.event(runs.current().orElseThrow().runId, "EQUIPMENT_REPAIRED",
+                "{\"instanceId\":\"" + instanceId + "\",\"method\":\"FAC-S02\"}");
+        return true;
+    }
+
     private String mostDamagedEquipped(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null) return null;

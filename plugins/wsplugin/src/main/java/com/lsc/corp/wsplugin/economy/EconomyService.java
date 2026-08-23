@@ -2,6 +2,7 @@ package com.lsc.corp.wsplugin.economy;
 
 import com.lsc.corp.wsplugin.content.PrototypeContent;
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
+import com.lsc.corp.wsplugin.facility.FacilityStateAccess;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
@@ -16,6 +17,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -65,6 +68,8 @@ public final class EconomyService implements Listener {
     private final TelemetryService telemetry;
     private final ItemCodexService codex;
     private final NamespacedKey facilityKey;
+    private BiPredicate<Player, String> virtualPreflight = (player, outputId) -> true;
+    private BiConsumer<Player, String> virtualCommit;
 
     public EconomyService(JavaPlugin plugin, RunService runs, PrototypeContent content,
                           ProductionContentCatalog production, EquipmentService equipment,
@@ -78,6 +83,15 @@ public final class EconomyService implements Listener {
         this.telemetry = telemetry;
         this.codex = codex;
         this.facilityKey = new NamespacedKey(plugin, "facility_id");
+        this.virtualCommit = (player, outputId) -> runs.commitOnce("virtual-output:" + outputId,
+                "VIRTUAL_RECIPE_COMMITTED", "{\"outputId\":\"" + outputId + "\"}",
+                run -> run.committedKeys.add("proof:" + outputId));
+    }
+
+    public void setVirtualFacilityHandler(BiPredicate<Player, String> preflight,
+                                          BiConsumer<Player, String> commit) {
+        this.virtualPreflight = java.util.Objects.requireNonNull(preflight);
+        this.virtualCommit = java.util.Objects.requireNonNull(commit);
     }
 
     public void openCraft(Player player) {
@@ -112,9 +126,11 @@ public final class EconomyService implements Listener {
 
     private void openLedger(Player player, int requestedPage) {
         RunSnapshot run = runs.current().orElse(null);
+        boolean prototypeDepot = run != null && run.facility != null && run.facility.active;
+        boolean productionDepot = run != null && FacilityStateAccess.active(run, "FAC-S16");
         if (!runs.isRunningMember(player) || run == null || !run.sharedLedgerUnlocked
-                || run.facility == null || !run.facility.active) {
-            player.sendMessage(ChatColor.RED + "공용 보급 저장소를 제작한 뒤 월드에 설치해야 합니다.");
+                || (!prototypeDepot && !productionDepot)) {
+            player.sendMessage(ChatColor.RED + "FAC-S16 공용 물류고를 활성 상태로 설치해야 합니다.");
             return;
         }
         List<ProductionContentCatalog.MaterialEntry> visible = production.materialsById().values().stream()
@@ -448,6 +464,7 @@ public final class EconomyService implements Listener {
             return;
         }
         ProductionContentCatalog.CatalogEntry output = production.itemsById().get(recipe.outputId());
+        if (output == null && !virtualPreflight.test(player, recipe.outputId())) return;
         if (output != null && output.equipment() && !equipment.canGrantEquipment(player)) {
             player.sendMessage(ChatColor.RED + "장비 결과를 받을 인벤토리 공간이 없습니다.");
             return;
@@ -471,9 +488,7 @@ public final class EconomyService implements Listener {
             if (item.getAmount() <= 0) inventory.setItem(inventorySlot, null);
         }
         if (output == null) {
-            runs.commitOnce("virtual-recipe:" + recipe.id(), "VIRTUAL_RECIPE_COMMITTED",
-                    "{\"recipeId\":\"" + recipe.id() + "\",\"outputId\":\"" + recipe.outputId() + "\"}",
-                    run -> run.committedKeys.add("proof:" + recipe.outputId()));
+            virtualCommit.accept(player, recipe.outputId());
             player.sendMessage(ChatColor.GREEN + "시설/재건 단계 등록: " + recipe.outputId());
         } else if (output.equipment()) {
             if (baseEquipment == null) equipment.grantEquipment(player, output.id());
@@ -531,8 +546,10 @@ public final class EconomyService implements Listener {
         RunSnapshot snapshot = runs.current().orElseThrow();
         if (codex.countItem(player, proof) >= amount || snapshot.resources.getOrDefault(proof, 0) >= amount) return true;
         if (snapshot.committedKeys.contains("proof:" + proof) || snapshot.committedKeys.contains(proof)) return true;
-        if (proof.endsWith("_ACTIVE") && snapshot.facility != null && snapshot.facility.active) {
-            return proof.substring(0, proof.length() - "_ACTIVE".length()).equals(snapshot.facility.id);
+        if (proof.endsWith("_ACTIVE")) {
+            String facilityType = proof.substring(0, proof.length() - "_ACTIVE".length());
+            if (FacilityStateAccess.active(snapshot, facilityType)) return true;
+            return snapshot.facility != null && snapshot.facility.active && facilityType.equals(snapshot.facility.id);
         }
         return false;
     }
@@ -540,6 +557,10 @@ public final class EconomyService implements Listener {
     private int recipeFirstDay(ProductionContentCatalog.RecipeEntry recipe) {
         ProductionContentCatalog.CatalogEntry output = production.itemsById().get(recipe.outputId());
         if (output != null) return output.firstDay();
+        String facilityType = recipe.outputId().contains("@")
+                ? recipe.outputId().substring(0, recipe.outputId().indexOf('@')) : recipe.outputId();
+        ProductionContentCatalog.FacilityEntry facility = production.facilitiesById().get(facilityType);
+        if (facility != null) return facility.firstDay();
         java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("D(\\d{1,2})").matcher(recipe.id());
         return matcher.find() ? Math.min(50, Integer.parseInt(matcher.group(1))) : 1;
     }
