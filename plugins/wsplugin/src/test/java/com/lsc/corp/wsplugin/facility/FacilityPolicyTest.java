@@ -46,4 +46,17 @@ class FacilityPolicyTest {
         depot.state = "ACTIVE";
         assertTrue(FacilityStateAccess.active(run, "FAC-S16"));
     }
+
+    @Test
+    void reconstructionNeverStartsAsCompleted() {
+        assertEquals("ASSEMBLED", FacilityPolicy.initialReconstructionState("FAC-R01"));
+        assertEquals("ASSEMBLED", FacilityPolicy.initialReconstructionState("FAC-R02"));
+        assertEquals("ASSEMBLED", FacilityPolicy.initialReconstructionState("FAC-R03"));
+        assertEquals("ASSEMBLED", FacilityPolicy.initialReconstructionState("FAC-R04"));
+        assertEquals("PLACED", FacilityPolicy.initialReconstructionState("FAC-R05"));
+        assertEquals("READY_LOCKED", FacilityPolicy.initialReconstructionState("FAC-R06"));
+        assertEquals(120_000L, FacilityPolicy.reconstructionDurationMillis("FAC-R01"));
+        assertEquals(60_000L, FacilityPolicy.reconstructionDurationMillis("FAC-R02"));
+        assertEquals(0L, FacilityPolicy.reconstructionDurationMillis("FAC-R03"));
+    }
 }

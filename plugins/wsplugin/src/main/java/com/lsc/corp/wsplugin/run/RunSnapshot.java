@@ -192,6 +192,8 @@ public final class RunSnapshot {
         public int triggerCharges;
         public List<FacilityWorkState> queue = new ArrayList<>();
         public Map<String, Integer> outputLedger = new LinkedHashMap<>();
+        /** Slot-indexed Base64 Bukkit ItemStack payloads for facilities such as FAC-C03. */
+        public Map<String, String> storageSlots = new LinkedHashMap<>();
     }
 
     public static final class FacilityWorkState {
@@ -202,6 +204,8 @@ public final class RunSnapshot {
         public long queuedAtEpochMs;
         public long processingStartedAtEpochMs;
         public long durationMillis;
+        /** Active server time only. Offline wall-clock time must not advance facility work. */
+        public long processedMillis;
         public Map<String, Integer> reservedInputs = new LinkedHashMap<>();
         public Map<String, Integer> outputs = new LinkedHashMap<>();
     }

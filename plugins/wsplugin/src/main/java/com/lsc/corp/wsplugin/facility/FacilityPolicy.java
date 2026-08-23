@@ -70,6 +70,23 @@ public final class FacilityPolicy {
         return "DEFENSE".equals(tier) ? 64 : 24;
     }
 
+    public static String initialReconstructionState(String facilityType) {
+        return switch (facilityType) {
+            case "FAC-R01", "FAC-R02", "FAC-R03", "FAC-R04" -> "ASSEMBLED";
+            case "FAC-R05" -> "PLACED";
+            case "FAC-R06" -> "READY_LOCKED";
+            default -> throw new IllegalArgumentException("Not a reconstruction facility: " + facilityType);
+        };
+    }
+
+    public static long reconstructionDurationMillis(String facilityType) {
+        return switch (facilityType) {
+            case "FAC-R01" -> 120_000L;
+            case "FAC-R02" -> 60_000L;
+            default -> 0L;
+        };
+    }
+
     private static int scale(int value, double multiplier) {
         return (int) Math.ceil(value * multiplier);
     }

@@ -68,7 +68,8 @@ public final class Main extends JavaPlugin {
             equipment.setStatRefresher(stats::apply);
             FacilityService facility = new FacilityService(this, runService, content.productionCatalog(), codex, equipment, telemetry);
             ResearchService research = new ResearchService(runService, content.productionCatalog());
-            facility.setOpeners(economy::openCraft, economy::openLedger, codex::open, stats::open, research::open);
+            facility.setOpeners(economy::openCraft, economy::openLedger, codex::open, stats::open,
+                    research::open, growth::openAugments);
             economy.setVirtualFacilityHandler(facility::canAssembleVirtual, facility::assembleVirtual);
             DiscoveryService discoveries = new DiscoveryService(runService, content.productionCatalog());
             StoryService story = new StoryService(runService, content.productionCatalog());

@@ -8,6 +8,7 @@ import com.lsc.corp.wsplugin.player.EquipmentService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,8 +38,10 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -85,9 +88,12 @@ public final class FacilityService implements Listener {
     private Consumer<Player> codexOpener = ignored -> { };
     private Consumer<Player> statsOpener = ignored -> { };
     private Consumer<Player> researchOpener = ignored -> { };
+    private Consumer<Player> augmentOpener = ignored -> { };
     private CombatService combat;
     private final Map<UUID, PendingVirtualBuild> pendingVirtualBuilds = new HashMap<>();
+    private final Map<String, UUID> storageSessions = new HashMap<>();
     private long lastTrapTick;
+    private long lastWorkTick;
 
     public FacilityService(JavaPlugin plugin, RunService runs, ProductionContentCatalog production,
                            ItemCodexService codex, EquipmentService equipment, TelemetryService telemetry) {
@@ -104,12 +110,13 @@ public final class FacilityService implements Listener {
 
     public void setOpeners(Consumer<Player> craftOpener, Consumer<Player> ledgerOpener,
                            Consumer<Player> codexOpener, Consumer<Player> statsOpener,
-                           Consumer<Player> researchOpener) {
+                           Consumer<Player> researchOpener, Consumer<Player> augmentOpener) {
         this.craftOpener = Objects.requireNonNull(craftOpener);
         this.ledgerOpener = Objects.requireNonNull(ledgerOpener);
         this.codexOpener = Objects.requireNonNull(codexOpener);
         this.statsOpener = Objects.requireNonNull(statsOpener);
         this.researchOpener = Objects.requireNonNull(researchOpener);
+        this.augmentOpener = Objects.requireNonNull(augmentOpener);
     }
 
     public void setCombatService(CombatService combat) {
@@ -151,6 +158,8 @@ public final class FacilityService implements Listener {
         RunSnapshot run = runs.current().orElse(null);
         if (run == null || !"RUNNING".equals(run.state)) return;
         long now = runs.clockNowMillis();
+        long workDelta = lastWorkTick == 0L ? 0L : Math.max(0L, Math.min(2_000L, now - lastWorkTick));
+        lastWorkTick = now;
         List<String> expired = FacilityStateAccess.instances(run).values().stream()
                 .filter(instance -> FacilityStateAccess.expired(instance, now)).map(instance -> instance.instanceId).toList();
         if (!expired.isEmpty()) {
@@ -168,6 +177,7 @@ public final class FacilityService implements Listener {
             lastTrapTick = now;
             tickDefenceFacilities(run);
         }
+        if (workDelta > 0L) tickFacilityWork(workDelta);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -226,6 +236,14 @@ public final class FacilityService implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onClick(InventoryClickEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof StorageHolder holder) {
+            if (!(event.getWhoClicked() instanceof Player player) || !holder.owner.equals(player.getUniqueId())) {
+                event.setCancelled(true);
+                return;
+            }
+            Bukkit.getScheduler().runTask(plugin, () -> persistStorage(holder, event.getView().getTopInventory()));
+            return;
+        }
         if (!(event.getView().getTopInventory().getHolder() instanceof FacilityHolder holder)) return;
         event.setCancelled(true);
         if (!(event.getWhoClicked() instanceof Player player) || !holder.owner.equals(player.getUniqueId())) return;
@@ -243,7 +261,27 @@ public final class FacilityService implements Listener {
 
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof StorageHolder holder) {
+            Bukkit.getScheduler().runTask(plugin, () -> persistStorage(holder, event.getView().getTopInventory()));
+            return;
+        }
         if (event.getView().getTopInventory().getHolder() instanceof FacilityHolder) event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onClose(InventoryCloseEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof StorageHolder holder) {
+            persistStorage(holder, event.getView().getTopInventory());
+            storageSessions.remove(holder.instanceId, holder.owner);
+        }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        if (event.getPlayer().getOpenInventory().getTopInventory().getHolder() instanceof StorageHolder holder) {
+            persistStorage(holder, event.getPlayer().getOpenInventory().getTopInventory());
+            storageSessions.remove(holder.instanceId, holder.owner);
+        }
     }
 
     public void open(Player player, String instanceId) {
@@ -260,8 +298,11 @@ public final class FacilityService implements Listener {
                 ChatColor.GRAY + "망 " + instance.networkId + " · 위협 " + profile.threatValue(),
                 ChatColor.GRAY + "작업 슬롯 " + FacilityPolicy.workSlots(profile.workSlots(), instance.level),
                 ChatColor.DARK_GRAY + instance.instanceId)));
-        inventory.setItem(20, named(Material.LIME_DYE, ChatColor.GREEN + "기능 실행",
-                List.of(ChatColor.WHITE + profile.effectText(), ChatColor.GRAY + profile.maintenanceText())));
+        List<String> functionLore = new ArrayList<>(List.of(ChatColor.WHITE + profile.effectText(),
+                ChatColor.GRAY + profile.maintenanceText()));
+        String workText = activeWorkText(instance);
+        if (workText != null) functionLore.add(ChatColor.YELLOW + workText);
+        inventory.setItem(20, named(Material.LIME_DYE, ChatColor.GREEN + "기능 실행", functionLore));
         if (instance.level < profile.maxLevel() && profile.costProfile().startsWith("FP-")) {
             int target = instance.level + 1;
             FacilityPolicy.UpgradeCost cost = FacilityPolicy.upgradeCost(profile.costProfile(), target, partySize());
@@ -340,7 +381,7 @@ public final class FacilityService implements Listener {
             String instanceId = "facility:" + run.runId + ":" + UUID.randomUUID();
             markRepresentation(target.getBlock(), material(profile), instanceId);
             RunSnapshot.FacilityInstanceState instance = createInstance(player, profile, instanceId, target, 0L);
-            instance.state = initialReconstructionState(facilityType, run.day);
+            instance.state = FacilityPolicy.initialReconstructionState(facilityType);
             created.add(instance);
         }
         runs.mutate(snapshot -> {
@@ -350,8 +391,6 @@ public final class FacilityService implements Listener {
             if (snapshot.facilityTypesEverActivated == null) snapshot.facilityTypesEverActivated = new java.util.LinkedHashSet<>();
             snapshot.facilityTypesEverActivated.add(facilityType);
             snapshot.committedKeys.add("proof:" + outputId);
-            if ("READY".equals(created.get(0).state)) snapshot.committedKeys.add("proof:" + facilityType + "_READY");
-            if ("FAC-R05".equals(facilityType)) snapshot.committedKeys.add("proof:FAC-R05_READY");
         });
         recomputeNetworks();
         telemetry.event(run.runId, "RECONSTRUCTION_ASSEMBLED", "{\"facilityType\":\""
@@ -396,13 +435,24 @@ public final class FacilityService implements Listener {
             case "FORECAST", "ALERT", "ASSAULT_OBSERVE" -> showAnalysis(player);
             case "TRAVEL" -> travel(player, instance);
             case "SESSION_RELAY" -> player.sendMessage(ChatColor.AQUA + "안전 중단·체크포인트는 /ws 명령에서 파티 투표로 요청합니다.");
-            case "REBUILD_POWER", "REBUILD_LENS", "REBUILD_PURIFY" -> completeReconstructionTest(player, instance);
+            case "REBUILD_POWER" -> startTimedReconstruction(player, instance);
+            case "REBUILD_LENS" -> requireReconstructionEvidence(player, instance,
+                    "세 방향 오차 시험 결과가 아직 연결되지 않았습니다.");
+            case "REBUILD_PURIFY" -> requireReconstructionEvidence(player, instance,
+                    "환경 2종 반응 시험 결과가 아직 연결되지 않았습니다.");
             case "REBUILD_FINAL" -> activateFinalFacility(player, instance);
             case "PURIFY_RELAY", "ENVIRONMENT_SHIELD" -> player.sendMessage(ChatColor.GREEN
                     + profile.name() + " 보호 범위가 시설망에 적용 중입니다.");
-            case "REFORGE", "AUGMENT_MANAGE", "GRAVE_RECOVERY",
-                    "POWER_DISTRIBUTE", "STORAGE", "BARRICADE", "WALL_REGISTER", "SLOW_TRAP", "IMPACT_TRAP",
-                    "TAUNT_BEACON", "REBUILD_FRAME", "REBUILD_STAKES" -> player.sendMessage(ChatColor.GREEN + profile.name() + " 가동 상태 · " + profile.effectText());
+            case "AUGMENT_MANAGE" -> augmentOpener.accept(player);
+            case "STORAGE" -> openStorage(player, instance);
+            case "SLOW_TRAP", "IMPACT_TRAP" -> player.sendMessage(ChatColor.GREEN + profile.name()
+                    + " 잔여 발동 " + instance.triggerCharges + "회");
+            case "REBUILD_FRAME" -> startTimedReconstruction(player, instance);
+            case "REBUILD_STAKES" -> requireReconstructionEvidence(player, instance,
+                    "세 말뚝 순차 교정 결과가 아직 연결되지 않았습니다.");
+            case "REFORGE", "GRAVE_RECOVERY", "POWER_DISTRIBUTE", "BARRICADE", "WALL_REGISTER",
+                    "TAUNT_BEACON" -> player.sendMessage(ChatColor.RED + profile.name()
+                    + "은(는) 구체 자원 ID 또는 대상 등록 계약이 미확정되어 BLOCKED_DATA 상태입니다.");
             default -> player.sendMessage(ChatColor.RED + "지원하지 않는 시설 기능입니다: " + profile.effectOpcode());
         }
         telemetry.event(runs.current().orElseThrow().runId, "FACILITY_USED", "{\"instanceId\":\""
@@ -462,17 +512,44 @@ public final class FacilityService implements Listener {
         }
     }
 
-    private void completeReconstructionTest(Player player, RunSnapshot.FacilityInstanceState instance) {
+    private void startTimedReconstruction(Player player, RunSnapshot.FacilityInstanceState instance) {
         if ("READY".equals(instance.state)) {
-            player.sendMessage(ChatColor.GREEN + profile(instance).name() + " 시험은 이미 완료되었습니다.");
+            player.sendMessage(ChatColor.GREEN + profile(instance).name() + " 작업은 이미 완료되었습니다.");
             return;
         }
+        long duration = FacilityPolicy.reconstructionDurationMillis(instance.facilityType);
+        if (duration <= 0L) {
+            requireReconstructionEvidence(player, instance, "자동 시간 작업이 정의되지 않았습니다.");
+            return;
+        }
+        RunSnapshot.FacilityWorkState existing = instance.queue == null ? null : instance.queue.stream()
+                .filter(work -> work.operation.equals(profile(instance).effectOpcode())
+                        && !List.of("COMPLETED", "CLAIMED", "CANCELLED").contains(work.state))
+                .findFirst().orElse(null);
+        if (existing != null) {
+            player.sendMessage(ChatColor.YELLOW + "작업 진행 " + existing.processedMillis / 1000 + "/"
+                    + existing.durationMillis / 1000 + "초");
+            return;
+        }
+        RunSnapshot.FacilityWorkState work = new RunSnapshot.FacilityWorkState();
+        work.workId = "facility-work:" + runs.current().orElseThrow().runId + ":" + UUID.randomUUID();
+        work.operation = profile(instance).effectOpcode();
+        work.ownerUuid = player.getUniqueId().toString();
+        work.state = "PROCESSING";
+        work.queuedAtEpochMs = runs.clockNowMillis();
+        work.processingStartedAtEpochMs = work.queuedAtEpochMs;
+        work.durationMillis = duration;
         runs.mutate(run -> {
             RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(run).get(instance.instanceId);
-            current.state = "READY";
-            run.committedKeys.add("proof:" + current.facilityType + "_READY");
+            if (current.queue == null) current.queue = new ArrayList<>();
+            current.queue.add(work);
+            current.state = "FAC-R01".equals(current.facilityType) ? "ASSEMBLED" : "TESTING";
         });
-        player.sendMessage(ChatColor.GREEN + profile(instance).name() + " 시험·교정 완료 · READY");
+        player.sendMessage(ChatColor.GREEN + profile(instance).name() + " 작업 시작 · " + duration / 1000 + "초");
+    }
+
+    private void requireReconstructionEvidence(Player player, RunSnapshot.FacilityInstanceState instance, String reason) {
+        player.sendMessage(ChatColor.RED + profile(instance).name() + " BLOCKED_EVIDENCE · " + reason);
     }
 
     private void activateFinalFacility(Player player, RunSnapshot.FacilityInstanceState instance) {
@@ -482,10 +559,20 @@ public final class FacilityService implements Listener {
             player.sendMessage(ChatColor.RED + "Day " + profile.activationDay() + " 전에는 READY_LOCKED를 해제할 수 없습니다.");
             return;
         }
-        runs.mutate(run -> {
-            RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(run).get(instance.instanceId);
+        RunSnapshot run = runs.current().orElseThrow();
+        boolean systemsReady = List.of("FAC-R01", "FAC-R02", "FAC-R03", "FAC-R04").stream()
+                .allMatch(type -> FacilityStateAccess.instances(run).values().stream()
+                        .anyMatch(value -> type.equals(value.facilityType) && "READY".equals(value.state)));
+        long stakes = FacilityStateAccess.instances(run).values().stream()
+                .filter(value -> "FAC-R05".equals(value.facilityType) && "CALIBRATED".equals(value.state)).count();
+        if (!systemsReady || stakes < 3) {
+            player.sendMessage(ChatColor.RED + "R01~R04 READY와 교정 말뚝 3개 CALIBRATED가 필요합니다.");
+            return;
+        }
+        runs.mutate(snapshot -> {
+            RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(snapshot).get(instance.instanceId);
             current.state = "READY";
-            run.committedKeys.add("proof:FAC-R06_READY");
+            snapshot.committedKeys.add("proof:FAC-R06_READY");
         });
         player.sendMessage(ChatColor.GREEN + "첫 재건 장치가 READY 상태로 전환되었습니다.");
     }
@@ -606,6 +693,10 @@ public final class FacilityService implements Listener {
     private void dismantle(Player player, RunSnapshot.FacilityInstanceState instance) {
         if (!safeForFacilityAction(player)) { player.sendMessage(ChatColor.RED + "최근 피격·보스 전투 중에는 철거할 수 없습니다."); return; }
         ProductionContentCatalog.FacilityEntry profile = profile(instance);
+        if ("FAC-C03".equals(instance.facilityType) && instance.storageSlots != null && !instance.storageSlots.isEmpty()) {
+            player.sendMessage(ChatColor.RED + "임시 보관함을 비운 뒤 철거하세요. 저장 물품은 버리지 않습니다.");
+            return;
+        }
         if (profile.reconstruction()) { player.sendMessage(ChatColor.RED + "재건 시설은 60초 이전 절차가 필요해 현재 GUI에서 즉시 철거할 수 없습니다."); return; }
         clearRepresentation(instance);
         runs.mutate(run -> {
@@ -689,17 +780,6 @@ public final class FacilityService implements Listener {
         return result;
     }
 
-    private String initialReconstructionState(String facilityType, int day) {
-        return switch (facilityType) {
-            case "FAC-R01" -> "READY";
-            case "FAC-R02", "FAC-R04" -> "TESTING";
-            case "FAC-R03" -> "CALIBRATING";
-            case "FAC-R05" -> "CALIBRATED";
-            case "FAC-R06" -> day >= 50 ? "READY" : "READY_LOCKED";
-            default -> "ASSEMBLED";
-        };
-    }
-
     private String facilityType(String virtualOutputId) {
         int separator = virtualOutputId.indexOf('@');
         return separator < 0 ? virtualOutputId : virtualOutputId.substring(0, separator);
@@ -728,6 +808,69 @@ public final class FacilityService implements Listener {
                 if (current.triggerCharges == 0) current.state = "DISABLED";
             });
         }
+    }
+
+    private void tickFacilityWork(long deltaMillis) {
+        RunSnapshot snapshot = runs.current().orElse(null);
+        if (snapshot == null || FacilityStateAccess.instances(snapshot).values().stream()
+                .flatMap(instance -> instance.queue == null ? java.util.stream.Stream.empty() : instance.queue.stream())
+                .noneMatch(work -> "PROCESSING".equals(work.state))) return;
+        runs.mutate(run -> {
+            for (RunSnapshot.FacilityInstanceState instance : FacilityStateAccess.instances(run).values()) {
+                if (instance.queue == null) continue;
+                for (RunSnapshot.FacilityWorkState work : instance.queue) {
+                    if (!"PROCESSING".equals(work.state)) continue;
+                    work.processedMillis = Math.min(work.durationMillis, work.processedMillis + deltaMillis);
+                    if (work.processedMillis < work.durationMillis) continue;
+                    work.state = "COMPLETED";
+                    instance.state = "READY";
+                    run.committedKeys.add("proof:" + instance.facilityType + "_READY");
+                    telemetry.event(run.runId, "FACILITY_WORK_COMPLETED", "{\"instanceId\":\""
+                            + instance.instanceId + "\",\"workId\":\"" + work.workId + "\"}");
+                }
+            }
+        });
+    }
+
+    private void openStorage(Player player, RunSnapshot.FacilityInstanceState instance) {
+        UUID current = storageSessions.get(instance.instanceId);
+        if (current != null && !current.equals(player.getUniqueId())) {
+            Player viewer = Bukkit.getPlayer(current);
+            if (viewer != null && viewer.isOnline()) {
+                player.sendMessage(ChatColor.RED + "다른 파티원이 이 보관함을 사용 중입니다.");
+                return;
+            }
+            storageSessions.remove(instance.instanceId);
+        }
+        StorageHolder holder = new StorageHolder(player.getUniqueId(), instance.instanceId);
+        Inventory inventory = Bukkit.createInventory(holder, 9, ChatColor.DARK_GREEN + "임시 보관함");
+        holder.inventory = inventory;
+        if (instance.storageSlots != null) for (Map.Entry<String, String> entry : instance.storageSlots.entrySet()) {
+            try {
+                int slot = Integer.parseInt(entry.getKey());
+                if (slot >= 0 && slot < inventory.getSize()) inventory.setItem(slot,
+                        ItemStack.deserializeBytes(Base64.getDecoder().decode(entry.getValue())));
+            } catch (IllegalArgumentException exception) {
+                plugin.getLogger().warning("손상된 시설 보관 슬롯을 건너뜁니다: " + instance.instanceId + "/" + entry.getKey());
+            }
+        }
+        storageSessions.put(instance.instanceId, player.getUniqueId());
+        player.openInventory(inventory);
+    }
+
+    private void persistStorage(StorageHolder holder, Inventory inventory) {
+        UUID session = storageSessions.get(holder.instanceId);
+        if (session == null || !session.equals(holder.owner)) return;
+        Map<String, String> encoded = new LinkedHashMap<>();
+        for (int slot = 0; slot < Math.min(9, inventory.getSize()); slot++) {
+            ItemStack item = inventory.getItem(slot);
+            if (item == null || item.getType().isAir()) continue;
+            encoded.put(Integer.toString(slot), Base64.getEncoder().encodeToString(item.serializeAsBytes()));
+        }
+        runs.mutate(run -> {
+            RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(run).get(holder.instanceId);
+            if (current != null) current.storageSlots = encoded;
+        });
     }
 
     private void treat(Player player, String opcode) {
@@ -829,6 +972,13 @@ public final class FacilityService implements Listener {
         return ChatColor.DARK_GRAY + "Day " + day + "+ · 개인 자원에서 소비";
     }
 
+    private String activeWorkText(RunSnapshot.FacilityInstanceState instance) {
+        if (instance.queue == null) return null;
+        return instance.queue.stream().filter(work -> "PROCESSING".equals(work.state)).findFirst()
+                .map(work -> "진행 " + work.processedMillis / 1000 + "/" + work.durationMillis / 1000 + "초")
+                .orElse(null);
+    }
+
     private static ItemStack named(Material material, String name, List<String> lore) {
         ItemStack item = new ItemStack(material == null || material.isAir() ? Material.PAPER : material);
         ItemMeta meta = item.getItemMeta(); meta.setDisplayName(name); meta.setLore(lore); item.setItemMeta(meta); return item;
@@ -842,5 +992,13 @@ public final class FacilityService implements Listener {
         private final String instanceId;
         private FacilityHolder(UUID owner, String instanceId) { this.owner = owner; this.instanceId = instanceId; }
         @Override public Inventory getInventory() { return null; }
+    }
+
+    private static final class StorageHolder implements InventoryHolder {
+        private final UUID owner;
+        private final String instanceId;
+        private Inventory inventory;
+        private StorageHolder(UUID owner, String instanceId) { this.owner = owner; this.instanceId = instanceId; }
+        @Override public Inventory getInventory() { return inventory; }
     }
 }

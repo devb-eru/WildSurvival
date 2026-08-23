@@ -303,3 +303,21 @@ Season 1 실제 플레이 완료는 다음을 모두 만족할 때만 선언한�
 - p95 tick 50ms 이하 또는 계약된 안전 열화 상태로 정상 전환
 
 위 조건 전에는 `PLAYABLE_SEASON_1`, `LIVE_LOCKED`, “전체 구현 완료”라는 표현을 사용하지 않는다.
+
+## 9. 시설 의미 런타임 폐쇄 순서
+
+시설 버튼이 설명문만 출력하는 상태를 정상 구현으로 인정하지 않는다. 다음 순서와 판정으로 `P4`를 닫는다.
+
+| 묶음 | 대상 opcode | 구현 계약 | 승격 차단 조건 |
+|---|---|---|---|
+| 보관·조회 | `STORAGE`, `AUGMENT_MANAGE`, `SLOW_TRAP`, `IMPACT_TRAP` | 9칸 파티 보관의 ItemStack 원형 영속·동시 접근 잠금, 소유 증강 GUI 연결, 함정 잔여 횟수와 실제 수동 수리 경로 | 저장 복제·덮어쓰기 또는 안내문만 출력 |
+| 재건 상태 | `REBUILD_FRAME`, `REBUILD_POWER`, `REBUILD_LENS`, `REBUILD_PURIFY`, `REBUILD_STAKES`, `REBUILD_FINAL` | 제작 직후 `ASSEMBLED/PLACED`, 권위 작업·시험 뒤에만 `READY/CALIBRATED`, R06은 Day 50 전 `READY_LOCKED` | 제작만으로 준비 증명이 생김 |
+| 방어 대상 | `BARRICADE`, `WALL_REGISTER`, `TAUNT_BEACON` | 등록 블록 좌표·상한·공세 귀속·잔해화, 제한 시간 목표 우선순위와 비용을 저장 | 일반 건축 오인식 또는 비용 없는 반복 사용 |
+| 경제 작업 | `REFORGE`, `GRAVE_RECOVERY`, `POWER_DISTRIBUTE` | 장비 옵션·천장, 유품 원본 인스턴스, 전력·연료 원장의 정확한 입력 ID와 멱등 작업 TX | 범주 가치만으로 구체 자원을 임의 선택 |
+
+- `FAC-R01`은 120초 구조 결합을 완료하기 전 `READY`가 아니다.
+- `FAC-R02`는 60초 유효 출력 시험 전 `READY`가 아니다.
+- `FAC-R03`, `FAC-R04`, `FAC-R05`는 각각 세 방향 오차, 환경 2종 반응, 세 말뚝 순차 교정의 성공 증거가 있어야 한다.
+- `FAC-C03`은 한 시설에 한 세션만 쓰기 권한을 갖고, 닫기·접속 종료·서버 종료 때 슬롯별 직렬화를 원자 저장한다. 내용물이 있으면 안전 철거를 거부해 회수 원장 유실을 막는다.
+- `FAC-S09`의 기본 실행은 현재 소유·진화 계보 조회다. 실제 교체는 신호 비용 ID와 교체 후보 생성 계약이 고정되기 전까지 잠그며, 이 잠금을 정상 교체로 표시하지 않는다.
+- 비용 ID가 미고정인 `REFORGE`, `GRAVE_RECOVERY`, `TAUNT_BEACON`, `POWER_DISTRIBUTE`는 `BLOCKED_DATA`로 표시한다. 메시지 출력만으로 `RUNTIME=VERIFIED`로 승격하지 않는다.
