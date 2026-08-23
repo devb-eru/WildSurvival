@@ -109,5 +109,21 @@ class ProductionBundleValidatorTest {
         assertEquals(12, result.catalog().budgetProfilesById().size());
         assertEquals(14, result.catalog().drawLocksById().size());
         assertEquals(10.0, result.catalog().budgetProfilesById().get("CH-BOSS-LAB").multiplier("bossPattern"));
+        assertEquals(50, result.catalog().daysByNumber().size());
+        var day2 = result.catalog().daysByNumber().get(2);
+        assertEquals(10, day2.threatBudget3());
+        assertEquals(List.of(50, 23, 12, 0, 0), day2.resourceBudgetTotals());
+        var day40 = result.catalog().daysByNumber().get(40);
+        assertTrue(day40.bossDay());
+        assertEquals("BOSS-D40", day40.bossId());
+        var day50 = result.catalog().daysByNumber().get(50);
+        assertEquals(100, day50.threatBudget3());
+        assertEquals(224_420, day50.cumulativeExp());
+        assertEquals(50, day50.expectedEndLevel());
+        assertTrue(day50.finalAvailable());
+        assertTrue(day50.completionAllowed());
+        assertTrue(result.catalog().daysByNumber().entrySet().stream()
+                .filter(entry -> entry.getKey() < 50)
+                .noneMatch(entry -> entry.getValue().finalAvailable() || entry.getValue().completionAllowed()));
     }
 }

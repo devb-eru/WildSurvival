@@ -23,6 +23,7 @@ public record ProductionContentCatalog(
         Map<String, SupportEntityEntry> supportEntitiesById,
         Map<String, ActionBundleEntry> actionBundlesById,
         Map<String, LootEntry> lootById,
+        Map<Integer, DayEntry> daysByNumber,
         Map<String, EventEntry> eventsById,
         Map<Integer, List<EventEntry>> mainEventsByDay,
         Map<String, ResearchEntry> researchById,
@@ -156,6 +157,18 @@ public record ProductionContentCatalog(
         public int amountForPartySize(int partySize) {
             int index = partySize >= 4 ? 2 : partySize == 3 ? 1 : 0;
             return amounts.get(index);
+        }
+    }
+
+    public record DayEntry(String id, String sourceDocumentId, int day,
+                           int progressExp, int activityExp, int totalExp, int cumulativeExp,
+                           int expectedEndLevel, String endLevelText, int threatBudget3,
+                           List<String> resourceBudgetAuthority, List<Integer> resourceBudgetTotals,
+                           List<String> eventIds, String bossId, String milestoneText,
+                           boolean finalAvailable, boolean completionAllowed,
+                           List<String> stateMachine) {
+        public boolean bossDay() {
+            return !bossId.isBlank();
         }
     }
 

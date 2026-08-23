@@ -16,20 +16,138 @@
       "const": "ws-content-r2"
     },
     "domain": {
-      "type": "string",
-      "minLength": 1
+      "const": "days"
     },
     "records": {
       "type": "array",
+      "minItems": 50,
+      "maxItems": 50,
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
-          "id"
+          "id",
+          "sourceDocumentId",
+          "enabled",
+          "day",
+          "progressExp",
+          "activityExp",
+          "totalExp",
+          "cumulativeExp",
+          "expectedEndLevel",
+          "endLevelText",
+          "threatBudget3",
+          "resourceBudgetAuthority",
+          "resourceBudgetTotals",
+          "eventIds",
+          "bossId",
+          "milestoneText",
+          "finalAvailable",
+          "completionAllowed",
+          "stateMachine"
         ],
         "properties": {
           "id": {
             "type": "string",
+            "pattern": "^DAY-(0[1-9]|[1-4][0-9]|50)$"
+          },
+          "sourceDocumentId": {
+            "enum": [
+              "BALANCE-D10-001",
+              "BALANCE-D20-001",
+              "CONTENT-DATA-D50-001"
+            ]
+          },
+          "enabled": {
+            "const": true
+          },
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "progressExp": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "activityExp": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalExp": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "cumulativeExp": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expectedEndLevel": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "endLevelText": {
+            "type": "string",
             "minLength": 1
+          },
+          "threatBudget3": {
+            "type": "integer",
+            "minimum": -1
+          },
+          "resourceBudgetAuthority": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 5,
+            "items": {
+              "type": "string",
+              "pattern": "^\\d+(?:/\\d+/\\d+)?$"
+            }
+          },
+          "resourceBudgetTotals": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 5,
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "eventIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "bossId": {
+            "type": "string",
+            "pattern": "^(?:|BOSS-D(?:10|20|30|40))$"
+          },
+          "milestoneText": {
+            "type": "string",
+            "minLength": 1
+          },
+          "finalAvailable": {
+            "type": "boolean"
+          },
+          "completionAllowed": {
+            "type": "boolean"
+          },
+          "stateMachine": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 5,
+            "items": {
+              "enum": [
+                "PREPARING",
+                "ACTIVE",
+                "PRESSURE",
+                "RESOLVING",
+                "COMPLETED"
+              ]
+            }
           }
         }
       }

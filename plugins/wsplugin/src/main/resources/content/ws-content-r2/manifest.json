@@ -24,7 +24,7 @@
       "path": "schemas/day.schema.json",
       "domain": "schema",
       "schema": "common.schema.json",
-      "sha256": "11618c7119ac4443a2a8ce6341ce2d7d50b16378c6b1457e2214940024b80e27"
+      "sha256": "80eda1741eca36e1ac8b058af4b584fc582943783900f296a60e11da457ec699"
     },
     {
       "path": "schemas/event.schema.json",
@@ -150,7 +150,7 @@
       "path": "days/season1-days-01-50.json",
       "domain": "days",
       "schema": "day.schema.json",
-      "sha256": "27f54312ddbd057e2a5fc7027161793401d5adfda0cac8e11925349974bbc64e"
+      "sha256": "7a1773191c1b65a0056738d1fc0f41cada5d78134a1b5cf552729fde3d38338b"
     },
     {
       "path": "days/endless-days-51-plus.json",

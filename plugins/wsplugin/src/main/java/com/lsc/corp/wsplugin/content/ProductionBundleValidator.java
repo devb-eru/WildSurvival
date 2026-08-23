@@ -114,6 +114,7 @@ public final class ProductionBundleValidator {
             validateEventData(reader);
             validateFinalData(reader);
             validateOperationalData(reader);
+            validateDayData(catalog);
             validateReferences(reader, catalog);
             validateEquipmentCatalog(catalog);
             validateSkillCatalog(catalog);
@@ -373,6 +374,22 @@ public final class ProductionBundleValidator {
                 throw new ContentValidationException("Duplicate loot profile " + loot.id());
             }
         }
+        Map<Integer, ProductionContentCatalog.DayEntry> daysByNumber = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "days/season1-days-01-50.json")) {
+            ProductionContentCatalog.DayEntry day = new ProductionContentCatalog.DayEntry(
+                    requiredString(record, "id"), requiredString(record, "sourceDocumentId"),
+                    requiredInt(record, "day"), requiredInt(record, "progressExp"),
+                    requiredInt(record, "activityExp"), requiredInt(record, "totalExp"),
+                    requiredInt(record, "cumulativeExp"), requiredInt(record, "expectedEndLevel"),
+                    requiredString(record, "endLevelText"), requiredInt(record, "threatBudget3"),
+                    stringArray(record, "resourceBudgetAuthority"), integerArray(record, "resourceBudgetTotals"),
+                    stringArray(record, "eventIds"), requiredString(record, "bossId"),
+                    requiredString(record, "milestoneText"), record.get("finalAvailable").getAsBoolean(),
+                    record.get("completionAllowed").getAsBoolean(), stringArray(record, "stateMachine"));
+            if (daysByNumber.putIfAbsent(day.day(), day) != null) {
+                throw new ContentValidationException("Duplicate Day number " + day.day());
+            }
+        }
         Map<String, ProductionContentCatalog.EventEntry> eventsById = new LinkedHashMap<>();
         Map<Integer, List<ProductionContentCatalog.EventEntry>> mainEventsByDay = new LinkedHashMap<>();
         for (String path : List.of("events/day01-10.json", "events/day11-20.json", "events/day21-50.json")) {
@@ -458,7 +475,7 @@ public final class ProductionBundleValidator {
                 Map.copyOf(byOutput), List.copyOf(skills), Map.copyOf(skillsById),
                 List.copyOf(personalAugments), List.copyOf(partyAugments), Map.copyOf(augmentsById),
                 Map.copyOf(enemiesById), Map.copyOf(bossesById), Map.copyOf(supportEntitiesById),
-                Map.copyOf(actionBundlesById), Map.copyOf(lootById), Map.copyOf(eventsById),
+                Map.copyOf(actionBundlesById), Map.copyOf(lootById), Map.copyOf(daysByNumber), Map.copyOf(eventsById),
                 Map.copyOf(mainEventsByDay), Map.copyOf(researchById), Map.copyOf(storyScenesById),
                 Map.copyOf(storyLogsById), Map.copyOf(finalRecordsById), Map.copyOf(budgetProfilesById),
                 Map.copyOf(drawLocksById), Map.copyOf(counts));
@@ -511,6 +528,72 @@ public final class ProductionBundleValidator {
         List<Integer> result = new ArrayList<>();
         value.getAsJsonArray().forEach(element -> result.add(element.getAsInt()));
         return List.copyOf(result);
+    }
+
+    private void validateDayData(ProductionContentCatalog catalog) throws ContentValidationException {
+        if (catalog.daysByNumber().size() != 50) {
+            throw new ContentValidationException("Season 1 Day ledger must contain Day 1 through Day 50");
+        }
+        Set<Integer> bossDays = Set.of(10, 20, 30, 40);
+        List<String> expectedStates = List.of("PREPARING", "ACTIVE", "PRESSURE", "RESOLVING", "COMPLETED");
+        int cumulative = 0;
+        for (int number = 1; number <= 50; number++) {
+            ProductionContentCatalog.DayEntry day = catalog.daysByNumber().get(number);
+            if (day == null || !day.id().equals("DAY-%02d".formatted(number))) {
+                throw new ContentValidationException("Missing or misidentified Day " + number);
+            }
+            String expectedSource = number <= 10 ? "BALANCE-D10-001"
+                    : number <= 20 ? "BALANCE-D20-001" : "CONTENT-DATA-D50-001";
+            if (!expectedSource.equals(day.sourceDocumentId())) {
+                throw new ContentValidationException("Day source authority mismatch " + number);
+            }
+            if (day.progressExp() < 0 || day.activityExp() < 0
+                    || day.totalExp() != day.progressExp() + day.activityExp()) {
+                throw new ContentValidationException("Day EXP equation mismatch " + number);
+            }
+            cumulative += day.totalExp();
+            if (day.cumulativeExp() != cumulative || day.expectedEndLevel() < 1
+                    || day.expectedEndLevel() > 50 || day.endLevelText().isBlank()) {
+                throw new ContentValidationException("Day cumulative progression mismatch " + number);
+            }
+            if (day.resourceBudgetAuthority().size() != 5 || day.resourceBudgetTotals().size() != 5) {
+                throw new ContentValidationException("Day resource budget must contain five groups " + number);
+            }
+            for (int index = 0; index < 5; index++) {
+                String authority = day.resourceBudgetAuthority().get(index);
+                java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("^(\\d+)(?:/\\d+/\\d+)?$").matcher(authority);
+                if (!matcher.matches() || Integer.parseInt(matcher.group(1)) != day.resourceBudgetTotals().get(index)
+                        || day.resourceBudgetTotals().get(index) < 0) {
+                    throw new ContentValidationException("Day resource budget mismatch " + number + " group=" + index);
+                }
+            }
+            boolean bossDay = bossDays.contains(number);
+            String expectedBoss = bossDay ? "BOSS-D" + number : "";
+            if (!expectedBoss.equals(day.bossId()) || bossDay != day.bossDay()
+                    || (bossDay ? day.threatBudget3() != -1 : day.threatBudget3() < 0)) {
+                throw new ContentValidationException("Day threat/boss authority mismatch " + number);
+            }
+            Set<String> eventIds = new HashSet<>();
+            for (String eventId : day.eventIds()) {
+                ProductionContentCatalog.EventEntry event = catalog.eventsById().get(eventId);
+                if (!eventIds.add(eventId) || event == null || event.firstDay() != number) {
+                    throw new ContentValidationException("Invalid Day event reference " + number + " -> " + eventId);
+                }
+            }
+            if (!bossDay && day.eventIds().isEmpty()) {
+                throw new ContentValidationException("Non-boss Day has no executable event " + number);
+            }
+            boolean finalDay = number == 50;
+            if (day.finalAvailable() != finalDay || day.completionAllowed() != finalDay) {
+                throw new ContentValidationException("Completion must remain locked until Day 50, invalid Day " + number);
+            }
+            if (!day.stateMachine().equals(expectedStates) || day.milestoneText().isBlank()) {
+                throw new ContentValidationException("Invalid Day state contract " + number);
+            }
+        }
+        if (cumulative != 224_420 || catalog.daysByNumber().get(50).expectedEndLevel() != 50) {
+            throw new ContentValidationException("Season 1 final progression ledger mismatch");
+        }
     }
 
     private void validateReferences(ResourceReader reader, ProductionContentCatalog catalog) throws Exception {

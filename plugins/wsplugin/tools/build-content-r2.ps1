@@ -474,6 +474,9 @@ $eventD10Rows = Read-TableRows '기획\06 사건과 적\EVENT-DATA Day 1-10 사�
 $eventD20Rows = Read-TableRows '기획\06 사건과 적\EVENT-DATA Day 11-20 사건 실행 데이터 기획서.md'
 $eventD50Rows = Read-TableRows '기획\06 사건과 적\EVENT-DATA Day 21-50 사건 실행 데이터 기획서.md'
 $finalRows = Read-TableRows '기획\01 회차와 진행\FINAL-DATA Day 50+ 최종 목표 실행 데이터 기획서.md'
+$balanceD10Rows = Read-TableRows '기획\09 데이터와 밸런스\BALANCE Day 1-10 자원·성장·전투 원장 시뮬레이션.md'
+$balanceD20Rows = Read-TableRows '기획\09 데이터와 밸런스\BALANCE Day 11-20 자원·성장·전투 원장 시뮬레이션.md'
+$contentD50Rows = Read-TableRows '기획\09 데이터와 밸런스\CONTENT-DATA Day 21-50 및 Day 51+ 콘텐츠 확정 기획서.md'
 
 $materialCodex = [ordered]@{}
 foreach ($cells in $materialRows) {
@@ -1257,7 +1260,64 @@ foreach ($key in $expected.Keys) {
 }
 if (@($codex.codexIndex | Group-Object | Where-Object Count -ne 1).Count -ne 0) { throw 'Duplicate codex index' }
 
-$days = 1..50 | ForEach-Object { [ordered]@{ id=('DAY-{0:D2}' -f $_); sourceDocumentId='CONTENT-DATA-D50-001'; enabled=$true; day=$_; finalAvailable=($_ -ge 50) } }
+function Clean-Int([string]$Text) { return [int]($Text -replace '[^0-9-]','') }
+$growthByDay = [ordered]@{}
+foreach($cells in @($balanceD10Rows + $balanceD20Rows)) {
+    if($cells.Count -eq 8 -and $cells[0] -match '^\d{1,2}$' -and $cells[1] -match '^[\d,]+$' -and $cells[2] -match '^[\d,]+$' -and $cells[3] -match '^[\d,]+$') {
+        $growthByDay[$cells[0]]=$cells
+    }
+}
+foreach($cells in $contentD50Rows) {
+    if($cells.Count -eq 7 -and $cells[0] -match '^(2[1-9]|3\d|4\d|50)$' -and $cells[1] -match '^([\d,]+)\(([\d,]+)/([\d,]+)\)$') {
+        $growthByDay[$cells[0]]=@($cells[0],$Matches[2],$Matches[3],$Matches[1],$cells[2],$cells[3],'',$cells[6])
+    }
+}
+$resourceBudgetByDay = [ordered]@{}
+foreach($cells in @($balanceD10Rows + $balanceD20Rows)) {
+    if($cells.Count -eq 7 -and $cells[0] -match '^\d{1,2}$' -and $cells[1] -match '^\d+/\d+/\d+$' -and $cells[2] -match '^\d+/\d+/\d+$') {
+        $resourceBudgetByDay[$cells[0]]=@($cells[1],$cells[2],$cells[3],$cells[4],$cells[5])
+    }
+}
+foreach($cells in $contentD50Rows) {
+    if($cells.Count -eq 7 -and $cells[0] -match '^(2[1-9]|3\d|4\d|50)$' -and $cells[5] -match '^\d+/\d+/\d+/\d+/\d+$') {
+        $resourceBudgetByDay[$cells[0]]=@($cells[5].Split('/'))
+    }
+}
+$threatBudgetByDay = [ordered]@{}
+foreach($cells in @($balanceD10Rows + $balanceD20Rows)) {
+    if($cells.Count -eq 7 -and $cells[0] -match '^\d{1,2}$' -and $cells[1] -notmatch '/' -and $cells[1] -match '^(\d+)') {
+        $threatBudgetByDay[$cells[0]]=[int]$Matches[1]
+    }
+}
+foreach($cells in $contentD50Rows) {
+    if($cells.Count -eq 7 -and $cells[0] -match '^(2[1-9]|3\d|4\d|50)$' -and $cells[1] -match '^([\d,]+)\(([\d,]+)/([\d,]+)\)$') {
+        $threatBudgetByDay[$cells[0]]=$(if($cells[4] -match '(\d+)') {[int]$Matches[1]} else {-1})
+    }
+}
+$days = foreach($day in 1..50) {
+    $growth=$growthByDay[$day.ToString()]
+    if(-not $growth) { throw "Day growth authority missing: $day" }
+    $eventsForDay=@($eventsD10 | Where-Object {$_.firstDay -eq $day -and $_.eventKind -eq 'NATURAL_ACTIVITY'} | ForEach-Object {$_.id})
+    $mainEvent=@($eventsD20 + $eventsD50 | Where-Object {$_.firstDay -eq $day -and $_.eventKind -eq 'MAIN_EVENT'} | Select-Object -First 1)
+    if($mainEvent.Count){$eventsForDay += $mainEvent[0].id}
+    $bossId = if($day -in @(10,20,30,40)){"BOSS-D$day"}else{''}
+    $threat = if($bossId){-1}else{$threatBudgetByDay[$day.ToString()]}
+    if($null -eq $threat) { throw "Day threat authority missing: $day" }
+    $resourceAuthority = [string[]]$resourceBudgetByDay[$day.ToString()]
+    if($resourceAuthority.Count -ne 5) { throw "Day resource authority must contain five groups: $day" }
+    $resourceTotals = [int[]]@($resourceAuthority | ForEach-Object {
+        if($_ -notmatch '^(\d+)') { throw "Day resource value malformed: day=$day value=$_" }
+        [int]$Matches[1]
+    })
+    $level=50
+    if($growth[5] -match 'Lv(\d+)'){$level=[int]$Matches[1]}
+    [ordered]@{
+        id=('DAY-{0:D2}' -f $day);sourceDocumentId=$(if($day -le 10){'BALANCE-D10-001'}elseif($day -le 20){'BALANCE-D20-001'}else{'CONTENT-DATA-D50-001'});enabled=$true;day=$day
+        progressExp=Clean-Int $growth[1];activityExp=Clean-Int $growth[2];totalExp=Clean-Int $growth[3];cumulativeExp=Clean-Int $growth[4];expectedEndLevel=$level;endLevelText=$growth[5]
+        threatBudget3=$threat;resourceBudgetAuthority=$resourceAuthority;resourceBudgetTotals=$resourceTotals;eventIds=[string[]]$eventsForDay;bossId=$bossId;milestoneText=$growth[7]
+        finalAvailable=($day -ge 50);completionAllowed=($day -ge 50);stateMachine=@('PREPARING','ACTIVE','PRESSURE','RESOLVING','COMPLETED')
+    }
+}
 $endless = @([ordered]@{ id='DAY-51-PLUS'; sourceDocumentId='CONTENT-DATA-D50-001'; enabled=$true; firstDay=51; repeatPolicy='ENDLESS' })
 $enemyD10 = @($enemies | Where-Object { (Enemy-Day $_.id) -le 10 })
 $enemyD20 = @($enemies | Where-Object { (Enemy-Day $_.id) -ge 11 -and (Enemy-Day $_.id) -le 20 })
@@ -1282,6 +1342,24 @@ $manifestSchema = [ordered]@{
         schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; activationPolicy=[ordered]@{const='NEW_RUN_ONLY'}
         storyRevision=[ordered]@{const='ws-story-s1-r1'}; budgetPolicyRevision=[ordered]@{const='budget-live-r2'}
         files=[ordered]@{type='array';minItems=64;maxItems=64;items=[ordered]@{type='object'}}
+    }
+}
+$daySchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{const='days'}
+        records=[ordered]@{type='array';minItems=50;maxItems=50;items=[ordered]@{
+            type='object';additionalProperties=$false
+            required=@('id','sourceDocumentId','enabled','day','progressExp','activityExp','totalExp','cumulativeExp','expectedEndLevel','endLevelText','threatBudget3','resourceBudgetAuthority','resourceBudgetTotals','eventIds','bossId','milestoneText','finalAvailable','completionAllowed','stateMachine')
+            properties=[ordered]@{
+                id=[ordered]@{type='string';pattern='^DAY-(0[1-9]|[1-4][0-9]|50)$'};sourceDocumentId=[ordered]@{enum=@('BALANCE-D10-001','BALANCE-D20-001','CONTENT-DATA-D50-001')};enabled=[ordered]@{const=$true};day=[ordered]@{type='integer';minimum=1;maximum=50}
+                progressExp=[ordered]@{type='integer';minimum=0};activityExp=[ordered]@{type='integer';minimum=0};totalExp=[ordered]@{type='integer';minimum=1};cumulativeExp=[ordered]@{type='integer';minimum=1};expectedEndLevel=[ordered]@{type='integer';minimum=1;maximum=50};endLevelText=[ordered]@{type='string';minLength=1}
+                threatBudget3=[ordered]@{type='integer';minimum=-1};resourceBudgetAuthority=[ordered]@{type='array';minItems=5;maxItems=5;items=[ordered]@{type='string';pattern='^\d+(?:/\d+/\d+)?$'}};resourceBudgetTotals=[ordered]@{type='array';minItems=5;maxItems=5;items=[ordered]@{type='integer';minimum=0}}
+                eventIds=[ordered]@{type='array';items=[ordered]@{type='string';minLength=1};uniqueItems=$true};bossId=[ordered]@{type='string';pattern='^(?:|BOSS-D(?:10|20|30|40))$'};milestoneText=[ordered]@{type='string';minLength=1};finalAvailable=[ordered]@{type='boolean'};completionAllowed=[ordered]@{type='boolean'}
+                stateMachine=[ordered]@{type='array';minItems=5;maxItems=5;items=[ordered]@{enum=@('PREPARING','ACTIVE','PRESSURE','RESOLVING','COMPLETED')}}
+            }
+        }}
     }
 }
 $recipeSchema = [ordered]@{
@@ -1350,7 +1428,7 @@ $finalSchema = [ordered]@{
     }
 }
 foreach ($name in $schemaNames) {
-    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } else { $genericSchema }
+    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'day') { $daySchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } else { $genericSchema }
     Write-Json "schemas/$name.schema.json" $schema
 }
 

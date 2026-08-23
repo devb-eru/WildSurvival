@@ -5,353 +5,2062 @@
   "records": [
     {
       "id": "DAY-01",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D10-001",
       "enabled": true,
       "day": 1,
-      "finalAvailable": false
+      "progressExp": 80,
+      "activityExp": 30,
+      "totalExp": 110,
+      "cumulativeExp": 110,
+      "expectedEndLevel": 2,
+      "endLevelText": "Lv2, 10/130",
+      "threatBudget3": 8,
+      "resourceBudgetAuthority": [
+        "57/20/37",
+        "22/8/14",
+        "8/3/5",
+        "0/0/0",
+        "0/0/0"
+      ],
+      "resourceBudgetTotals": [
+        57,
+        22,
+        8,
+        0,
+        0
+      ],
+      "eventIds": [
+        "ACT-D1-WORKTRACE"
+      ],
+      "bossId": "",
+      "milestoneText": "첫 투자",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-02",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D10-001",
       "enabled": true,
       "day": 2,
-      "finalAvailable": false
+      "progressExp": 80,
+      "activityExp": 30,
+      "totalExp": 110,
+      "cumulativeExp": 220,
+      "expectedEndLevel": 2,
+      "endLevelText": "Lv2, 120/130",
+      "threatBudget3": 10,
+      "resourceBudgetAuthority": [
+        "50/20/67",
+        "23/12/25",
+        "12/10/7",
+        "0/0/0",
+        "0/0/0"
+      ],
+      "resourceBudgetTotals": [
+        50,
+        23,
+        12,
+        0,
+        0
+      ],
+      "eventIds": [
+        "ACT-D2-ORE",
+        "ACT-D2-HERD"
+      ],
+      "bossId": "",
+      "milestoneText": "Lv3 직전",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-03",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D10-001",
       "enabled": true,
       "day": 3,
-      "finalAvailable": false
+      "progressExp": 140,
+      "activityExp": 60,
+      "totalExp": 200,
+      "cumulativeExp": 420,
+      "expectedEndLevel": 4,
+      "endLevelText": "Lv4, 20/220",
+      "threatBudget3": 13,
+      "resourceBudgetAuthority": [
+        "44/18/93",
+        "21/15/31",
+        "13/14/6",
+        "0/0/0",
+        "0/0/0"
+      ],
+      "resourceBudgetTotals": [
+        44,
+        21,
+        13,
+        0,
+        0
+      ],
+      "eventIds": [
+        "ACT-D3-ORE",
+        "ACT-D3-HERD"
+      ],
+      "bossId": "",
+      "milestoneText": "Lv3 실버 개인 증강",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-04",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D10-001",
       "enabled": true,
       "day": 4,
-      "finalAvailable": false
+      "progressExp": 150,
+      "activityExp": 60,
+      "totalExp": 210,
+      "cumulativeExp": 630,
+      "expectedEndLevel": 5,
+      "endLevelText": "Lv5, 10/280",
+      "threatBudget3": 14,
+      "resourceBudgetAuthority": [
+        "41/15/119",
+        "20/12/39",
+        "18/15/9",
+        "4/4/0",
+        "0/0/0"
+      ],
+      "resourceBudgetTotals": [
+        41,
+        20,
+        18,
+        4,
+        0
+      ],
+      "eventIds": [
+        "ACT-D4-CRYSTAL",
+        "ACT-D4-BLOOM"
+      ],
+      "bossId": "",
+      "milestoneText": "무기 역할 분화",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-05",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D10-001",
       "enabled": true,
       "day": 5,
-      "finalAvailable": false
+      "progressExp": 180,
+      "activityExp": 80,
+      "totalExp": 260,
+      "cumulativeExp": 890,
+      "expectedEndLevel": 5,
+      "endLevelText": "Lv5, 270/280",
+      "threatBudget3": 17,
+      "resourceBudgetAuthority": [
+        "38/14/143",
+        "20/12/47",
+        "24/16/17",
+        "5/2/3",
+        "1/0/1"
+      ],
+      "resourceBudgetTotals": [
+        38,
+        20,
+        24,
+        5,
+        1
+      ],
+      "eventIds": [
+        "ACT-D5-SIGNAL",
+        "ACT-D5-RIFT",
+        "ACT-D5-BLOOM"
+      ],
+      "bossId": "",
+      "milestoneText": "Lv6 직전",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-06",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D10-001",
       "enabled": true,
       "day": 6,
-      "finalAvailable": false
+      "progressExp": 230,
+      "activityExp": 110,
+      "totalExp": 340,
+      "cumulativeExp": 1230,
+      "expectedEndLevel": 6,
+      "endLevelText": "Lv6, 330/350",
+      "threatBudget3": 18,
+      "resourceBudgetAuthority": [
+        "35/12/166",
+        "19/12/54",
+        "27/14/30",
+        "8/3/8",
+        "3/2/2"
+      ],
+      "resourceBudgetTotals": [
+        35,
+        19,
+        27,
+        8,
+        3
+      ],
+      "eventIds": [
+        "ACT-D6-WRECK",
+        "ACT-D6-CRYSTAL",
+        "ACT-D6-RATION",
+        "ACT-D6-RIFT"
+      ],
+      "bossId": "",
+      "milestoneText": "Lv6 골드 개인 증강",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-07",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D10-001",
       "enabled": true,
       "day": 7,
-      "finalAvailable": false
+      "progressExp": 215,
+      "activityExp": 85,
+      "totalExp": 300,
+      "cumulativeExp": 1530,
+      "expectedEndLevel": 7,
+      "endLevelText": "Lv7, 280/430",
+      "threatBudget3": 21,
+      "resourceBudgetAuthority": [
+        "34/10/190",
+        "19/11/62",
+        "28/12/46",
+        "9/2/15",
+        "4/2/4"
+      ],
+      "resourceBudgetTotals": [
+        34,
+        19,
+        28,
+        9,
+        4
+      ],
+      "eventIds": [
+        "ACT-D7-SIGNAL",
+        "ACT-D7-RIFT",
+        "ACT-D7-ORE"
+      ],
+      "bossId": "",
+      "milestoneText": "AP·방어 투자 체감",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-08",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D10-001",
       "enabled": true,
       "day": 8,
-      "finalAvailable": false
+      "progressExp": 240,
+      "activityExp": 110,
+      "totalExp": 350,
+      "cumulativeExp": 1880,
+      "expectedEndLevel": 8,
+      "endLevelText": "Lv8, 200/520",
+      "threatBudget3": 23,
+      "resourceBudgetAuthority": [
+        "32/8/214",
+        "19/10/71",
+        "28/12/62",
+        "10/2/23",
+        "6/2/8"
+      ],
+      "resourceBudgetTotals": [
+        32,
+        19,
+        28,
+        10,
+        6
+      ],
+      "eventIds": [
+        "ACT-D8-RESONANCE",
+        "ACT-D8-ELITE_TRACE"
+      ],
+      "bossId": "",
+      "milestoneText": "첫 정예·희귀 장비",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-09",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D10-001",
       "enabled": true,
       "day": 9,
-      "finalAvailable": false
+      "progressExp": 275,
+      "activityExp": 145,
+      "totalExp": 420,
+      "cumulativeExp": 2300,
+      "expectedEndLevel": 9,
+      "endLevelText": "Lv9, 100/620",
+      "threatBudget3": 26,
+      "resourceBudgetAuthority": [
+        "31/7/238",
+        "18/10/79",
+        "28/10/80",
+        "12/3/32",
+        "7/3/12"
+      ],
+      "resourceBudgetTotals": [
+        31,
+        18,
+        28,
+        12,
+        7
+      ],
+      "eventIds": [
+        "ACT-D9-SIGNAL",
+        "ACT-D9-RIFT",
+        "ACT-D9-ELITE_TRACE"
+      ],
+      "bossId": "",
+      "milestoneText": "보스 준비 완성",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-10",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D10-001",
       "enabled": true,
       "day": 10,
-      "finalAvailable": false
+      "progressExp": 384,
+      "activityExp": 136,
+      "totalExp": 520,
+      "cumulativeExp": 2820,
+      "expectedEndLevel": 10,
+      "endLevelText": "Lv10, 0/730",
+      "threatBudget3": -1,
+      "resourceBudgetAuthority": [
+        "21/7/252",
+        "18/13/84",
+        "20/15/85",
+        "9/3/38",
+        "4/3/13"
+      ],
+      "resourceBudgetTotals": [
+        21,
+        18,
+        20,
+        9,
+        4
+      ],
+      "eventIds": [
+        "ACT-D10-SIGNAL",
+        "ACT-D10-CRYSTAL",
+        "ACT-D10-SAFETY"
+      ],
+      "bossId": "BOSS-D10",
+      "milestoneText": "Lv10 프리즘, 처치 후 파티 증강",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-11",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D20-001",
       "enabled": true,
       "day": 11,
-      "finalAvailable": false
+      "progressExp": 595,
+      "activityExp": 255,
+      "totalExp": 850,
+      "cumulativeExp": 3670,
+      "expectedEndLevel": 11,
+      "endLevelText": "Lv11, 120/850",
+      "threatBudget3": 21,
+      "resourceBudgetAuthority": [
+        "32/18/14",
+        "22/12/10",
+        "25/15/10",
+        "10/5/5",
+        "10/4/6"
+      ],
+      "resourceBudgetTotals": [
+        32,
+        22,
+        25,
+        10,
+        10
+      ],
+      "eventIds": [
+        "EV20-11-TRIAGE"
+      ],
+      "bossId": "",
+      "milestoneText": "상태 저항 투자 시작",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-12",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D20-001",
       "enabled": true,
       "day": 12,
-      "finalAvailable": false
+      "progressExp": 665,
+      "activityExp": 285,
+      "totalExp": 950,
+      "cumulativeExp": 4620,
+      "expectedEndLevel": 12,
+      "endLevelText": "Lv12, 220/980",
+      "threatBudget3": 23,
+      "resourceBudgetAuthority": [
+        "31/15/30",
+        "23/14/19",
+        "27/18/19",
+        "11/6/10",
+        "15/8/13"
+      ],
+      "resourceBudgetTotals": [
+        31,
+        23,
+        27,
+        11,
+        15
+      ],
+      "eventIds": [
+        "EV20-12-TOXIC-FIRE"
+      ],
+      "bossId": "",
+      "milestoneText": "상태 조합 대응",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-13",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D20-001",
       "enabled": true,
       "day": 13,
-      "finalAvailable": false
+      "progressExp": 735,
+      "activityExp": 315,
+      "totalExp": 1050,
+      "cumulativeExp": 5670,
+      "expectedEndLevel": 13,
+      "endLevelText": "Lv13, 290/1,120",
+      "threatBudget3": 26,
+      "resourceBudgetAuthority": [
+        "30/18/42",
+        "24/15/28",
+        "29/20/28",
+        "12/7/15",
+        "20/12/21"
+      ],
+      "resourceBudgetTotals": [
+        30,
+        24,
+        29,
+        12,
+        20
+      ],
+      "eventIds": [
+        "EV20-13-REACTION-LAB"
+      ],
+      "bossId": "",
+      "milestoneText": "표본·시설 분화",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-14",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D20-001",
       "enabled": true,
       "day": 14,
-      "finalAvailable": false
+      "progressExp": 805,
+      "activityExp": 345,
+      "totalExp": 1150,
+      "cumulativeExp": 6820,
+      "expectedEndLevel": 14,
+      "endLevelText": "Lv14, 320/1,270",
+      "threatBudget3": 27,
+      "resourceBudgetAuthority": [
+        "29/16/55",
+        "25/20/33",
+        "30/21/37",
+        "13/8/20",
+        "24/16/29"
+      ],
+      "resourceBudgetTotals": [
+        29,
+        25,
+        30,
+        13,
+        24
+      ],
+      "eventIds": [
+        "EV20-14-RESCUE-BIND"
+      ],
+      "bossId": "",
+      "milestoneText": "구조 보조 장비",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-15",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D20-001",
       "enabled": true,
       "day": 15,
-      "finalAvailable": false
+      "progressExp": 875,
+      "activityExp": 375,
+      "totalExp": 1250,
+      "cumulativeExp": 8070,
+      "expectedEndLevel": 15,
+      "endLevelText": "Lv15, 300/1,430",
+      "threatBudget3": 30,
+      "resourceBudgetAuthority": [
+        "28/17/66",
+        "25/18/40",
+        "31/22/46",
+        "14/8/26",
+        "29/18/40"
+      ],
+      "resourceBudgetTotals": [
+        28,
+        25,
+        31,
+        14,
+        29
+      ],
+      "eventIds": [
+        "EV20-15-LOCKED-TIER"
+      ],
+      "bossId": "",
+      "milestoneText": "4회차 개인 증강·등급 잠금",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-16",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D20-001",
       "enabled": true,
       "day": 16,
-      "finalAvailable": false
+      "progressExp": 945,
+      "activityExp": 405,
+      "totalExp": 1350,
+      "cumulativeExp": 9420,
+      "expectedEndLevel": 16,
+      "endLevelText": "Lv16, 220/1,600",
+      "threatBudget3": 31,
+      "resourceBudgetAuthority": [
+        "27/14/79",
+        "26/18/48",
+        "32/21/57",
+        "15/9/32",
+        "33/20/53"
+      ],
+      "resourceBudgetTotals": [
+        27,
+        26,
+        32,
+        15,
+        33
+      ],
+      "eventIds": [
+        "EV20-16-BREATHING-FOG"
+      ],
+      "bossId": "",
+      "milestoneText": "구름 이동 대응",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-17",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D20-001",
       "enabled": true,
       "day": 17,
-      "finalAvailable": false
+      "progressExp": 1015,
+      "activityExp": 435,
+      "totalExp": 1450,
+      "cumulativeExp": 10870,
+      "expectedEndLevel": 17,
+      "endLevelText": "Lv17, 70/1,780",
+      "threatBudget3": 33,
+      "resourceBudgetAuthority": [
+        "26/14/91",
+        "27/19/56",
+        "33/20/70",
+        "16/10/38",
+        "36/22/67"
+      ],
+      "resourceBudgetTotals": [
+        26,
+        27,
+        33,
+        16,
+        36
+      ],
+      "eventIds": [
+        "EV20-17-SILENT-HANDS"
+      ],
+      "bossId": "",
+      "milestoneText": "침묵·무장해제 대응",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-18",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D20-001",
       "enabled": true,
       "day": 18,
-      "finalAvailable": false
+      "progressExp": 1120,
+      "activityExp": 480,
+      "totalExp": 1600,
+      "cumulativeExp": 12470,
+      "expectedEndLevel": 17,
+      "endLevelText": "Lv17, 1,670/1,780",
+      "threatBudget3": 36,
+      "resourceBudgetAuthority": [
+        "25/15/101",
+        "28/18/66",
+        "34/21/83",
+        "17/10/45",
+        "43/25/85"
+      ],
+      "resourceBudgetTotals": [
+        25,
+        28,
+        34,
+        17,
+        43
+      ],
+      "eventIds": [
+        "EV20-18-STITCHED-ELITE"
+      ],
+      "bossId": "",
+      "milestoneText": "상태 정예·EPIC 엔진",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-19",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D20-001",
       "enabled": true,
       "day": 19,
-      "finalAvailable": false
+      "progressExp": 1225,
+      "activityExp": 525,
+      "totalExp": 1750,
+      "cumulativeExp": 14220,
+      "expectedEndLevel": 18,
+      "endLevelText": "Lv18, 1,640/1,970",
+      "threatBudget3": 39,
+      "resourceBudgetAuthority": [
+        "24/13/112",
+        "29/18/77",
+        "35/20/98",
+        "18/10/53",
+        "47/30/102"
+      ],
+      "resourceBudgetTotals": [
+        24,
+        29,
+        35,
+        18,
+        47
+      ],
+      "eventIds": [
+        "EV20-19-NEURAL-ESCORT"
+      ],
+      "bossId": "",
+      "milestoneText": "보스 신호·호출 준비",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-20",
-      "sourceDocumentId": "CONTENT-DATA-D50-001",
+      "sourceDocumentId": "BALANCE-D20-001",
       "enabled": true,
       "day": 20,
-      "finalAvailable": false
+      "progressExp": 1750,
+      "activityExp": 750,
+      "totalExp": 2500,
+      "cumulativeExp": 16720,
+      "expectedEndLevel": 20,
+      "endLevelText": "Lv20, 0/2,380",
+      "threatBudget3": -1,
+      "resourceBudgetAuthority": [
+        "20/15/117",
+        "28/18/87",
+        "30/22/106",
+        "16/12/57",
+        "44/35/111"
+      ],
+      "resourceBudgetTotals": [
+        20,
+        28,
+        30,
+        16,
+        44
+      ],
+      "eventIds": [],
+      "bossId": "BOSS-D20",
+      "milestoneText": "개인 증강 5회차·부품 B·전설·파티 증강 2회차",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-21",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 21,
-      "finalAvailable": false
+      "progressExp": 1540,
+      "activityExp": 660,
+      "totalExp": 2200,
+      "cumulativeExp": 18920,
+      "expectedEndLevel": 20,
+      "endLevelText": "Lv20 2,200/2,380",
+      "threatBudget3": 32,
+      "resourceBudgetAuthority": [
+        "24",
+        "28",
+        "36",
+        "20",
+        "18"
+      ],
+      "resourceBudgetTotals": [
+        24,
+        28,
+        36,
+        20,
+        18
+      ],
+      "eventIds": [
+        "EV50-D21-MOVING-BORDER"
+      ],
+      "bossId": "",
+      "milestoneText": "이동 오염, C14 분류 시작",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-22",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 22,
-      "finalAvailable": false
+      "progressExp": 1680,
+      "activityExp": 720,
+      "totalExp": 2400,
+      "cumulativeExp": 21320,
+      "expectedEndLevel": 21,
+      "endLevelText": "Lv21 2,220/2,600",
+      "threatBudget3": 34,
+      "resourceBudgetAuthority": [
+        "23",
+        "28",
+        "38",
+        "21",
+        "22"
+      ],
+      "resourceBudgetTotals": [
+        23,
+        28,
+        38,
+        21,
+        22
+      ],
+      "eventIds": [
+        "EV50-D22-MUTATION-MIRROR"
+      ],
+      "bossId": "",
+      "milestoneText": "자연 정화 후보, 변이 차이",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-23",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 23,
-      "finalAvailable": false
+      "progressExp": 1820,
+      "activityExp": 780,
+      "totalExp": 2600,
+      "cumulativeExp": 23920,
+      "expectedEndLevel": 22,
+      "endLevelText": "Lv22 2,220/2,830",
+      "threatBudget3": 36,
+      "resourceBudgetAuthority": [
+        "22",
+        "29",
+        "40",
+        "22",
+        "26"
+      ],
+      "resourceBudgetTotals": [
+        22,
+        29,
+        40,
+        22,
+        26
+      ],
+      "eventIds": [
+        "EV50-D23-PURIFIER-PARASITE"
+      ],
+      "bossId": "",
+      "milestoneText": "휴대 정화기, 시설 오염 신호",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-24",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 24,
-      "finalAvailable": false
+      "progressExp": 1960,
+      "activityExp": 840,
+      "totalExp": 2800,
+      "cumulativeExp": 26720,
+      "expectedEndLevel": 23,
+      "endLevelText": "Lv23 2,190/3,070",
+      "threatBudget3": 38,
+      "resourceBudgetAuthority": [
+        "21",
+        "29",
+        "42",
+        "23",
+        "30"
+      ],
+      "resourceBudgetTotals": [
+        21,
+        29,
+        42,
+        23,
+        30
+      ],
+      "eventIds": [
+        "EV50-D24-LEDGER-TRACK"
+      ],
+      "bossId": "",
+      "milestoneText": "오염 자원 운반 방어",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-25",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 25,
-      "finalAvailable": false
+      "progressExp": 2100,
+      "activityExp": 900,
+      "totalExp": 3000,
+      "cumulativeExp": 29720,
+      "expectedEndLevel": 24,
+      "endLevelText": "Lv24 2,120/3,320",
+      "threatBudget3": 40,
+      "resourceBudgetAuthority": [
+        "20",
+        "30",
+        "44",
+        "24",
+        "34"
+      ],
+      "resourceBudgetTotals": [
+        20,
+        30,
+        44,
+        24,
+        34
+      ],
+      "eventIds": [
+        "EV50-D25-MUTATION-MAP"
+      ],
+      "bossId": "",
+      "milestoneText": "Lv25 잠금 접근, 변이+증강",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-26",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 26,
-      "finalAvailable": false
+      "progressExp": 2310,
+      "activityExp": 990,
+      "totalExp": 3300,
+      "cumulativeExp": 33020,
+      "expectedEndLevel": 25,
+      "endLevelText": "Lv25 2,100/3,580",
+      "threatBudget3": 42,
+      "resourceBudgetAuthority": [
+        "19",
+        "30",
+        "46",
+        "25",
+        "38"
+      ],
+      "resourceBudgetTotals": [
+        19,
+        30,
+        46,
+        25,
+        38
+      ],
+      "eventIds": [
+        "EV50-D26-CONFLICTED-ORDER"
+      ],
+      "bossId": "",
+      "milestoneText": "Lv25 개인 증강 6회차, C18",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-27",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 27,
-      "finalAvailable": false
+      "progressExp": 2520,
+      "activityExp": 1080,
+      "totalExp": 3600,
+      "cumulativeExp": 36620,
+      "expectedEndLevel": 26,
+      "endLevelText": "Lv26 2,120/3,850",
+      "threatBudget3": 44,
+      "resourceBudgetAuthority": [
+        "18",
+        "31",
+        "48",
+        "26",
+        "42"
+      ],
+      "resourceBudgetTotals": [
+        18,
+        31,
+        48,
+        26,
+        42
+      ],
+      "eventIds": [
+        "EV50-D27-RIFT-STABILITY"
+      ],
+      "bossId": "",
+      "milestoneText": "정화 방해, C19 균열 안정화",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-28",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 28,
-      "finalAvailable": false
+      "progressExp": 2800,
+      "activityExp": 1200,
+      "totalExp": 4000,
+      "cumulativeExp": 40620,
+      "expectedEndLevel": 27,
+      "endLevelText": "Lv27 2,270/4,130",
+      "threatBudget3": 47,
+      "resourceBudgetAuthority": [
+        "17",
+        "31",
+        "50",
+        "27",
+        "46"
+      ],
+      "resourceBudgetTotals": [
+        17,
+        31,
+        50,
+        27,
+        46
+      ],
+      "eventIds": [
+        "EV50-D28-ABYSSAL-COST"
+      ],
+      "bossId": "",
+      "milestoneText": "오염 정예, 심연 대가 공개",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-29",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 29,
-      "finalAvailable": false
+      "progressExp": 3150,
+      "activityExp": 1350,
+      "totalExp": 4500,
+      "cumulativeExp": 45120,
+      "expectedEndLevel": 28,
+      "endLevelText": "Lv28 2,640/4,420",
+      "threatBudget3": 50,
+      "resourceBudgetAuthority": [
+        "16",
+        "32",
+        "52",
+        "28",
+        "50"
+      ],
+      "resourceBudgetTotals": [
+        16,
+        32,
+        52,
+        28,
+        50
+      ],
+      "eventIds": [
+        "EV50-D29-CORE-TRIANGULATION"
+      ],
+      "bossId": "",
+      "milestoneText": "오염 핵 신호, 호출 준비",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-30",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 30,
-      "finalAvailable": false
+      "progressExp": 4550,
+      "activityExp": 1950,
+      "totalExp": 6500,
+      "cumulativeExp": 51620,
+      "expectedEndLevel": 30,
+      "endLevelText": "Lv30 0/5,030",
+      "threatBudget3": -1,
+      "resourceBudgetAuthority": [
+        "14",
+        "30",
+        "48",
+        "26",
+        "55"
+      ],
+      "resourceBudgetTotals": [
+        14,
+        30,
+        48,
+        26,
+        55
+      ],
+      "eventIds": [],
+      "bossId": "BOSS-D30",
+      "milestoneText": "BOSS-003, 부품 C, 개인 Lv30, 파티 증강 3",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-31",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 31,
-      "finalAvailable": false
+      "progressExp": 2800,
+      "activityExp": 1200,
+      "totalExp": 4000,
+      "cumulativeExp": 55620,
+      "expectedEndLevel": 30,
+      "endLevelText": "Lv30 4,000/5,030",
+      "threatBudget3": 50,
+      "resourceBudgetAuthority": [
+        "20",
+        "32",
+        "50",
+        "28",
+        "24"
+      ],
+      "resourceBudgetTotals": [
+        20,
+        32,
+        50,
+        28,
+        24
+      ],
+      "eventIds": [
+        "EV50-D31-BREAK-TELEMETRY"
+      ],
+      "bossId": "",
+      "milestoneText": "구조적 약점, 브레이크 상세 UI",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-32",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 32,
-      "finalAvailable": false
+      "progressExp": 3150,
+      "activityExp": 1350,
+      "totalExp": 4500,
+      "cumulativeExp": 60120,
+      "expectedEndLevel": 31,
+      "endLevelText": "Lv31 3,470/5,350",
+      "threatBudget3": 53,
+      "resourceBudgetAuthority": [
+        "19",
+        "32",
+        "52",
+        "29",
+        "27"
+      ],
+      "resourceBudgetTotals": [
+        19,
+        32,
+        52,
+        29,
+        27
+      ],
+      "eventIds": [
+        "EV50-D32-TAG-TRIAL"
+      ],
+      "bossId": "",
+      "milestoneText": "중단 가능·불가 태그",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-33",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 33,
-      "finalAvailable": false
+      "progressExp": 3500,
+      "activityExp": 1500,
+      "totalExp": 5000,
+      "cumulativeExp": 65120,
+      "expectedEndLevel": 32,
+      "endLevelText": "Lv32 3,120/5,680",
+      "threatBudget3": 56,
+      "resourceBudgetAuthority": [
+        "18",
+        "33",
+        "54",
+        "30",
+        "30"
+      ],
+      "resourceBudgetTotals": [
+        18,
+        33,
+        54,
+        30,
+        30
+      ],
+      "eventIds": [
+        "EV50-D33-SIEGE-BORE"
+      ],
+      "bossId": "",
+      "milestoneText": "공성 적, 현장 수리 보강",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-34",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 34,
-      "finalAvailable": false
+      "progressExp": 3850,
+      "activityExp": 1650,
+      "totalExp": 5500,
+      "cumulativeExp": 70620,
+      "expectedEndLevel": 33,
+      "endLevelText": "Lv33 2,940/6,020",
+      "threatBudget3": 59,
+      "resourceBudgetAuthority": [
+        "17",
+        "33",
+        "56",
+        "31",
+        "33"
+      ],
+      "resourceBudgetTotals": [
+        17,
+        33,
+        56,
+        31,
+        33
+      ],
+      "eventIds": [
+        "EV50-D34-METHOD-DECAY"
+      ],
+      "bossId": "",
+      "milestoneText": "반복 패링 내성, C23",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-35",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 35,
-      "finalAvailable": false
+      "progressExp": 4200,
+      "activityExp": 1800,
+      "totalExp": 6000,
+      "cumulativeExp": 76620,
+      "expectedEndLevel": 34,
+      "endLevelText": "Lv34 2,920/6,370",
+      "threatBudget3": 62,
+      "resourceBudgetAuthority": [
+        "16",
+        "34",
+        "58",
+        "32",
+        "36"
+      ],
+      "resourceBudgetTotals": [
+        16,
+        34,
+        58,
+        32,
+        36
+      ],
+      "eventIds": [
+        "EV50-D35-FOUR-AUTHORITIES"
+      ],
+      "bossId": "",
+      "milestoneText": "Lv35 접근, 고등급 적 증강",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-36",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 36,
-      "finalAvailable": false
+      "progressExp": 4550,
+      "activityExp": 1950,
+      "totalExp": 6500,
+      "cumulativeExp": 83120,
+      "expectedEndLevel": 35,
+      "endLevelText": "Lv35 3,050/6,730",
+      "threatBudget3": 65,
+      "resourceBudgetAuthority": [
+        "15",
+        "34",
+        "60",
+        "33",
+        "39"
+      ],
+      "resourceBudgetTotals": [
+        15,
+        34,
+        60,
+        33,
+        39
+      ],
+      "eventIds": [
+        "EV50-D36-RESIDUAL-FIELD"
+      ],
+      "bossId": "",
+      "milestoneText": "Lv35 개인 증강 8회차, 잔류 장판",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-37",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 37,
-      "finalAvailable": false
+      "progressExp": 4900,
+      "activityExp": 2100,
+      "totalExp": 7000,
+      "cumulativeExp": 90120,
+      "expectedEndLevel": 36,
+      "endLevelText": "Lv36 3,320/7,100",
+      "threatBudget3": 68,
+      "resourceBudgetAuthority": [
+        "14",
+        "35",
+        "62",
+        "34",
+        "42"
+      ],
+      "resourceBudgetTotals": [
+        14,
+        35,
+        62,
+        34,
+        42
+      ],
+      "eventIds": [
+        "EV50-D37-BREAK-SUTURE"
+      ],
+      "bossId": "",
+      "milestoneText": "브레이크 보호·회복 조합",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-38",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 38,
-      "finalAvailable": false
+      "progressExp": 5250,
+      "activityExp": 2250,
+      "totalExp": 7500,
+      "cumulativeExp": 97620,
+      "expectedEndLevel": 37,
+      "endLevelText": "Lv37 3,720/7,480",
+      "threatBudget3": 72,
+      "resourceBudgetAuthority": [
+        "13",
+        "35",
+        "64",
+        "35",
+        "45"
+      ],
+      "resourceBudgetTotals": [
+        13,
+        35,
+        64,
+        35,
+        45
+      ],
+      "eventIds": [
+        "EV50-D38-PHASE-ELITE"
+      ],
+      "bossId": "",
+      "milestoneText": "페이즈형 정예 브레이크",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-39",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 39,
-      "finalAvailable": false
+      "progressExp": 5600,
+      "activityExp": 2400,
+      "totalExp": 8000,
+      "cumulativeExp": 105620,
+      "expectedEndLevel": 38,
+      "endLevelText": "Lv38 4,240/7,870",
+      "threatBudget3": 76,
+      "resourceBudgetAuthority": [
+        "12",
+        "36",
+        "66",
+        "36",
+        "48"
+      ],
+      "resourceBudgetTotals": [
+        12,
+        36,
+        66,
+        36,
+        48
+      ],
+      "eventIds": [
+        "EV50-D39-INTERRUPT-CORE"
+      ],
+      "bossId": "",
+      "milestoneText": "대형 채널 예행, C26 호출",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-40",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 40,
-      "finalAvailable": false
+      "progressExp": 8330,
+      "activityExp": 3570,
+      "totalExp": 11900,
+      "cumulativeExp": 117520,
+      "expectedEndLevel": 40,
+      "endLevelText": "Lv40 0/8,680",
+      "threatBudget3": -1,
+      "resourceBudgetAuthority": [
+        "10",
+        "34",
+        "60",
+        "34",
+        "58"
+      ],
+      "resourceBudgetTotals": [
+        10,
+        34,
+        60,
+        34,
+        58
+      ],
+      "eventIds": [],
+      "bossId": "BOSS-D40",
+      "milestoneText": "BOSS-004, 부품 D, 개인 Lv40, 파티 증강 4",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-41",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 41,
-      "finalAvailable": false
+      "progressExp": 4200,
+      "activityExp": 1800,
+      "totalExp": 6000,
+      "cumulativeExp": 123520,
+      "expectedEndLevel": 40,
+      "endLevelText": "Lv40 6,000/8,680",
+      "threatBudget3": 64,
+      "resourceBudgetAuthority": [
+        "16",
+        "36",
+        "62",
+        "36",
+        "30"
+      ],
+      "resourceBudgetTotals": [
+        16,
+        36,
+        62,
+        36,
+        30
+      ],
+      "eventIds": [
+        "EV50-D41-FOUR-PARTS"
+      ],
+      "bossId": "",
+      "milestoneText": "부품 A~D 공명, C27",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-42",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 42,
-      "finalAvailable": false
+      "progressExp": 4900,
+      "activityExp": 2100,
+      "totalExp": 7000,
+      "cumulativeExp": 130520,
+      "expectedEndLevel": 41,
+      "endLevelText": "Lv41 4,320/9,100",
+      "threatBudget3": 68,
+      "resourceBudgetAuthority": [
+        "15",
+        "36",
+        "64",
+        "37",
+        "34"
+      ],
+      "resourceBudgetTotals": [
+        15,
+        36,
+        64,
+        37,
+        34
+      ],
+      "eventIds": [
+        "EV50-D42-POWER-TEST"
+      ],
+      "bossId": "",
+      "milestoneText": "오염 100% 이후 강도 안정화",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-43",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 43,
-      "finalAvailable": false
+      "progressExp": 5600,
+      "activityExp": 2400,
+      "totalExp": 8000,
+      "cumulativeExp": 138520,
+      "expectedEndLevel": 42,
+      "endLevelText": "Lv42 3,220/9,530",
+      "threatBudget3": 72,
+      "resourceBudgetAuthority": [
+        "14",
+        "37",
+        "66",
+        "38",
+        "38"
+      ],
+      "resourceBudgetTotals": [
+        14,
+        37,
+        66,
+        38,
+        38
+      ],
+      "eventIds": [
+        "EV50-D43-CONTRADICTION"
+      ],
+      "bossId": "",
+      "milestoneText": "적 증강 복수 상충표",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-44",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 44,
-      "finalAvailable": false
+      "progressExp": 6300,
+      "activityExp": 2700,
+      "totalExp": 9000,
+      "cumulativeExp": 147520,
+      "expectedEndLevel": 43,
+      "endLevelText": "Lv43 2,690/9,970",
+      "threatBudget3": 76,
+      "resourceBudgetAuthority": [
+        "13",
+        "37",
+        "68",
+        "39",
+        "42"
+      ],
+      "resourceBudgetTotals": [
+        13,
+        37,
+        68,
+        39,
+        42
+      ],
+      "eventIds": [
+        "EV50-D44-SPLIT-RETURN"
+      ],
+      "bossId": "",
+      "milestoneText": "시설망·파티 분할 압박",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-45",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 45,
-      "finalAvailable": false
+      "progressExp": 7000,
+      "activityExp": 3000,
+      "totalExp": 10000,
+      "cumulativeExp": 157520,
+      "expectedEndLevel": 44,
+      "endLevelText": "Lv44 2,720/10,420",
+      "threatBudget3": 80,
+      "resourceBudgetAuthority": [
+        "12",
+        "38",
+        "70",
+        "40",
+        "46"
+      ],
+      "resourceBudgetTotals": [
+        12,
+        38,
+        70,
+        40,
+        46
+      ],
+      "eventIds": [
+        "EV50-D45-BUILD-SUMMARY"
+      ],
+      "bossId": "",
+      "milestoneText": "마지막 개인 증강 접근, 프레임",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-46",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 46,
-      "finalAvailable": false
+      "progressExp": 7700,
+      "activityExp": 3300,
+      "totalExp": 11000,
+      "cumulativeExp": 168520,
+      "expectedEndLevel": 45,
+      "endLevelText": "Lv45 3,300/10,880",
+      "threatBudget3": 84,
+      "resourceBudgetAuthority": [
+        "11",
+        "38",
+        "72",
+        "41",
+        "50"
+      ],
+      "resourceBudgetTotals": [
+        11,
+        38,
+        72,
+        41,
+        50
+      ],
+      "eventIds": [
+        "EV50-D46-BOSS-ECHO"
+      ],
+      "bossId": "",
+      "milestoneText": "Lv45 개인 증강 10회차, 보스 잔향 정예",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-47",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 47,
-      "finalAvailable": false
+      "progressExp": 8400,
+      "activityExp": 3600,
+      "totalExp": 12000,
+      "cumulativeExp": 180520,
+      "expectedEndLevel": 46,
+      "endLevelText": "Lv46 4,420/11,350",
+      "threatBudget3": 88,
+      "resourceBudgetAuthority": [
+        "10",
+        "39",
+        "74",
+        "42",
+        "54"
+      ],
+      "resourceBudgetTotals": [
+        10,
+        39,
+        74,
+        42,
+        54
+      ],
+      "eventIds": [
+        "EV50-D47-RELAY-LINE"
+      ],
+      "bossId": "",
+      "milestoneText": "이동형 전력·신호 중계",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-48",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 48,
-      "finalAvailable": false
+      "progressExp": 9100,
+      "activityExp": 3900,
+      "totalExp": 13000,
+      "cumulativeExp": 193520,
+      "expectedEndLevel": 47,
+      "endLevelText": "Lv47 6,070/11,830",
+      "threatBudget3": 92,
+      "resourceBudgetAuthority": [
+        "9",
+        "39",
+        "76",
+        "43",
+        "58"
+      ],
+      "resourceBudgetTotals": [
+        9,
+        39,
+        76,
+        43,
+        58
+      ],
+      "eventIds": [
+        "EV50-D48-FOUR-SYSTEMS"
+      ],
+      "bossId": "",
+      "milestoneText": "C28 완료·최종 장치 조립",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-49",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 49,
-      "finalAvailable": false
+      "progressExp": 9800,
+      "activityExp": 4200,
+      "totalExp": 14000,
+      "cumulativeExp": 207520,
+      "expectedEndLevel": 48,
+      "endLevelText": "Lv48 8,240/12,320",
+      "threatBudget3": 96,
+      "resourceBudgetAuthority": [
+        "8",
+        "40",
+        "78",
+        "44",
+        "62"
+      ],
+      "resourceBudgetTotals": [
+        8,
+        40,
+        78,
+        44,
+        62
+      ],
+      "eventIds": [
+        "EV50-D49-THREE-CALIBRATIONS"
+      ],
+      "bossId": "",
+      "milestoneText": "C29 세 교정·준비 완료 플래그",
+      "finalAvailable": false,
+      "completionAllowed": false,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     },
     {
       "id": "DAY-50",
       "sourceDocumentId": "CONTENT-DATA-D50-001",
       "enabled": true,
       "day": 50,
-      "finalAvailable": true
+      "progressExp": 11830,
+      "activityExp": 5070,
+      "totalExp": 16900,
+      "cumulativeExp": 224420,
+      "expectedEndLevel": 50,
+      "endLevelText": "Lv50 MAX",
+      "threatBudget3": 100,
+      "resourceBudgetAuthority": [
+        "6",
+        "38",
+        "70",
+        "42",
+        "72"
+      ],
+      "resourceBudgetTotals": [
+        6,
+        38,
+        70,
+        42,
+        72
+      ],
+      "eventIds": [
+        "EV50-D50-READINESS"
+      ],
+      "bossId": "",
+      "milestoneText": "Day 잠금 해제, FINAL-001 또는 Day 51 진입",
+      "finalAvailable": true,
+      "completionAllowed": true,
+      "stateMachine": [
+        "PREPARING",
+        "ACTIVE",
+        "PRESSURE",
+        "RESOLVING",
+        "COMPLETED"
+      ]
     }
   ]
 }
