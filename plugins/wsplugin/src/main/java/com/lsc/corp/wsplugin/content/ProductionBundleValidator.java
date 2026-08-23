@@ -427,6 +427,11 @@ public final class ProductionBundleValidator {
                     requiredString(record, "prerequisiteText"), requiredString(record, "comparisonInput"),
                     Map.copyOf(cost), requiredInt(record, "durationSeconds"),
                     requiredString(record, "unlockText"), stringArray(record, "stateMachine"));
+            List<String> canonicalResearchStates = List.of("HIDDEN", "OBSERVABLE", "HYPOTHESIZED", "READY",
+                    "QUEUED", "PROCESSING", "PAUSED", "ANALYZED", "UNLOCKED", "MASTERED");
+            if (!canonicalResearchStates.equals(research.stateMachine())) {
+                throw new ContentValidationException("Research state machine mismatch " + research.id());
+            }
             researchById.put(research.id(), research);
         }
 
@@ -1094,7 +1099,8 @@ public final class ProductionBundleValidator {
 
     private void validateStructuredAuthorityData(ResourceReader reader) throws Exception {
         Set<String> researchIds = new HashSet<>();
-        List<String> researchStates = List.of("LOCKED", "AVAILABLE", "READY_LOCKED", "RUNNING", "COMPLETED", "MASTERED");
+        List<String> researchStates = List.of("HIDDEN", "OBSERVABLE", "HYPOTHESIZED", "READY", "QUEUED",
+                "PROCESSING", "PAUSED", "ANALYZED", "UNLOCKED", "MASTERED");
         for (JsonObject record : records(reader, "research/season1-research.json")) {
             rejectAuthorityStub(record);
             String id = requiredString(record, "id");

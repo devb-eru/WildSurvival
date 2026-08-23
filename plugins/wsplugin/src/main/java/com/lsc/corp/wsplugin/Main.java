@@ -28,6 +28,7 @@ import com.lsc.corp.wsplugin.world.DiscoveryService;
 import com.lsc.corp.wsplugin.story.StoryService;
 import com.lsc.corp.wsplugin.finale.FinalService;
 import com.lsc.corp.wsplugin.ui.PlayerMenuService;
+import com.lsc.corp.wsplugin.research.ResearchService;
 import java.util.Objects;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -63,7 +64,8 @@ public final class Main extends JavaPlugin {
             PlayerStatService stats = new PlayerStatService(this, runService, growth, equipment);
             equipment.setStatRefresher(stats::apply);
             FacilityService facility = new FacilityService(this, runService, content.productionCatalog(), codex, equipment, telemetry);
-            facility.setOpeners(economy::openCraft, economy::openLedger, codex::open, stats::open);
+            ResearchService research = new ResearchService(runService, content.productionCatalog());
+            facility.setOpeners(economy::openCraft, economy::openLedger, codex::open, stats::open, research::open);
             economy.setVirtualFacilityHandler(facility::canAssembleVirtual, facility::assembleVirtual);
             DiscoveryService discoveries = new DiscoveryService(runService, content.productionCatalog());
             StoryService story = new StoryService(runService, content.productionCatalog());
@@ -76,7 +78,7 @@ public final class Main extends JavaPlugin {
                     combat, growth, loot, telemetry);
             finale = new FinalService(this, runService, content.productionCatalog(), codex, combat, discoveries, story);
             PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, skills,
-                    growth, tutorial, discoveries, story, finale);
+                    growth, tutorial, discoveries, story, finale, research);
             combat.setMenuOpener(menu::open);
             combat.setBossDamageHandler((attacker, entity, damage, breakDamage, executionId) -> {
                 if (finale.handles(entity)) finale.damage(attacker, entity, damage, breakDamage, executionId);
@@ -95,7 +97,7 @@ public final class Main extends JavaPlugin {
 
             runService.attach(loop, equipment, growth);
             registerListeners(equipment, skills, combat, economy, facility, codex, stats, menu, discoveries, story, finale,
-                    tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
+                    research, tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
 
             PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand, menu);
             Objects.requireNonNull(getCommand("wildsurvival"), "wildsurvival command").setExecutor(command);
@@ -103,10 +105,12 @@ public final class Main extends JavaPlugin {
 
             runService.restore();
             facility.restore();
+            research.restore();
             finale.restore();
             getServer().getScheduler().runTaskTimer(this, facility::tick, 20L, 20L);
             getServer().getScheduler().runTaskTimer(this, discoveries::tick, 20L, 20L);
             getServer().getScheduler().runTaskTimer(this, story::tick, 30L, 20L);
+            getServer().getScheduler().runTaskTimer(this, research::tick, 30L, 20L);
             getServer().getScheduler().runTaskTimer(this, finale::tick, 40L, 1L);
             tutorial.start();
             for (org.bukkit.entity.Player player : runService.onlineMembers()) {

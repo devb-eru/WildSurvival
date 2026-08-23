@@ -83,6 +83,7 @@ public final class FacilityService implements Listener {
     private Consumer<Player> ledgerOpener = ignored -> { };
     private Consumer<Player> codexOpener = ignored -> { };
     private Consumer<Player> statsOpener = ignored -> { };
+    private Consumer<Player> researchOpener = ignored -> { };
     private final Map<UUID, PendingVirtualBuild> pendingVirtualBuilds = new HashMap<>();
     private long lastTrapTick;
 
@@ -100,11 +101,13 @@ public final class FacilityService implements Listener {
     }
 
     public void setOpeners(Consumer<Player> craftOpener, Consumer<Player> ledgerOpener,
-                           Consumer<Player> codexOpener, Consumer<Player> statsOpener) {
+                           Consumer<Player> codexOpener, Consumer<Player> statsOpener,
+                           Consumer<Player> researchOpener) {
         this.craftOpener = Objects.requireNonNull(craftOpener);
         this.ledgerOpener = Objects.requireNonNull(ledgerOpener);
         this.codexOpener = Objects.requireNonNull(codexOpener);
         this.statsOpener = Objects.requireNonNull(statsOpener);
+        this.researchOpener = Objects.requireNonNull(researchOpener);
     }
 
     public void restore() {
@@ -379,7 +382,8 @@ public final class FacilityService implements Listener {
             case "REPAIR_FULL" -> {
                 if (!equipment.repairMostDamagedFull(player)) player.sendMessage(ChatColor.YELLOW + "완전 수리할 장비가 없습니다.");
             }
-            case "RESEARCH", "PATTERN_ANALYZE", "SALVAGE" -> codexOpener.accept(player);
+            case "RESEARCH" -> researchOpener.accept(player);
+            case "PATTERN_ANALYZE", "SALVAGE" -> codexOpener.accept(player);
             case "TRAINING" -> statsOpener.accept(player);
             case "SHARED_LEDGER" -> ledgerOpener.accept(player);
             case "REST", "MEDICAL_BASIC", "MEDICAL", "PURIFY" -> treat(player, profile.effectOpcode());

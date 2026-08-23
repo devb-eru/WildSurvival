@@ -264,7 +264,7 @@ public final class RunSnapshot {
 
     public static final class ResearchNodeState {
         public String researchId;
-        public String state = "LOCKED";
+        public String state = "HIDDEN";
         public String startedByUuid;
         public long startedAtEpochMs;
         public long completesAtEpochMs;

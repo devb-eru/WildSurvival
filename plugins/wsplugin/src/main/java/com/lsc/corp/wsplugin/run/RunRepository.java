@@ -129,6 +129,15 @@ public final class RunRepository {
         }
         for (RunSnapshot.ResearchNodeState research : snapshot.researchNodes.values()) {
             if (research.reservedCost == null) research.reservedCost = new LinkedHashMap<>();
+            String researchState = research.state == null ? "HIDDEN" : research.state;
+            research.state = switch (researchState) {
+                case "LOCKED" -> "HIDDEN";
+                case "AVAILABLE" -> "OBSERVABLE";
+                case "READY_LOCKED" -> "HYPOTHESIZED";
+                case "RUNNING" -> "PROCESSING";
+                case "COMPLETED" -> "UNLOCKED";
+                default -> researchState;
+            };
         }
         for (RunSnapshot.DiscoveryNodeState discovery : snapshot.discoveryNodes.values()) {
             if (discovery.evidence == null) discovery.evidence = new LinkedHashSet<>();

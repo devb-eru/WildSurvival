@@ -100,8 +100,8 @@
           },
           "stateMachine": {
             "type": "array",
-            "minItems": 6,
-            "maxItems": 6,
+            "minItems": 10,
+            "maxItems": 10,
             "items": {
               "type": "string"
             }
