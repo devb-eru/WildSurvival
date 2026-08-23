@@ -66,7 +66,7 @@ tasks {
     }
 
     shadowJar {
-        archiveClassifier.set("")
+        archiveClassifier.set(providers.gradleProperty("wsArtifactClassifier").orElse(""))
         dependsOn(checkDevelopmentServerStopped)
         relocate("com.google.gson", "com.lsc.corp.wsplugin.lib.gson")
     }
