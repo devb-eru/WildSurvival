@@ -9,7 +9,7 @@
 | 역할 | 모든 생산 콘텐츠 ID의 합계, 소유 문서, 구현 파일과 참조 완결성을 관리하는 단일 색인 |
 | 상위 기준 | `PRODUCTION-DESIGN-GATE-001`, `DOC-AUTHORITY-001`, `DATA-REVISION-002` |
 | 목표 리비전 | `ws-content-r2` |
-| 최종 수정일 | 2026-08-23 |
+| 최종 수정일 | 2026-08-24 |
 
 ## 1. ID 소유권
 
@@ -30,22 +30,22 @@
 
 ID를 문서 제목, 표시명 또는 와일드카드로 대신하지 않는다. 저장 데이터에 한 번 사용된 ID는 삭제·재사용하지 않고 `enabled:false`와 대체 ID를 기록한다.
 
-## 2. 2026-08-23 생산 잠금 합계
+## 2. 2026-08-24 생산 잠금·실행 합계
 
-| 목록 | 고유 ID | 상태 | 생산 잠금 전 조치 |
+| 목록 | 고유 ID | 설계 상태 | r2 의미 실행 상태 |
 |---|---:|---|---|
-| 재료·진행 증명 | 59 | locked | 원재료36+가공15+보스3+증명5 |
-| 비장비 아이템 | 61 | locked | 소모품18+휴대7+시설32+호출4 |
-| 레시피 | 315 | locked | 기존85+신규 비장비/시설/도구48+장비182 |
-| 장비·상위 도구 | 214 | locked | 장비198+유틸리티 도구16 |
-| 플레이어 스킬 | 64 | locked | 기본 공격10+기존 액티브·상황54 |
-| 개인 증강 | 50 | locked | Silver18+Gold18+Prism14 |
-| 파티 증강 | 16 | locked | Day10/20/30/40 총4회 |
-| 일반·정예·Final 적 | 53 | locked | action bundle·loot 연결 |
-| 보스 | 4 | locked | boss action/entity/loot set 연결 |
-| 보조 엔티티 | 34 | locked | 투사체·UI7+노드6+보스/Final21 |
-| 시설 | 46 | locked | item/virtual recipe/state 연결 |
-| loot table | 62 | locked | 적45+보스4+노드6+기타6+NONE1 |
+| 재료·진행 증명 | 59 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 원재료36+가공15+보스3+증명5 |
+| 비장비 아이템 | 61 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 소모품18+휴대7+시설32+호출4 |
+| 레시피 | 315 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; CRAFT21+PROCESS30+장비198+시설39+도구16+호출4+가상7 |
+| 장비·상위 도구 | 214 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 장비198+유틸리티 도구16 |
+| 플레이어 스킬 | 64 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 기본 공격10+액티브·상황54 |
+| 개인 증강 | 50 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; Silver18+Gold18+Prism14 |
+| 파티 증강 | 16 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; Day10/20/30/40 총4회 |
+| 일반·정예·Final 적 | 53 | `DATA_LOCKED` | `STRUCTURED_ONLY`; action bundle당 주 행동 1개 |
+| 보스 | 4 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; Day10 축약형 외 전체 상태기계 필요 |
+| 보조 엔티티 | 34 | `DATA_LOCKED` | `STRUCTURED_ONLY`; 생성·복구·cleanup 필요 |
+| 시설 | 46 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 시설별 작업 opcode 필요 |
+| loot table | 62 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 일반 적 개인 보상함 외 실행 필요 |
 
 전체 도감 레코드는 334개이며 codexIndex 중복은 0이다. 레시피 output 고아, 시설 recipe 누락, 장비·비장비 recipe 누락도 0이다. 증거는 `CONTENT-GRAPH-AUDIT-001`이다.
 
@@ -112,4 +112,4 @@ ID를 문서 제목, 표시명 또는 와일드카드로 대신하지 않는다.
 
 ## 7. 상태 승격
 
-별도 목록과 기계 추출 합계가 일치해 본 문서는 `DATA_LOCKED`다. 생산 코드 착수는 여전히 `PRODUCTION-DESIGN-GATE-001`의 PDG-5 번들·인계 계약까지 완료해야 승인한다.
+별도 목록과 기계 추출 합계가 일치해 본 문서는 `DATA_LOCKED`다. 이 상태는 설계 ID 잠금이며 실제 플레이 완료가 아니다. 모든 레코드의 데이터·런타임·거부·저장·복구·테스트 판정은 `PRODUCTION-COMPLETION-PLAN-001`의 개별 상태 행렬을 따른다.

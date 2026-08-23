@@ -9,7 +9,7 @@
 | 역할 | 문서 ID, 권위, 상태, 대체 관계와 구현 착수 가능 여부의 단일 원장 |
 | 상위 기준 | `VISION-001`, `PLAN-AUDIT-001` |
 | 갱신 책임 | 기획 리드. 문서 추가·폐기·게이트 변경과 같은 커밋에서 함께 갱신 |
-| 최종 수정일 | 2026-08-22 |
+| 최종 수정일 | 2026-08-24 |
 
 ## 1. 권위 판정 규칙
 
@@ -53,6 +53,7 @@
 | `ROADMAP-001` | `ACTIVE_CONTROL` | 작업 순서·게이트 | G0 |
 | `PLAN-AUDIT-001` | `ACTIVE_CONTROL` | 기획 공백·완료 증거 | G0 |
 | `DOC-AUTHORITY-001` | `ACTIVE_CONTROL` | ID·상태·권위·대체 관계 | G0 |
+| `PRODUCTION-COMPLETION-PLAN-001` | `ACTIVE_CONTROL` | 전 고정 ID의 실제 플레이 전환 순서·개별 완료 판정 | DEV-300~800 |
 | `CONTENT-MASTER-001` | `BASELINE_LOCKED` | Day 1~50+ 상위 진행 | G0 |
 | `GAME-001~003` | `BASELINE_LOCKED` | 타이머·저장·인원 스케일 | G0 |
 | `DAY-001` | `BASELINE_LOCKED` | Day 전환·스킵·완료 | G0 |

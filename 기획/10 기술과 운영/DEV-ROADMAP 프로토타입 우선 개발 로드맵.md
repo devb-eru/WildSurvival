@@ -7,7 +7,7 @@
 | 문서 ID | `DEV-ROADMAP-001` |
 | 상태 | `ACTIVE_CONTROL` |
 | 상위 기준 | `DOC-AUTHORITY-001`, `ROADMAP-001` |
-| 구현 입력 | `DATA-REVISION-002`, `IMPLEMENTATION-HANDOFF-001` |
+| 구현 입력 | `DATA-REVISION-002`, `IMPLEMENTATION-HANDOFF-001`, `PRODUCTION-COMPLETION-PLAN-001` |
 | 적용 범위 | Season 1 Paper 플러그인·콘텐츠 데이터·자동화·플레이테스트 |
 | 통합 브랜치 | `S1_dev` |
 | 현재 단계 | `DEV-300 PLAYABLE CONTENT REVIEW` — 자동·Paper 스모크 통과, 2·4인 실플레이 E2E 대기 |
@@ -397,6 +397,8 @@ DEV-000 계약 보정
 | 6 | Day 41~50·Final·Story RC | `NOT_STARTED` | Day49 거부·Day50 활성, Final 단계별 멱등 복구, Day51+ 상한 순환 |
 
 정식 승격 전 남은 구현 누락은 다음과 같다.
+
+모든 등록 ID를 어떤 순서와 증거로 완료할지는 `PRODUCTION-COMPLETION-PLAN-001`이 소유한다. 아래 목록은 단계 요약이며, 개별 ID의 일부 구현으로 도메인 전체를 완료 처리하지 않는다.
 
 - 적 action bundle은 현재 각 53종의 기본 전조 행동 1개만 실행한다. 문서에 있는 추가 행동·거리/상태/시설 대상 조건·변이·적 증강 선택을 데이터와 런타임에 확장해야 한다.
 - 보스 4종은 정형 기본 수치만 준비됐다. Day10 축약 프로토타입 외 Day10·20·30·40 전체 페이즈·오브젝트·중단·재접속·고정 보상/3택 선택 상태기계가 필요하다.
