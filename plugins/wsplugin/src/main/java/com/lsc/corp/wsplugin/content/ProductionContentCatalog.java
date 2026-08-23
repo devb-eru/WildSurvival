@@ -8,6 +8,8 @@ public record ProductionContentCatalog(
         Map<String, CatalogEntry> itemsById,
         List<RecipeEntry> recipes,
         Map<String, List<RecipeEntry>> recipesByOutput,
+        List<SkillEntry> skills,
+        Map<String, SkillEntry> skillsById,
         Map<String, Integer> counts
 ) {
     public CatalogEntry item(String id) {
@@ -28,5 +30,18 @@ public record ProductionContentCatalog(
     }
 
     public record IngredientEntry(int slot, String kind, String key, int amount, boolean consume) {
+    }
+
+    public record SkillEntry(String id, String kind, String name, String weaponClass, double apCost,
+                             int cooldownTicks, double damageCoefficient, double breakDamage, double range,
+                             double arcDegrees, int maxTargets, String effect, List<String> tags,
+                             int unlockLevel, String consumableId, String description) {
+        public boolean weaponActive() {
+            return "WEAPON_ACTIVE".equals(kind);
+        }
+
+        public boolean commonActive() {
+            return "COMMON_ACTIVE".equals(kind);
+        }
     }
 }

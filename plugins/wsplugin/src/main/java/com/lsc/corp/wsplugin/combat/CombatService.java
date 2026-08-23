@@ -102,6 +102,7 @@ public final class CombatService implements Listener {
     private final NamespacedKey projectileWeaponKey;
     private final Map<UUID, ComboState> combos = new HashMap<>();
     private final Map<UUID, Long> attackReadyAtNanos = new HashMap<>();
+    private final Map<String, Long> skillReadyAtNanos = new HashMap<>();
     private final Map<UUID, Long> lastLeftInputTick = new HashMap<>();
     private final Map<UUID, CombatInputPolicy.LeftDisposition> lastLeftDisposition = new HashMap<>();
     private final Map<UUID, Long> invulnerableUntilEpochMs = new HashMap<>();
@@ -110,6 +111,7 @@ public final class CombatService implements Listener {
     private final Map<UUID, BossBar> breakBars = new HashMap<>();
     private final Set<UUID> activeCombatEntities = new HashSet<>();
     private final Map<UUID, Long> tridentHitCooldown = new HashMap<>();
+    private final Map<UUID, CoverField> coverFields = new HashMap<>();
     private BossDamageHandler bossDamageHandler;
     private Consumer<Player> menuOpener = player -> { };
     private ItemRewardHandler itemRewardHandler = (player, resourceId, amount) -> { };
@@ -251,9 +253,12 @@ public final class CombatService implements Listener {
                 ? clamp(attackerState.testDamageDealtMultiplier, 0.0, 100.0) : 1.0;
         double testBreakMultiplier = runs.isTestRun() && attackerState != null
                 ? clamp(attackerState.testBreakMultiplier, 0.0, 100.0) : 1.0;
+        double vulnerableMultiplier = statusActive(target, "vulnerable") ? 1.12 : 1.0;
         double finalDamage = CombatMath.outgoingDamage(rawAttack, Math.max(0.0, defence),
-                growth.attackMultiplier(attacker), groggyMultiplier, testDamageMultiplier);
-        double finalBreak = Math.max(0.0, breakDamage * growth.breakMultiplier(attacker) * testBreakMultiplier);
+                growth.attackMultiplier(attacker), groggyMultiplier * vulnerableMultiplier, testDamageMultiplier);
+        double breakCallMultiplier = statusActive(target, "break_call") ? 1.06 : 1.0;
+        double finalBreak = Math.max(0.0, breakDamage * growth.breakMultiplier(attacker)
+                * testBreakMultiplier * breakCallMultiplier);
         if (pdc.getOrDefault(testInvulnerableKey, PersistentDataType.BYTE, (byte) 0) == (byte) 1) {
             finalDamage = 0.0;
             finalBreak = 0.0;
@@ -486,6 +491,12 @@ public final class CombatService implements Listener {
             return;
         }
         if (event instanceof EntityDamageByEntityEvent byEntity) {
+            if (byEntity.getDamager() instanceof Projectile && protectedByCover(player)) {
+                event.setCancelled(true);
+                player.getWorld().spawnParticle(Particle.BLOCK, player.getLocation().add(0, 1, 0),
+                        12, 0.6, 0.8, 0.6, Material.COBBLESTONE.createBlockData());
+                return;
+            }
             LivingEntity attacker = combatAttacker(byEntity);
             if (attacker != null) {
                 event.setDamage(enemyAttackDamage(attacker) / PLAYER_HP_SCALE);
@@ -818,7 +829,7 @@ public final class CombatService implements Listener {
         combo.lastAttackAtEpochMs = Instant.now().toEpochMilli();
         String executionId = UUID.randomUUID().toString();
         if (usesArrowAmmo(weaponId)) {
-            if (!takeOneMaterial(player, Material.ARROW)) {
+            if (!consumeArrowAmmo(player, weaponId)) {
                 attackReadyAtNanos.remove(player.getUniqueId());
                 ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
                 return false;
@@ -855,23 +866,38 @@ public final class CombatService implements Listener {
             ActionBarService.notice(player, Component.text("W" + slot + " 스킬이 비어 있습니다. Shift+F → 스킬에서 장착하세요.", NamedTextColor.RED), 50);
             return false;
         }
-        if ("TRIDENT_THROW".equals(skill.effect())) {
-            boolean success = throwTrident(player, skill.apCost());
+        if (!requireSkillReady(player, skill)) return false;
+        if ("TRIDENT_TOGGLE".equals(skill.effect())) {
+            RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+            boolean success = "HELD".equals(state.tridentState)
+                    ? throwTrident(player, skill.apCost()) : recallTrident(player, Math.min(20.0, skill.apCost()));
             if (success) {
+                startSkillCooldown(player, skill);
                 equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
                 showSkillEffect(player, skill, List.of());
             }
             return success;
         }
-        if ("TRIDENT_RECALL".equals(skill.effect())) {
-            boolean success = recallTrident(player, skill.apCost());
-            if (success) {
-                equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
-                showSkillEffect(player, skill, List.of());
+        if ("RELOAD".equals(skill.effect())) {
+            if (!hasMaterial(player, Material.ARROW, 2)) {
+                ActionBarService.notice(player, Component.text("순간 장전에는 화살 2개가 필요합니다", NamedTextColor.RED), 30);
+                return false;
             }
-            return success;
+            if (!runs.consumeAp(player, skill.apCost())) {
+                apFailure(player, skill.apCost());
+                return false;
+            }
+            takeMaterial(player, Material.ARROW, 2);
+            runs.mutate(run -> {
+                RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                state.crossbowLoadedAmmo = Math.min(6, state.crossbowLoadedAmmo + 2);
+            });
+            startSkillCooldown(player, skill);
+            showSkillEffect(player, skill, List.of());
+            ActionBarService.notice(player, Component.text("순간 장전 · 탄창 +2", NamedTextColor.AQUA), 30);
+            return true;
         }
-        if (usesArrowAmmo(weaponId) && !hasMaterial(player, Material.ARROW)) {
+        if (usesArrowAmmo(weaponId) && !hasArrowAmmo(player, weaponId)) {
             ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
             return false;
         }
@@ -879,15 +905,17 @@ public final class CombatService implements Listener {
             apFailure(player, skill.apCost());
             return false;
         }
-        if (usesArrowAmmo(weaponId)) takeOneMaterial(player, Material.ARROW);
+        if (usesArrowAmmo(weaponId)) consumeArrowAmmo(player, weaponId);
+        startSkillCooldown(player, skill);
         equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
         List<LivingEntity> targets = coneTargets(player, skill.range(), skill.arcDegrees(), skill.maxTargets());
         String executionId = "skill:" + skill.id() + ":" + UUID.randomUUID();
         for (LivingEntity target : targets) {
             damageCombatEntity(player, target, 100.0 * skill.damageCoefficient(), skill.breakDamage(),
                     executionId + ":" + target.getUniqueId());
-            applySkillEffect(target, skill);
+            applySkillEffect(player, target, skill);
         }
+        applyCasterSkillEffect(player, skill, targets);
         showSkillEffect(player, skill, targets);
         runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tutorialSignals.add("USED_SKILL"));
         ActionBarService.notice(player, Component.text("W" + slot + " " + skill.name() + " / AP -" + Math.round(skill.apCost()), NamedTextColor.AQUA), 30);
@@ -896,36 +924,44 @@ public final class CombatService implements Listener {
 
     private void executeCommonActive(Player player, int slot) {
         if (!requireActiveAction(player)) return;
-        switch (slot) {
-            case 1 -> executeDodge(player);
-            case 2 -> {
-                if (!runs.consumeAp(player, 24.0)) {
-                    apFailure(player, 24.0);
-                    return;
-                }
-                for (Player member : runs.onlineMembers()) {
-                    if (member.getLocation().distanceSquared(player.getLocation()) <= 64.0) {
-                        runs.mutate(run -> {
-                            RunSnapshot.PlayerState state = run.players.get(member.getUniqueId().toString());
-                            state.ap = Math.min(state.maxAp, state.ap + 10.0);
-                        });
-                    }
-                }
-                runs.broadcast(ChatColor.AQUA + player.getName() + "의 집결 신호: 근처 파티 AP +10");
-            }
-            case 3 -> nearestTarget(player, 16.0).ifPresent(target -> {
-                applyMark(target, 100L);
-                ActionBarService.notice(player, Component.text("C3 전술 표식", NamedTextColor.YELLOW), 30);
-            });
-            case 4 -> {
-                player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 0.8f, 1.3f);
-                for (Player member : runs.onlineMembers()) {
-                    member.sendMessage(ChatColor.YELLOW + "[C4 위치 신호] " + player.getName() + " @ "
-                            + player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ());
-                }
-            }
-            default -> { }
+        PrototypeContent.SkillDefinition skill = skills.resolveCommon(player, slot);
+        if (skill == null) {
+            ActionBarService.notice(player, Component.text("C" + slot + " 공용 액티브가 비어 있습니다.", NamedTextColor.RED), 40);
+            return;
         }
+        if (!requireSkillReady(player, skill)) return;
+        boolean enemyTargetRequired = "MARK".equals(skill.effect()) || skill.id().contains("break_call");
+        LivingEntity target = enemyTargetRequired ? nearestTarget(player, skill.range()).orElse(null)
+                : "RESCUE_PULL".equals(skill.effect()) ? nearestDowned(player).orElse(null) : null;
+        if (enemyTargetRequired && target == null) {
+            ActionBarService.notice(player, Component.text("사거리 안에 대상이 없습니다", NamedTextColor.RED), 30);
+            return;
+        }
+        if ("RESCUE_PULL".equals(skill.effect()) && target == null) {
+            ActionBarService.notice(player, Component.text("8블록 안에 빈사 파티원이 없습니다", NamedTextColor.GRAY), 30);
+            return;
+        }
+        String consumableId = skills.consumableId(skill.id());
+        if (!consumableId.isBlank() && !equipment.hasRegisteredItem(player, consumableId)) {
+            ActionBarService.notice(player, Component.text("필요 소모품이 없습니다: " + consumableId, NamedTextColor.RED), 40);
+            return;
+        }
+        if (!runs.consumeAp(player, skill.apCost())) {
+            apFailure(player, skill.apCost());
+            return;
+        }
+        if (!consumableId.isBlank() && !equipment.consumeQuickItem(player, consumableId)) {
+            runs.mutate(run -> {
+                RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                state.ap = Math.min(state.maxAp, state.ap + skill.apCost());
+            });
+            return;
+        }
+        startSkillCooldown(player, skill);
+        executeCommonEffect(player, skill, target);
+        showSkillEffect(player, skill, target == null ? List.of() : List.of(target));
+        ActionBarService.notice(player, Component.text("C" + slot + " " + skill.name()
+                + " / AP -" + Math.round(skill.apCost()), NamedTextColor.LIGHT_PURPLE), 35);
     }
 
     private void executeQuickItem(Player player, int slot) {
@@ -1386,12 +1422,26 @@ public final class CombatService implements Listener {
                 Component.text("빈사·사망 상태에서는 이동과 도움 요청 외 행동을 할 수 없습니다.", NamedTextColor.RED), 30);
     }
 
-    private void applySkillEffect(LivingEntity target, PrototypeContent.SkillDefinition skill) {
+    private void applySkillEffect(Player attacker, LivingEntity target, PrototypeContent.SkillDefinition skill) {
         switch (skill.effect()) {
             case "SLOW" -> target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1, true, true));
+            case "ROOT" -> {
+                setTimedStatus(target, "root", 16L);
+                target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 16, 10, true, true));
+            }
             case "MARK" -> {
                 applyMark(target, 120L);
             }
+            case "BLEED" -> applyDamageOverTime(attacker, target, skill, "bleed", 4, 20L, 7.0);
+            case "POISON" -> {
+                target.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 0, true, true));
+                applyDamageOverTime(attacker, target, skill, "poison", 4, 25L, 5.0);
+            }
+            case "BURN" -> {
+                target.setFireTicks(Math.max(target.getFireTicks(), 80));
+                applyDamageOverTime(attacker, target, skill, "burn", 4, 20L, 8.0);
+            }
+            case "VULNERABLE" -> setTimedStatus(target, "vulnerable", 120L);
             case "ARMOR_SHRED" -> {
                 double before = target.getPersistentDataContainer().getOrDefault(defenceKey, PersistentDataType.DOUBLE, 0.0);
                 double reduction = Math.min(20.0, before);
@@ -1405,6 +1455,163 @@ public final class CombatService implements Listener {
             }
             default -> { }
         }
+    }
+
+    private void applyCasterSkillEffect(Player player, PrototypeContent.SkillDefinition skill, List<LivingEntity> targets) {
+        String id = skill.id();
+        if (id.contains("rally_lunge")) {
+            player.setVelocity(player.getLocation().getDirection().normalize().multiply(1.15).setY(0.12));
+        } else if (id.contains("shadowstep")) {
+            player.setVelocity(player.getLocation().getDirection().normalize().multiply(0.9).setY(0.08));
+        } else if (id.contains("fading_feint")) {
+            player.setVelocity(player.getLocation().getDirection().normalize().multiply(-0.9).setY(0.08));
+        }
+        if (skill.effect().equals("HEAL") || id.contains("purifying_field")) {
+            for (Player member : runs.onlineMembers()) if (sameWorldWithin(player, member, 5.0)) {
+                heal(member, 3.0);
+                cleanseWeakEffects(member);
+            }
+        }
+        if (id.contains("rescue_flare")) {
+            for (Player member : runs.onlineMembers()) if (sameWorldWithin(player, member, 4.0)) {
+                member.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 120, 0, true, true));
+            }
+        }
+        if (id.contains("turning_guard") || id.contains("bulwark_strike") || id.contains("centered_stance")) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE,
+                    id.contains("centered_stance") ? 100 : 40, 0, true, true));
+        }
+        if (id.contains("guard_intercept")) {
+            for (Player member : runs.onlineMembers()) if (sameWorldWithin(player, member, 3.0)) {
+                member.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 40, 0, true, true));
+            }
+        }
+    }
+
+    private void executeCommonEffect(Player player, PrototypeContent.SkillDefinition skill, LivingEntity target) {
+        String id = skill.id();
+        switch (skill.effect()) {
+            case "HEAL" -> {
+                if (id.contains("shared_breath")) {
+                    for (Player member : runs.onlineMembers()) if (!member.equals(player) && sameWorldWithin(player, member, 5.0)) {
+                        runs.mutate(run -> {
+                            RunSnapshot.PlayerState state = run.players.get(member.getUniqueId().toString());
+                            state.ap = Math.min(state.maxAp, state.ap + 8.0);
+                        });
+                    }
+                } else {
+                    double maximum = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
+                            : player.getAttribute(Attribute.MAX_HEALTH).getValue();
+                    heal(player, maximum * 0.08 + 4.0);
+                    player.removePotionEffect(PotionEffectType.POISON);
+                }
+            }
+            case "CLEANSE" -> cleanseWeakEffects(player);
+            case "AP_STIM" -> runs.mutate(run -> {
+                RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                state.ap = Math.min(state.maxAp, state.ap + 25.0);
+            });
+            case "MARK" -> applyMark(target, 120L);
+            case "RESCUE_PULL" -> pullDowned(player, (Player) target);
+            case "COVER" -> {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 240, 1, true, true));
+                coverFields.put(player.getUniqueId(), new CoverField(player.getLocation().clone(),
+                        Instant.now().plusSeconds(12).toEpochMilli()));
+                player.getWorld().spawnParticle(Particle.BLOCK, player.getLocation().add(0, 1, 0),
+                        60, 1.5, 1.0, 0.4, Material.COBBLESTONE.createBlockData());
+            }
+            case "SUPPORT" -> {
+                if (id.contains("guard_step")) {
+                    player.setVelocity(player.getLocation().getDirection().normalize().multiply(0.75).setY(0.08));
+                    invulnerableUntilEpochMs.put(player.getUniqueId(), Instant.now().plusMillis(800).toEpochMilli());
+                } else if (id.contains("break_call") && target != null) {
+                    setTimedStatus(target, "break_call", 80L);
+                }
+            }
+            default -> { }
+        }
+    }
+
+    private boolean requireSkillReady(Player player, PrototypeContent.SkillDefinition skill) {
+        long remaining = skillReadyAtNanos.getOrDefault(player.getUniqueId() + ":" + skill.id(), 0L) - System.nanoTime();
+        if (remaining <= 0L) return true;
+        ActionBarService.notice(player, Component.text(skill.name() + " 재사용 대기 "
+                + String.format(java.util.Locale.ROOT, "%.1f", remaining / 1_000_000_000.0) + "초", NamedTextColor.RED), 25);
+        return false;
+    }
+
+    private void startSkillCooldown(Player player, PrototypeContent.SkillDefinition skill) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        double multiplier = runs.isTestRun() && state != null ? clamp(state.testCooldownMultiplier, 0.05, 10.0) : 1.0;
+        long ticks = CombatMath.cooldownTicks(skills.cooldownTicks(skill.id()), multiplier);
+        skillReadyAtNanos.put(player.getUniqueId() + ":" + skill.id(), System.nanoTime() + ticks * 50_000_000L);
+    }
+
+    private void setTimedStatus(LivingEntity target, String id, long durationTicks) {
+        target.getPersistentDataContainer().set(new NamespacedKey(plugin, "status_" + id), PersistentDataType.LONG,
+                Instant.now().plusMillis(durationTicks * 50L).toEpochMilli());
+    }
+
+    private boolean statusActive(LivingEntity target, String id) {
+        NamespacedKey key = new NamespacedKey(plugin, "status_" + id);
+        long expiry = target.getPersistentDataContainer().getOrDefault(key, PersistentDataType.LONG, 0L);
+        if (expiry > Instant.now().toEpochMilli()) return true;
+        target.getPersistentDataContainer().remove(key);
+        return false;
+    }
+
+    private void applyDamageOverTime(Player attacker, LivingEntity target, PrototypeContent.SkillDefinition skill,
+                                     String status, int pulses, long intervalTicks, double rawDamage) {
+        setTimedStatus(target, status, pulses * intervalTicks + 10L);
+        for (int pulse = 1; pulse <= pulses; pulse++) {
+            int sequence = pulse;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (target.isValid() && !target.isDead() && isCombatEntity(target)) {
+                    damageCombatEntity(attacker, target, rawDamage, 0.0,
+                            "dot:" + skill.id() + ":" + target.getUniqueId() + ":" + sequence);
+                }
+            }, pulse * intervalTicks);
+        }
+    }
+
+    private void heal(Player player, double amount) {
+        double maximum = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
+                : player.getAttribute(Attribute.MAX_HEALTH).getValue();
+        player.setHealth(Math.min(maximum, player.getHealth() + amount));
+    }
+
+    private void cleanseWeakEffects(Player player) {
+        player.removePotionEffect(PotionEffectType.POISON);
+        player.removePotionEffect(PotionEffectType.WITHER);
+        player.removePotionEffect(PotionEffectType.WEAKNESS);
+        player.removePotionEffect(PotionEffectType.SLOWNESS);
+        player.removePotionEffect(PotionEffectType.BLINDNESS);
+    }
+
+    private boolean sameWorldWithin(Player source, Player target, double range) {
+        return source.getWorld().equals(target.getWorld())
+                && source.getLocation().distanceSquared(target.getLocation()) <= range * range;
+    }
+
+    private boolean protectedByCover(Player player) {
+        long now = Instant.now().toEpochMilli();
+        coverFields.entrySet().removeIf(entry -> entry.getValue().expiresAtEpochMs < now);
+        return coverFields.values().stream().anyMatch(field -> field.location.getWorld() != null
+                && field.location.getWorld().equals(player.getWorld())
+                && field.location.distanceSquared(player.getLocation()) <= 2.5 * 2.5);
+    }
+
+    private java.util.Optional<Player> nearestDowned(Player player) {
+        return runs.onlineMembers().stream().filter(member -> !member.equals(player) && sameWorldWithin(player, member, 8.0))
+                .filter(member -> runs.playerState(member.getUniqueId()).map(state -> "DOWNED".equals(state.lifeState)).orElse(false))
+                .min(Comparator.comparingDouble(member -> member.getLocation().distanceSquared(player.getLocation())));
+    }
+
+    private void pullDowned(Player player, Player member) {
+        Vector away = player.getLocation().toVector().subtract(member.getLocation().toVector());
+        if (away.lengthSquared() < 0.01) away = player.getLocation().getDirection().multiply(-1.0);
+        Location destination = player.getLocation().clone().subtract(away.normalize().multiply(1.5));
+        member.teleport(destination);
     }
 
     private void showSkillEffect(Player player, PrototypeContent.SkillDefinition skill, List<LivingEntity> targets) {
@@ -1443,9 +1650,15 @@ public final class CombatService implements Listener {
     }
 
     private boolean hasMaterial(Player player, Material material) {
+        return hasMaterial(player, material, 1);
+    }
+
+    private boolean hasMaterial(Player player, Material material, int amount) {
+        int found = 0;
         for (int slot = 1; slot <= 35; slot++) {
             ItemStack item = player.getInventory().getItem(slot);
-            if (item != null && item.getType() == material && item.getAmount() > 0) return true;
+            if (item != null && item.getType() == material) found += item.getAmount();
+            if (found >= amount) return true;
         }
         return false;
     }
@@ -1455,14 +1668,41 @@ public final class CombatService implements Listener {
     }
 
     private boolean takeOneMaterial(Player player, Material material) {
+        return takeMaterial(player, material, 1);
+    }
+
+    private boolean takeMaterial(Player player, Material material, int amount) {
+        if (!hasMaterial(player, material, amount)) return false;
+        int remaining = amount;
         for (int slot = 1; slot <= 35; slot++) {
             ItemStack item = player.getInventory().getItem(slot);
             if (item == null || item.getType() != material || item.getAmount() <= 0) continue;
-            item.setAmount(item.getAmount() - 1);
+            int consumed = Math.min(remaining, item.getAmount());
+            item.setAmount(item.getAmount() - consumed);
             if (item.getAmount() <= 0) player.getInventory().setItem(slot, null);
-            return true;
+            remaining -= consumed;
+            if (remaining == 0) return true;
         }
-        return false;
+        return true;
+    }
+
+    private boolean hasArrowAmmo(Player player, String weaponId) {
+        if ("CROSSBOW".equals(weaponId)) {
+            RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+            if (state != null && state.crossbowLoadedAmmo > 0) return true;
+        }
+        return hasMaterial(player, Material.ARROW);
+    }
+
+    private boolean consumeArrowAmmo(Player player, String weaponId) {
+        if ("CROSSBOW".equals(weaponId)) {
+            RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+            if (state != null && state.crossbowLoadedAmmo > 0) {
+                runs.mutate(run -> run.players.get(player.getUniqueId().toString()).crossbowLoadedAmmo--);
+                return true;
+            }
+        }
+        return takeOneMaterial(player, Material.ARROW);
     }
 
     private boolean inCombatStance(Player player) {
@@ -1487,6 +1727,8 @@ public final class CombatService implements Listener {
                                    double maxHealth, double defence, double currentBreak, double maxBreak,
                                    double attackDamage, boolean ai, boolean invulnerable, List<String> statuses) {
     }
+
+    private record CoverField(Location location, long expiresAtEpochMs) { }
 
     public record DamagePreview(double rawDamage, double defenceFactor, double augmentDamageMultiplier,
                                 double testDamageMultiplier, double finalDamage, double rawBreak,

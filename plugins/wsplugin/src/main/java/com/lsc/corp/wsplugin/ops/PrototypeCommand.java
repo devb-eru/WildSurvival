@@ -2,6 +2,7 @@ package com.lsc.corp.wsplugin.ops;
 
 import com.lsc.corp.wsplugin.boss.PrototypeBossService;
 import com.lsc.corp.wsplugin.content.ContentBundleService;
+import com.lsc.corp.wsplugin.content.ProductionBundleValidator;
 import com.lsc.corp.wsplugin.economy.EconomyService;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
@@ -85,8 +86,12 @@ public final class PrototypeCommand implements CommandExecutor, TabCompleter {
             throw new IllegalArgumentException("/ws content validate");
         }
         var result = content.loadAndValidate();
+        var production = content.productionValidation();
         sender.sendMessage(ChatColor.GREEN + result.manifest().contentRevision() + " L0 validated: "
                 + result.verifiedFileCount() + " files, promotionForbidden=" + result.manifest().promotionForbidden());
+        sender.sendMessage(ChatColor.GREEN + ProductionBundleValidator.REVISION + " production validated: "
+                + production.verifiedFileCount() + " files, codex=" + production.catalog().codexEntries().size()
+                + ", recipes=" + production.catalog().recipes().size() + ", skills=" + production.catalog().skills().size());
     }
 
     private void prototype(CommandSender sender, String[] args) throws Exception {

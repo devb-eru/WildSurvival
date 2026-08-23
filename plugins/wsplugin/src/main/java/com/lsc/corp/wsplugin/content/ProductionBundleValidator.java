@@ -98,6 +98,7 @@ public final class ProductionBundleValidator {
             ProductionContentCatalog catalog = loadCatalog(reader, counts);
             validateReferences(reader, catalog);
             validateEquipmentCatalog(catalog);
+            validateSkillCatalog(catalog);
             return new ValidationResult(catalog, Map.copyOf(counts), paths.size() + 2,
                     ContentBundleValidator.sha256(manifestBytes));
         } catch (ContentValidationException exception) {
@@ -159,8 +160,27 @@ public final class ProductionBundleValidator {
             byOutput.computeIfAbsent(recipe.outputId(), ignored -> new ArrayList<>()).add(recipe);
         }
         byOutput.replaceAll((ignored, values) -> List.copyOf(values));
+        List<ProductionContentCatalog.SkillEntry> skills = new ArrayList<>();
+        Map<String, ProductionContentCatalog.SkillEntry> skillsById = new LinkedHashMap<>();
+        for (JsonObject record : records(reader, "skills/player-skills.json")) {
+            List<String> tags = new ArrayList<>();
+            JsonArray tagArray = record.getAsJsonArray("tags");
+            if (tagArray != null) tagArray.forEach(value -> tags.add(value.getAsString()));
+            ProductionContentCatalog.SkillEntry skill = new ProductionContentCatalog.SkillEntry(
+                    requiredString(record, "id"), requiredString(record, "kind"), requiredString(record, "name"),
+                    requiredString(record, "weaponClass"), requiredDouble(record, "apCost"),
+                    requiredInt(record, "cooldownTicks"), requiredDouble(record, "damageCoefficient"),
+                    requiredDouble(record, "breakDamage"), requiredDouble(record, "range"),
+                    requiredDouble(record, "arcDegrees"), requiredInt(record, "maxTargets"),
+                    requiredString(record, "effect"), List.copyOf(tags), requiredInt(record, "unlockLevel"),
+                    optionalString(record, "consumableId", ""), requiredString(record, "description"));
+            if (skillsById.putIfAbsent(skill.id(), skill) != null) {
+                throw new ContentValidationException("Duplicate skill ID " + skill.id());
+            }
+            skills.add(skill);
+        }
         return new ProductionContentCatalog(List.copyOf(codex), Map.copyOf(byId), List.copyOf(recipes),
-                Map.copyOf(byOutput), Map.copyOf(counts));
+                Map.copyOf(byOutput), List.copyOf(skills), Map.copyOf(skillsById), Map.copyOf(counts));
     }
 
     private void validateReferences(ResourceReader reader, ProductionContentCatalog catalog) throws Exception {
@@ -235,6 +255,53 @@ public final class ProductionBundleValidator {
         if (!slotCounts.equals(expected)) throw new ContentValidationException("Equipment slot cardinality mismatch " + slotCounts);
     }
 
+    private void validateSkillCatalog(ProductionContentCatalog catalog) throws ContentValidationException {
+        if (catalog.skills().size() != 64 || catalog.skillsById().size() != 64) {
+            throw new ContentValidationException("Skill catalog must contain 64 unique skills");
+        }
+        Set<String> kinds = Set.of("BASIC", "WEAPON_ACTIVE", "COMMON_ACTIVE", "CONTEXT");
+        Set<String> weaponClasses = Set.of("SWORD", "AXE", "BOW", "CROSSBOW", "DAGGER", "MACE",
+                "STAFF", "PICKAXE", "TRIDENT", "UNARMED");
+        Map<String, Long> kindCounts = catalog.skills().stream().collect(java.util.stream.Collectors.groupingBy(
+                ProductionContentCatalog.SkillEntry::kind, java.util.stream.Collectors.counting()));
+        Map<String, Long> expectedKinds = Map.of("BASIC", 10L, "WEAPON_ACTIVE", 40L,
+                "COMMON_ACTIVE", 10L, "CONTEXT", 4L);
+        if (!kindCounts.equals(expectedKinds)) {
+            throw new ContentValidationException("Skill kind cardinality mismatch " + kindCounts);
+        }
+        for (ProductionContentCatalog.SkillEntry skill : catalog.skills()) {
+            if (!kinds.contains(skill.kind()) || skill.name().isBlank() || skill.description().isBlank()) {
+                throw new ContentValidationException("Invalid skill identity " + skill.id());
+            }
+            if ((skill.weaponActive() || "BASIC".equals(skill.kind())) && !weaponClasses.contains(skill.weaponClass())) {
+                throw new ContentValidationException("Invalid weapon class " + skill.id() + " -> " + skill.weaponClass());
+            }
+            if (skill.apCost() < 0.0 || skill.apCost() > 100.0 || skill.cooldownTicks() < 0
+                    || skill.cooldownTicks() > 20 * 120 || skill.damageCoefficient() < 0.0
+                    || skill.breakDamage() < 0.0 || skill.range() <= 0.0 || skill.range() > 64.0
+                    || skill.arcDegrees() <= 0.0 || skill.arcDegrees() > 360.0 || skill.maxTargets() < 1
+                    || skill.maxTargets() > 32 || skill.unlockLevel() < 1) {
+                throw new ContentValidationException("Invalid skill tuning " + skill.id());
+            }
+            if (skill.weaponActive() && skill.tags().isEmpty()) {
+                throw new ContentValidationException("Weapon skill tags missing " + skill.id());
+            }
+            if (!skill.consumableId().isBlank() && !catalog.itemsById().containsKey(skill.consumableId())) {
+                throw new ContentValidationException("Unknown skill consumable " + skill.id() + " -> " + skill.consumableId());
+            }
+        }
+        for (String weaponClass : weaponClasses) {
+            long basics = catalog.skills().stream().filter(skill -> "BASIC".equals(skill.kind())
+                    && weaponClass.equals(skill.weaponClass())).count();
+            long actives = catalog.skills().stream().filter(skill -> skill.weaponActive()
+                    && weaponClass.equals(skill.weaponClass())).count();
+            if (basics != 1 || actives != 4) {
+                throw new ContentValidationException("Weapon skill set mismatch " + weaponClass
+                        + " basics=" + basics + " actives=" + actives);
+            }
+        }
+    }
+
     private int count(ResourceReader reader, String path) throws Exception { return records(reader, path).size(); }
     private Set<String> ids(ResourceReader reader, String path) throws Exception {
         Set<String> result = new HashSet<>();
@@ -282,6 +349,10 @@ public final class ProductionBundleValidator {
     private static int requiredInt(JsonObject object, String key) throws ContentValidationException {
         if (!object.has(key)) throw new ContentValidationException("Missing integer " + key);
         return object.get(key).getAsInt();
+    }
+    private static double requiredDouble(JsonObject object, String key) throws ContentValidationException {
+        if (!object.has(key)) throw new ContentValidationException("Missing number " + key);
+        return object.get(key).getAsDouble();
     }
     private static String optionalString(JsonObject object, String key, String fallback) {
         return object.has(key) && !object.get(key).isJsonNull() ? object.get(key).getAsString() : fallback;

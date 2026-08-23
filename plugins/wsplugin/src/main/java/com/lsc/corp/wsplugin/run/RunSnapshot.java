@@ -54,6 +54,9 @@ public final class RunSnapshot {
         public Map<String, Integer> quickItems = new LinkedHashMap<>();
         public Map<Integer, String> quickBindings = new LinkedHashMap<>();
         public Map<String, Map<Integer, String>> weaponSkillLoadouts = new LinkedHashMap<>();
+        public Map<Integer, String> commonSkillLoadout = new LinkedHashMap<>();
+        public boolean productionWeaponSkillLoadoutsInitialized;
+        public boolean productionCommonSkillLoadoutInitialized;
         public Set<String> discoveredItemIds = new LinkedHashSet<>();
         public Map<String, Integer> pendingRegisteredItems = new LinkedHashMap<>();
         public Set<String> completedTutorialQuests = new LinkedHashSet<>();
@@ -64,6 +67,7 @@ public final class RunSnapshot {
         public List<String> personalAugments = new ArrayList<>();
         public Set<Integer> resolvedPersonalMilestones = new LinkedHashSet<>();
         public String tridentState = "HELD";
+        public int crossbowLoadedAmmo;
         public String tridentEntityUuid;
         public String tridentWorld;
         public double tridentX;

@@ -350,7 +350,56 @@ $recipes = foreach ($entry in $recipesById.GetEnumerator()) {
 
 $skillPattern = '^ws\.(basic|sword|axe|bow|crossbow|dagger|blunt|staff|pickaxe|trident|unarmed|common|context)\.[a-z0-9_.-]+$'
 $skillsById = Find-IdRows $skillRows $skillPattern
-$skills = foreach ($entry in $skillsById.GetEnumerator()) { Raw-Record $entry.Key 'SKILL-LIST-001' $entry.Value }
+$skills = foreach ($entry in $skillsById.GetEnumerator()) {
+    $id = $entry.Key; $cells = $entry.Value; $joined = $cells -join ' '
+    $kind = if ($id.StartsWith('ws.basic.')) {'BASIC'} elseif ($id.StartsWith('ws.common.')) {'COMMON_ACTIVE'} elseif ($id.StartsWith('ws.context.')) {'CONTEXT'} else {'WEAPON_ACTIVE'}
+    $weaponClass = if ($kind -eq 'BASIC') {$cells[1]} elseif ($kind -eq 'WEAPON_ACTIVE') { $id.Split('.')[1].ToUpperInvariant() } elseif ($kind -eq 'COMMON_ACTIVE') {'COMMON'} else {'CONTEXT'}
+    if ($weaponClass -eq 'SWORD') {$weaponClass='SWORD'} elseif ($weaponClass -eq 'BLUNT') {$weaponClass='MACE'}
+    $name = if ($kind -eq 'BASIC') {$weaponClass + ' 기본 공격'} else {$cells[1]}
+    $apCost = 0.0; $cooldownTicks = 0; $damage = 0.0; $breakDamage = 0.0
+    if ($kind -eq 'BASIC') {
+        $apCost=[double]$cells[2]
+        if ($cells[3] -match '([0-9.]+)초') {$cooldownTicks=[int][Math]::Round([double]$Matches[1]*20)}
+        if ($cells[4] -match 'ATK\s*([0-9.]+)(?:~([0-9.]+))?') {$damage=$(if($Matches[2]){[double]$Matches[2]}else{[double]$Matches[1]})}
+        if ($cells[5] -match '([0-9.]+)') {$breakDamage=[double]$Matches[1]}
+    } elseif ($kind -ne 'CONTEXT') {
+        if ($cells[2] -match '([0-9.]+)') {$apCost=[double]$Matches[1]}
+        if ($cells[2] -match '([0-9.]+)초') {$cooldownTicks=[int][Math]::Round([double]$Matches[1]*20)}
+        $effectCell = if ($kind -eq 'COMMON_ACTIVE') {$cells[4]} else {$cells[3]}
+        if ($effectCell -match 'ATK\s*([0-9.]+)(?:/([0-9.]+))?') {$damage=[double]$Matches[1]}
+        if ($effectCell -match '브레이크\s*([0-9.]+)') {$breakDamage=[double]$Matches[1]}
+    }
+    $damageFallbacks = @{
+        'ws.bow.barbed_rain.v1'=0.65; 'ws.crossbow.magazine_volley.v1'=0.70
+        'ws.dagger.venom_flurry.v1'=0.45; 'ws.pickaxe.armor_drill.v1'=0.90
+    }
+    if ($damage -eq 0.0 -and $damageFallbacks.ContainsKey($id)) {$damage=[double]$damageFallbacks[$id]}
+    $effectText = if ($kind -eq 'BASIC') {$cells[4..($cells.Count-1)] -join ' '} elseif ($kind -eq 'COMMON_ACTIVE') {$cells[4]} elseif ($kind -eq 'CONTEXT') {$joined} else {$cells[3]}
+    $tagCell = if ($kind -eq 'WEAPON_ACTIVE') {$cells[4]} elseif ($kind -eq 'COMMON_ACTIVE') {$cells[5]} else {''}
+    $tags = @($tagCell -replace '`','' -split ',' | ForEach-Object {$_.Trim()} | Where-Object {$_})
+    $effect = if ($id -eq 'ws.trident.cast_recall.v1') {'TRIDENT_TOGGLE'}
+        elseif ($id -eq 'ws.common.ap_stim.v1') {'AP_STIM'} elseif ($id -eq 'ws.common.rescue_line.v1') {'RESCUE_PULL'}
+        elseif ($id -eq 'ws.common.emergency_cover.v1') {'COVER'} elseif ($id -eq 'ws.unarmed.centered_stance.v1') {'STANCE'}
+        elseif ($joined -match 'HEALING|회복') {'HEAL'}
+        elseif ($joined -match 'CONTROL_BREAK|CLEANSE|해제|정화') {'CLEANSE'} elseif ($joined -match 'ARMOR_BREAK|DEF -') {'ARMOR_SHRED'}
+        elseif ($joined -match 'ROOT') {'ROOT'} elseif ($joined -match 'SLOW') {'SLOW'} elseif ($joined -match 'MARK') {'MARK'}
+        elseif ($joined -match 'BLEED') {'BLEED'} elseif ($joined -match 'POISON') {'POISON'} elseif ($joined -match 'BURN') {'BURN'}
+        elseif ($joined -match 'VULNERABLE') {'VULNERABLE'} elseif ($joined -match 'RELOAD') {'RELOAD'} elseif ($joined -match 'SUPPORT|COOP|GUARD') {'SUPPORT'} else {'DAMAGE'}
+    $range = 4.0
+    if ($effectText -match '([0-9.]+)(블록|m)') {$range=[double]$Matches[1]}
+    elseif ($weaponClass -in @('BOW','CROSSBOW')) {$range=28.0} elseif ($weaponClass -eq 'STAFF') {$range=18.0}
+    $arc = if ($effectText -match '([0-9.]+)도') {[double]$Matches[1]} elseif ($joined -match 'AREA|영역|반경') {360.0} else {70.0}
+    $maxTargets = if ($effectText -match '최대\s*([0-9]+)대상') {[int]$Matches[1]} elseif ($joined -match 'AREA|MULTITARGET|CHAIN') {6} else {1}
+    $unlockLevel = if ($joined -match '레벨\s*([0-9]+)') {[int]$Matches[1]} else {1}
+    $consumableId = switch -Regex ($id) {
+        'field_bandage' {'WSI-CONS-BANDAGE'} 'quick_purify|control_break' {'WSI-CONS-PURIFY_AMPOULE'}
+        'ap_stim' {'WSI-CONS-AP_STIM'} 'rescue_line' {'WSI-CONS-RESCUE_BRACE'}
+        'emergency_cover' {'WSI-CONS-REPAIR_KIT'} default {''}
+    }
+    [ordered]@{id=$id;sourceDocumentId='SKILL-LIST-001';enabled=$true;kind=$kind;name=$name;weaponClass=$weaponClass
+        apCost=$apCost;cooldownTicks=$cooldownTicks;damageCoefficient=$damage;breakDamage=$breakDamage;range=$range;arcDegrees=$arc
+        maxTargets=$maxTargets;effect=$effect;tags=@($tags);unlockLevel=$unlockLevel;consumableId=$consumableId;description=$effectText;raw=@($cells)}
+}
 $personalById = Find-IdRows $personalAugmentRows '^AUG-[SGP]-\d{3}$'
 $personalAugments = foreach ($entry in $personalById.GetEnumerator()) { Raw-Record $entry.Key 'AUG-LIST-001' $entry.Value }
 $partyById = Find-IdRows $partyAugmentRows '^PAUG-\d{3}$'

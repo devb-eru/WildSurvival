@@ -300,6 +300,10 @@ public final class EquipmentService implements Listener {
         return true;
     }
 
+    public boolean hasRegisteredItem(Player player, String id) {
+        return codex.countItem(player, id) > 0;
+    }
+
     public String resolveWeaponId(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         return state == null || state.mainWeaponId == null || state.mainWeaponId.isBlank()
