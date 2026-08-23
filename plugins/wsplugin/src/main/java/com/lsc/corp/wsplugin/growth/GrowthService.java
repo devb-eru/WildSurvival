@@ -20,6 +20,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,6 +44,7 @@ public final class GrowthService implements Listener {
     private final Map<String, PrototypeContent.AugmentDefinition> runtimeAugments;
     private final TelemetryService telemetry;
     private final Map<UUID, Integer> openMilestones = new HashMap<>();
+    private final Map<UUID, ReactiveState> reactiveStates = new HashMap<>();
     private boolean partyVoteOpened;
     private int tickCounter;
 
@@ -251,6 +254,8 @@ public final class GrowthService implements Listener {
         if (hasAugment(player, "AUG-P-001") && player.getHealth() / Math.max(1.0, player.getMaxHealth()) <= 0.40) {
             result *= 1.22;
         }
+        if (hasMatchingEquipmentSynergy(player)) result *= 1.07;
+        if (partyHasAugment("PAUG-016") && separatedCombatPartner(player, 10.0)) result *= 1.06;
         return result;
     }
 
@@ -260,6 +265,18 @@ public final class GrowthService implements Listener {
             result *= 1.15;
         }
         return result;
+    }
+
+    public double targetBreakMultiplier(Player player, boolean targetHasDamageOverTime) {
+        return hasAugment(player, "AUG-S-013") && targetHasDamageOverTime ? 1.05 : 1.0;
+    }
+
+    public double statusHitBonus(Player player, boolean targetHasDamageOverTime) {
+        return hasAugment(player, "AUG-S-013") && targetHasDamageOverTime ? 0.08 : 0.0;
+    }
+
+    public double bonusDefence(Player player) {
+        return hasAugment(player, "AUG-G-016") && !hasMatchingEquipmentSynergy(player) ? 7.0 : 0.0;
     }
 
     public double resourceMultiplier(Player player) {
@@ -643,6 +660,170 @@ public final class GrowthService implements Listener {
         return Math.max(4.0, result);
     }
 
+    public void onDodgeStarted(Player player, double paidCost) {
+        ReactiveState state = reactiveStates.computeIfAbsent(player.getUniqueId(), ignored -> new ReactiveState());
+        state.lastDodgeCost = Math.max(0.0, paidCost);
+    }
+
+    /** Applies effects that are defined on a successful invulnerability-window dodge. */
+    public double onPreciseDodge(Player player) {
+        long now = System.currentTimeMillis();
+        ReactiveState state = reactiveStates.computeIfAbsent(player.getUniqueId(), ignored -> new ReactiveState());
+        double extraRefund = 0.0;
+        if (hasAugment(player, "AUG-G-002")) {
+            if (now - state.lastPreciseDodgeAtEpochMs > 5_000L) state.consecutiveDodgeRefunds = 0;
+            extraRefund = state.lastDodgeCost * 0.30 * Math.pow(0.5, state.consecutiveDodgeRefunds);
+            state.consecutiveDodgeRefunds++;
+        }
+        if (hasAugment(player, "AUG-G-001")) {
+            state.nextAttackDamageMultiplier *= 1.18;
+            state.nextAttackBreakMultiplier *= 1.15;
+        }
+        if (hasAugment(player, "AUG-S-012")) {
+            state.counterDamageMultiplier = 1.08;
+            state.counterExpiresAtEpochMs = now + 2_000L;
+        }
+        if (hasAugment(player, "AUG-P-002")) {
+            state.preciseDodgesTowardGuard++;
+            if (state.preciseDodgesTowardGuard >= 2) {
+                state.preciseDodgesTowardGuard = 0;
+                state.nextIncomingDamageMultiplier = 0.30;
+            }
+        }
+        if (hasAugment(player, "AUG-P-010") && "UNARMED".equals(resolveWeaponClass(player))) {
+            state.unarmedCounterExpiresAtEpochMs = now + 2_000L;
+        }
+        state.lastPreciseDodgeAtEpochMs = now;
+        return extraRefund;
+    }
+
+    /** Returns and consumes single-use attack buffs. Periodic damage never consumes them. */
+    public ReactiveAttackModifier reactiveAttackModifier(Player player, String executionId) {
+        if (executionId.startsWith("dot:")) return ReactiveAttackModifier.IDENTITY;
+        long now = System.currentTimeMillis();
+        ReactiveState state = reactiveStates.computeIfAbsent(player.getUniqueId(), ignored -> new ReactiveState());
+        state.lastCombatAtEpochMs = now;
+        double damage = state.nextAttackDamageMultiplier;
+        double breakMultiplier = state.nextAttackBreakMultiplier;
+        state.nextAttackDamageMultiplier = 1.0;
+        state.nextAttackBreakMultiplier = 1.0;
+        if (state.counterExpiresAtEpochMs >= now) damage *= state.counterDamageMultiplier;
+        state.counterExpiresAtEpochMs = 0L;
+        state.counterDamageMultiplier = 1.0;
+        double defenceIgnore = 0.0;
+        if (state.unarmedCounterExpiresAtEpochMs >= now && "UNARMED".equals(resolveWeaponClass(player))) {
+            defenceIgnore = 0.35;
+            breakMultiplier *= 2.0;
+        }
+        state.unarmedCounterExpiresAtEpochMs = 0L;
+        return new ReactiveAttackModifier(damage, breakMultiplier, defenceIgnore);
+    }
+
+    /** Consumes the Prism two-dodge guard on the next damaging hit. */
+    public double reactiveIncomingDamageMultiplier(Player player) {
+        ReactiveState state = reactiveStates.computeIfAbsent(player.getUniqueId(), ignored -> new ReactiveState());
+        double result = state.nextIncomingDamageMultiplier;
+        state.nextIncomingDamageMultiplier = 1.0;
+        return result;
+    }
+
+    /** Gold survival shield: only the transition from above 30% to at/below 30% arms it. */
+    public void onIncomingDamage(Player player, double finalDamage) {
+        if (!hasAugment(player, "AUG-G-013") || finalDamage <= 0.0) return;
+        double maximum = maximumHealth(player);
+        ReactiveState state = reactiveStates.computeIfAbsent(player.getUniqueId(), ignored -> new ReactiveState());
+        double beforeRatio = player.getHealth() / maximum;
+        double afterRatio = Math.max(0.0, player.getHealth() - finalDamage) / maximum;
+        if (beforeRatio > 0.30 && afterRatio <= 0.30 && !state.lowHealthShieldArmed) {
+            double shield = maximum * 0.12;
+            player.setAbsorptionAmount(Math.max(player.getAbsorptionAmount(), shield));
+            state.lowHealthShieldArmed = true;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (player.isOnline()) player.setAbsorptionAmount(Math.max(0.0, player.getAbsorptionAmount() - shield));
+            }, 100L);
+        } else if (afterRatio > 0.30) {
+            state.lowHealthShieldArmed = false;
+        }
+    }
+
+    /** Executes post-revive AP and healing effects at the single authoritative completion point. */
+    public void onReviveCompleted(Player reviver, Player target) {
+        double nearbyHealRate = hasAugment(reviver, "AUG-G-015") ? 0.05 : 0.0;
+        boolean silverRecovery = hasAugment(reviver, "AUG-S-014");
+        boolean partyRecovery = partyHasAugment("PAUG-004");
+        runs.mutate(run -> {
+            if (silverRecovery) {
+                addAp(run.players.get(reviver.getUniqueId().toString()), 5.0);
+                addAp(run.players.get(target.getUniqueId().toString()), 5.0);
+            }
+            if (partyRecovery) {
+                for (RunSnapshot.PlayerState member : run.players.values()) {
+                    if (!"DEAD".equals(member.lifeState)) addAp(member, 10.0);
+                }
+            }
+        });
+        if (partyRecovery) {
+            healRate(reviver, 0.08);
+            healRate(target, 0.08);
+        }
+        if (nearbyHealRate > 0.0) {
+            for (Player member : runs.onlineMembers()) {
+                if (sameWorldWithin(reviver, member, 5.0)) healRate(member, nearbyHealRate);
+            }
+        }
+    }
+
+    private String resolveWeaponClass(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || state.mainWeaponId == null) return "UNARMED";
+        ProductionContentCatalog.CatalogEntry item = production.itemsById().get(state.mainWeaponId);
+        return item == null ? state.mainWeaponId : switch (item.equipmentType()) {
+            case "SW" -> "SWORD"; case "AX" -> "AXE"; case "BO" -> "BOW";
+            case "CB" -> "CROSSBOW"; case "DG" -> "DAGGER"; case "BL" -> "MACE";
+            case "ST" -> "STAFF"; case "PK" -> "PICKAXE"; case "TR" -> "TRIDENT";
+            default -> "UNARMED";
+        };
+    }
+
+    private boolean hasMatchingEquipmentSynergy(Player player) {
+        if (!hasAugment(player, "AUG-G-016")) return false;
+        String weaponTag = resolveWeaponClass(player);
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return false;
+        long matches = state.personalAugments.stream().filter(id -> !"AUG-G-016".equals(id))
+                .map(production.augmentsById()::get).filter(java.util.Objects::nonNull)
+                .filter(augment -> augment.tags().contains(weaponTag)).count();
+        return matches >= 2;
+    }
+
+    private boolean separatedCombatPartner(Player player, double minimumDistance) {
+        long now = System.currentTimeMillis();
+        ReactiveState own = reactiveStates.get(player.getUniqueId());
+        if (own == null || now - own.lastCombatAtEpochMs > 5_000L) return false;
+        double minimumSquared = minimumDistance * minimumDistance;
+        return runs.onlineMembers().stream().filter(member -> !member.equals(player))
+                .filter(member -> member.getWorld().equals(player.getWorld()))
+                .filter(member -> member.getLocation().distanceSquared(player.getLocation()) >= minimumSquared)
+                .anyMatch(member -> {
+                    ReactiveState other = reactiveStates.get(member.getUniqueId());
+                    return other != null && now - other.lastCombatAtEpochMs <= 5_000L;
+                });
+    }
+
+    private static void addAp(RunSnapshot.PlayerState state, double amount) {
+        if (state != null) state.ap = Math.min(state.maxAp, state.ap + amount);
+    }
+
+    private static double maximumHealth(Player player) {
+        return player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
+                : Math.max(1.0, player.getAttribute(Attribute.MAX_HEALTH).getValue());
+    }
+
+    private static void healRate(Player player, double rate) {
+        double maximum = maximumHealth(player);
+        player.setHealth(Math.min(maximum, player.getHealth() + maximum * rate));
+    }
+
     public double basicAttackApCost(Player player, String weaponClass, double baseCost) {
         return hasAugment(player, "AUG-P-008") && ("BOW".equals(weaponClass) || "CROSSBOW".equals(weaponClass))
                 ? baseCost * 1.20 : baseCost;
@@ -767,6 +948,26 @@ public final class GrowthService implements Listener {
 
     public static int levelForExp(int exp) {
         return LevelCurve.levelForExp(exp);
+    }
+
+    public record ReactiveAttackModifier(double damageMultiplier, double breakMultiplier,
+                                         double defenceIgnoreFraction) {
+        public static final ReactiveAttackModifier IDENTITY = new ReactiveAttackModifier(1.0, 1.0, 0.0);
+    }
+
+    private static final class ReactiveState {
+        double lastDodgeCost;
+        long lastPreciseDodgeAtEpochMs;
+        int consecutiveDodgeRefunds;
+        double nextAttackDamageMultiplier = 1.0;
+        double nextAttackBreakMultiplier = 1.0;
+        double counterDamageMultiplier = 1.0;
+        long counterExpiresAtEpochMs;
+        int preciseDodgesTowardGuard;
+        double nextIncomingDamageMultiplier = 1.0;
+        long unarmedCounterExpiresAtEpochMs;
+        boolean lowHealthShieldArmed;
+        long lastCombatAtEpochMs;
     }
 
     private static float levelProgress(RunSnapshot.PlayerState state) {

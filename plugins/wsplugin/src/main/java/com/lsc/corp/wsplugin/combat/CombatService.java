@@ -315,12 +315,17 @@ public final class CombatService implements Listener {
                 ? clamp(attackerState.testBreakMultiplier, 0.0, 100.0) : 1.0;
         EquipmentService.ActiveEquipmentStats equipmentStats = equipment.activeStats(attacker);
         double equipmentAttack = equipmentStats.value("ATK");
-        double effectiveDefence = Math.max(0.0, defence - equipmentStats.value("PEN"));
+        GrowthService.ReactiveAttackModifier reactive = growth.reactiveAttackModifier(attacker, executionId);
+        double effectiveDefence = Math.max(0.0,
+                defence * (1.0 - reactive.defenceIgnoreFraction()) - equipmentStats.value("PEN"));
         double vulnerableMultiplier = statusActive(target, "vulnerable") ? 1.12 : 1.0;
+        boolean targetHasDot = hasDamageOverTime(target);
         double finalDamage = CombatMath.outgoingDamage(rawAttack + equipmentAttack, effectiveDefence,
-                growth.attackMultiplier(attacker), groggyMultiplier * vulnerableMultiplier, testDamageMultiplier);
+                growth.attackMultiplier(attacker) * reactive.damageMultiplier(),
+                groggyMultiplier * vulnerableMultiplier, testDamageMultiplier);
         double breakCallMultiplier = statusActive(target, "break_call") ? 1.06 : 1.0;
-        double finalBreak = Math.max(0.0, breakDamage * growth.breakMultiplier(attacker)
+        double finalBreak = Math.max(0.0, breakDamage * growth.breakMultiplier(attacker) * reactive.breakMultiplier()
+                * growth.targetBreakMultiplier(attacker, targetHasDot)
                 * testBreakMultiplier * breakCallMultiplier * (1.0 + equipmentStats.value("BREAK_DAMAGE") / 100.0));
         if (pdc.getOrDefault(testInvulnerableKey, PersistentDataType.BYTE, (byte) 0) == (byte) 1) {
             finalDamage = 0.0;
@@ -592,20 +597,25 @@ public final class CombatService implements Listener {
             double reduction = clamp(playerState.testDamageReductionRate, 0.0, 0.95);
             event.setDamage(CombatMath.incomingDamage(event.getDamage(), multiplier, reduction));
         }
-        double equipmentDefence = equipment.activeStat(player, "DEF");
+        double equipmentDefence = equipment.activeStat(player, "DEF") + growth.bonusDefence(player);
         event.setDamage(event.getDamage() * PlayerStatPolicy.incomingDamageMultiplier(playerState.investedStats)
                 * (100.0 / (100.0 + Math.max(0.0, equipmentDefence))));
         long now = Instant.now().toEpochMilli();
         if (invulnerableUntilEpochMs.getOrDefault(player.getUniqueId(), 0L) >= now) {
             event.setCancelled(true);
             player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 8, 0.4, 0.2, 0.4, 0.02);
+            double augmentRefund = growth.onPreciseDodge(player);
             runs.mutate(run -> {
                 RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-                state.ap = Math.min(state.maxAp, state.ap + 10.0);
+                state.ap = Math.min(state.maxAp, state.ap + 10.0 + augmentRefund);
             });
-            telemetry.event(runs.current().orElseThrow().runId, "DODGE_SUCCESS", "{\"refund\":10}");
+            telemetry.event(runs.current().orElseThrow().runId, "DODGE_SUCCESS",
+                    "{\"refund\":" + round(10.0 + augmentRefund) + "}");
             return;
         }
+        event.setDamage(event.getDamage() * growth.reactiveIncomingDamageMultiplier(player));
+        if (reviveProtected(player)) event.setDamage(event.getDamage() * 0.50);
+        growth.onIncomingDamage(player, event.getFinalDamage());
         switch (PlayerLifePolicy.evaluate(playerState.lifeState, player.getHealth(), event.getFinalDamage())) {
             case BLOCK -> event.setCancelled(true);
             case ENTER_DOWNED -> {
@@ -1240,6 +1250,7 @@ public final class CombatService implements Listener {
             apFailure(player, cost);
             return;
         }
+        growth.onDodgeStarted(player, cost);
         Vector direction = player.getLocation().getDirection().setY(0).normalize();
         if (player.isSneaking()) {
             direction.multiply(-1.0);
@@ -1418,6 +1429,7 @@ public final class CombatService implements Listener {
         target.removePotionEffect(PotionEffectType.SLOWNESS);
         target.removePotionEffect(PotionEffectType.GLOWING);
         target.setHealth(Math.max(1.0, target.getAttribute(Attribute.MAX_HEALTH).getValue() * 0.25));
+        growth.onReviveCompleted(reviver, target);
         runs.broadcast(ChatColor.GREEN + reviver.getName() + "이(가) " + target.getName() + "을 구조했습니다.");
         ActionBarService.critical(reviver, Component.text(target.getName() + " 구조 완료", NamedTextColor.GREEN), 60);
         ActionBarService.critical(target, Component.text("구조 완료 · 전투 복귀", NamedTextColor.GREEN), 60);
@@ -1427,6 +1439,15 @@ public final class CombatService implements Listener {
     private boolean withinReviveRange(Player reviver, Player target) {
         return reviver.getWorld().equals(target.getWorld())
                 && reviver.getLocation().distanceSquared(target.getLocation()) <= REVIVE_RANGE_SQUARED;
+    }
+
+    private boolean reviveProtected(Player player) {
+        for (ReviveChannel channel : reviveChannels.values()) {
+            if (!channel.reviver.equals(player.getUniqueId()) && !channel.target.equals(player.getUniqueId())) continue;
+            Player reviver = Bukkit.getPlayer(channel.reviver);
+            if (reviver != null && growth.hasAugment(reviver, "AUG-P-014")) return true;
+        }
+        return false;
     }
 
     private void processDownedTimeouts(long now) {
@@ -1496,7 +1517,8 @@ public final class CombatService implements Listener {
         double roll = Math.floorMod((executionId + ":" + target.getUniqueId()).hashCode(), 10_000) / 10_000.0;
         RunSnapshot.PlayerState state = runs.playerState(attacker.getUniqueId()).orElse(null);
         double chance = weapon.statusChance() + (state == null ? 0.0 : PlayerStatPolicy.statusChanceBonus(state.investedStats))
-                + Math.max(0.0, equipment.activeStat(attacker, "HIT")) / 100.0;
+                + Math.max(0.0, equipment.activeStat(attacker, "HIT")) / 100.0
+                + growth.statusHitBonus(attacker, hasDamageOverTime(target));
         if (stage != weapon.attackCoefficients().size() - 1 || roll > chance) {
             return;
         }
@@ -1931,6 +1953,10 @@ public final class CombatService implements Listener {
         if (expiry > Instant.now().toEpochMilli()) return true;
         target.getPersistentDataContainer().remove(key);
         return false;
+    }
+
+    private boolean hasDamageOverTime(LivingEntity target) {
+        return statusActive(target, "bleed") || statusActive(target, "poison") || statusActive(target, "burn");
     }
 
     private void applyDamageOverTime(Player attacker, LivingEntity target, PrototypeContent.SkillDefinition skill,

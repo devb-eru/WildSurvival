@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.lsc.corp.wsplugin.growth.AugmentRuntimeContract;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -801,6 +802,10 @@ public final class ProductionBundleValidator {
             if (augment.personal() != augment.id().startsWith("AUG-")
                     || (!augment.personal() && !"PARTY".equals(augment.tier()))) {
                 throw new ContentValidationException("Augment scope/tier mismatch " + augment.id());
+            }
+            if (!AugmentRuntimeContract.supports(augment.effectOpcode())) {
+                throw new ContentValidationException("Unknown augment runtime opcode " + augment.id()
+                        + " -> " + augment.effectOpcode());
             }
             for (String exclusive : augment.exclusiveWith()) {
                 ProductionContentCatalog.AugmentEntry other = catalog.augmentsById().get(exclusive);
