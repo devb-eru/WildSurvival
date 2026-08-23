@@ -24,6 +24,7 @@ import com.lsc.corp.wsplugin.testlab.TestScenarioService;
 import com.lsc.corp.wsplugin.testlab.VirtualPartyService;
 import com.lsc.corp.wsplugin.tutorial.TutorialService;
 import com.lsc.corp.wsplugin.world.PrototypeLoopService;
+import com.lsc.corp.wsplugin.world.DiscoveryService;
 import com.lsc.corp.wsplugin.ui.PlayerMenuService;
 import java.util.Objects;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -61,7 +62,9 @@ public final class Main extends JavaPlugin {
             FacilityService facility = new FacilityService(this, runService, content.productionCatalog(), codex, equipment, telemetry);
             facility.setOpeners(economy::openCraft, economy::openLedger, codex::open, stats::open);
             economy.setVirtualFacilityHandler(facility::canAssembleVirtual, facility::assembleVirtual);
-            PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, skills, growth, tutorial);
+            DiscoveryService discoveries = new DiscoveryService(runService, content.productionCatalog());
+            PlayerMenuService menu = new PlayerMenuService(runService, economy, codex, stats, equipment, skills,
+                    growth, tutorial, discoveries);
             damageNumbers = new DamageNumberService(this, runService);
             combat.setMenuOpener(menu::open);
             combat.setItemRewardHandler((player, resourceId, amount) -> codex.grantResource(player, resourceId, amount));
@@ -83,7 +86,8 @@ public final class Main extends JavaPlugin {
             TestLabCommand testLabCommand = new TestLabCommand(testLab, testLabGui, scenarios, virtualParty, combat, runService);
 
             runService.attach(loop, equipment, growth);
-            registerListeners(equipment, skills, combat, economy, facility, codex, stats, menu, tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
+            registerListeners(equipment, skills, combat, economy, facility, codex, stats, menu, discoveries,
+                    tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
 
             PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand, menu);
             Objects.requireNonNull(getCommand("wildsurvival"), "wildsurvival command").setExecutor(command);
@@ -92,6 +96,7 @@ public final class Main extends JavaPlugin {
             runService.restore();
             facility.restore();
             getServer().getScheduler().runTaskTimer(this, facility::tick, 20L, 20L);
+            getServer().getScheduler().runTaskTimer(this, discoveries::tick, 20L, 20L);
             tutorial.start();
             for (org.bukkit.entity.Player player : runService.onlineMembers()) {
                 codex.reconcile(player);
@@ -101,7 +106,7 @@ public final class Main extends JavaPlugin {
             virtualParty.cleanupOrphans();
             testLab.recoverActiveSession();
             runService.startHeartbeat();
-            getLogger().info("WildSurvival Season 1 runtime + ws-content-r2 catalog are ready (66 files, 334 codex entries).");
+            getLogger().info("WildSurvival Season 1 runtime + ws-content-r2 catalog are ready (68 files, 334 codex entries).");
         } catch (Exception exception) {
             getLogger().log(java.util.logging.Level.SEVERE, "Prototype bootstrap failed; disabling plugin.", exception);
             getServer().getPluginManager().disablePlugin(this);

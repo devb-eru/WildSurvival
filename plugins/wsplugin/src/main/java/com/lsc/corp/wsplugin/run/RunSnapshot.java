@@ -42,6 +42,7 @@ public final class RunSnapshot {
     public DayState seasonDay = new DayState();
     public Map<String, EncounterState> encounters = new LinkedHashMap<>();
     public Map<String, ResearchNodeState> researchNodes = new LinkedHashMap<>();
+    public Map<String, DiscoveryNodeState> discoveryNodes = new LinkedHashMap<>();
     public StoryState story = new StoryState();
     public Set<String> defeatedBossIds = new LinkedHashSet<>();
     public Set<String> reconstructionPartIds = new LinkedHashSet<>();
@@ -269,6 +270,18 @@ public final class RunSnapshot {
         public long completesAtEpochMs;
         public long completedAtEpochMs;
         public Map<String, Integer> reservedCost = new LinkedHashMap<>();
+        public boolean unlockCommitted;
+    }
+
+    public static final class DiscoveryNodeState {
+        public String discoveryId;
+        public String state = "HIDDEN";
+        public int hintLevel;
+        public Set<String> evidence = new LinkedHashSet<>();
+        public String firstCluePlayerUuid;
+        public long firstClueAtEpochMs;
+        public long discoveredAtEpochMs;
+        public long masteredAtEpochMs;
         public boolean unlockCommitted;
     }
 

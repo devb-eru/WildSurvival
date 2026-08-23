@@ -9,6 +9,7 @@ import com.lsc.corp.wsplugin.player.SkillLoadoutService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import com.lsc.corp.wsplugin.tutorial.TutorialService;
+import com.lsc.corp.wsplugin.world.DiscoveryService;
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -33,14 +34,16 @@ public final class PlayerMenuService implements Listener {
     private final SkillLoadoutService skills;
     private final GrowthService growth;
     private final TutorialService tutorial;
+    private final DiscoveryService discoveries;
 
     public PlayerMenuService(RunService runs, EconomyService economy, ItemCodexService codex,
                              PlayerStatService stats, EquipmentService equipment, SkillLoadoutService skills,
-                             GrowthService growth, TutorialService tutorial) {
+                             GrowthService growth, TutorialService tutorial, DiscoveryService discoveries) {
         this.runs = runs; this.economy = economy; this.codex = codex;
         this.stats = stats; this.equipment = equipment; this.growth = growth;
         this.skills = skills;
         this.tutorial = tutorial;
+        this.discoveries = discoveries;
     }
 
     public void open(Player player) {
@@ -67,6 +70,8 @@ public final class PlayerMenuService implements Listener {
         inventory.setItem(33, named(Material.COMPARATOR, ChatColor.YELLOW + "설정",
                 List.of(ChatColor.GRAY + "피해량 표시·도감/증강/스킬 설명")));
         inventory.setItem(35, named(Material.BOOK, ChatColor.GOLD + "초반 생존 길잡이", List.of(ChatColor.GRAY + "L키 Advancement 탭 안내")));
+        inventory.setItem(37, named(Material.SPYGLASS, ChatColor.LIGHT_PURPLE + "발견 기록",
+                List.of(ChatColor.GRAY + "파티 공유 단서·가설·실험·해금 확인")));
         inventory.setItem(49, named(Material.BARRIER, ChatColor.RED + "닫기", List.of()));
         player.openInventory(inventory);
     }
@@ -97,6 +102,7 @@ public final class PlayerMenuService implements Listener {
                 case 19 -> economy.openCraft(player); case 21 -> codex.open(player); case 23 -> stats.open(player);
                 case 25 -> equipment.open(player); case 27 -> skills.open(player); case 29 -> growth.openAugments(player);
                 case 31 -> economy.openLedger(player); case 33 -> openSettings(player); case 35 -> tutorial.showGuide(player);
+                case 37 -> discoveries.open(player);
                 case 49 -> player.closeInventory();
                 default -> { }
             }

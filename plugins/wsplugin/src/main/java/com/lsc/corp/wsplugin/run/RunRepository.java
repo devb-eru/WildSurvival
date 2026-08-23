@@ -88,6 +88,7 @@ public final class RunRepository {
     private static void normalizeSeasonState(RunSnapshot snapshot) {
         if (snapshot.encounters == null) snapshot.encounters = new LinkedHashMap<>();
         if (snapshot.researchNodes == null) snapshot.researchNodes = new LinkedHashMap<>();
+        if (snapshot.discoveryNodes == null) snapshot.discoveryNodes = new LinkedHashMap<>();
         if (snapshot.defeatedBossIds == null) snapshot.defeatedBossIds = new LinkedHashSet<>();
         if (snapshot.reconstructionPartIds == null) snapshot.reconstructionPartIds = new LinkedHashSet<>();
         if (snapshot.discoveryIds == null) snapshot.discoveryIds = new LinkedHashSet<>();
@@ -125,6 +126,10 @@ public final class RunRepository {
         }
         for (RunSnapshot.ResearchNodeState research : snapshot.researchNodes.values()) {
             if (research.reservedCost == null) research.reservedCost = new LinkedHashMap<>();
+        }
+        for (RunSnapshot.DiscoveryNodeState discovery : snapshot.discoveryNodes.values()) {
+            if (discovery.evidence == null) discovery.evidence = new LinkedHashSet<>();
+            if (discovery.state == null || discovery.state.isBlank()) discovery.state = "HIDDEN";
         }
     }
 
