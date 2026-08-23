@@ -1,5 +1,6 @@
 package com.lsc.corp.wsplugin.testlab;
 
+import com.lsc.corp.wsplugin.combat.DeathRuntimePolicy;
 import com.lsc.corp.wsplugin.boss.PrototypeBossService;
 import com.lsc.corp.wsplugin.combat.CombatService;
 import com.lsc.corp.wsplugin.content.PrototypeContent;
@@ -227,7 +228,15 @@ public final class TestLabService implements Listener {
             state.lifeState = life;
             state.downedAtEpochMs = "DOWNED".equals(life) ? runs.clockNowMillis() : 0L;
             if ("DOWNED".equals(life)) {
+                state.injuryStacks = Math.max(1, Math.min(DeathRuntimePolicy.MAX_INJURY_STACKS, state.injuryStacks));
+                double maximum = actor.getAttribute(Attribute.MAX_HEALTH).getValue();
+                state.downedMaxHp = maximum * DeathRuntimePolicy.downedHealthFraction(state.injuryStacks);
+                state.downedHp = state.downedMaxHp;
                 state.ap = 0.0;
+            } else {
+                state.downedGraceUntilEpochMs = 0L;
+                state.downedHp = 0.0;
+                state.downedMaxHp = 0.0;
             }
         });
         if ("DEAD".equals(life)) {

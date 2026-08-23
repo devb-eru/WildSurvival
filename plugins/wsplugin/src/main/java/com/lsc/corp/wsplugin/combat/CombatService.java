@@ -257,7 +257,7 @@ public final class CombatService implements Listener {
         long now = Instant.now().toEpochMilli();
         processProductionEnemyActions();
         processRevives(now);
-        processDownedTimeouts(now);
+        processLifeStates(now);
         processTridents(now);
         if (++hudTick % 10 == 0) {
             updateHud();
@@ -619,6 +619,15 @@ public final class CombatService implements Listener {
                 * (100.0 / (100.0 + Math.max(0.0, equipmentDefence)))
                 * (1.0 + Math.max(0.0, statuses.strength(player, "VULNERABLE"))));
         long now = Instant.now().toEpochMilli();
+        if ("DOWNED_GRACE".equals(playerState.lifeState)) {
+            event.setCancelled(true);
+            return;
+        }
+        if ("DOWNED".equals(playerState.lifeState)) {
+            event.setCancelled(true);
+            applyDownedDamage(player, event.getFinalDamage(), downedDamageMultiplier(event));
+            return;
+        }
         if (invulnerableUntilEpochMs.getOrDefault(player.getUniqueId(), 0L) >= now) {
             event.setCancelled(true);
             player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation(), 8, 0.4, 0.2, 0.4, 0.02);
@@ -890,7 +899,7 @@ public final class CombatService implements Listener {
         RunSnapshot run = runs.current().orElseThrow();
         if (FacilityStateAccess.activeNear(run, "FAC-P07", target.getWorld().getName(),
                 target.getX(), target.getY(), target.getZ(), 12.0)) multiplier *= 1.15;
-        long duration = Math.max(1000L, Math.round(plugin.getConfig().getInt("prototype.revive-channel-seconds", 3) * 1000L / multiplier));
+        long duration = DeathRuntimePolicy.reviveDurationMillis(Math.max(1, targetState.injuryStacks), multiplier);
         reviveChannels.put(target.getUniqueId(), new ReviveChannel(reviver.getUniqueId(), target.getUniqueId(), Instant.now().toEpochMilli() + duration));
         reviver.sendMessage(ChatColor.YELLOW + target.getName() + " 구조 시작 — " + (duration / 1000.0) + "초");
         ActionBarService.critical(reviver, Component.text(target.getName() + " 구조 시작", NamedTextColor.YELLOW), 30);
@@ -1405,17 +1414,33 @@ public final class CombatService implements Listener {
         if (!"ACTIVE".equals(state.lifeState)) {
             return;
         }
+        if (DeathRuntimePolicy.fatalInsteadOfDowned(state.injuryStacks)) {
+            completeDeath(player, "MAX_INJURY_FATAL");
+            return;
+        }
+        long now = Instant.now().toEpochMilli();
+        int nextInjury = state.injuryStacks + 1;
+        double maximumHealth = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
+                : player.getAttribute(Attribute.MAX_HEALTH).getValue();
+        double downedMaximum = maximumHealth * DeathRuntimePolicy.downedHealthFraction(nextInjury);
         runs.mutate(run -> {
             RunSnapshot.PlayerState value = run.players.get(player.getUniqueId().toString());
-            value.lifeState = "DOWNED";
-            value.downedAtEpochMs = Instant.now().toEpochMilli();
+            value.lifeState = "DOWNED_GRACE";
+            value.downedAtEpochMs = now;
+            value.downedGraceUntilEpochMs = now + DeathRuntimePolicy.DOWNED_GRACE_MILLIS;
+            value.downedMaxHp = downedMaximum;
+            value.downedHp = downedMaximum;
+            value.injuryStacks = nextInjury;
             value.ap = 0.0;
         });
+        invulnerableUntilEpochMs.remove(player.getUniqueId());
+        reviveChannels.remove(player.getUniqueId());
         statuses.clearControls(player);
         player.setHealth(1.0);
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 4, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false));
-        runs.broadcast(ChatColor.RED + "[빈사] " + player.getName() + " — 우클릭 유지로 구조하세요.");
+        runs.broadcast(ChatColor.RED + "[빈사 보호] " + player.getName() + " — 부상 " + nextInjury
+                + "/3 · " + DeathRuntimePolicy.DOWNED_GRACE_MILLIS / 1000.0 + "초");
         for (Player member : runs.onlineMembers()) {
             ActionBarService.critical(member, Component.text("[빈사] " + player.getName() + " — 웅크리고 우클릭하여 구조", NamedTextColor.RED), 80);
         }
@@ -1450,11 +1475,18 @@ public final class CombatService implements Listener {
             RunSnapshot.PlayerState state = run.players.get(target.getUniqueId().toString());
             state.lifeState = "ACTIVE";
             state.downedAtEpochMs = 0L;
+            state.downedGraceUntilEpochMs = 0L;
+            state.downedHp = 0.0;
+            state.downedMaxHp = 0.0;
             state.ap = state.maxAp * 0.20;
         });
         target.removePotionEffect(PotionEffectType.SLOWNESS);
         target.removePotionEffect(PotionEffectType.GLOWING);
-        target.setHealth(Math.max(1.0, target.getAttribute(Attribute.MAX_HEALTH).getValue() * 0.25));
+        RunSnapshot.PlayerState revived = runs.playerState(target.getUniqueId()).orElseThrow();
+        double maximum = target.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
+                : target.getAttribute(Attribute.MAX_HEALTH).getValue();
+        target.setHealth(Math.max(1.0, maximum * DeathRuntimePolicy.reviveHealthFraction(
+                Math.max(1, revived.injuryStacks))));
         growth.onReviveCompleted(reviver, target);
         runs.broadcast(ChatColor.GREEN + reviver.getName() + "이(가) " + target.getName() + "을 구조했습니다.");
         ActionBarService.critical(reviver, Component.text(target.getName() + " 구조 완료", NamedTextColor.GREEN), 60);
@@ -1476,21 +1508,16 @@ public final class CombatService implements Listener {
         return false;
     }
 
-    private void processDownedTimeouts(long now) {
-        long timeout = plugin.getConfig().getInt("prototype.downed-timeout-seconds", 30) * 1000L;
+    private void processLifeStates(long now) {
         for (Player player : runs.onlineMembers()) {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
-            if ("DOWNED".equals(state.lifeState) && now - state.downedAtEpochMs >= timeout) {
-                runs.mutate(run -> run.players.get(player.getUniqueId().toString()).lifeState = "DEAD");
-                statuses.clearOnDeath(player);
-                player.setGameMode(GameMode.SPECTATOR);
-                player.removePotionEffect(PotionEffectType.SLOWNESS);
-                player.removePotionEffect(PotionEffectType.GLOWING);
-                runs.broadcast(ChatColor.DARK_RED + "[완전 사망] " + player.getName());
-                for (Player member : runs.onlineMembers()) {
-                    ActionBarService.critical(member, Component.text("[완전 사망] " + player.getName(), NamedTextColor.DARK_RED), 80);
-                }
-                telemetry.event(runs.current().orElseThrow().runId, "PLAYER_STATE_CHANGED", "{\"state\":\"DEAD\"}");
+            if ("DEAD_PENDING".equals(state.lifeState)) {
+                completeDeath(player, "RECOVER_PENDING");
+                continue;
+            }
+            if ("DOWNED_GRACE".equals(state.lifeState) && now >= state.downedGraceUntilEpochMs) {
+                runs.mutate(run -> run.players.get(player.getUniqueId().toString()).lifeState = "DOWNED");
+                ActionBarService.critical(player, Component.text("빈사 상태 · 구조가 필요합니다.", NamedTextColor.RED), 60);
             }
         }
         if (runs.current().map(run -> "RUNNING".equals(run.state)).orElse(false) && runs.survivableCount() == 0) {
@@ -1500,6 +1527,52 @@ public final class CombatService implements Listener {
                 throw new IllegalStateException(exception);
             }
         }
+    }
+
+    private void applyDownedDamage(Player player, double finalDamage, double typeMultiplier) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+        double damage = DeathRuntimePolicy.downedDamage(finalDamage, typeMultiplier, state.downedMaxHp);
+        if (damage <= 0.0) return;
+        double remaining = Math.max(0.0, state.downedHp - damage);
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState current = run.players.get(player.getUniqueId().toString());
+            current.downedHp = remaining;
+            current.lastDamageAtEpochMs = Instant.now().toEpochMilli();
+        });
+        ActionBarService.critical(player, Component.text("빈사 체력 " + Math.round(remaining) + "/"
+                + Math.round(state.downedMaxHp), remaining <= state.downedMaxHp * 0.25
+                ? NamedTextColor.DARK_RED : NamedTextColor.RED), 45);
+        if (remaining <= 0.0) completeDeath(player, "DOWNED_HP_ZERO");
+    }
+
+    private double downedDamageMultiplier(EntityDamageEvent event) {
+        if (!(event instanceof EntityDamageByEntityEvent byEntity)) return 0.50;
+        LivingEntity source = combatAttacker(byEntity);
+        if (source == null) return 0.50;
+        String id = enemyId(source);
+        ProductionContentCatalog.EnemyEntry entry = production.enemiesById().get(id);
+        return id.startsWith("BOSS-") || production.bossesById().containsKey(id)
+                || (entry != null && entry.elite()) ? 0.75 : 0.50;
+    }
+
+    private void completeDeath(Player player, String reason) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || "DEAD".equals(state.lifeState)) return;
+        reviveChannels.remove(player.getUniqueId());
+        if (!"DEAD_PENDING".equals(state.lifeState)) {
+            runs.mutate(run -> run.players.get(player.getUniqueId().toString()).lifeState = "DEAD_PENDING");
+        }
+        statuses.clearOnDeath(player);
+        player.setGameMode(GameMode.SPECTATOR);
+        player.removePotionEffect(PotionEffectType.SLOWNESS);
+        player.removePotionEffect(PotionEffectType.GLOWING);
+        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).lifeState = "DEAD");
+        runs.broadcast(ChatColor.DARK_RED + "[완전 사망] " + player.getName());
+        for (Player member : runs.onlineMembers()) {
+            ActionBarService.critical(member, Component.text("[완전 사망] " + player.getName(), NamedTextColor.DARK_RED), 80);
+        }
+        telemetry.event(runs.current().orElseThrow().runId, "PLAYER_STATE_CHANGED",
+                "{\"state\":\"DEAD\",\"reason\":\"" + reason + "\"}");
     }
 
     private void defeatEnemy(Player attacker, LivingEntity target, String enemyId) {
@@ -1607,6 +1680,13 @@ public final class CombatService implements Listener {
         }
         for (Player player : runs.onlineMembers()) {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
+            if ("DOWNED".equals(state.lifeState) || "DOWNED_GRACE".equals(state.lifeState)) {
+                ActionBarService.renderHud(player, Component.text("빈사 체력 " + Math.round(state.downedHp) + "/"
+                        + Math.round(state.downedMaxHp) + " | 부상 " + state.injuryStacks + "/3"
+                        + ("DOWNED_GRACE".equals(state.lifeState) ? " | 보호" : " | 웅크리기+우클릭 구조"),
+                        NamedTextColor.RED));
+                continue;
+            }
             NamedTextColor color = state.ap <= 20.0 ? NamedTextColor.RED : NamedTextColor.AQUA;
             String status = statuses.summary(player);
             ActionBarService.renderHud(player, Component.text("Day " + snapshot.day + " | AP " + Math.round(state.ap) + "/" + state.maxAp

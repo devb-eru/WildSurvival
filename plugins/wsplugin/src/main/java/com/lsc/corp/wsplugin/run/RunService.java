@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -452,7 +453,8 @@ public final class RunService {
             if (current == null) {
                 return 0;
             }
-            return (int) current.players.values().stream().filter(state -> !"DEAD".equals(state.lifeState)).count();
+            return (int) current.players.values().stream().filter(state -> Set.of(
+                    "ACTIVE", "DOWNED_GRACE", "DOWNED", "BEING_REVIVED").contains(state.lifeState)).count();
         }
     }
 
@@ -479,11 +481,19 @@ public final class RunService {
                 state.lastKnownName = player.getName();
                 player.setLevel(state.level);
                 player.setExp(levelProgress(state));
-                if ("DEAD".equals(state.lifeState)) {
+                if ("DEAD".equals(state.lifeState) || "DEAD_PENDING".equals(state.lifeState)) {
                     player.setGameMode(GameMode.SPECTATOR);
-                } else if ("DOWNED".equals(state.lifeState)) {
+                } else if ("DOWNED".equals(state.lifeState) || "DOWNED_GRACE".equals(state.lifeState)) {
                     player.setGameMode(GameMode.SURVIVAL);
                     player.setHealth(Math.max(1.0, Math.min(player.getHealth(), 1.0)));
+                    if (state.injuryStacks <= 0) state.injuryStacks = 1;
+                    if (state.downedMaxHp <= 0.0) {
+                        double maximum = player.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH) == null ? 20.0
+                                : player.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue();
+                        state.downedMaxHp = maximum * com.lsc.corp.wsplugin.combat.DeathRuntimePolicy
+                                .downedHealthFraction(Math.min(3, state.injuryStacks));
+                        state.downedHp = state.downedMaxHp;
+                    }
                     player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 4, false, false));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, Integer.MAX_VALUE, 0, false, false));
                 }

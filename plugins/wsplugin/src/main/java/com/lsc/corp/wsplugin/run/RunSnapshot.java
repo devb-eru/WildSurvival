@@ -100,6 +100,10 @@ public final class RunSnapshot {
         public double tridentZ;
         public long tridentThrownAtEpochMs;
         public long downedAtEpochMs;
+        public long downedGraceUntilEpochMs;
+        public double downedHp;
+        public double downedMaxHp;
+        public int injuryStacks;
         public double testDamageDealtMultiplier = 1.0;
         public double testBreakMultiplier = 1.0;
         public double testDamageTakenMultiplier = 1.0;
