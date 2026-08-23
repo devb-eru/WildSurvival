@@ -136,26 +136,18 @@ public final class FinalService implements Listener, CombatService.BossDamageHan
     }
 
     public List<String> missingRequirements(RunSnapshot run) {
-        List<String> missing = new ArrayList<>();
-        if (run.day < 50) missing.add("FINAL_DAY_LOCK · Day 50 필요");
-        requireAll(missing, "보스", run.defeatedBossIds, Set.of("BOSS-D10", "BOSS-D20", "BOSS-D30", "BOSS-D40"));
-        requireAll(missing, "재건 부품", run.reconstructionPartIds, Set.of("A", "B", "C", "D"));
-        requireAll(missing, "발견", run.discoveryIds, Set.of("C27", "C28-A", "C28-B", "C28-C", "C28-D", "C29"));
-        for (String type : List.of("FAC-R01", "FAC-R02", "FAC-R03", "FAC-R04", "FAC-R06")) {
-            if (run.facilities.values().stream().noneMatch(value -> type.equals(value.facilityType)
-                    && "READY".equals(value.state))) missing.add(type + " READY");
-        }
+        Set<String> readyFacilityTypes = run.facilities.values().stream()
+                .filter(value -> "READY".equals(value.state)).map(value -> value.facilityType)
+                .collect(java.util.stream.Collectors.toSet());
         long stakes = run.facilities.values().stream().filter(value -> "FAC-R05".equals(value.facilityType)
                 && "CALIBRATED".equals(value.state)).count();
-        if (stakes < 3) missing.add("FAC-R05 CALIBRATED 3기 (현재 " + stakes + ")");
-        if (runs.onlineMembers().stream().noneMatch(player -> codex.countItem(player, "WSR-FINAL_SIGNAL_KEY") > 0)) {
-            missing.add("WSR-FINAL_SIGNAL_KEY 소지자 온라인");
-        }
-        if (run.boss != null && "ACTIVE".equals(run.boss.state)) missing.add("활성 보스 종료");
-        if (run.encounters.values().stream().anyMatch(value -> Set.of("SPAWNING", "ACTIVE").contains(value.state))) {
-            missing.add("활성 공세 종료");
-        }
-        return List.copyOf(missing);
+        boolean keyOnline = runs.onlineMembers().stream()
+                .anyMatch(player -> codex.countItem(player, "WSR-FINAL_SIGNAL_KEY") > 0);
+        boolean activeEncounter = run.encounters.values().stream()
+                .anyMatch(value -> Set.of("SPAWNING", "ACTIVE").contains(value.state));
+        return FinalReadinessPolicy.missing(new FinalReadinessPolicy.State(run.day, run.defeatedBossIds,
+                run.reconstructionPartIds, run.discoveryIds, readyFacilityTypes, stakes, keyOnline,
+                run.boss != null && "ACTIVE".equals(run.boss.state), activeEncounter));
     }
 
     public void vote(Player player) {
@@ -711,11 +703,6 @@ public final class FinalService implements Listener, CombatService.BossDamageHan
 
     private void cleanupBossBar() {
         if (bossBar != null) { bossBar.removeAll(); bossBar = null; }
-    }
-
-    private static void requireAll(List<String> missing, String label, Set<String> actual, Set<String> expected) {
-        Set<String> absent = new LinkedHashSet<>(expected); absent.removeAll(actual);
-        if (!absent.isEmpty()) missing.add(label + " " + absent);
     }
 
     private static int number(JsonObject object, String key, int fallback) {
