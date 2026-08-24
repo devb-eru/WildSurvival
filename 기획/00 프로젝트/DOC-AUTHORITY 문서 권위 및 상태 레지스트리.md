@@ -76,6 +76,7 @@
 | `AUGMENT-EFFECT-LIST-001` | `DATA_LOCKED` | 증강 66개 고유 opcode·trigger·stateScope 실행 투영 | DEV-500 |
 | `SKILL-001~002` | `BASELINE_LOCKED` | 스킬 실행·범위·백엔드 | G0 |
 | `SKILL-LIST-001` | `DATA_LOCKED` | 스킬 ID 목록 | G0 |
+| `SKILL-EFFECT-LIST-001` | `DATA_LOCKED` | 스킬 64개 operation 배열과 실행 투영 | DEV-300~500 |
 | `DEATH-001~003` | `BASELINE_LOCKED` | 빈사·구조·사망·부활 | G0 |
 | `CORE-001~002` | `BASELINE_LOCKED` | 서버 권위 피해·일반 공격 | G0 |
 | `COMBAT-001~004` | `BASELINE_LOCKED` | AP·회피·방어·패링 | G0 |

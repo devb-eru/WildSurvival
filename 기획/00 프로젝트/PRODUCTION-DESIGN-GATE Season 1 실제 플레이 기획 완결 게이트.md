@@ -141,6 +141,7 @@ slot == 0
 | `HIGH-TIER-MATERIAL-LIST-001` | Season 1 상위 재료 목록 | T3~T6 재료23의 정확한 ID 투영 |
 | `RECIPE-LIST-001` | Season 1 조합법 목록 | 3×3·가공·장비·시설·호출·재건 전 레시피 |
 | `SKILL-LIST-001` | 기존 문서 갱신 | 기본 공격 10종·액티브 54종·적/시설 실행 연결 |
+| `SKILL-EFFECT-LIST-001` | Season 1 스킬 실행 효과 목록 | 스킬 64개 구조화 operation 배열 |
 | `AUG-LIST-001~002` | 기존 문서 갱신 | 개인 50·파티 16과 실행 트리거·상한 |
 | `AUGMENT-EFFECT-LIST-001` | Season 1 증강 실행 효과 목록 | 66개 고유 opcode·명시 trigger·상태 저장 범위 |
 | `ENTITY-LIST-001` | Season 1 엔티티 목록 | 적·보스·소환체·투사체·장판·표시·노드 개체 |

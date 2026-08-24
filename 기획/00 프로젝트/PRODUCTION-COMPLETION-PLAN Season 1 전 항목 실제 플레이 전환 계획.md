@@ -135,6 +135,8 @@ L0 수량 일치는 콘텐츠 존재 증거다. `BLOCKED_DATA`, `STRUCTURED_ONLY
 - 리소스 팩 없는 전조, 파티원·보스·시설 오발 차단
 - 스킬별 단위 fixture와 10개 무기군 60초 역할 검증
 
+`SKILL-EFFECT-LIST-001`은 64개 스킬을 피해·브레이크·상태·이동·탄약·영역·구조·제작 operation 배열로 전개한다. 현재 r2의 단일 `effect=DAMAGE/SUPPORT` 축약은 `STRUCTURED_ONLY`이며 operation 배열과 파라미터가 명시 필드로 이관되기 전에는 의미 실행으로 인정하지 않는다.
+
 입력 계약은 slot 0에서만 `L/R/Shift+L/Shift+R/F`와 `Shift+2~9`를 해석한다. 숫자 조합은 성공·실패 뒤 slot 0으로 복원하며 서버가 만든 held-slot 이벤트를 재귀 입력으로 보지 않는다.
 
 ### 3.6 개인·파티 증강 목록 — `AUG-LIST-001~002`
