@@ -137,7 +137,7 @@
 | `OPS-001` | `IMPLEMENTATION_CONTRACT` | 명령·권한·복구 | G0 |
 | `DATA-REVISION-001` | `PARTIAL_R1` | Day 1~20 `ws-content-r1` | 기존 r1만 |
 | `DEV-ROADMAP-001` | `ACTIVE_CONTROL` | 프로토타입 우선 구현 단계·승인 게이트 | DEV-000~800 |
-| `PRODUCTION-DEV-ROADMAP-S1-001` | `STOPPED_CONTROL` | 프로토타입 이후 P0~P9 실제 플레이 전환 순서·현재 사용자 정지점 | 다음 목표부터 |
+| `PRODUCTION-DEV-ROADMAP-S1-001` | `ACTIVE_CONTROL` | 프로토타입 이후 P0~P9 실제 플레이 전환 순서·재개된 Season 1 실제 플레이 완성 목표 | 현재 활성 목표 |
 | `TEST-LAB-001` | `IMPLEMENTED_PROTOTYPE` | 격리 솔로 테스트·튜닝·가상 파티 계약 | `ws-prototype-r1` |
 
 ## 4. 공식 위임·완료 레지스트리
