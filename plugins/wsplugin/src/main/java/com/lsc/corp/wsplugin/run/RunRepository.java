@@ -42,7 +42,8 @@ public final class RunRepository {
     public static RunRepository testLab(Path dataDirectory) {
         return new RunRepository(dataDirectory.resolve("test-lab").resolve("runs"), Set.of(
                 new RunIdentity("TEST", "ws-prototype-r1"),
-                new RunIdentity("TEST", "ws-content-r2")), "test-lab");
+                new RunIdentity("TEST", "ws-content-r2"),
+                new RunIdentity("TEST", "ws-content-r2.1")), "test-lab");
     }
 
     public synchronized Optional<RunSnapshot> load() throws IOException {
@@ -58,7 +59,7 @@ public final class RunRepository {
     }
 
     public synchronized void save(RunSnapshot snapshot) throws IOException {
-        if (snapshot.schemaVersion != 2) {
+        if (snapshot.schemaVersion != 3) {
             throw new IOException("Cannot save unsupported run schema version " + snapshot.schemaVersion);
         }
         validateIdentity(snapshot);
@@ -84,9 +85,9 @@ public final class RunRepository {
     }
 
     private void migrate(RunSnapshot snapshot) throws IOException {
-        if (snapshot.schemaVersion == 1) {
-            snapshot.schemaVersion = 2;
-        } else if (snapshot.schemaVersion != 2) {
+        if (snapshot.schemaVersion == 1 || snapshot.schemaVersion == 2) {
+            snapshot.schemaVersion = 3;
+        } else if (snapshot.schemaVersion != 3) {
             throw new IOException("Unsupported run schema version " + snapshot.schemaVersion);
         }
         normalizeSeasonState(snapshot);
@@ -94,6 +95,21 @@ public final class RunRepository {
     }
 
     private static void normalizeSeasonState(RunSnapshot snapshot) {
+        if (snapshot.registeredPlayers == null) snapshot.registeredPlayers = new ArrayList<>();
+        if (snapshot.players == null) snapshot.players = new LinkedHashMap<>();
+        if (snapshot.resources == null) snapshot.resources = new LinkedHashMap<>();
+        if (snapshot.resourceTransactions == null) snapshot.resourceTransactions = new LinkedHashMap<>();
+        if (snapshot.committedKeys == null) snapshot.committedKeys = new LinkedHashSet<>();
+        if (snapshot.outbox == null) snapshot.outbox = new ArrayList<>();
+        if (snapshot.milestoneLocks == null) snapshot.milestoneLocks = new LinkedHashMap<>();
+        if (snapshot.partyAugmentIds == null) snapshot.partyAugmentIds = new ArrayList<>();
+        if (snapshot.resolvedPartyAugmentMilestones == null) snapshot.resolvedPartyAugmentMilestones = new LinkedHashSet<>();
+        if (snapshot.partyAugmentVotes == null) snapshot.partyAugmentVotes = new LinkedHashMap<>();
+        if (snapshot.facilities == null) snapshot.facilities = new LinkedHashMap<>();
+        if (snapshot.facilityTypesEverActivated == null) snapshot.facilityTypesEverActivated = new LinkedHashSet<>();
+        if (snapshot.facilityRecoveryLedger == null) snapshot.facilityRecoveryLedger = new LinkedHashMap<>();
+        if (snapshot.lootTransactions == null) snapshot.lootTransactions = new LinkedHashMap<>();
+        if (snapshot.lootPityCounters == null) snapshot.lootPityCounters = new LinkedHashMap<>();
         if (snapshot.encounters == null) snapshot.encounters = new LinkedHashMap<>();
         if (snapshot.remains == null) snapshot.remains = new LinkedHashMap<>();
         if (snapshot.researchNodes == null) snapshot.researchNodes = new LinkedHashMap<>();
@@ -141,9 +157,48 @@ public final class RunRepository {
             if (remains.equipmentInstances == null) remains.equipmentInstances = new LinkedHashMap<>();
         }
         for (RunSnapshot.PlayerState player : snapshot.players.values()) {
+            if (player.equippedTemplateBySlot == null) player.equippedTemplateBySlot = new LinkedHashMap<>();
+            if (player.equippedInstanceBySlot == null) player.equippedInstanceBySlot = new LinkedHashMap<>();
+            if (player.ownedEquipment == null) player.ownedEquipment = new LinkedHashSet<>();
+            if (player.equipmentInstances == null) player.equipmentInstances = new LinkedHashMap<>();
+            if (player.quickItems == null) player.quickItems = new LinkedHashMap<>();
+            if (player.quickBindings == null) player.quickBindings = new LinkedHashMap<>();
+            if (player.quickItemUsesByDay == null) player.quickItemUsesByDay = new LinkedHashMap<>();
+            if (player.quickItemUsesByCombat == null) player.quickItemUsesByCombat = new LinkedHashMap<>();
             if (player.pendingRemainsDeliveries == null) player.pendingRemainsDeliveries = new LinkedHashMap<>();
             if (player.reviveContributions == null) player.reviveContributions = new LinkedHashMap<>();
             if (player.ammoLedger == null) player.ammoLedger = new LinkedHashMap<>();
+            if (player.personalResources == null) player.personalResources = new LinkedHashMap<>();
+            if (player.weaponSkillLoadouts == null) player.weaponSkillLoadouts = new LinkedHashMap<>();
+            if (player.commonSkillLoadout == null) player.commonSkillLoadout = new LinkedHashMap<>();
+            if (player.discoveredItemIds == null) player.discoveredItemIds = new LinkedHashSet<>();
+            if (player.pendingRegisteredItems == null) player.pendingRegisteredItems = new LinkedHashMap<>();
+            if (player.pendingEquipmentRewards == null) player.pendingEquipmentRewards = new ArrayList<>();
+            if (player.pendingBlueprintUnlocks == null) player.pendingBlueprintUnlocks = new LinkedHashSet<>();
+            if (player.completedTutorialQuests == null) player.completedTutorialQuests = new LinkedHashSet<>();
+            if (player.tutorialSignals == null) player.tutorialSignals = new LinkedHashSet<>();
+            if (player.investedStats == null) player.investedStats = new LinkedHashMap<>();
+            if (player.personalAugments == null) player.personalAugments = new ArrayList<>();
+            if (player.resolvedPersonalMilestones == null) player.resolvedPersonalMilestones = new LinkedHashSet<>();
+            player.apStimPulsesRemaining = Math.max(0, Math.min(5, player.apStimPulsesRemaining));
+            player.apStimTicksUntilNextPulse = player.apStimPulsesRemaining == 0 ? 0
+                    : Math.max(1, Math.min(20, player.apStimTicksUntilNextPulse));
+            player.rescueBraceCharges = Math.max(0, Math.min(1, player.rescueBraceCharges));
+            player.rescueInterruptThresholdBonus = normalizeBraceBonus(player.rescueInterruptThresholdBonus);
+            player.activeRescueInterruptThresholdBonus = normalizeBraceBonus(player.activeRescueInterruptThresholdBonus);
+        }
+        for (RunSnapshot.ResourceTransactionState transaction : snapshot.resourceTransactions.values()) {
+            if (transaction.reservedResources == null) transaction.reservedResources = new LinkedHashMap<>();
+            if (transaction.state == null || transaction.state.isBlank()) transaction.state = "VALIDATED";
+        }
+        for (RunSnapshot.FacilityInstanceState facility : snapshot.facilities.values()) {
+            if (facility.queue == null) facility.queue = new ArrayList<>();
+            if (facility.outputLedger == null) facility.outputLedger = new LinkedHashMap<>();
+            if (facility.storageSlots == null) facility.storageSlots = new LinkedHashMap<>();
+            for (RunSnapshot.FacilityWorkState work : facility.queue) {
+                if (work.reservedInputs == null) work.reservedInputs = new LinkedHashMap<>();
+                if (work.outputs == null) work.outputs = new LinkedHashMap<>();
+            }
         }
         for (RunSnapshot.ResearchNodeState research : snapshot.researchNodes.values()) {
             if (research.reservedCost == null) research.reservedCost = new LinkedHashMap<>();
@@ -161,6 +216,11 @@ public final class RunRepository {
             if (discovery.evidence == null) discovery.evidence = new LinkedHashSet<>();
             if (discovery.state == null || discovery.state.isBlank()) discovery.state = "HIDDEN";
         }
+    }
+
+    private static double normalizeBraceBonus(double bonus) {
+        if (!Double.isFinite(bonus) || bonus <= 0.0) return 0.0;
+        return bonus >= 0.25 ? 0.25 : 0.10;
     }
 
     private void validateIdentity(RunSnapshot snapshot) throws IOException {

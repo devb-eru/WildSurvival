@@ -1,5 +1,6 @@
 package com.lsc.corp.wsplugin.run;
 
+import com.lsc.corp.wsplugin.combat.ApStimPulsePolicy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,7 +26,7 @@ class RunRepositoryTest {
         assertEquals(6, restored.resources.get("WSR-IRON"));
         assertTrue(restored.committedKeys.contains("reward-1"));
         assertEquals(1, restored.version);
-        assertEquals(2, restored.schemaVersion);
+        assertEquals(3, restored.schemaVersion);
     }
 
     @Test
@@ -66,6 +67,10 @@ class RunRepositoryTest {
         repository.save(snapshot);
 
         assertEquals("ws-content-r2", repository.load().orElseThrow().contentRevision);
+
+        snapshot.contentRevision = "ws-content-r2.1";
+        repository.save(snapshot);
+        assertEquals("ws-content-r2.1", repository.load().orElseThrow().contentRevision);
     }
 
     @Test
@@ -115,7 +120,7 @@ class RunRepositoryTest {
 
         RunSnapshot restored = new RunRepository(temporary).load().orElseThrow();
 
-        assertEquals(2, restored.schemaVersion);
+        assertEquals(3, restored.schemaVersion);
         assertEquals(20, restored.seasonDay.day);
         assertEquals("DAY-20", restored.seasonDay.dayId);
         assertEquals("LOCKED", restored.finalObjective.state);
@@ -123,6 +128,41 @@ class RunRepositoryTest {
         assertTrue(restored.researchNodes.isEmpty());
         assertTrue(restored.story.playedSceneIds.isEmpty());
         assertTrue(restored.defeatedBossIds.isEmpty());
+    }
+
+    @Test
+    void migratesSchemaTwoPersonalLedgersAndRuntimeCounters(@TempDir Path temporary) throws Exception {
+        Path current = temporary.resolve("runs/current.json");
+        Files.createDirectories(current.getParent());
+        Files.writeString(current, """
+                {
+                  "schemaVersion": 2,
+                  "runId": "legacy-proto",
+                  "contentRevision": "ws-prototype-r1",
+                  "runType": "PROTOTYPE",
+                  "state": "RUNNING",
+                  "players": {
+                    "player-1": {
+                      "uuid": "player-1",
+                      "apStimPulsesRemaining": 99,
+                      "apStimTicksUntilNextPulse": 0,
+                      "rescueBraceCharges": 4,
+                      "rescueInterruptThresholdBonus": 0.21
+                    }
+                  }
+                }
+                """, StandardCharsets.UTF_8);
+
+        RunSnapshot restored = new RunRepository(temporary).load().orElseThrow();
+        RunSnapshot.PlayerState player = restored.players.get("player-1");
+
+        assertEquals(3, restored.schemaVersion);
+        assertTrue(restored.resourceTransactions.isEmpty());
+        assertTrue(player.personalResources.isEmpty());
+        assertEquals(5, player.apStimPulsesRemaining);
+        assertEquals(1, player.apStimTicksUntilNextPulse);
+        assertEquals(1, player.rescueBraceCharges);
+        assertEquals(0.10, player.rescueInterruptThresholdBonus);
     }
 
     @Test
@@ -161,6 +201,39 @@ class RunRepositoryTest {
         assertTrue(restored.story.playedSceneIds.contains("ST5-FINAL-READY"));
         assertEquals("AVAILABLE", restored.finalObjective.state);
         assertEquals("device-1", restored.facilities.get("portable:proto-test:device-1").portableInstanceId);
+    }
+
+    @Test
+    void apStimCheckpointSurvivesForcedReloadWithOnlyRemainingPulses(@TempDir Path temporary) throws Exception {
+        RunRepository repository = new RunRepository(temporary);
+        RunSnapshot snapshot = snapshot();
+        RunSnapshot.PlayerState player = new RunSnapshot.PlayerState();
+        player.uuid = "player-1";
+        player.maxAp = 100;
+        ApStimPulsePolicy.State pulse = ApStimPulsePolicy.start(20.0, player.maxAp);
+        for (int tick = 0; tick < 40; tick++) {
+            pulse = ApStimPulsePolicy.tick(pulse.ap(), pulse.maxAp(), pulse.pulsesRemaining(),
+                    pulse.ticksUntilNextPulse());
+        }
+        player.ap = pulse.ap();
+        player.apStimPulsesRemaining = pulse.pulsesRemaining();
+        player.apStimTicksUntilNextPulse = pulse.ticksUntilNextPulse();
+        snapshot.players.put(player.uuid, player);
+        repository.save(snapshot);
+
+        RunSnapshot.PlayerState restored = repository.load().orElseThrow().players.get(player.uuid);
+        assertEquals(36.0, restored.ap);
+        assertEquals(3, restored.apStimPulsesRemaining);
+        assertEquals(20, restored.apStimTicksUntilNextPulse);
+
+        ApStimPulsePolicy.State resumed = new ApStimPulsePolicy.State(restored.ap, restored.maxAp,
+                restored.apStimPulsesRemaining, restored.apStimTicksUntilNextPulse, false);
+        for (int tick = 0; tick < 60; tick++) {
+            resumed = ApStimPulsePolicy.tick(resumed.ap(), resumed.maxAp(), resumed.pulsesRemaining(),
+                    resumed.ticksUntilNextPulse());
+        }
+        assertEquals(45.0, resumed.ap());
+        assertEquals(0, resumed.pulsesRemaining());
     }
 
     private static RunSnapshot snapshot() {

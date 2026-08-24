@@ -3,7 +3,9 @@ package com.lsc.corp.wsplugin.facility;
 import com.lsc.corp.wsplugin.boss.ArenaManifestPolicy;
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
 import com.lsc.corp.wsplugin.combat.CombatService;
+import com.lsc.corp.wsplugin.economy.CostValuePolicy;
 import com.lsc.corp.wsplugin.economy.ItemCodexService;
+import com.lsc.corp.wsplugin.economy.ResourceLedger;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
 import com.lsc.corp.wsplugin.run.RunService;
@@ -56,20 +58,6 @@ import org.bukkit.util.Vector;
 
 public final class FacilityService implements Listener {
     private static final String REVISION = "facility-data-d11-d50-r1";
-    private static final List<String> COST_CATEGORIES = List.of("CONSTRUCTION", "SURVIVAL", "METAL", "SIGNAL", "SPECIAL");
-    private static final Map<String, List<ResourceValue>> CATEGORY_RESOURCES = Map.of(
-            "CONSTRUCTION", List.of(new ResourceValue("WSR-STABILIZED_FRAME", 8), new ResourceValue("WSR-HARD_AGGREGATE", 4),
-                    new ResourceValue("WSR-WOOD", 1), new ResourceValue("WSR-STONE", 1)),
-            "SURVIVAL", List.of(new ResourceValue("WSR-BIO_MEDIUM", 5), new ResourceValue("WSR-STERILE_GEL", 3),
-                    new ResourceValue("WSR-HERB", 2), new ResourceValue("WSR-RATION", 1)),
-            "METAL", List.of(new ResourceValue("WSR-HIGH_DENSITY_ALLOY", 6), new ResourceValue("WSR-REINFORCED_ALLOY", 3),
-                    new ResourceValue("WSR-REFINED_ALLOY", 2), new ResourceValue("WSR-IRON", 1),
-                    new ResourceValue("WSR-METAL_PLATE", 1)),
-            "SIGNAL", List.of(new ResourceValue("WSR-RESONANCE_COIL", 6), new ResourceValue("WSR-NEURAL_CIRCUIT", 4),
-                    new ResourceValue("WSR-COPPER_COIL", 2), new ResourceValue("WSR-REDSTONE", 1)),
-            "SPECIAL", List.of(new ResourceValue("WSR-INTERRUPT_CORE", 8), new ResourceValue("WSR-PATTERN_RESIDUE", 5),
-                    new ResourceValue("WSR-PURIFY_CATALYST", 3), new ResourceValue("WSR-MAGIC_CRYSTAL", 2))
-    );
     private static final Map<String, Integer> TYPE_LIMITS = Map.ofEntries(
             Map.entry("FAC-S10", 1), Map.entry("FAC-S13", 1), Map.entry("FAC-S19", 1), Map.entry("FAC-S20", 1),
             Map.entry("FAC-D02", 8), Map.entry("FAC-D03", 6), Map.entry("FAC-D04", 2),
@@ -155,6 +143,69 @@ public final class FacilityService implements Listener {
                 if (instance != null) instance.state = "DISABLED";
             });
         });
+        recoverFacilityCostTransactions();
+    }
+
+    private void recoverFacilityCostTransactions() {
+        RunSnapshot snapshot = runs.current().orElse(null);
+        if (snapshot == null || !"RUNNING".equals(snapshot.state)) return;
+        List<String> transactionIds = snapshot.resourceTransactions.values().stream()
+                .filter(transaction -> transaction.costId != null && transaction.costId.startsWith("FCOST-")
+                        && ("RESERVED".equals(transaction.state) || "PROCESSING".equals(transaction.state)))
+                .map(transaction -> transaction.transactionId).toList();
+        for (String transactionId : transactionIds) {
+            RunSnapshot.ResourceTransactionState transaction = runs.current().orElseThrow()
+                    .resourceTransactions.get(transactionId);
+            RunSnapshot.FacilityInstanceState instance = transaction == null ? null
+                    : FacilityStateAccess.instances(runs.current().orElseThrow()).get(transaction.targetId);
+            if (transaction == null) continue;
+            if (instance == null) {
+                failOrRefundFacilityCost(transaction, "FACILITY_MISSING_DURING_RECOVERY");
+                continue;
+            }
+            RunSnapshot.FacilityWorkState work = instance.queue.stream()
+                    .filter(value -> transactionId.equals(value.workId)).findFirst().orElse(null);
+            if (work == null || work.operation == null || !work.operation.startsWith("UPGRADE_L")) {
+                failOrRefundFacilityCost(transaction, "FACILITY_WORK_MISSING_DURING_RECOVERY");
+                continue;
+            }
+            int target;
+            try {
+                target = Integer.parseInt(work.operation.substring("UPGRADE_L".length()));
+            } catch (NumberFormatException exception) {
+                failOrRefundFacilityCost(transaction, "FACILITY_TARGET_INVALID_DURING_RECOVERY");
+                continue;
+            }
+            if ("RESERVED".equals(transaction.state)) {
+                runs.beginResourceTransaction(transactionId,
+                        run -> facilityWork(run, instance.instanceId, transactionId).state = "PROCESSING");
+            }
+            ProductionContentCatalog.FacilityEntry profile = profile(instance);
+            runs.commitResourceTransaction(transactionId, "FACILITY_UPGRADED_RECOVERED", "{\"instanceId\":\""
+                    + instance.instanceId + "\",\"costId\":\"" + transaction.costId + "\",\"level\":"
+                    + target + "}", run -> {
+                        RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(run)
+                                .get(instance.instanceId);
+                        if (current.level < target) {
+                            double ratio = current.hp / Math.max(1.0, current.maxHp);
+                            current.level = target;
+                            current.maxHp = profile.baseHp() * FacilityPolicy.hpMultiplier(target);
+                            current.hp = Math.max(1.0, current.maxHp * ratio);
+                            current.state = FacilityPolicy.healthState(current.hp, current.maxHp);
+                        }
+                        facilityWork(run, instance.instanceId, transactionId).state = "COMPLETED";
+                    });
+        }
+    }
+
+    private void failOrRefundFacilityCost(RunSnapshot.ResourceTransactionState transaction, String reason) {
+        if ("RESERVED".equals(transaction.state)) {
+            runs.cancelResourceReservation(transaction.transactionId, reason);
+            return;
+        }
+        runs.mutate(run -> run.resourceTransactions.get(transaction.transactionId).failureReason = reason);
+        telemetry.event(runs.current().orElseThrow().runId, "FACILITY_COST_RECOVERY_FAILED",
+                "{\"transactionId\":\"" + transaction.transactionId + "\",\"reason\":\"" + reason + "\"}");
     }
 
     public void tick() {
@@ -254,7 +305,8 @@ public final class FacilityService implements Listener {
         RunSnapshot.FacilityInstanceState instance = FacilityStateAccess.instances(runs.current().orElseThrow()).get(holder.instanceId);
         if (instance == null) { player.closeInventory(); return; }
         if (event.getRawSlot() == 20) executeFacility(player, instance);
-        else if (event.getRawSlot() == 22) upgrade(player, instance);
+        else if (event.getRawSlot() == 22) upgrade(player, instance,
+                event.isRightClick() ? ResourceLedger.Scope.SHARED : ResourceLedger.Scope.PERSONAL);
         else if (event.getRawSlot() == 24) {
             recomputeNetworks();
             player.sendMessage(ChatColor.GREEN + "시설 네트워크 연결을 다시 계산했습니다.");
@@ -309,9 +361,10 @@ public final class FacilityService implements Listener {
         inventory.setItem(20, named(Material.LIME_DYE, ChatColor.GREEN + "기능 실행", functionLore));
         if (instance.level < profile.maxLevel() && profile.costProfile().startsWith("FP-")) {
             int target = instance.level + 1;
-            FacilityPolicy.UpgradeCost cost = FacilityPolicy.upgradeCost(profile.costProfile(), target, partySize());
+            ProductionContentCatalog.FacilityCostEntry cost = levelCost(profile, target);
             inventory.setItem(22, named(Material.ANVIL, ChatColor.AQUA + "Lv " + target + " 업그레이드",
-                    List.of(ChatColor.GRAY + costText(cost), dayReadyText(target))));
+                    List.of(ChatColor.GRAY + costText(cost.cost()), dayReadyText(target),
+                            ChatColor.YELLOW + "좌클릭 개인 / 우클릭 공용 결제")));
         } else inventory.setItem(22, named(Material.GRAY_DYE, ChatColor.GRAY + "업그레이드 없음", List.of()));
         inventory.setItem(24, named(Material.COMPASS, ChatColor.YELLOW + "네트워크 재검사",
                 List.of(ChatColor.GRAY + "설치·철거 시 자동 계산되며 수동 갱신도 가능합니다.")));
@@ -729,7 +782,7 @@ public final class FacilityService implements Listener {
         return instance;
     }
 
-    private void upgrade(Player player, RunSnapshot.FacilityInstanceState instance) {
+    private void upgrade(Player player, RunSnapshot.FacilityInstanceState instance, ResourceLedger.Scope scope) {
         ProductionContentCatalog.FacilityEntry profile = profile(instance);
         int target = instance.level + 1;
         if (target > profile.maxLevel() || !profile.costProfile().startsWith("FP-")) return;
@@ -737,41 +790,70 @@ public final class FacilityService implements Listener {
         if (runs.current().orElseThrow().day < requiredDay) {
             player.sendMessage(ChatColor.RED + "Lv " + target + " 업그레이드는 Day " + requiredDay + "부터 가능합니다."); return;
         }
-        FacilityPolicy.UpgradeCost cost = FacilityPolicy.upgradeCost(profile.costProfile(), target, partySize());
-        Map<String, Integer> spend = new LinkedHashMap<>();
-        for (String category : COST_CATEGORIES) {
-            Map<String, Integer> planned = planCategory(player, category, cost.value(category));
-            if (planned == null) { player.sendMessage(ChatColor.RED + category + " 가치 자원이 부족합니다."); return; }
-            planned.forEach((id, amount) -> spend.merge(id, amount, Integer::sum));
+        ProductionContentCatalog.FacilityCostEntry cost = levelCost(profile, target);
+        if (!CostValuePolicy.runtimeDebitRequired(cost.paymentMode(), target)) {
+            player.sendMessage(ChatColor.RED + "Lv2 이상 시설 비용 레코드가 RESOURCE_VALUE가 아닙니다: " + cost.id());
+            return;
         }
-        for (Map.Entry<String, Integer> entry : spend.entrySet()) if (!codex.takeResource(player, entry.getKey(), entry.getValue())) {
-            throw new IllegalStateException("업그레이드 예약 이후 개인 자원이 변경되었습니다.");
+        RunSnapshot run = runs.current().orElseThrow();
+        String owner = player.getUniqueId().toString();
+        if (scope == ResourceLedger.Scope.SHARED && (!run.sharedLedgerUnlocked
+                || !FacilityStateAccess.active(run, "FAC-S16"))) {
+            player.sendMessage(ChatColor.RED + "공용 결제에는 활성 FAC-S16이 필요합니다.");
+            return;
         }
-        runs.mutate(run -> {
-            RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(run).get(instance.instanceId);
-            double ratio = current.hp / Math.max(1.0, current.maxHp);
-            current.level = target;
-            current.maxHp = profile.baseHp() * FacilityPolicy.hpMultiplier(target);
-            current.hp = Math.max(1.0, current.maxHp * ratio);
-            current.state = FacilityPolicy.healthState(current.hp, current.maxHp);
+        Map<String, Integer> balance = scope == ResourceLedger.Scope.SHARED
+                ? run.resources : run.players.get(owner).personalResources;
+        Map<String, Integer> spend = CostValuePolicy.plan(cost.cost(), partySize(), balance);
+        if (spend == null) {
+            player.sendMessage(ChatColor.RED + "정확한 FCOST 동가치 조합이 부족합니다: " + cost.id());
+            return;
+        }
+        String transactionId = "cost:facility:" + instance.instanceId + ":" + cost.id();
+        ResourceLedger.ReserveResult reserved = runs.reserveResourceTransaction(transactionId, cost.id(),
+                instance.instanceId, scope, scope == ResourceLedger.Scope.PERSONAL ? owner : null, spend, snapshot -> {
+                    RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(snapshot).get(instance.instanceId);
+                    RunSnapshot.FacilityWorkState work = new RunSnapshot.FacilityWorkState();
+                    work.workId = transactionId;
+                    work.operation = "UPGRADE_L" + target;
+                    work.ownerUuid = owner;
+                    work.state = "QUEUED";
+                    work.queuedAtEpochMs = runs.clockNowMillis();
+                    work.reservedInputs.putAll(spend);
+                    current.queue.add(work);
         });
+        if (reserved != ResourceLedger.ReserveResult.RESERVED) {
+            player.sendMessage(reserved == ResourceLedger.ReserveResult.ALREADY_COMMITTED
+                    ? ChatColor.GREEN + "이미 완료된 업그레이드입니다."
+                    : ChatColor.RED + "시설 비용 예약 실패: " + reserved);
+            return;
+        }
+        runs.beginResourceTransaction(transactionId, snapshot -> facilityWork(snapshot, instance.instanceId,
+                transactionId).state = "PROCESSING");
+        runs.commitResourceTransaction(transactionId, "FACILITY_UPGRADED", "{\"instanceId\":\""
+                + instance.instanceId + "\",\"costId\":\"" + cost.id() + "\",\"level\":" + target + "}", snapshot -> {
+                    RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(snapshot).get(instance.instanceId);
+                    double ratio = current.hp / Math.max(1.0, current.maxHp);
+                    current.level = target;
+                    current.maxHp = profile.baseHp() * FacilityPolicy.hpMultiplier(target);
+                    current.hp = Math.max(1.0, current.maxHp * ratio);
+                    current.state = FacilityPolicy.healthState(current.hp, current.maxHp);
+                    facilityWork(snapshot, instance.instanceId, transactionId).state = "COMPLETED";
+                });
         player.sendMessage(ChatColor.GREEN + profile.name() + " Lv " + target + " 업그레이드 완료");
-        telemetry.event(runs.current().orElseThrow().runId, "FACILITY_UPGRADED", "{\"instanceId\":\""
-                + instance.instanceId + "\",\"level\":" + target + "}");
     }
 
-    private Map<String, Integer> planCategory(Player player, String category, int requiredValue) {
-        Map<String, Integer> result = new LinkedHashMap<>();
-        int remaining = requiredValue;
-        for (ResourceValue option : CATEGORY_RESOURCES.get(category)) {
-            if (remaining <= 0) break;
-            int available = codex.countResource(player, option.id);
-            int amount = Math.min(available, (int) Math.ceil(remaining / (double) option.value));
-            if (amount <= 0) continue;
-            result.put(option.id, amount);
-            remaining -= amount * option.value;
-        }
-        return remaining <= 0 ? result : null;
+    private static RunSnapshot.FacilityWorkState facilityWork(RunSnapshot run, String instanceId,
+                                                               String transactionId) {
+        return FacilityStateAccess.instances(run).get(instanceId).queue.stream()
+                .filter(work -> transactionId.equals(work.workId)).findFirst().orElseThrow();
+    }
+
+    private static ProductionContentCatalog.FacilityCostEntry levelCost(
+            ProductionContentCatalog.FacilityEntry profile, int targetLevel) {
+        return profile.levelCosts().stream().filter(cost -> cost.targetLevel() == targetLevel)
+                .findFirst().orElseThrow(() -> new IllegalStateException(
+                        "Missing facility cost " + profile.id() + " L" + targetLevel));
     }
 
     private void dismantle(Player player, RunSnapshot.FacilityInstanceState instance) {
@@ -1046,9 +1128,10 @@ public final class FacilityService implements Listener {
         if (current != null && current.instanceId.equals(instance.instanceId)) block.setType(Material.AIR, false);
     }
 
-    private String costText(FacilityPolicy.UpgradeCost cost) {
-        return "건 " + cost.construction() + " / 생 " + cost.survival() + " / 금 " + cost.metal()
-                + " / 신 " + cost.signal() + " / 특 " + cost.special();
+    private String costText(Map<String, Integer> cost) {
+        return "건 " + cost.getOrDefault("construction", 0) + " / 생 " + cost.getOrDefault("survival", 0)
+                + " / 금 " + cost.getOrDefault("metal", 0) + " / 신 " + cost.getOrDefault("signal", 0)
+                + " / 특 " + cost.getOrDefault("specialist", 0);
     }
 
     private String dayReadyText(int targetLevel) {
@@ -1068,7 +1151,6 @@ public final class FacilityService implements Listener {
         ItemMeta meta = item.getItemMeta(); meta.setDisplayName(name); meta.setLore(lore); item.setItemMeta(meta); return item;
     }
 
-    private record ResourceValue(String id, int value) { }
     private record PendingVirtualBuild(String outputId, List<Location> targets) { }
 
     private static final class FacilityHolder implements InventoryHolder {

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 public final class RunSnapshot {
-    public int schemaVersion = 2;
+    public int schemaVersion = 3;
     public long version = 0;
     public String runId;
     public String contentRevision;
@@ -22,6 +22,8 @@ public final class RunSnapshot {
     public List<String> registeredPlayers = new ArrayList<>();
     public Map<String, PlayerState> players = new LinkedHashMap<>();
     public Map<String, Integer> resources = new LinkedHashMap<>();
+    /** Persisted validate/reserve/process/commit records for personal and shared resource costs. */
+    public Map<String, ResourceTransactionState> resourceTransactions = new LinkedHashMap<>();
     public Set<String> committedKeys = new LinkedHashSet<>();
     public List<OutboxEvent> outbox = new ArrayList<>();
     public Map<String, MilestoneLock> milestoneLocks = new LinkedHashMap<>();
@@ -76,12 +78,15 @@ public final class RunSnapshot {
         public Map<String, Integer> quickItemUsesByDay = new LinkedHashMap<>();
         public Map<String, Integer> quickItemUsesByCombat = new LinkedHashMap<>();
         public Map<String, Integer> ammoLedger = new LinkedHashMap<>();
+        /** Server-authoritative custom resource balance. Vanilla items remain in the Bukkit inventory. */
+        public Map<String, Integer> personalResources = new LinkedHashMap<>();
         public long personalCombatSequence;
         public long personalCombatScopeExpiresAtEpochMs;
         public int apStimPulsesRemaining;
         public int apStimTicksUntilNextPulse;
         public int rescueBraceCharges;
         public double rescueInterruptThresholdBonus;
+        public double activeRescueInterruptThresholdBonus;
         public Map<String, Map<Integer, String>> weaponSkillLoadouts = new LinkedHashMap<>();
         public Map<Integer, String> commonSkillLoadout = new LinkedHashMap<>();
         public boolean productionWeaponSkillLoadoutsInitialized;
@@ -286,6 +291,21 @@ public final class RunSnapshot {
         public Map<String, Integer> outputs = new LinkedHashMap<>();
     }
 
+    public static final class ResourceTransactionState {
+        public String transactionId;
+        public String costId;
+        public String targetId;
+        public String ledgerScope;
+        public String ownerUuid;
+        public String state = "VALIDATED";
+        public Map<String, Integer> reservedResources = new LinkedHashMap<>();
+        public long validatedAtEpochMs;
+        public long reservedAtEpochMs;
+        public long processingStartedAtEpochMs;
+        public long committedAtEpochMs;
+        public String failureReason;
+    }
+
     public static final class LootTransactionState {
         public String transactionId;
         public String sourceId;
@@ -349,6 +369,9 @@ public final class RunSnapshot {
         public long startedAtEpochMs;
         public long completesAtEpochMs;
         public long completedAtEpochMs;
+        public long durationMillis;
+        /** Active server time only; offline wall-clock time never advances research. */
+        public long processedMillis;
         public Map<String, Integer> reservedCost = new LinkedHashMap<>();
         public boolean unlockCommitted;
     }

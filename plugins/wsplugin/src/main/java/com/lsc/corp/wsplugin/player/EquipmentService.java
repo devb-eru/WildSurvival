@@ -442,6 +442,21 @@ public final class EquipmentService implements Listener {
         return instance == null || !"BROKEN".equals(instance.condition);
     }
 
+    public boolean isOffhandShieldUsable(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || state.offhandId == null || state.offhandId.isBlank()) return false;
+        ProductionContentCatalog.EquipmentEntry profile = production.equipmentById().get(state.offhandId);
+        if (profile == null || !"OFF_WEAPON".equals(profile.equipmentSlot())) return false;
+        RunSnapshot.EquipmentInstanceState instance = equipmentInstances(state).get(state.offhandInstanceId);
+        return instance == null || !"BROKEN".equals(instance.condition);
+    }
+
+    public boolean consumeOffhandDurability(Player player, int amount, String reason) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || state.offhandInstanceId == null) return false;
+        return consumeDurability(player, state.offhandInstanceId, amount, reason);
+    }
+
     public boolean consumeMainWeaponDurability(Player player, int amount, String reason) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null || state.mainWeaponId == null || state.mainWeaponInstanceId == null) return true;

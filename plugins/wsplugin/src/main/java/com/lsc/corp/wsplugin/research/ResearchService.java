@@ -1,12 +1,16 @@
 package com.lsc.corp.wsplugin.research;
 
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
+import com.lsc.corp.wsplugin.economy.CostValuePolicy;
+import com.lsc.corp.wsplugin.economy.ResourceLedger;
+import com.lsc.corp.wsplugin.facility.FacilityStateAccess;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -22,10 +26,11 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-/** Party research journal. Starting work remains hard-blocked until the two data contracts are supplied. */
+/** Party research journal with persisted RCOST reservation and active-time processing. */
 public final class ResearchService implements Listener {
     private final RunService runs;
     private final List<ProductionContentCatalog.ResearchEntry> ordered;
+    private long lastWorkTick;
 
     public ResearchService(RunService runs, ProductionContentCatalog production) {
         this.runs = runs;
@@ -45,13 +50,32 @@ public final class ResearchService implements Listener {
                     return state;
                 });
             }
+            reconcileTransactions(run);
             refreshAvailability(run);
         });
+        if (!"RUNNING".equals(runs.current().orElseThrow().state)) return;
+        List<String> reserved = runs.current().orElseThrow().resourceTransactions.values().stream()
+                .filter(transaction -> transaction.costId != null && transaction.costId.startsWith("RCOST-")
+                        && "RESERVED".equals(transaction.state))
+                .map(transaction -> transaction.transactionId).toList();
+        for (String transactionId : reserved) {
+            runs.beginResourceTransaction(transactionId, run -> {
+                RunSnapshot.ResourceTransactionState transaction = run.resourceTransactions.get(transactionId);
+                RunSnapshot.ResearchNodeState state = run.researchNodes.get(transaction.targetId);
+                if (state != null) state.state = "PROCESSING";
+            });
+        }
     }
 
     public void tick() {
         RunSnapshot snapshot = runs.current().orElse(null);
         if (snapshot == null || !"RUNNING".equals(snapshot.state)) return;
+        long now = runs.clockNowMillis();
+        long delta = lastWorkTick == 0L ? 0L : Math.max(0L, Math.min(2_000L, now - lastWorkTick));
+        lastWorkTick = now;
+        if (delta > 0L) processResearch(delta, now);
+        snapshot = runs.current().orElse(null);
+        if (snapshot == null) return;
         if (needsRefresh(snapshot)) runs.mutate(this::refreshAvailability);
     }
 
@@ -65,8 +89,8 @@ public final class ResearchService implements Listener {
         for (int slot = 0; slot < 9; slot++) inventory.setItem(slot, border);
         inventory.setItem(4, named(Material.LECTERN, ChatColor.GREEN + "Season 1 연구",
                 List.of(ChatColor.WHITE + "공용 연구 " + ordered.size() + "개",
-                        ChatColor.RED + "입력 계약 미확정: 연구 시작 차단",
-                        ChatColor.GRAY + "조회는 가능하며 비용은 소비되지 않습니다.")));
+                        ChatColor.GRAY + "좌클릭: 개인 원장 · 우클릭: 공용 원장",
+                        ChatColor.GRAY + "공용 원장은 활성 FAC-S16이 필요합니다.")));
         int slot = 9;
         for (ProductionContentCatalog.ResearchEntry entry : ordered) {
             RunSnapshot.ResearchNodeState state = snapshot.researchNodes.get(entry.id());
@@ -89,12 +113,22 @@ public final class ResearchService implements Listener {
         if (index < 0 || index >= ordered.size()) return;
         ProductionContentCatalog.ResearchEntry entry = ordered.get(index);
         RunSnapshot.ResearchNodeState state = runs.current().orElseThrow().researchNodes.get(entry.id());
-        player.sendMessage(ChatColor.RED + "[DATA BLOCKER] " + entry.id() + " 연구는 아직 시작할 수 없습니다.");
-        player.sendMessage(ChatColor.GRAY + "필요 1: general/metal/signal/specialist → 실제 자원 ID·동가치 표");
-        player.sendMessage(ChatColor.GRAY + "필요 2: '" + entry.comparisonInput() + "'의 기계 판독 가능한 증거 ID·수량");
-        if (state != null && "HIDDEN".equals(state.state)) {
+        if (state == null) return;
+        if ("HIDDEN".equals(state.state)) {
             player.sendMessage(ChatColor.YELLOW + "최소 Day " + entry.minimumDay() + " · " + entry.prerequisiteText());
+            return;
         }
+        if (!"READY".equals(state.state)) {
+            if (Set.of("QUEUED", "PROCESSING", "PAUSED", "ANALYZED").contains(state.state)) {
+                player.sendMessage(ChatColor.YELLOW + entry.id() + " 진행 " + progress(state) + "% · " + state.state);
+            } else if (Set.of("UNLOCKED", "MASTERED").contains(state.state)) {
+                player.sendMessage(ChatColor.GREEN + entry.id() + " 연구 완료");
+            } else {
+                player.sendMessage(ChatColor.RED + "연구 증거가 부족합니다: " + entry.comparisonInput());
+            }
+            return;
+        }
+        startResearch(player, entry, event.isRightClick() ? ResourceLedger.Scope.SHARED : ResourceLedger.Scope.PERSONAL);
     }
 
     @EventHandler
@@ -118,6 +152,99 @@ public final class ResearchService implements Listener {
             state.state = ResearchPolicy.availability(run.day, entry.minimumDay(), entry.prerequisiteText(),
                     discoveries, completed, false);
         }
+    }
+
+    private void startResearch(Player player, ProductionContentCatalog.ResearchEntry entry, ResourceLedger.Scope scope) {
+        RunSnapshot run = runs.current().orElseThrow();
+        String owner = player.getUniqueId().toString();
+        if (scope == ResourceLedger.Scope.SHARED && (!run.sharedLedgerUnlocked
+                || !FacilityStateAccess.active(run, "FAC-S16"))) {
+            player.sendMessage(ChatColor.RED + "공용 결제에는 활성 FAC-S16이 필요합니다.");
+            return;
+        }
+        Map<String, Integer> balance = scope == ResourceLedger.Scope.SHARED
+                ? run.resources : run.players.get(owner).personalResources;
+        Map<String, Integer> planned = CostValuePolicy.plan(entry.cost(), runs.effectivePartySize(), balance);
+        if (planned == null) {
+            player.sendMessage(ChatColor.RED + "정확한 RCOST 동가치 조합이 부족합니다: " + entry.costId());
+            return;
+        }
+        String transactionId = "cost:research:" + entry.costId();
+        ResourceLedger.ReserveResult reserved = runs.reserveResourceTransaction(transactionId, entry.costId(),
+                entry.id(), scope, scope == ResourceLedger.Scope.PERSONAL ? owner : null, planned, snapshot -> {
+                    RunSnapshot.ResearchNodeState state = snapshot.researchNodes.get(entry.id());
+                    state.state = "QUEUED";
+                    state.startedByUuid = owner;
+                    state.startedAtEpochMs = runs.clockNowMillis();
+                    state.durationMillis = entry.durationSeconds() * 1_000L;
+                    state.processedMillis = 0L;
+                    state.reservedCost.clear();
+                    state.reservedCost.putAll(planned);
+                });
+        if (reserved == ResourceLedger.ReserveResult.ALREADY_COMMITTED) {
+            player.sendMessage(ChatColor.GREEN + "이미 완료된 연구입니다.");
+            return;
+        }
+        if (reserved != ResourceLedger.ReserveResult.RESERVED) {
+            player.sendMessage(ChatColor.RED + "연구 비용 예약 실패: " + reserved);
+            return;
+        }
+        runs.beginResourceTransaction(transactionId, snapshot -> {
+            RunSnapshot.ResearchNodeState state = snapshot.researchNodes.get(entry.id());
+            state.state = "PROCESSING";
+            state.completesAtEpochMs = 0L;
+        });
+        player.sendMessage(ChatColor.GREEN + entry.id() + " 연구 시작 · " + entry.durationSeconds() + "초");
+    }
+
+    private void processResearch(long deltaMillis, long now) {
+        List<String> completed = new ArrayList<>();
+        runs.mutateTransient(run -> {
+            for (ProductionContentCatalog.ResearchEntry entry : ordered) {
+                RunSnapshot.ResearchNodeState state = run.researchNodes.get(entry.id());
+                if (state == null || !"PROCESSING".equals(state.state) || state.durationMillis <= 0L) continue;
+                RunSnapshot.ResourceTransactionState transaction = run.resourceTransactions.values().stream()
+                        .filter(value -> entry.id().equals(value.targetId) && "PROCESSING".equals(value.state))
+                        .findFirst().orElse(null);
+                if (transaction == null) continue;
+                state.processedMillis = Math.min(state.durationMillis, state.processedMillis + deltaMillis);
+                if (state.processedMillis >= state.durationMillis) completed.add(entry.id());
+            }
+        });
+        for (String researchId : completed) {
+            ProductionContentCatalog.ResearchEntry entry = ordered.stream()
+                    .filter(value -> value.id().equals(researchId)).findFirst().orElseThrow();
+            String transactionId = "cost:research:" + entry.costId();
+            runs.commitResourceTransaction(transactionId, "RESEARCH_UNLOCKED",
+                    "{\"researchId\":\"" + researchId + "\",\"costId\":\"" + entry.costId() + "\"}", run -> {
+                        RunSnapshot.ResearchNodeState state = run.researchNodes.get(researchId);
+                        state.state = "UNLOCKED";
+                        state.completedAtEpochMs = now;
+                        state.unlockCommitted = true;
+                    });
+            runs.broadcast(ChatColor.GREEN + "연구 완료: " + researchId);
+        }
+    }
+
+    private void reconcileTransactions(RunSnapshot run) {
+        for (RunSnapshot.ResourceTransactionState transaction : run.resourceTransactions.values()) {
+            if (transaction.costId == null || !transaction.costId.startsWith("RCOST-")) continue;
+            RunSnapshot.ResearchNodeState state = run.researchNodes.get(transaction.targetId);
+            if (state == null) continue;
+            if ("COMMITTED".equals(transaction.state)) {
+                state.state = "UNLOCKED";
+                state.unlockCommitted = true;
+            } else if ("PROCESSING".equals(transaction.state)) {
+                state.state = "PROCESSING";
+            } else if ("RESERVED".equals(transaction.state)) {
+                state.state = "QUEUED";
+            }
+        }
+    }
+
+    private static int progress(RunSnapshot.ResearchNodeState state) {
+        return state.durationMillis <= 0L ? 0
+                : (int) Math.min(100L, Math.round(state.processedMillis * 100.0 / state.durationMillis));
     }
 
     private boolean needsRefresh(RunSnapshot run) {
@@ -159,7 +286,8 @@ public final class ResearchService implements Listener {
                 + entry.cost().get("specialist"));
         lore.add(ChatColor.GRAY + "시간 " + entry.durationSeconds() + "초");
         lore.add(ChatColor.AQUA + "해금: " + entry.unlockText());
-        if ("HYPOTHESIZED".equals(state)) lore.add(ChatColor.RED + "클릭: 미확정 데이터 계약 확인");
+        if ("READY".equals(state)) lore.add(ChatColor.YELLOW + "좌클릭 개인 / 우클릭 공용 결제");
+        if ("HYPOTHESIZED".equals(state)) lore.add(ChatColor.RED + "정확한 비교 증거가 더 필요합니다.");
         return named(material, color(state) + entry.id(), lore);
     }
 

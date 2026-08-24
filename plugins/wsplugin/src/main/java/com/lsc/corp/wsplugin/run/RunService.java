@@ -271,6 +271,63 @@ public final class RunService {
         }
     }
 
+    public ResourceLedger.ReserveResult reserveResourceTransaction(String transactionId, String costId,
+            String targetId, ResourceLedger.Scope scope, String ownerUuid, java.util.Map<String, Integer> costs) {
+        return reserveResourceTransaction(transactionId, costId, targetId, scope, ownerUuid, costs, run -> { });
+    }
+
+    public ResourceLedger.ReserveResult reserveResourceTransaction(String transactionId, String costId,
+            String targetId, ResourceLedger.Scope scope, String ownerUuid, java.util.Map<String, Integer> costs,
+            Consumer<RunSnapshot> reservationMutation) {
+        synchronized (serialQueue) {
+            requireRunning();
+            ResourceLedger.ReserveResult result = ResourceLedger.reserve(current, transactionId, costId, targetId,
+                    scope, ownerUuid, costs, clockNowMillisLocked());
+            if (result == ResourceLedger.ReserveResult.RESERVED) {
+                reservationMutation.accept(current);
+                saveUnchecked();
+            }
+            return result;
+        }
+    }
+
+    public boolean beginResourceTransaction(String transactionId) {
+        return beginResourceTransaction(transactionId, run -> { });
+    }
+
+    public boolean beginResourceTransaction(String transactionId, Consumer<RunSnapshot> processingMutation) {
+        synchronized (serialQueue) {
+            requireRunning();
+            boolean changed = ResourceLedger.beginProcessing(current, transactionId, clockNowMillisLocked());
+            if (changed) {
+                processingMutation.accept(current);
+                saveUnchecked();
+            }
+            return changed;
+        }
+    }
+
+    public boolean commitResourceTransaction(String transactionId, String eventType, String payload,
+                                             Consumer<RunSnapshot> mutation) {
+        synchronized (serialQueue) {
+            requireRunning();
+            boolean committed = ResourceLedger.commit(current, transactionId, clockNowMillisLocked(), mutation);
+            if (!committed) return false;
+            commitEventLocked(transactionId, eventType, payload);
+            saveUnchecked();
+            return true;
+        }
+    }
+
+    public boolean cancelResourceReservation(String transactionId, String reason) {
+        synchronized (serialQueue) {
+            requireRunning();
+            boolean cancelled = ResourceLedger.cancelReservation(current, transactionId, reason);
+            if (cancelled) saveUnchecked();
+            return cancelled;
+        }
+    }
+
     public int addResource(String key, String resourceId, int amount) {
         synchronized (serialQueue) {
             requireRunning();

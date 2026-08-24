@@ -128,8 +128,11 @@ public final class CombatService implements Listener {
     private final Map<UUID, CoverField> coverFields = new HashMap<>();
     private final Map<UUID, Map<UUID, Double>> enemyContributions = new HashMap<>();
     private final Map<UUID, EnemyActionState> productionActionStates = new HashMap<>();
-    private final Map<EnemyHitPermit, Double> permittedEnemyHits = new HashMap<>();
+    private final Map<EnemyHitPermit, EnemyHitContext> permittedEnemyHits = new HashMap<>();
     private final Map<UUID, QuickUseChannel> quickUseChannels = new HashMap<>();
+    private final Map<UUID, ShortGuardPolicy.State> shortGuards = new HashMap<>();
+    private final Map<UUID, Long> parryReadyAtTicks = new HashMap<>();
+    private long guardInputSequence;
     private BossDamageHandler bossDamageHandler;
     private ProductionLootHandler productionLootHandler = (transactionId, enemy, contributors) -> { };
     private Consumer<Player> menuOpener = player -> { };
@@ -261,19 +264,30 @@ public final class CombatService implements Listener {
     }
 
     public void damagePlayerFromPattern(LivingEntity attacker, Player target, double rawDamage) {
-        if (!isCombatEntity(attacker) || rawDamage <= 0.0 || !runs.isRunningMember(target)) return;
+        damagePlayerFromPattern(attacker, target, rawDamage, 0.0, List.of(), List.of(), "LEGACY");
+    }
+
+    private HitOutcome damagePlayerFromPattern(LivingEntity attacker, Player target, double rawDamage,
+                                               double guardImpact, List<String> tags,
+                                               List<String> responseTags, String executionId) {
+        if (!isCombatEntity(attacker) || rawDamage <= 0.0 || !runs.isRunningMember(target)) {
+            return HitOutcome.REJECTED;
+        }
         EnemyHitPermit permit = new EnemyHitPermit(attacker.getUniqueId(), target.getUniqueId());
-        permittedEnemyHits.put(permit, rawDamage);
+        EnemyHitContext context = new EnemyHitContext(rawDamage, guardImpact, tags, responseTags, executionId);
+        permittedEnemyHits.put(permit, context);
         try {
             target.damage(Math.max(0.1, rawDamage / PLAYER_HP_SCALE), attacker);
         } finally {
             permittedEnemyHits.remove(permit);
         }
+        return context.outcome;
     }
 
     public void tick() {
         long now = Instant.now().toEpochMilli();
         processApStimPulses();
+        processShortGuards();
         processQuickUseChannels();
         processProductionEnemyActions();
         processRevives(now);
@@ -324,6 +338,8 @@ public final class CombatService implements Listener {
         enemyContributions.clear();
         productionActionStates.clear();
         permittedEnemyHits.clear();
+        shortGuards.clear();
+        parryReadyAtTicks.clear();
         breakBars.values().forEach(BossBar::removeAll);
         breakBars.clear();
     }
@@ -607,6 +623,8 @@ public final class CombatService implements Listener {
             event.setCancelled(true);
             return;
         }
+        LivingEntity combatAttacker = null;
+        EnemyHitContext hitContext = null;
         if (event instanceof EntityDamageByEntityEvent byEntity) {
             if (byEntity.getDamager() instanceof Projectile && protectedByCover(player)) {
                 event.setCancelled(true);
@@ -616,17 +634,22 @@ public final class CombatService implements Listener {
             }
             LivingEntity attacker = combatAttacker(byEntity);
             if (attacker != null) {
+                combatAttacker = attacker;
                 if (isCombatEntity(attacker)) markCombatAction(player);
                 EnemyHitPermit permit = new EnemyHitPermit(attacker.getUniqueId(), player.getUniqueId());
-                Double permittedDamage = permittedEnemyHits.remove(permit);
+                EnemyHitContext permitted = permittedEnemyHits.get(permit);
                 ProductionContentCatalog.EnemyEntry productionEnemy = production.enemiesById().get(enemyId(attacker));
-                if (permittedDamage != null) {
-                    event.setDamage(permittedDamage / PLAYER_HP_SCALE);
+                if (permitted != null) {
+                    hitContext = permitted;
+                    event.setDamage(permitted.rawDamage / PLAYER_HP_SCALE);
                 } else if (productionEnemy != null) {
                     event.setCancelled(true);
                     return;
                 } else {
                     event.setDamage(enemyAttackDamage(attacker) / PLAYER_HP_SCALE);
+                    hitContext = new EnemyHitContext(enemyAttackDamage(attacker), 0.0,
+                            byEntity.getDamager() instanceof Projectile ? List.of("PROJECTILE") : List.of("MELEE"),
+                            List.of(), "VANILLA_COMBAT_ENTITY");
                 }
             }
         }
@@ -653,6 +676,7 @@ public final class CombatService implements Listener {
             applyDownedDamage(player, event.getFinalDamage(), downedDamageMultiplier(event));
             return;
         }
+        if (applyShortGuard(player, combatAttacker, hitContext, event)) return;
         if (now < playerState.reviveProtectionUntilEpochMs && isDamageOverTime(event.getCause())) {
             event.setCancelled(true);
             return;
@@ -799,7 +823,8 @@ public final class CombatService implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onRestrictedSprint(PlayerToggleSprintEvent event) {
-        if (event.isSprinting() && runs.isRunningMember(event.getPlayer()) && isActionRestricted(event.getPlayer())) {
+        if (event.isSprinting() && runs.isRunningMember(event.getPlayer())
+                && (isActionRestricted(event.getPlayer()) || hasShortGuard(event.getPlayer()))) {
             event.setCancelled(true);
             event.getPlayer().setSprinting(false);
         }
@@ -807,7 +832,8 @@ public final class CombatService implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onRestrictedJump(PlayerJumpEvent event) {
-        if (runs.isRunningMember(event.getPlayer()) && isActionRestricted(event.getPlayer())) {
+        if (runs.isRunningMember(event.getPlayer())
+                && (isActionRestricted(event.getPlayer()) || hasShortGuard(event.getPlayer()))) {
             event.setCancelled(true);
         }
     }
@@ -877,10 +903,11 @@ public final class CombatService implements Listener {
         int originalSlot = player.getInventory().getHeldItemSlot();
         if (player.isSneaking()) {
             event.setCancelled(true);
+            cancelShortGuard(player);
             menuOpener.accept(player);
         } else if (inCombatStance(player)) {
             event.setCancelled(true);
-            executeWeaponActive(player, 3);
+            startShortGuard(player);
         } else {
             return;
         }
@@ -909,6 +936,7 @@ public final class CombatService implements Listener {
                 executeQuickItem(player, slot - 4);
             }
             case VANILLA -> {
+                if (slot != 0) cancelShortGuard(player);
                 return;
             }
         }
@@ -940,6 +968,9 @@ public final class CombatService implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         cancelQuickUse(player, "접속 종료로 사용 취소");
+        cancelShortGuard(player);
+        parryReadyAtTicks.remove(player.getUniqueId());
+        cancelAllReviveParticipation(player.getUniqueId(), "접속 종료로 구조 중단");
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null || !("DOWNED_GRACE".equals(state.lifeState) || "DOWNED".equals(state.lifeState)
                 || "BEING_REVIVED".equals(state.lifeState))) return;
@@ -1047,6 +1078,7 @@ public final class CombatService implements Listener {
             return lastLeftDisposition.getOrDefault(player.getUniqueId(), CombatInputPolicy.LeftDisposition.BASIC_ATTACK);
         }
         lastLeftInputTick.put(player.getUniqueId(), tick);
+        cancelShortGuard(player);
         String weaponId = equipment.resolveWeaponId(player);
         double targetRange = content.weapon(weaponId).range();
         CombatInputPolicy.LeftDisposition disposition = CombatInputPolicy.leftClick(
@@ -1143,6 +1175,7 @@ public final class CombatService implements Listener {
     }
 
     private boolean executeWeaponActive(Player player, int slot) {
+        cancelShortGuard(player);
         if (!requireActiveAction(player) || !requireUsableWeapon(player)) return false;
         if (statuses.blocksWeaponSkill(player)) {
             showControlRestriction(player, "제어/무장 해제/침묵 — 무기 스킬 불가");
@@ -1218,6 +1251,7 @@ public final class CombatService implements Listener {
     }
 
     private void executeCommonActive(Player player, int slot) {
+        cancelShortGuard(player);
         if (!requireActiveAction(player)) return;
         if (statuses.blocksCommonSkill(player)) {
             showControlRestriction(player, "제어/침묵 — 공용 액티브 불가");
@@ -1269,6 +1303,7 @@ public final class CombatService implements Listener {
     }
 
     private void executeQuickItem(Player player, int slot) {
+        cancelShortGuard(player);
         if (!requireActiveAction(player)) return;
         String bound = equipment.quickBinding(player, slot);
         if (bound == null || !equipment.hasRegisteredItem(player, bound)) {
@@ -1336,9 +1371,11 @@ public final class CombatService implements Listener {
             case "WSI-CONS-RESCUE_BRACE" -> {
                 runs.mutate(run -> {
                     RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-                    state.rescueBraceCharges++;
-                    state.rescueInterruptThresholdBonus = Math.max(state.rescueInterruptThresholdBonus,
+                    RescueBracePolicy.Pending pending = RescueBracePolicy.reserve(
+                            state.rescueInterruptThresholdBonus,
                             ConsumableRuntimePolicy.BASE_RESCUE_BRACE_THRESHOLD_BONUS);
+                    state.rescueBraceCharges = pending.charges();
+                    state.rescueInterruptThresholdBonus = pending.bonus();
                 });
                 result = "다음 구조 중단 임계 +10%";
             }
@@ -1370,9 +1407,11 @@ public final class CombatService implements Listener {
             case "WSI-CONS-REINFORCED_RESCUE_BRACE" -> {
                 runs.mutate(run -> {
                     RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-                    state.rescueBraceCharges++;
-                    state.rescueInterruptThresholdBonus = Math.max(state.rescueInterruptThresholdBonus,
+                    RescueBracePolicy.Pending pending = RescueBracePolicy.reserve(
+                            state.rescueInterruptThresholdBonus,
                             ConsumableRuntimePolicy.REINFORCED_RESCUE_BRACE_THRESHOLD_BONUS);
+                    state.rescueBraceCharges = pending.charges();
+                    state.rescueInterruptThresholdBonus = pending.bonus();
                 });
                 result = "다음 구조 중단 임계 +25%";
             }
@@ -1474,6 +1513,8 @@ public final class CombatService implements Listener {
             if (player != null) cancelQuickUse(player, "서버 종료로 사용 취소");
         }
         quickUseChannels.clear();
+        shortGuards.clear();
+        parryReadyAtTicks.clear();
     }
 
     private boolean canUseLimitedConsumable(Player player, String id) {
@@ -1515,6 +1556,12 @@ public final class CombatService implements Listener {
             }
             case "WSI-CONS-AP_STIM" -> runs.playerState(player.getUniqueId())
                     .map(state -> state.apStimPulsesRemaining == 0).orElse(false);
+            case "WSI-CONS-RESCUE_BRACE" -> runs.playerState(player.getUniqueId())
+                    .map(state -> state.rescueInterruptThresholdBonus
+                            < ConsumableRuntimePolicy.BASE_RESCUE_BRACE_THRESHOLD_BONUS).orElse(false);
+            case "WSI-CONS-REINFORCED_RESCUE_BRACE" -> runs.playerState(player.getUniqueId())
+                    .map(state -> state.rescueInterruptThresholdBonus
+                            < ConsumableRuntimePolicy.REINFORCED_RESCUE_BRACE_THRESHOLD_BONUS).orElse(false);
             default -> true;
         };
         if (!allowed && !"WSI-CONS-NEURAL_STABILIZER".equals(id)) {
@@ -1563,6 +1610,7 @@ public final class CombatService implements Listener {
     }
 
     private void executeDodge(Player player) {
+        cancelShortGuard(player);
         if (statuses.blocksDodge(player)) {
             showControlRestriction(player, "제어 상태 — 회피 불가");
             return;
@@ -1588,6 +1636,157 @@ public final class CombatService implements Listener {
         invulnerableUntilEpochMs.put(player.getUniqueId(), Instant.now().plusMillis(450).toEpochMilli());
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.35f, 1.6f);
         ActionBarService.notice(player, Component.text("◇ 회피 / AP -" + Math.round(cost), NamedTextColor.AQUA), 24);
+    }
+
+    private void startShortGuard(Player player) {
+        if (!equipment.isOffhandShieldUsable(player)) {
+            ActionBarService.notice(player, Component.text("사용 가능한 보조 방패가 필요합니다.", NamedTextColor.RED), 35);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.45f, 0.7f);
+            return;
+        }
+        long tick = Bukkit.getCurrentTick();
+        ShortGuardPolicy.State existing = shortGuards.get(player.getUniqueId());
+        if (existing != null) {
+            ShortGuardPolicy.State advanced = ShortGuardPolicy.advance(existing, tick);
+            if (advanced != null) {
+                shortGuards.put(player.getUniqueId(), advanced);
+                ActionBarService.notice(player, Component.text("현재 패링/단기 방어 실행이 끝나지 않았습니다.",
+                        NamedTextColor.GRAY), 20);
+                return;
+            }
+            parryReadyAtTicks.put(player.getUniqueId(), existing.parryReadyAtTick());
+            shortGuards.remove(player.getUniqueId());
+        }
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
+        long readyAt = parryReadyAtTicks.getOrDefault(player.getUniqueId(), 0L);
+        ShortGuardPolicy.Start start = ShortGuardPolicy.start(tick, state.ap, false, readyAt,
+                ++guardInputSequence);
+        if (!start.started()) {
+            String message = "COOLDOWN".equals(start.result()) ? "패링 준비가 끝나지 않았습니다."
+                    : "AP가 0이라 방어할 수 없습니다.";
+            ActionBarService.notice(player, Component.text(message, NamedTextColor.RED), 30);
+            return;
+        }
+        if (start.apAfter() != state.ap) {
+            runs.mutate(run -> run.players.get(player.getUniqueId().toString()).ap = start.apAfter());
+        }
+        shortGuards.put(player.getUniqueId(), start.state());
+        player.setSprinting(false);
+        player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 0.45f,
+                "PARRY".equals(start.result()) ? 1.45f : 0.8f);
+        ActionBarService.notice(player, Component.text("PARRY".equals(start.result())
+                ? "패링 준비 · AP -15" : "AP 부족 · 3틱 뒤 단기 방어", NamedTextColor.YELLOW), 24);
+    }
+
+    private void processShortGuards() {
+        if (shortGuards.isEmpty()) return;
+        long tick = Bukkit.getCurrentTick();
+        for (Map.Entry<UUID, ShortGuardPolicy.State> entry : new ArrayList<>(shortGuards.entrySet())) {
+            Player player = Bukkit.getPlayer(entry.getKey());
+            if (player == null || !player.isOnline() || !runs.isRunningMember(player)
+                    || isActionRestricted(player) || !inCombatStance(player)
+                    || !equipment.isOffhandShieldUsable(player)) {
+                cancelShortGuard(entry.getKey());
+                continue;
+            }
+            ShortGuardPolicy.State advanced = ShortGuardPolicy.advance(entry.getValue(), tick);
+            if (advanced == null) {
+                parryReadyAtTicks.put(entry.getKey(), entry.getValue().parryReadyAtTick());
+                shortGuards.remove(entry.getKey());
+                continue;
+            }
+            shortGuards.put(entry.getKey(), advanced);
+            if (advanced.phase() == ShortGuardPolicy.Phase.SHORT_GUARD && tick % 3L == 0L) {
+                ActionBarService.show(player, Component.text("단기 방어 · AP "
+                        + Math.round(runs.playerState(player.getUniqueId()).map(value -> value.ap).orElse(0.0)),
+                        NamedTextColor.AQUA), 3, 90);
+            }
+        }
+    }
+
+    private boolean applyShortGuard(Player player, LivingEntity attacker, EnemyHitContext context,
+                                    EntityDamageEvent event) {
+        ShortGuardPolicy.State state = shortGuards.get(player.getUniqueId());
+        if (state == null || attacker == null || context == null) return false;
+        long tick = Bukkit.getCurrentTick();
+        state = ShortGuardPolicy.advance(state, tick);
+        if (state == null) {
+            shortGuards.remove(player.getUniqueId());
+            return false;
+        }
+        shortGuards.put(player.getUniqueId(), state);
+        if (state.phase() == ShortGuardPolicy.Phase.PARRY_ACTIVE) {
+            boolean success = facesSource(player, attacker, 150.0)
+                    && ShortGuardPolicy.parryable(context.responseTags, context.tags);
+            if (!success) {
+                ShortGuardPolicy.State failed = ShortGuardPolicy.parryFailure(state, tick);
+                shortGuards.put(player.getUniqueId(), failed);
+                parryReadyAtTicks.put(player.getUniqueId(), failed.parryReadyAtTick());
+                return false;
+            }
+            event.setCancelled(true);
+            context.outcome = HitOutcome.PARRIED;
+            ShortGuardPolicy.State succeeded = ShortGuardPolicy.parrySuccess(state, tick);
+            shortGuards.put(player.getUniqueId(), succeeded);
+            parryReadyAtTicks.put(player.getUniqueId(), succeeded.parryReadyAtTick());
+            runs.mutate(run -> {
+                RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
+                mutable.ap = Math.min(mutable.maxAp, mutable.ap + ShortGuardPolicy.PARRY_REFUND);
+            });
+            equipment.consumeOffhandDurability(player, 1, "PARRY:" + context.executionId);
+            applyBreak(attacker, ShortGuardPolicy.normalizedGuardImpact(context.guardImpact, context.tags));
+            player.getWorld().spawnParticle(Particle.CRIT, player.getEyeLocation(), 18, 0.45, 0.45, 0.45, 0.08);
+            player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1.0f, 1.8f);
+            ActionBarService.critical(player, Component.text("패링 성공 · AP +5", NamedTextColor.GOLD), 35);
+            telemetry.event(runs.current().orElseThrow().runId, "PARRY_SUCCESS",
+                    "{\"executionId\":\"" + context.executionId + "\"}");
+            return true;
+        }
+        if (state.phase() != ShortGuardPolicy.Phase.SHORT_GUARD
+                || !facesSource(player, attacker, 120.0)
+                || !ShortGuardPolicy.guardable(context.responseTags, context.tags)) return false;
+        event.setDamage(event.getDamage() * ShortGuardPolicy.guardedDamageMultiplier(context.tags));
+        context.outcome = HitOutcome.GUARDED;
+        double impact = ShortGuardPolicy.normalizedGuardImpact(context.guardImpact, context.tags);
+        RunSnapshot.PlayerState before = runs.playerState(player.getUniqueId()).orElseThrow();
+        boolean broken = before.ap <= impact + 1.0e-9;
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
+            mutable.ap = Math.max(0.0, mutable.ap - impact);
+        });
+        equipment.consumeOffhandDurability(player, 1, "GUARD:" + context.executionId);
+        if (broken) {
+            ShortGuardPolicy.State brokenState = ShortGuardPolicy.guardBroken(state, tick);
+            shortGuards.put(player.getUniqueId(), brokenState);
+            parryReadyAtTicks.put(player.getUniqueId(), brokenState.parryReadyAtTick());
+            ActionBarService.critical(player, Component.text("가드 붕괴 · AP 0", NamedTextColor.RED), 35);
+        } else {
+            ActionBarService.notice(player, Component.text("단기 방어 · 가드 충격 AP -"
+                    + Math.round(impact), NamedTextColor.AQUA), 24);
+        }
+        return false;
+    }
+
+    private boolean facesSource(Player player, LivingEntity source, double fullAngleDegrees) {
+        Vector facing = player.getEyeLocation().getDirection().setY(0.0);
+        Vector toward = source.getEyeLocation().toVector().subtract(player.getEyeLocation().toVector()).setY(0.0);
+        if (facing.lengthSquared() < 1.0e-6 || toward.lengthSquared() < 1.0e-6) return true;
+        double threshold = Math.cos(Math.toRadians(fullAngleDegrees / 2.0));
+        return facing.normalize().dot(toward.normalize()) + 1.0e-9 >= threshold;
+    }
+
+    private boolean hasShortGuard(Player player) {
+        return shortGuards.containsKey(player.getUniqueId());
+    }
+
+    private void cancelShortGuard(Player player) {
+        cancelShortGuard(player.getUniqueId());
+    }
+
+    private void cancelShortGuard(UUID playerId) {
+        ShortGuardPolicy.State removed = shortGuards.remove(playerId);
+        if (removed != null) parryReadyAtTicks.put(playerId, removed.parryReadyAtTick());
     }
 
     private boolean throwTrident(Player player, double cost) {
@@ -1796,7 +1995,10 @@ public final class CombatService implements Listener {
                 activeContributors.add(reviver);
                 contributionWeights.put(reviver.getUniqueId(), speed);
             }
-            invalid.forEach(session.contributors::remove);
+            invalid.forEach(contributorId -> {
+                session.contributors.remove(contributorId);
+                clearActiveRescueBrace(contributorId);
+            });
             double previousProgress = targetState.reviveProgress;
             double nextProgress = previousProgress;
             if (!activeContributors.isEmpty()) {
@@ -1804,6 +2006,7 @@ public final class CombatService implements Listener {
                         Math.max(1, targetState.injuryStacks), elapsed, weightedSpeed);
                 nextProgress = Math.min(1.0, previousProgress + delta);
                 double creditedProgress = nextProgress - previousProgress;
+                if (creditedProgress > 0.0) activateRescueBraces(activeContributors, creditedProgress);
                 double totalWeight = weightedSpeed;
                 double persistedProgress = nextProgress;
                 runs.mutateTransient(run -> {
@@ -1839,7 +2042,10 @@ public final class CombatService implements Listener {
                 removeSessions.add(session.target);
             }
         }
-        removeSessions.forEach(reviveSessions::remove);
+        for (UUID targetId : removeSessions) {
+            ReviveSession removed = reviveSessions.remove(targetId);
+            if (removed != null) removed.contributors.keySet().forEach(this::clearActiveRescueBrace);
+        }
     }
 
     private void revive(Player target, List<Player> contributors) {
@@ -1913,19 +2119,31 @@ public final class CombatService implements Listener {
         if (state == null) return;
         double maximum = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
                 : player.getAttribute(Attribute.MAX_HEALTH).getValue();
-        double threshold = 0.05 + (state.rescueBraceCharges > 0
-                ? Math.max(0.0, state.rescueInterruptThresholdBonus) : 0.0);
+        double threshold = RescueBracePolicy.interruptFraction(state.activeRescueInterruptThresholdBonus);
         if (finalDamage + 1.0e-6 < maximum * threshold) return;
-        if (state.rescueBraceCharges > 0) {
-            runs.mutate(run -> {
-                RunSnapshot.PlayerState current = run.players.get(player.getUniqueId().toString());
-                current.rescueBraceCharges--;
-                current.rescueInterruptThresholdBonus = 0.0;
-            });
-            ActionBarService.critical(player, Component.text("구조 보호대가 중단을 막았습니다.", NamedTextColor.YELLOW), 40);
-            return;
-        }
         cancelAllReviveParticipation(player.getUniqueId(), "강한 피해로 구조 중단");
+    }
+
+    private void activateRescueBraces(List<Player> contributors, double creditedProgress) {
+        for (Player contributor : contributors) {
+            RunSnapshot.PlayerState before = runs.playerState(contributor.getUniqueId()).orElse(null);
+            if (before == null || before.rescueBraceCharges <= 0) continue;
+            RescueBracePolicy.Activation activation = RescueBracePolicy.activate(before.rescueBraceCharges,
+                    before.rescueInterruptThresholdBonus, before.activeRescueInterruptThresholdBonus,
+                    creditedProgress);
+            if (!activation.consumed()) continue;
+            runs.mutate(run -> {
+                RunSnapshot.PlayerState state = run.players.get(contributor.getUniqueId().toString());
+                RescueBracePolicy.Activation current = RescueBracePolicy.activate(state.rescueBraceCharges,
+                        state.rescueInterruptThresholdBonus, state.activeRescueInterruptThresholdBonus,
+                        creditedProgress);
+                state.rescueBraceCharges = current.charges();
+                state.rescueInterruptThresholdBonus = current.pendingBonus();
+                state.activeRescueInterruptThresholdBonus = current.activeBonus();
+            });
+            ActionBarService.notice(contributor, Component.text("구조 고정대 적용 · 중단 임계 +"
+                    + Math.round(activation.activeBonus() * 100.0) + "%", NamedTextColor.YELLOW), 35);
+        }
     }
 
     private void cancelAllReviveParticipation(UUID contributorId, String reason) {
@@ -1934,6 +2152,14 @@ public final class CombatService implements Listener {
             if (session.contributors.remove(contributorId) != null && contributor != null) {
                 ActionBarService.critical(contributor, Component.text(reason, NamedTextColor.RED), 40);
             }
+        }
+        clearActiveRescueBrace(contributorId);
+    }
+
+    private void clearActiveRescueBrace(UUID contributorId) {
+        if (runs.playerState(contributorId).map(state -> state.activeRescueInterruptThresholdBonus > 0.0)
+                .orElse(false)) {
+            runs.mutate(run -> run.players.get(contributorId.toString()).activeRescueInterruptThresholdBonus = 0.0);
         }
     }
 
@@ -2506,8 +2732,12 @@ public final class CombatService implements Listener {
         if (target == null || !target.isOnline() || !target.getWorld().equals(enemy.getWorld())
                 || target.getLocation().distanceSquared(enemy.getLocation()) > action.range() * action.range()
                 || !enemy.hasLineOfSight(target)) return;
-        damagePlayerFromPattern(enemy, target, action.damage());
-        if (!action.statusId().isBlank()
+        HitOutcome outcome = damagePlayerFromPattern(enemy, target, action.damage(), action.breakDamage(),
+                action.tags(), action.responseTags(), action.id() + ":" + runs.clockTick());
+        boolean guardedStatusPassed = outcome != HitOutcome.GUARDED
+                || java.util.concurrent.ThreadLocalRandom.current().nextDouble() < 0.50;
+        if (outcome != HitOutcome.PARRIED && guardedStatusPassed && !action.statusId().isBlank()
+                && !"NONE".equals(action.statusId())
                 && invulnerableUntilEpochMs.getOrDefault(target.getUniqueId(), 0L) < Instant.now().toEpochMilli()) {
             applyEnemyStatus(enemy, target, action);
         }
@@ -2737,27 +2967,38 @@ public final class CombatService implements Listener {
     private void startApStim(Player player) {
         runs.mutate(run -> {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-            state.ap = Math.min(state.maxAp, state.ap + ConsumableRuntimePolicy.AP_STIM_INITIAL_AP);
-            state.apStimPulsesRemaining = ConsumableRuntimePolicy.AP_STIM_PULSE_COUNT;
-            state.apStimTicksUntilNextPulse = (int) ConsumableRuntimePolicy.AP_STIM_PULSE_INTERVAL_TICKS;
+            ApStimPulsePolicy.State started = ApStimPulsePolicy.start(state.ap, state.maxAp);
+            state.ap = started.ap();
+            state.apStimPulsesRemaining = started.pulsesRemaining();
+            state.apStimTicksUntilNextPulse = started.ticksUntilNextPulse();
         });
     }
 
     private void processApStimPulses() {
+        List<String> due = new ArrayList<>();
         runs.mutateTransient(run -> {
-            for (RunSnapshot.PlayerState state : run.players.values()) {
+            for (Map.Entry<String, RunSnapshot.PlayerState> entry : run.players.entrySet()) {
+                RunSnapshot.PlayerState state = entry.getValue();
                 if (state.apStimPulsesRemaining <= 0) continue;
                 if (state.apStimTicksUntilNextPulse > 1) {
                     state.apStimTicksUntilNextPulse--;
                     continue;
                 }
-                state.ap = Math.min(state.maxAp,
-                        state.ap + ConsumableRuntimePolicy.AP_STIM_PULSE_AP);
-                state.apStimPulsesRemaining--;
-                state.apStimTicksUntilNextPulse = state.apStimPulsesRemaining == 0 ? 0
-                        : (int) ConsumableRuntimePolicy.AP_STIM_PULSE_INTERVAL_TICKS;
+                due.add(entry.getKey());
             }
         });
+        for (String playerId : due) {
+            runs.mutate(run -> {
+                RunSnapshot.PlayerState state = run.players.get(playerId);
+                if (state == null || state.apStimPulsesRemaining <= 0
+                        || state.apStimTicksUntilNextPulse > 1) return;
+                ApStimPulsePolicy.State pulsed = ApStimPulsePolicy.tick(state.ap, state.maxAp,
+                        state.apStimPulsesRemaining, state.apStimTicksUntilNextPulse);
+                state.ap = pulsed.ap();
+                state.apStimPulsesRemaining = pulsed.pulsesRemaining();
+                state.apStimTicksUntilNextPulse = pulsed.ticksUntilNextPulse();
+            });
+        }
     }
 
     private boolean requireSkillReady(Player player, PrototypeContent.SkillDefinition skill) {
@@ -2982,6 +3223,26 @@ public final class CombatService implements Listener {
     }
 
     private record EnemyHitPermit(UUID enemyUuid, UUID playerUuid) { }
+
+    private static final class EnemyHitContext {
+        private final double rawDamage;
+        private final double guardImpact;
+        private final List<String> tags;
+        private final List<String> responseTags;
+        private final String executionId;
+        private HitOutcome outcome = HitOutcome.HIT;
+
+        private EnemyHitContext(double rawDamage, double guardImpact, List<String> tags,
+                                List<String> responseTags, String executionId) {
+            this.rawDamage = rawDamage;
+            this.guardImpact = guardImpact;
+            this.tags = tags == null ? List.of() : List.copyOf(tags);
+            this.responseTags = responseTags == null ? List.of() : List.copyOf(responseTags);
+            this.executionId = executionId == null ? "UNKNOWN" : executionId;
+        }
+    }
+
+    private enum HitOutcome { HIT, GUARDED, PARRIED, REJECTED }
 
     private record QuickUseChannel(String itemId, int slot, long startedAtTick, long completesAtTick) { }
 
