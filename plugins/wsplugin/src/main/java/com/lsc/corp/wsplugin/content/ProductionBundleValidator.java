@@ -173,6 +173,10 @@ public final class ProductionBundleValidator {
                         requiredInt(record, "firstDay"), requiredInt(record, "maxDurability"),
                         requiredInt(record, "toolTier"), optionalString(record, "setId", ""),
                         stringArray(record, "tags"), numberMap(record, "stats"),
+                        requiredString(record, "executionOpcode"), requiredString(record, "harvestProfileId"),
+                        requiredDouble(record, "resourceYieldMultiplier"),
+                        requiredInt(record, "durabilityCostPerSuccess"),
+                        record.get("vanillaActionPassthrough").getAsBoolean(),
                         requiredString(record, "effectText"));
                 if (equipmentById.putIfAbsent(equipment.id(), equipment) != null) {
                     throw new ContentValidationException("Duplicate equipment profile " + equipment.id());
@@ -965,6 +969,7 @@ public final class ProductionBundleValidator {
                 "MACE", "STAFF", "PICKAXE", "TRIDENT");
         Set<String> statIds = Set.of("ATK", "DEF", "HP", "AP", "HIT", "EVA", "PEN", "RES",
                 "TENACITY", "STAGGER_RES", "SPD", "BREAK_DAMAGE");
+        Set<String> harvestProfiles = Set.of("HARVEST_PICKAXE", "HARVEST_AXE", "HARVEST_SHOVEL", "HARVEST_HOE");
         Map<Integer, Long> utilityTiers = catalog.equipmentById().values().stream()
                 .filter(ProductionContentCatalog.EquipmentEntry::utility)
                 .collect(java.util.stream.Collectors.groupingBy(ProductionContentCatalog.EquipmentEntry::toolTier,
@@ -985,8 +990,21 @@ public final class ProductionBundleValidator {
                 throw new ContentValidationException("Invalid equipment stats " + equipment.id());
             }
             if (equipment.utility() && (!"INVENTORY".equals(equipment.equipmentSlot())
-                    || equipment.toolTier() < 3 || equipment.toolTier() > 6)) {
+                    || equipment.toolTier() < 3 || equipment.toolTier() > 6
+                    || !"VANILLA_HARVEST_WITH_WS_TIER_GATE".equals(equipment.executionOpcode())
+                    || !harvestProfiles.contains(equipment.harvestProfileId())
+                    || equipment.resourceYieldMultiplier() != 1.0
+                    || equipment.durabilityCostPerSuccess() != 1
+                    || !equipment.vanillaActionPassthrough()
+                    || equipment.effectText().contains("본 문서") || equipment.effectText().contains("§"))) {
                 throw new ContentValidationException("Invalid utility profile " + equipment.id());
+            }
+            if (!equipment.utility() && (!equipment.executionOpcode().isBlank()
+                    || !equipment.harvestProfileId().isBlank()
+                    || equipment.resourceYieldMultiplier() != 1.0
+                    || equipment.durabilityCostPerSuccess() != 0
+                    || equipment.vanillaActionPassthrough())) {
+                throw new ContentValidationException("Unexpected utility execution fields " + equipment.id());
             }
         }
     }

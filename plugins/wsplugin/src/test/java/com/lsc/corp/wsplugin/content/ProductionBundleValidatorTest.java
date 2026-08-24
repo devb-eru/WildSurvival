@@ -66,6 +66,15 @@ class ProductionBundleValidatorTest {
         var utilityPickaxe = result.catalog().equipmentById().get("EQL-UT-RI-PICKAXE");
         assertEquals(3, utilityPickaxe.toolTier());
         assertEquals(720, utilityPickaxe.maxDurability());
+        assertEquals("VANILLA_HARVEST_WITH_WS_TIER_GATE", utilityPickaxe.executionOpcode());
+        assertEquals("HARVEST_PICKAXE", utilityPickaxe.harvestProfileId());
+        assertEquals(1.0, utilityPickaxe.resourceYieldMultiplier());
+        assertEquals(1, utilityPickaxe.durabilityCostPerSuccess());
+        assertTrue(utilityPickaxe.vanillaActionPassthrough());
+        assertTrue(result.catalog().equipmentById().values().stream()
+                .filter(ProductionContentCatalog.EquipmentEntry::utility)
+                .noneMatch(equipment -> equipment.effectText().contains("본 문서")
+                        || equipment.effectText().contains("§")));
         var pioneerSword = result.catalog().equipmentById().get("EQL-W01");
         assertEquals("SWORD", pioneerSword.weaponClass());
         assertEquals("IRON_SWORD", pioneerSword.displayMaterial());

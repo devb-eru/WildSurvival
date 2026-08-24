@@ -22,7 +22,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_PICKAXE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T3 WS 노드 채집; HARVEST_PICKAXE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1000",
         "EQL-UT-RI-PICKAXE",
@@ -51,7 +56,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_AXE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T3 WS 노드 채집; HARVEST_AXE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1001",
         "EQL-UT-RI-AXE",
@@ -80,7 +90,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_SHOVEL",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T3 WS 노드 채집; HARVEST_SHOVEL 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1002",
         "EQL-UT-RI-SHOVEL",
@@ -109,7 +124,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_HOE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T3 WS 노드 채집; HARVEST_HOE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1003",
         "EQL-UT-RI-HOE",
@@ -138,7 +158,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_PICKAXE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T4 WS 노드 채집; HARVEST_PICKAXE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1004",
         "EQL-UT-RS-PICKAXE",
@@ -167,7 +192,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_AXE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T4 WS 노드 채집; HARVEST_AXE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1005",
         "EQL-UT-RS-AXE",
@@ -196,7 +226,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_SHOVEL",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T4 WS 노드 채집; HARVEST_SHOVEL 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1006",
         "EQL-UT-RS-SHOVEL",
@@ -225,7 +260,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_HOE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T4 WS 노드 채집; HARVEST_HOE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1007",
         "EQL-UT-RS-HOE",
@@ -254,7 +294,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_PICKAXE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T5 WS 노드 채집; HARVEST_PICKAXE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1008",
         "EQL-UT-HD-PICKAXE",
@@ -283,7 +328,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_AXE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T5 WS 노드 채집; HARVEST_AXE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1009",
         "EQL-UT-HD-AXE",
@@ -312,7 +362,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_SHOVEL",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T5 WS 노드 채집; HARVEST_SHOVEL 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1010",
         "EQL-UT-HD-SHOVEL",
@@ -341,7 +396,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_HOE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T5 WS 노드 채집; HARVEST_HOE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1011",
         "EQL-UT-HD-HOE",
@@ -370,7 +430,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_PICKAXE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T6 WS 노드 채집; HARVEST_PICKAXE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1012",
         "EQL-UT-RC-PICKAXE",
@@ -399,7 +464,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_AXE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T6 WS 노드 채집; HARVEST_AXE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1013",
         "EQL-UT-RC-AXE",
@@ -428,7 +498,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_SHOVEL",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T6 WS 노드 채집; HARVEST_SHOVEL 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1014",
         "EQL-UT-RC-SHOVEL",
@@ -457,7 +532,12 @@
       "setId": "",
       "tags": [],
       "stats": {},
-      "effectText": "본 문서 §3",
+      "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
+      "harvestProfileId": "HARVEST_HOE",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 1,
+      "vanillaActionPassthrough": true,
+      "effectText": "T1~T6 WS 노드 채집; HARVEST_HOE 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1",
       "raw": [
         "1015",
         "EQL-UT-RC-HOE",
@@ -488,6 +568,11 @@
       "stats": {
         "RES": 2.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AC-C01 | 표본 주머니 | ACCESSORY | COMMON | 표본 보관 4칸, RES +2 | WSRCP-E06",
       "raw": [
         "1016",
@@ -517,6 +602,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AC-R01 | 균열 측정환 | ACCESSORY | RARE | 서로 다른 약화 2종 대상 브레이크 +6% | 결정 1, 정밀 부품 1, 조직 2",
       "raw": [
         "1017",
@@ -546,6 +636,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AC-R02 | 탄약 분배대 | ACCESSORY | RARE | 탄약 묶음 첫 소비 12% 확률 미소비 | 코일 2, 정밀 부품 1",
       "raw": [
         "1018",
@@ -577,6 +672,11 @@
       "stats": {
         "HIT": 4.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AC-U01 | 공명 나침반 | ACCESSORY | UNCOMMON | 신호 측정 오차 -10%, HIT +4 | WSRCP-E07",
       "raw": [
         "1019",
@@ -606,6 +706,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AC-U02 | 응급 버클 | ACCESSORY | UNCOMMON | HP 25% 이하 첫 붕대 사용시간 -50%, Day당 1회 | 붕대 4, 보강 천 2",
       "raw": [
         "1020",
@@ -638,6 +743,11 @@
         "DEF": 5.0,
         "HP": 20.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-C01 | 머리 | DEF +5, HP +20 | 2부위: 환경 피해 -3% | WSRCP-E01",
       "raw": [
         "1021",
@@ -670,6 +780,11 @@
         "DEF": 10.0,
         "HP": 40.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-C02 | 가슴 | DEF +10, HP +40 | 4부위: 야전 수리 키트 효율 +10% | WSRCP-E02",
       "raw": [
         "1022",
@@ -702,6 +817,11 @@
         "DEF": 8.0,
         "HP": 30.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-C03 | 다리 | DEF +8, HP +30 | 동일 | WSRCP-E03",
       "raw": [
         "1023",
@@ -734,6 +854,11 @@
         "DEF": 4.0,
         "EVA": 2.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-C04 | 발 | DEF +4, EVA +2 | 동일 | WSRCP-E04",
       "raw": [
         "1024",
@@ -765,6 +890,11 @@
         "AXE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AX-R01 | 처형 표식 도끼 | RARE | HP 30% 이하 대상 강공 피해 +12%, 내부 5초 | 합금 3, 정밀 부품 1",
       "raw": [
         "1025",
@@ -796,6 +926,11 @@
         "AXE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AX-U01 | 벌목 전투도끼 | UNCOMMON | 2대상 이상 적중 시 AP 3 환급, 실행당 1회 | 판재 2, 경목 1",
       "raw": [
         "1026",
@@ -827,6 +962,11 @@
         "MACE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-BL-R01 | 취약 유도 철퇴 | RARE | 브레이크 성공 후 개인 피해 +8%, 5초 | 합금 3, 정밀 부품 1, 결정 1",
       "raw": [
         "1027",
@@ -858,6 +998,11 @@
         "MACE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-BL-U01 | 충격 둔기 | UNCOMMON | 일반 공격 브레이크 +8% | 판재 3, 골재 2",
       "raw": [
         "1028",
@@ -889,6 +1034,11 @@
         "BOW"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-BO-R01 | 가시비 활 | RARE | 동일 대상 3번째 화살이 출혈 1중첩 | 정밀 부품 1, 결정 1, 보강 천 2",
       "raw": [
         "1029",
@@ -922,6 +1072,11 @@
       "stats": {
         "HIT": 4.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-BO-U01 | 장거리 활 | UNCOMMON | 12블록 이상 피해 +4%, HIT +4 | 경목 2, 보강 천 2",
       "raw": [
         "1030",
@@ -953,6 +1108,11 @@
         "CROSSBOW"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-CB-R01 | 장갑 파쇄 석궁 | RARE | 첫 볼트 방어력 감소 DEF -12, 4초 | 합금 2, 정밀 부품 2",
       "raw": [
         "1031",
@@ -984,6 +1144,11 @@
         "CROSSBOW"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-CB-U01 | 야전 탄창 석궁 | UNCOMMON | 장전시간 -8%, 탄창 3발 | 판재 2, 코일 2",
       "raw": [
         "1032",
@@ -1015,6 +1180,11 @@
       "stats": {
         "HP": 40.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-CH-C01 | 생존자의 매듭 | CHARM | COMMON | 최대 HP +40 | 구조 고정대 1, 보강 천 1",
       "raw": [
         "1033",
@@ -1044,6 +1214,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-CH-R01 | 정화 인장 | CHARM | RARE | 정화 앰풀 효과 +12%, 획득량 생성 없음 | 촉매 2, 금 1, 결정 1",
       "raw": [
         "1034",
@@ -1073,6 +1248,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-CH-U01 | 짧은 호흡 부적 | CHARM | UNCOMMON | 비전투 AP 회복 +0.5/초 | 결정 1, 식량 배급 2",
       "raw": [
         "1035",
@@ -1104,6 +1284,11 @@
       "stats": {
         "BREAK_DAMAGE": 4.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-CH-U02 | 충격 추 | CHARM | UNCOMMON | BREAK_DAMAGE +4% | 골재 2, 판재 1",
       "raw": [
         "1036",
@@ -1133,6 +1318,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-AC | 동조 회로환 | ACCESSORY | 다른 플레이어가 건 상태 1종당 상태 적중 +3%p, 최대 3종 | 잔류 패턴 4, 코일 3, 정밀 부품 2, 금 1",
       "raw": [
         "1037",
@@ -1162,6 +1352,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-AR | 신호직 가슴보호구 | ARMOR_CHEST | 패턴 전조 대응 성공 후 받는 피해 -10%, 5초 | 잔류 패턴 4, 보강 천 4, 정밀 부품 2, 결정 1",
       "raw": [
         "1038",
@@ -1191,6 +1386,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-CH | 파쇄 감응핵 | CHARM | 브레이크 80% 이상 대상 BREAK_DAMAGE +12%, 성공 후 10초 비활성 | 잔류 패턴 4, 골재 3, 정밀 부품 3, 결정 1",
       "raw": [
         "1039",
@@ -1220,6 +1420,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-OH | 맥동 방패 | OFF_WEAPON | 보스 패링 성공 시 4블록 파티 AP 3 회복, 패턴별 8초 | 잔류 패턴 4, 합금 4, 정밀 부품 2",
       "raw": [
         "1040",
@@ -1249,6 +1454,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-UA | 공명 격투 고리 | 권투 사용자 ACCESSORY | 정확 회피 반격 시 4초간 DEF 12 무시, 8초 | 잔류 패턴 4, 보강 천 3, 정밀 부품 3, 결정 1",
       "raw": [
         "1041",
@@ -1280,6 +1490,11 @@
         "DAGGER"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-DG-R01 | 독침 단검 | RARE | 독 출처 최대 1개 추가, 독 피해 +8% | 결정 1, 정밀 부품 1, 조직 2",
       "raw": [
         "1042",
@@ -1311,6 +1526,11 @@
         "DAGGER"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-DG-U01 | 혈흔 단검 | UNCOMMON | 출혈 적 HIT +6, 4타 피해 +6% | 판재 2, 보강 천 1",
       "raw": [
         "1043",
@@ -1340,6 +1560,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-OH-C01 | 야전 방패 | OFF_WEAPON | COMMON | 기본 COMBAT-004 방어·패링 | WSRCP-E05",
       "raw": [
         "1044",
@@ -1369,6 +1594,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-OH-R01 | 구조 방패 | OFF_WEAPON | RARE | 방어 중 뒤 3블록 파티 투사체 피해 -8% | 합금 2, 정밀 부품 1, 보강 천 2",
       "raw": [
         "1045",
@@ -1398,6 +1628,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-OH-U01 | 반응 방패 | OFF_WEAPON | UNCOMMON | 패링 각도 +10도, 성공 시 AP +1 추가 | 방패 + 코일 1 + 판재 2",
       "raw": [
         "1046",
@@ -1429,6 +1664,11 @@
         "PICKAXE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-PK-R01 | 단층 탐지 곡괭이 | RARE | 브레이크 80% 이상 대상 피해 +10% | 합금 3, 정밀 부품 1, 회로 2",
       "raw": [
         "1047",
@@ -1460,6 +1700,11 @@
         "PICKAXE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-PK-U01 | 장갑 굴착 곡괭이 | UNCOMMON | 장갑 태그 대상 PEN +8 | 판재 3, 합금 1",
       "raw": [
         "1048",
@@ -1491,6 +1736,11 @@
         "STAFF"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-ST-R01 | 정화 파동 지팡이 | RARE | 지원 영역 내 파티 오염 획득 -8% | 촉매 2, 정밀 부품 1, 결정 1",
       "raw": [
         "1049",
@@ -1522,6 +1772,11 @@
         "STAFF"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-ST-U01 | 잔불 지팡이 | UNCOMMON | 화상 적중 +6%p, BURN 1중첩 피해 +6% | 코일 1, 결정 1, 경목 1",
       "raw": [
         "1050",
@@ -1553,6 +1808,11 @@
         "SWORD"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-SW-R01 | 균열 추적 검 | RARE | 콤보 3타가 4초간 취약 +4%, 대상별 6초 | 합금 2, 정밀 부품 1, 결정 1",
       "raw": [
         "1051",
@@ -1586,6 +1846,11 @@
       "stats": {
         "DEF": 6.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-SW-U01 | 수비대 검 | UNCOMMON | DEF +6, 패링 브레이크 +4% | 판재 2, 보강 천 1",
       "raw": [
         "1052",
@@ -1617,6 +1882,11 @@
         "TRIDENT"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-TR-R01 | 정박 삼지창 | RARE | 투척 적중 대상 4초 표식, 회수 경로 브레이크 +10% | 합금 2, 정밀 부품 1, 결정 1",
       "raw": [
         "1053",
@@ -1648,6 +1918,11 @@
         "TRIDENT"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-TR-U01 | 회귀 삼지창 | UNCOMMON | 회수 AP -3, 회수 속도 +10% | 코일 2, 보강 천 1",
       "raw": [
         "1054",
@@ -1677,6 +1952,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-UA-R01 | 역진동 손목끈 | ACCESSORY | RARE | 정확 회피 후 권투 첫 타 브레이크 +20% | 정밀 부품 1, 보강 천 2, 결정 1",
       "raw": [
         "1055",
@@ -1708,6 +1988,11 @@
       "stats": {
         "DEF": 4.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-UA-U01 | 충격 완화 손목끈 | ACCESSORY | UNCOMMON | 권투 반격 AP -2, DEF +4 | 보강 천 2, 판재 1",
       "raw": [
         "1056",
@@ -1744,6 +2029,11 @@
         "ATK": 8.0,
         "DEF": 2.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-W01 | 개척 검 | SWORD | ATK +8, DEF +2 | WSRCP-W01 | COMBO`, `GUARD",
       "raw": [
         "1057",
@@ -1779,6 +2069,11 @@
       "stats": {
         "ATK": 12.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-W02 | 개척 도끼 | AXE | ATK +12 | WSRCP-W02 | HEAVY`, `EXECUTE",
       "raw": [
         "1058",
@@ -1815,6 +2110,11 @@
         "ATK": 8.0,
         "HIT": 4.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-W03 | 개척 활 | BOW | ATK +8, HIT +4 | WSRCP-W03 | RANGED`, `AIM",
       "raw": [
         "1059",
@@ -1850,6 +2150,11 @@
       "stats": {
         "ATK": 14.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-W04 | 개척 석궁 | CROSSBOW | ATK +14 | WSRCP-W04 | MAGAZINE`, `BREACH",
       "raw": [
         "1060",
@@ -1886,6 +2191,11 @@
         "ATK": 5.0,
         "EVA": 4.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-W05 | 개척 단검 | DAGGER | ATK +5, EVA +4 | WSRCP-W05 | AGILE`, `BLEED",
       "raw": [
         "1061",
@@ -1922,6 +2232,11 @@
         "ATK": 10.0,
         "BREAK_DAMAGE": 4.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-W06 | 개척 둔기 | BLUNT | ATK +10, BREAK_DAMAGE +4% | WSRCP-W06 | IMPACT`, `BREAK",
       "raw": [
         "1062",
@@ -1958,6 +2273,11 @@
         "AP": 4.0,
         "ATK": 8.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-W07 | 개척 지팡이 | STAFF | ATK +8, 최대 AP +4 | WSRCP-W07 | MAGIC`, `AREA",
       "raw": [
         "1063",
@@ -1994,6 +2314,11 @@
         "ATK": 10.0,
         "PEN": 6.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-W08 | 개척 전투 곡괭이 | PICKAXE | ATK +10, PEN +6 | WSRCP-W08 | PENETRATE`, `BREAK",
       "raw": [
         "1064",
@@ -2030,6 +2355,11 @@
         "ATK": 9.0,
         "HIT": 4.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-W09 | 개척 삼지창 | TRIDENT | ATK +9, HIT +4 | WSRCP-W09 | THROW`, `RECALL",
       "raw": [
         "1065",
@@ -2062,6 +2392,11 @@
         "DEF": 5.0,
         "HP": 20.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-U-SCOUT-* | 개척자 기본값 + EVA 2~4, HIT 2~4 | 이동 중 첫 피격 피해 -4%, 8초 | 동적 자원 노드 측정시간 -15% | 코일 1, 보강 천 1",
       "raw": [
         "1066",
@@ -2094,6 +2429,11 @@
         "DEF": 10.0,
         "HP": 40.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-U-SCOUT-* | 개척자 기본값 + EVA 2~4, HIT 2~4 | 이동 중 첫 피격 피해 -4%, 8초 | 동적 자원 노드 측정시간 -15% | 코일 1, 보강 천 1",
       "raw": [
         "1067",
@@ -2126,6 +2466,11 @@
         "DEF": 8.0,
         "HP": 30.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-U-SCOUT-* | 개척자 기본값 + EVA 2~4, HIT 2~4 | 이동 중 첫 피격 피해 -4%, 8초 | 동적 자원 노드 측정시간 -15% | 코일 1, 보강 천 1",
       "raw": [
         "1068",
@@ -2158,6 +2503,11 @@
         "DEF": 4.0,
         "EVA": 2.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-U-SCOUT-* | 개척자 기본값 + EVA 2~4, HIT 2~4 | 이동 중 첫 피격 피해 -4%, 8초 | 동적 자원 노드 측정시간 -15% | 코일 1, 보강 천 1",
       "raw": [
         "1069",
@@ -2190,6 +2540,11 @@
         "DEF": 9.0,
         "HP": 20.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-U-VANGUARD-* | 개척자 기본값 + DEF 4~8 | 가드 충격 AP -5% | 구조 중 받는 피해 -8% | 판재 2, 골재 1",
       "raw": [
         "1070",
@@ -2222,6 +2577,11 @@
         "DEF": 18.0,
         "HP": 40.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-U-VANGUARD-* | 개척자 기본값 + DEF 4~8 | 가드 충격 AP -5% | 구조 중 받는 피해 -8% | 판재 2, 골재 1",
       "raw": [
         "1071",
@@ -2254,6 +2614,11 @@
         "DEF": 14.0,
         "HP": 30.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-U-VANGUARD-* | 개척자 기본값 + DEF 4~8 | 가드 충격 AP -5% | 구조 중 받는 피해 -8% | 판재 2, 골재 1",
       "raw": [
         "1072",
@@ -2286,6 +2651,11 @@
         "DEF": 8.0,
         "EVA": 2.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-U-VANGUARD-* | 개척자 기본값 + DEF 4~8 | 가드 충격 AP -5% | 구조 중 받는 피해 -8% | 판재 2, 골재 1",
       "raw": [
         "1073",
@@ -2319,6 +2689,11 @@
         "HP": 20.0,
         "RES": 4.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-R-OBSERVER-* | 개척자 기본값 + RES 4~8, HP 20~40 | 개인 오염 획득 -6% | 표본 채취 중 피격 중단 임계 +20% | 촉매 1, 결정 1, 정밀 부품 1",
       "raw": [
         "1074",
@@ -2352,6 +2727,11 @@
         "HP": 40.0,
         "RES": 8.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-R-OBSERVER-* | 개척자 기본값 + RES 4~8, HP 20~40 | 개인 오염 획득 -6% | 표본 채취 중 피격 중단 임계 +20% | 촉매 1, 결정 1, 정밀 부품 1",
       "raw": [
         "1075",
@@ -2385,6 +2765,11 @@
         "HP": 30.0,
         "RES": 6.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-R-OBSERVER-* | 개척자 기본값 + RES 4~8, HP 20~40 | 개인 오염 획득 -6% | 표본 채취 중 피격 중단 임계 +20% | 촉매 1, 결정 1, 정밀 부품 1",
       "raw": [
         "1076",
@@ -2418,6 +2803,11 @@
         "EVA": 2.0,
         "RES": 4.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-AR-R-OBSERVER-* | 개척자 기본값 + RES 4~8, HP 20~40 | 개인 오염 획득 -6% | 표본 채취 중 피격 중단 임계 +20% | 촉매 1, 결정 1, 정밀 부품 1",
       "raw": [
         "1077",
@@ -2449,6 +2839,11 @@
         "SWORD"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-W-{class} | 공명 추적 무기 | 현재 사용 중 무기군 | 해당 무기 핵심 액티브 적중 시 6초 내 다음 핵심 액티브 브레이크 +18%, 10초 | 잔류 패턴 4, 합금 4, 정밀 부품 3, 금 2, 결정 1",
       "raw": [
         "1078",
@@ -2480,6 +2875,11 @@
         "AXE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-W-{class} | 공명 추적 무기 | 현재 사용 중 무기군 | 해당 무기 핵심 액티브 적중 시 6초 내 다음 핵심 액티브 브레이크 +18%, 10초 | 잔류 패턴 4, 합금 4, 정밀 부품 3, 금 2, 결정 1",
       "raw": [
         "1079",
@@ -2511,6 +2911,11 @@
         "BOW"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-W-{class} | 공명 추적 무기 | 현재 사용 중 무기군 | 해당 무기 핵심 액티브 적중 시 6초 내 다음 핵심 액티브 브레이크 +18%, 10초 | 잔류 패턴 4, 합금 4, 정밀 부품 3, 금 2, 결정 1",
       "raw": [
         "1080",
@@ -2542,6 +2947,11 @@
         "CROSSBOW"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-W-{class} | 공명 추적 무기 | 현재 사용 중 무기군 | 해당 무기 핵심 액티브 적중 시 6초 내 다음 핵심 액티브 브레이크 +18%, 10초 | 잔류 패턴 4, 합금 4, 정밀 부품 3, 금 2, 결정 1",
       "raw": [
         "1081",
@@ -2573,6 +2983,11 @@
         "DAGGER"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-W-{class} | 공명 추적 무기 | 현재 사용 중 무기군 | 해당 무기 핵심 액티브 적중 시 6초 내 다음 핵심 액티브 브레이크 +18%, 10초 | 잔류 패턴 4, 합금 4, 정밀 부품 3, 금 2, 결정 1",
       "raw": [
         "1082",
@@ -2604,6 +3019,11 @@
         "MACE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-W-{class} | 공명 추적 무기 | 현재 사용 중 무기군 | 해당 무기 핵심 액티브 적중 시 6초 내 다음 핵심 액티브 브레이크 +18%, 10초 | 잔류 패턴 4, 합금 4, 정밀 부품 3, 금 2, 결정 1",
       "raw": [
         "1083",
@@ -2635,6 +3055,11 @@
         "STAFF"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-W-{class} | 공명 추적 무기 | 현재 사용 중 무기군 | 해당 무기 핵심 액티브 적중 시 6초 내 다음 핵심 액티브 브레이크 +18%, 10초 | 잔류 패턴 4, 합금 4, 정밀 부품 3, 금 2, 결정 1",
       "raw": [
         "1084",
@@ -2666,6 +3091,11 @@
         "PICKAXE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-W-{class} | 공명 추적 무기 | 현재 사용 중 무기군 | 해당 무기 핵심 액티브 적중 시 6초 내 다음 핵심 액티브 브레이크 +18%, 10초 | 잔류 패턴 4, 합금 4, 정밀 부품 3, 금 2, 결정 1",
       "raw": [
         "1085",
@@ -2697,6 +3127,11 @@
         "TRIDENT"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQL-D10-W-{class} | 공명 추적 무기 | 현재 사용 중 무기군 | 해당 무기 핵심 액티브 적중 시 6초 내 다음 핵심 액티브 브레이크 +18%, 10초 | 잔류 패턴 4, 합금 4, 정밀 부품 3, 금 2, 결정 1",
       "raw": [
         "1086",

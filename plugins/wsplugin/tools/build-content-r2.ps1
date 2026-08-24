@@ -672,6 +672,16 @@ $tools = foreach ($cells in $toolRows) {
         $day = Equipment-FirstDay $id
         $toolTier = $(if ($day -ge 41) {6} elseif ($day -ge 31) {5} elseif ($day -ge 21) {4} elseif ($day -ge 11) {3} else {2})
     }
+    $isUtility = $cells[2] -eq 'UTILITY'
+    $harvestProfileId = ''
+    if ($isUtility -and $id -match '-(PICKAXE|AXE|SHOVEL|HOE)$') {
+        $harvestProfileId = "HARVEST_$($Matches[1])"
+    }
+    $utilityEffectText = ''
+    if ($isUtility) {
+        if (-not $harvestProfileId) { throw "Utility harvest profile missing: $id" }
+        $utilityEffectText = "T1~T$toolTier WS 노드 채집; $harvestProfileId 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1"
+    }
     [ordered]@{
         id = $id; sourceDocumentId = 'TOOL-LIST-001'; enabled = $true
         codexIndex = [int]$cells[0]; name = Equipment-DisplayName $id $detailKey $detailCells
@@ -682,7 +692,12 @@ $tools = foreach ($cells in $toolRows) {
         maxDurability = Equipment-Durability $id $cells[2] $rarity; toolTier = $toolTier
         setId = Equipment-SetId $id; tags = [string[]]@($compiledTags)
         stats = Equipment-Stats $id
-        effectText = $(if ($detailCells.Count) { $detailCells -join ' | ' } else { $cells[5] })
+        executionOpcode = $(if ($isUtility) {'VANILLA_HARVEST_WITH_WS_TIER_GATE'} else {''})
+        harvestProfileId = $harvestProfileId
+        resourceYieldMultiplier = 1.0
+        durabilityCostPerSuccess = $(if ($isUtility) {1} else {0})
+        vanillaActionPassthrough = $isUtility
+        effectText = $(if ($isUtility) {$utilityEffectText} elseif ($detailCells.Count) { $detailCells -join ' | ' } else { $cells[5] })
         raw = @($cells)
     }
 }
@@ -1543,6 +1558,26 @@ $itemSchema = [ordered]@{
         }}
     }
 }
+$equipmentSchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema'; type='object'; additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; domain=[ordered]@{const='equipment'}
+        records=[ordered]@{type='array';items=[ordered]@{
+            type='object';additionalProperties=$false
+            required=@('id','sourceDocumentId','enabled','codexIndex','name','equipmentType','equipmentSlot','weaponClass','displayMaterial','definition','rarity','itemLevel','firstDay','maxDurability','toolTier','setId','tags','stats','executionOpcode','harvestProfileId','resourceYieldMultiplier','durabilityCostPerSuccess','vanillaActionPassthrough','effectText','raw')
+            properties=[ordered]@{
+                id=[ordered]@{type='string';pattern='^(?:EQL-|EQD(?:20|50)-)'};sourceDocumentId=[ordered]@{const='TOOL-LIST-001'};enabled=[ordered]@{const=$true};codexIndex=[ordered]@{type='integer';minimum=1000;maximum=1999};name=[ordered]@{type='string';minLength=1}
+                equipmentType=[ordered]@{enum=@('UTILITY','SW','AX','BO','CB','DG','BL','ST','PK','TR','UNARMED_SUPPORT','OFF','ARMOR','ACCESSORY','CHARM')};equipmentSlot=[ordered]@{enum=@('INVENTORY','MAIN_WEAPON','OFF_WEAPON','ARMOR_HEAD','ARMOR_CHEST','ARMOR_LEGS','ARMOR_FEET','ACCESSORY','CHARM')}
+                weaponClass=[ordered]@{enum=@('','SWORD','AXE','BOW','CROSSBOW','DAGGER','MACE','STAFF','PICKAXE','TRIDENT')};displayMaterial=[ordered]@{type='string';pattern='^[A-Z][A-Z0-9_]*$'};definition=[ordered]@{type='string';minLength=1}
+                rarity=[ordered]@{enum=@('COMMON','UNCOMMON','RARE','EPIC','LEGENDARY','ABYSSAL')};itemLevel=[ordered]@{type='integer';minimum=1;maximum=50};firstDay=[ordered]@{type='integer';minimum=1;maximum=50};maxDurability=[ordered]@{type='integer';minimum=1};toolTier=[ordered]@{type='integer';minimum=-1;maximum=6};setId=[ordered]@{type='string'}
+                tags=[ordered]@{type='array';items=[ordered]@{type='string'};uniqueItems=$true};stats=[ordered]@{type='object';additionalProperties=[ordered]@{type='number'}}
+                executionOpcode=[ordered]@{enum=@('','VANILLA_HARVEST_WITH_WS_TIER_GATE')};harvestProfileId=[ordered]@{enum=@('','HARVEST_PICKAXE','HARVEST_AXE','HARVEST_SHOVEL','HARVEST_HOE')};resourceYieldMultiplier=[ordered]@{const=1.0};durabilityCostPerSuccess=[ordered]@{type='integer';minimum=0;maximum=1};vanillaActionPassthrough=[ordered]@{type='boolean'}
+                effectText=[ordered]@{type='string';minLength=1};raw=[ordered]@{type='array';minItems=6;maxItems=6;items=[ordered]@{type='string'}}
+            }
+        }}
+    }
+}
 $researchSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
@@ -1602,7 +1637,7 @@ foreach ($name in $schemaNames) {
         Write-CanonicalArtifact 'schemas/status.schema.json'
         continue
     }
-    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'day') { $daySchema } elseif ($name -eq 'item') { $itemSchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'discovery') { $discoverySchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } else { $genericSchema }
+    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'day') { $daySchema } elseif ($name -eq 'item') { $itemSchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'equipment') { $equipmentSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'discovery') { $discoverySchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } else { $genericSchema }
     Write-Json "schemas/$name.schema.json" $schema
 }
 

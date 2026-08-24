@@ -8,7 +8,7 @@
 | 상태 | `DATA_LOCKED` |
 | 적용 범위 | 채집 도구, 전투 무기, 방어구, 보조무기, 장신구, 부적의 생산 ID와 도감 위치 |
 | 상위 기준 | `EQUIP-001`, `EQUIP-LIST-001`, `EQUIP-DATA-D20-001`, `EQUIP-DATA-D50-001`, `WEAPON-002` |
-| 데이터 리비전 | `tool-equipment-s1-r1` |
+| 데이터 리비전 | `tool-equipment-s1-r2` |
 | 최종 수정일 | 2026-08-23 |
 
 ## 1. 권위와 분류
@@ -52,6 +52,8 @@ slot 1~8 + 바닐라/WS 유틸리티 도구
 | RECONSTRUCTION | 41 | FAC-S01/S02 | T6 | 2100 | 네더라이트+CMD, 재건 하위 계통 |
 
 각 등급은 곡괭이·도끼·삽·괭이 4종이다. 가위·솔·낚싯대는 바닐라 도구를 사용하고 특수 표본은 FAC-P03 채취기가 권위를 가진다. 상위 도구 제작식은 `WSRCP-UT-<tier>-<tool>`이다.
+
+16종의 실행 필드는 `UTILITY-TOOL-LIST-001`이 소유한다. 공통 opcode는 `VANILLA_HARVEST_WITH_WS_TIER_GATE`, WS 노드 수율 배율은 `1.00`, 성공당 서버 내구 소모는 `1`이며 도구별 채집 프로필과 허용 노드 범주는 해당 별도 목록을 따른다.
 
 ## 4. 생산 장비·도구 레지스트리
 

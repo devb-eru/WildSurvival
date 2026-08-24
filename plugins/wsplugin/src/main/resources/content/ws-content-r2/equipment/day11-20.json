@@ -22,6 +22,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-AC-R01 | 표본 분류낭 | ACCESSORY | RARE 14 | 상태 표본 가상 보관 8칸, 표본 쿼터와 드롭량 증가는 없음 | 표본 주머니, 분류판 1, 탄성 직조 1",
       "raw": [
         "1087",
@@ -51,6 +56,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-AC-R02 | 응급 중계기 | ACCESSORY | RARE 17 | 8블록 내 아군 빈사 전환 시 5초간 구조 시작속도 +12%, 30초 | 신경 회로 1, 회로 2, 금 1",
       "raw": [
         "1088",
@@ -84,6 +94,11 @@
         "REACTION"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-AX-R01 | 절제 도끼 | AXE | RARE 14 | 상태 2종 이상 대상 강공 피해 +10%, 실행당 1회 | 강화 합금 3, 혈성 표본 2 | HEAVY`, `REACTION",
       "raw": [
         "1089",
@@ -117,6 +132,11 @@
         "CONTROL"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-BL-R01 | 신경 차단 철퇴 | BLUNT | RARE 14 | 강공 적중 시 적의 다음 약한 제어 지속시간 -20%, 아군 보호 효과, 8초 | 강화 합금 3, 신경 표본 2 | IMPACT`, `CONTROL",
       "raw": [
         "1090",
@@ -150,6 +170,11 @@
         "COOLING"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-BO-R01 | 냉각선 활 | BOW | RARE 14 | 12블록 이상 적중 시 화상 1중첩 제거 후 브레이크 +12%, 적에게만 적용 | 탄성 직조 2, 열성 표본 2 | RANGED`, `COOLING",
       "raw": [
         "1091",
@@ -183,6 +208,11 @@
         "SUPPRESS"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-CB-R01 | 격리 볼트 석궁 | CROSSBOW | RARE 14 | 첫 볼트가 독·출혈 중첩 원천의 상태 적중 -8%p, 5초 | 강화 합금 2, 독성 표본 2 | MAGAZINE`, `SUPPRESS",
       "raw": [
         "1092",
@@ -212,6 +242,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-CH-R01 | 안정화 매듭 | CHARM | RARE 17 | 상태 제거 소모품 사용 후 4초간 같은 상태 재적용 지속시간 -20%, 15초 | 멸균 젤 2, 탄성 직조 2, 신경 표본 1",
       "raw": [
         "1093",
@@ -241,6 +276,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-CH-R02 | 경계 감응핵 | CHARM | RARE 17 | 8블록 밖 전조 적이 강한 제어를 준비하면 방향 표시, 대상별 10초 | 신경 회로 1, 결정 2, 회로 2",
       "raw": [
         "1094",
@@ -274,6 +314,11 @@
         "BLEED"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-DG-R01 | 봉합 단검 | DAGGER | RARE 14 | 정확 회피 후 4초간 출혈 대상 HIT +8, 4타 브레이크 +10% | 탄성 직조 2, 혈성 표본 2 | AGILE`, `BLEED",
       "raw": [
         "1095",
@@ -303,6 +348,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-AC01 | 신경 분배환 | ACCESSORY | EPIC 19 | 아군 상태를 허용된 소모품으로 제거하면 양쪽 AP 4 회복, 대상별 12초 | 신경 회로 2, 금 3, 멸균 젤 2",
       "raw": [
         "1096",
@@ -334,6 +384,11 @@
         "RARE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-AR01 | 격리 가슴보호구 | ARMOR_CHEST | EPIC 19 | 강한 상태 최초 적용 시 2초간 받는 피해 -12%, 상태 계열별 전투당 1회 | RARE 가슴, 탄성 직조 3, 멸균 젤 3, 생체 조직 2",
       "raw": [
         "1097",
@@ -363,6 +418,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-CH01 | 연쇄 억제핵 | CHARM | EPIC 19 | 파티가 3초 안에 서로 다른 상태 3종을 걸면 보스 상태 저항 -6, 5초, 12초 | 상태 분류판 2, 생체 조직 2, 결정 3",
       "raw": [
         "1098",
@@ -392,6 +452,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-OH01 | 구조 중계 방패 | OFF_WEAPON | EPIC 19 | 방어 중 뒤 4블록 아군의 구조 중단 피해 임계 +20%; 패링 성공 시 3초 | 구조 방패, 강화 합금 4, 구조 고정대 2",
       "raw": [
         "1099",
@@ -421,6 +486,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-UA01 | 구조 격투 고리 | 권투 ACCESSORY | EPIC 19 | 정확 회피 반격 후 4초 내 구조 시작 시 이동속도 페널티 -50%, 12초 | 반격 붕대, 탄성 직조 3, 강화 합금 2",
       "raw": [
         "1100",
@@ -450,6 +520,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-AC01 | 다중 상태 해석환 | ACCESSORY | 파티가 서로 다른 상태 4종을 기록하면 8초간 상태 반응 피해·브레이크 +10%, 20초 | 잔류물 6, 분류판 3, 신경 회로 4, 금 4",
       "raw": [
         "1101",
@@ -479,6 +554,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-AR01 | 재건 생체 외피 | ARMOR_CHEST | 전투당 첫 빈사 전환 때 구조 가능시간 +4초와 자기 약한 상태 정지; 부활·빈사 방지는 아님 | 잔류물 6, 생체 매질 5, 탄성 직조 4, 강화 합금 4",
       "raw": [
         "1102",
@@ -508,6 +588,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-CH01 | 구조 공명핵 | CHARM | 구조 성공 후 구조자와 대상이 6초간 서로에게 향한 피해 10% 분담, 각자 HP 1 미만 불가, 30초 | 잔류물 6, 생체 매질 4, 구조 고정대 3, 결정 4",
       "raw": [
         "1103",
@@ -537,6 +622,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-OH01 | 접합 차단막 | OFF_WEAPON | 패링으로 강한 상태 패턴을 막으면 4블록 아군에게 3초 상태 적중 면역이 아니라 저항 +12 부여, 15초 | 잔류물 6, 강화 합금 7, 신경 회로 3",
       "raw": [
         "1104",
@@ -566,6 +656,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-UA01 | 무구의 생체 고리 | 권투 ACCESSORY | 정확 회피 반격으로 아군에게 향한 추적 패턴을 끊으면 파티 AP 5 회복, 패턴별 15초 | 잔류물 6, 탄성 직조 5, 생체 매질 3, 강화 합금 4",
       "raw": [
         "1105",
@@ -595,6 +690,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-OH-R01 | 정화 투사 방패 | OFF_WEAPON | RARE 14 | 패링 성공 시 뒤 3블록 아군의 독·화상 지속시간 -1초, 패턴별 8초 | 구조 방패, 강화 합금 2, 멸균 젤 2",
       "raw": [
         "1106",
@@ -628,6 +728,11 @@
         "BREAK"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-PK-R01 | 조직 천공 곡괭이 | PICKAXE | RARE 14 | 생체·장갑 태그 대상 PEN +10, 브레이크 80% 이상이면 +4 추가 | 강화 합금 3, 생체 조직 1 | PENETRATE`, `BREAK",
       "raw": [
         "1107",
@@ -661,6 +766,11 @@
         "REACTION"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-ST-R01 | 분류 지팡이 | STAFF | RARE 14 | 서로 다른 상태 3종 대상 영역 피해 +8%, 같은 시전 1회 | 상태 분류판 1, 신경 회로 1 | MAGIC`, `REACTION",
       "raw": [
         "1108",
@@ -694,6 +804,11 @@
         "STATUS_EXTEND"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SW-R01 | 중재자 검 | SWORD | RARE 14 | 패링 후 5초 내 다음 3타가 대상 상태 지속시간 +8%, 대상별 8초 | 강화 합금 2, 신경 회로 1 | GUARD`, `STATUS_EXTEND",
       "raw": [
         "1109",
@@ -727,6 +842,11 @@
         "RECALL"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-TR-R01 | 회수선 삼지창 | TRIDENT | RARE 14 | 커스텀 회수 경로가 아군을 통과하면 그 아군 상태 저항 +6, 4초, 아군별 10초 | 탄성 직조 2, 신경 회로 1 | THROW`, `RECALL",
       "raw": [
         "1110",
@@ -759,6 +879,11 @@
         "COUNTER"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-UA-R01 | 반격 붕대 | UNARMED 보조 ACCESSORY | RARE 14 | 빈손 정확 회피 반격 시 자기 약한 둔화·약화 1개 제거, 12초 | 탄성 직조 2, 멸균 젤 2 | UNARMED`, `COUNTER",
       "raw": [
         "1111",
@@ -791,6 +916,11 @@
         "RARE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-W01 | 상태 전환 코어 | 주무기 개조 | EPIC 19 | 다른 플레이어가 건 상태와 반응을 일으키면 6초간 다음 핵심 액티브 브레이크 +14%, 10초 | 기존 RARE, 강화 합금 4, 신경 회로 2, 분류판 1",
       "raw": [
         "1112",
@@ -823,6 +953,11 @@
         "RARE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-W01 | 상태 전환 코어 | 주무기 개조 | EPIC 19 | 다른 플레이어가 건 상태와 반응을 일으키면 6초간 다음 핵심 액티브 브레이크 +14%, 10초 | 기존 RARE, 강화 합금 4, 신경 회로 2, 분류판 1",
       "raw": [
         "1113",
@@ -855,6 +990,11 @@
         "RARE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-W01 | 상태 전환 코어 | 주무기 개조 | EPIC 19 | 다른 플레이어가 건 상태와 반응을 일으키면 6초간 다음 핵심 액티브 브레이크 +14%, 10초 | 기존 RARE, 강화 합금 4, 신경 회로 2, 분류판 1",
       "raw": [
         "1114",
@@ -887,6 +1027,11 @@
         "RARE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-W01 | 상태 전환 코어 | 주무기 개조 | EPIC 19 | 다른 플레이어가 건 상태와 반응을 일으키면 6초간 다음 핵심 액티브 브레이크 +14%, 10초 | 기존 RARE, 강화 합금 4, 신경 회로 2, 분류판 1",
       "raw": [
         "1115",
@@ -919,6 +1064,11 @@
         "RARE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-W01 | 상태 전환 코어 | 주무기 개조 | EPIC 19 | 다른 플레이어가 건 상태와 반응을 일으키면 6초간 다음 핵심 액티브 브레이크 +14%, 10초 | 기존 RARE, 강화 합금 4, 신경 회로 2, 분류판 1",
       "raw": [
         "1116",
@@ -951,6 +1101,11 @@
         "RARE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-W01 | 상태 전환 코어 | 주무기 개조 | EPIC 19 | 다른 플레이어가 건 상태와 반응을 일으키면 6초간 다음 핵심 액티브 브레이크 +14%, 10초 | 기존 RARE, 강화 합금 4, 신경 회로 2, 분류판 1",
       "raw": [
         "1117",
@@ -983,6 +1138,11 @@
         "RARE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-W01 | 상태 전환 코어 | 주무기 개조 | EPIC 19 | 다른 플레이어가 건 상태와 반응을 일으키면 6초간 다음 핵심 액티브 브레이크 +14%, 10초 | 기존 RARE, 강화 합금 4, 신경 회로 2, 분류판 1",
       "raw": [
         "1118",
@@ -1015,6 +1175,11 @@
         "RARE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-W01 | 상태 전환 코어 | 주무기 개조 | EPIC 19 | 다른 플레이어가 건 상태와 반응을 일으키면 6초간 다음 핵심 액티브 브레이크 +14%, 10초 | 기존 RARE, 강화 합금 4, 신경 회로 2, 분류판 1",
       "raw": [
         "1119",
@@ -1047,6 +1212,11 @@
         "RARE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-EP-W01 | 상태 전환 코어 | 주무기 개조 | EPIC 19 | 다른 플레이어가 건 상태와 반응을 일으키면 6초간 다음 핵심 액티브 브레이크 +14%, 10초 | 기존 RARE, 강화 합금 4, 신경 회로 2, 분류판 1",
       "raw": [
         "1120",
@@ -1078,6 +1248,11 @@
         "SWORD"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-W01 | 신경 절합 무기 | 현재 주무기군 | 협동 상태 반응 후 8초 내 같은 대상 핵심 액티브가 적중하면 반응을 소비하지 않고 브레이크 +20%, 12초 | 보스 잔류물 6, 생체 매질 4, 신경 회로 4, 강화 합금 6",
       "raw": [
         "1121",
@@ -1109,6 +1284,11 @@
         "AXE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-W01 | 신경 절합 무기 | 현재 주무기군 | 협동 상태 반응 후 8초 내 같은 대상 핵심 액티브가 적중하면 반응을 소비하지 않고 브레이크 +20%, 12초 | 보스 잔류물 6, 생체 매질 4, 신경 회로 4, 강화 합금 6",
       "raw": [
         "1122",
@@ -1140,6 +1320,11 @@
         "BOW"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-W01 | 신경 절합 무기 | 현재 주무기군 | 협동 상태 반응 후 8초 내 같은 대상 핵심 액티브가 적중하면 반응을 소비하지 않고 브레이크 +20%, 12초 | 보스 잔류물 6, 생체 매질 4, 신경 회로 4, 강화 합금 6",
       "raw": [
         "1123",
@@ -1171,6 +1356,11 @@
         "CROSSBOW"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-W01 | 신경 절합 무기 | 현재 주무기군 | 협동 상태 반응 후 8초 내 같은 대상 핵심 액티브가 적중하면 반응을 소비하지 않고 브레이크 +20%, 12초 | 보스 잔류물 6, 생체 매질 4, 신경 회로 4, 강화 합금 6",
       "raw": [
         "1124",
@@ -1202,6 +1392,11 @@
         "DAGGER"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-W01 | 신경 절합 무기 | 현재 주무기군 | 협동 상태 반응 후 8초 내 같은 대상 핵심 액티브가 적중하면 반응을 소비하지 않고 브레이크 +20%, 12초 | 보스 잔류물 6, 생체 매질 4, 신경 회로 4, 강화 합금 6",
       "raw": [
         "1125",
@@ -1233,6 +1428,11 @@
         "MACE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-W01 | 신경 절합 무기 | 현재 주무기군 | 협동 상태 반응 후 8초 내 같은 대상 핵심 액티브가 적중하면 반응을 소비하지 않고 브레이크 +20%, 12초 | 보스 잔류물 6, 생체 매질 4, 신경 회로 4, 강화 합금 6",
       "raw": [
         "1126",
@@ -1264,6 +1464,11 @@
         "STAFF"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-W01 | 신경 절합 무기 | 현재 주무기군 | 협동 상태 반응 후 8초 내 같은 대상 핵심 액티브가 적중하면 반응을 소비하지 않고 브레이크 +20%, 12초 | 보스 잔류물 6, 생체 매질 4, 신경 회로 4, 강화 합금 6",
       "raw": [
         "1127",
@@ -1295,6 +1500,11 @@
         "PICKAXE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-W01 | 신경 절합 무기 | 현재 주무기군 | 협동 상태 반응 후 8초 내 같은 대상 핵심 액티브가 적중하면 반응을 소비하지 않고 브레이크 +20%, 12초 | 보스 잔류물 6, 생체 매질 4, 신경 회로 4, 강화 합금 6",
       "raw": [
         "1128",
@@ -1326,6 +1536,11 @@
         "TRIDENT"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-LG-W01 | 신경 절합 무기 | 현재 주무기군 | 협동 상태 반응 후 8초 내 같은 대상 핵심 액티브가 적중하면 반응을 소비하지 않고 브레이크 +20%, 12초 | 보스 잔류물 6, 생체 매질 4, 신경 회로 4, 강화 합금 6",
       "raw": [
         "1129",
@@ -1357,6 +1572,11 @@
       "stats": {
         "RES": 3.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-MED` 멸균 구조복 | RES +4, 치료받기 +2% | 아군 소모품 사용시간 -10% | 구조 성공 시 대상의 제거 가능한 약한 상태 1개 제거, 대상별 20초 | 멸균 젤 2, 탄성 직조 1, 의약 2",
       "raw": [
         "1130",
@@ -1388,6 +1608,11 @@
       "stats": {
         "RES": 6.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-MED` 멸균 구조복 | RES +4, 치료받기 +2% | 아군 소모품 사용시간 -10% | 구조 성공 시 대상의 제거 가능한 약한 상태 1개 제거, 대상별 20초 | 멸균 젤 2, 탄성 직조 1, 의약 2",
       "raw": [
         "1131",
@@ -1419,6 +1644,11 @@
       "stats": {
         "RES": 5.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-MED` 멸균 구조복 | RES +4, 치료받기 +2% | 아군 소모품 사용시간 -10% | 구조 성공 시 대상의 제거 가능한 약한 상태 1개 제거, 대상별 20초 | 멸균 젤 2, 탄성 직조 1, 의약 2",
       "raw": [
         "1132",
@@ -1450,6 +1680,11 @@
       "stats": {
         "RES": 3.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-MED` 멸균 구조복 | RES +4, 치료받기 +2% | 아군 소모품 사용시간 -10% | 구조 성공 시 대상의 제거 가능한 약한 상태 1개 제거, 대상별 20초 | 멸균 젤 2, 탄성 직조 1, 의약 2",
       "raw": [
         "1133",
@@ -1482,6 +1717,11 @@
         "TENACITY": 3.0,
         "STAGGER_RES": 3.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-CTRL` 신경 차폐복 | TENACITY +4, STAGGER_RES +4 | SILENCE·DISARM 지속시간 -10% | 강한 제어 종료 후 2초간 약한 제어 지속시간 -25%, 15초 | 신경 표본 2, 탄성 직조 1, 금 1",
       "raw": [
         "1134",
@@ -1514,6 +1754,11 @@
         "TENACITY": 6.0,
         "STAGGER_RES": 6.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-CTRL` 신경 차폐복 | TENACITY +4, STAGGER_RES +4 | SILENCE·DISARM 지속시간 -10% | 강한 제어 종료 후 2초간 약한 제어 지속시간 -25%, 15초 | 신경 표본 2, 탄성 직조 1, 금 1",
       "raw": [
         "1135",
@@ -1546,6 +1791,11 @@
         "TENACITY": 5.0,
         "STAGGER_RES": 5.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-CTRL` 신경 차폐복 | TENACITY +4, STAGGER_RES +4 | SILENCE·DISARM 지속시간 -10% | 강한 제어 종료 후 2초간 약한 제어 지속시간 -25%, 15초 | 신경 표본 2, 탄성 직조 1, 금 1",
       "raw": [
         "1136",
@@ -1578,6 +1828,11 @@
         "TENACITY": 3.0,
         "STAGGER_RES": 3.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-CTRL` 신경 차폐복 | TENACITY +4, STAGGER_RES +4 | SILENCE·DISARM 지속시간 -10% | 강한 제어 종료 후 2초간 약한 제어 지속시간 -25%, 15초 | 신경 표본 2, 탄성 직조 1, 금 1",
       "raw": [
         "1137",
@@ -1610,6 +1865,11 @@
         "DEF": 5.0,
         "HP": 21.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-GUARD` 격리 방호복 | DEF +6, 최대 HP +30 | 독·화상·출혈 중 가장 높은 중첩 피해 -8% | 서로 다른 상태 2종 보유 중 받는 피해 -8%, 강한 CC에는 미적용 | 강화 합금 2, 멸균 젤 1, 상태 표본 선택 1",
       "raw": [
         "1138",
@@ -1642,6 +1902,11 @@
         "DEF": 9.0,
         "HP": 42.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-GUARD` 격리 방호복 | DEF +6, 최대 HP +30 | 독·화상·출혈 중 가장 높은 중첩 피해 -8% | 서로 다른 상태 2종 보유 중 받는 피해 -8%, 강한 CC에는 미적용 | 강화 합금 2, 멸균 젤 1, 상태 표본 선택 1",
       "raw": [
         "1139",
@@ -1674,6 +1939,11 @@
         "DEF": 7.0,
         "HP": 33.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-GUARD` 격리 방호복 | DEF +6, 최대 HP +30 | 독·화상·출혈 중 가장 높은 중첩 피해 -8% | 서로 다른 상태 2종 보유 중 받는 피해 -8%, 강한 CC에는 미적용 | 강화 합금 2, 멸균 젤 1, 상태 표본 선택 1",
       "raw": [
         "1140",
@@ -1706,6 +1976,11 @@
         "DEF": 4.0,
         "HP": 18.0
       },
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD20-SET-GUARD` 격리 방호복 | DEF +6, 최대 HP +30 | 독·화상·출혈 중 가장 높은 중첩 피해 -8% | 서로 다른 상태 2종 보유 중 받는 피해 -8%, 강한 CC에는 미적용 | 강화 합금 2, 멸균 젤 1, 상태 표본 선택 1",
       "raw": [
         "1141",

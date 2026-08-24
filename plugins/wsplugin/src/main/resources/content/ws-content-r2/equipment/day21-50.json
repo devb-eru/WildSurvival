@@ -24,6 +24,11 @@
         "AB41"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-AC-CALIBRATE` 교정환 | ACCESSORY | ABYSSAL 44 | C29 상호작용 실패 허용 오차 +5%, 중첩 불가 | AB41",
       "raw": [
         "1142",
@@ -55,6 +60,11 @@
         "AXE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-AX-A41` 잔향 절단도끼 | 도끼 | 공성·보스 잔향 표식 피해 +10% | 비표식 피해 -4%",
       "raw": [
         "1143",
@@ -88,6 +98,11 @@
         "MUTATION"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-AX-E21` 변이 절단도끼 | 도끼·AXE | 서로 다른 변이 2개 적 강공 피해 +12% | 실행당 1회 | HEAVY,MUTATION",
       "raw": [
         "1144",
@@ -120,6 +135,11 @@
         "AP8"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-AX-L31` 중단 집행도끼 | 도끼 | 중단 직후 강공 피해 +15% | 6초, 실행 1회 | 강공 AP +8",
       "raw": [
         "1145",
@@ -149,6 +169,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-AC01` 다축 변이환 | ACCESSORY | 다른 플레이어의 변이 대응 성공 뒤 PEN+8, 6초 | 자기 단독 발동 불가",
       "raw": [
         "1146",
@@ -178,6 +203,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-AR01` 오염 공존 외피 | CHEST | 개인 오염 단계 3+ 피해 -10% | 받는 정화 -15%",
       "raw": [
         "1147",
@@ -207,6 +237,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-OH01` 변이 차단막 | OFF_WEAPON | 패링한 변이 패턴의 다음 파티 피해 -10%, 10초 | 자기 피해 감소는 -5%만",
       "raw": [
         "1148",
@@ -236,6 +271,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-UA01` 무구의 정화 고리 | 권투 ACCESSORY | 정확 회피 반격 시 정화 충전형 사건 진행 +1, 15초 | 비전투 정화·자원 생성 없음",
       "raw": [
         "1149",
@@ -265,6 +305,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-AC01` 수단 교대환 | ACCESSORY | 서로 다른 중단 수단 3개 성공 시 파티 AP 8 | 패턴별 20초, 자기 효과 재발동 없음",
       "raw": [
         "1150",
@@ -294,6 +339,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-AR01` 위상 작업 외피 | CHEST | 페이즈 전환 뒤 4초 브레이크 +10% | 페이즈 전환 중 AP 자연회복 정지",
       "raw": [
         "1151",
@@ -325,6 +375,11 @@
         "AP2"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-OH01` 잔류 차폐막 | OFF_WEAPON | PARTIAL 중단 뒤 잔류 영역 피해 -12% | 방어 유지 AP +2/초",
       "raw": [
         "1152",
@@ -356,6 +411,11 @@
         "AP1"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-UA01` 네 번째 수단 고리 | 권투 ACCESSORY | 정확 회피 반격을 독립 `COUNTER` 수단으로 기록 | 실패 반격 AP 회복 지연 +1초",
       "raw": [
         "1153",
@@ -387,6 +447,11 @@
         "MACE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-BL-A41` 재건 파쇄철퇴 | 둔기 | 접합 핵·공성 적 브레이크 +12% | 일반 적 피해 -4%",
       "raw": [
         "1154",
@@ -420,6 +485,11 @@
         "BREAK"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-BL-E21` 정화 파쇄철퇴 | 둔기·MACE | 정화 보호막 대상 브레이크 +14% | 대상별 8초 | IMPACT,BREAK",
       "raw": [
         "1155",
@@ -451,6 +521,11 @@
         "MACE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-BL-L31` 감쇠 지연철퇴 | 둔기 | 반복 수단 감쇠 단계를 1단 늦춤 | 파티 중 1개 | 이동속도 -5%",
       "raw": [
         "1156",
@@ -482,6 +557,11 @@
         "BOW"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-BO-A41` 중계선 관측활 | 활 | 중계선을 통과한 사격이 6초 경로 표식 | 같은 선 10초, 표식 직접 피해 없음",
       "raw": [
         "1157",
@@ -515,6 +595,11 @@
         "STATUS"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-BO-E21` 경계 관측활 | 활·BOW | 정화 영역 밖 표적 상태 적중 +8%p | 대상 8초, 전체 상한 | RANGED,STATUS",
       "raw": [
         "1158",
@@ -546,6 +631,11 @@
         "BOW"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-BO-L31` 채널 관통활 | 활 | 채널러 12m+ 브레이크 +12% | 대상 8초 | 근거리 피해 -6%",
       "raw": [
         "1159",
@@ -577,6 +667,11 @@
         "CROSSBOW"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-CB-A41` 분할 교대석궁 | 석궁 | 시설/파티 목표 교대 시 다음 장전 -12% | 10초, 탄창 피해 증가 없음",
       "raw": [
         "1160",
@@ -610,6 +705,11 @@
         "INTERRUPT"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-CB-E21` 방해 절단석궁 | 석궁·CROSSBOW | 정화 방해 채널 첫 볼트 중단 브레이크 +180 | 채널당 1회 | MAGAZINE,INTERRUPT",
       "raw": [
         "1161",
@@ -641,6 +741,11 @@
         "CROSSBOW"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-CB-L31` 교대 탄창석궁 | 석궁 | 한 탄창의 서로 다른 대상 적중 브레이크 +10% | 탄창당 1회 | 단일 대상 3발째 피해 -8%",
       "raw": [
         "1162",
@@ -672,6 +777,11 @@
         "AB41"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-CH-RELAY` 귀환 공명핵 | CHARM | ABYSSAL 44 | 20m 내 중계선 단절 경고·첫 수리 10% 빠름 | AB41",
       "raw": [
         "1163",
@@ -704,6 +814,11 @@
         "NO_RETRIGGER"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-DG-A41` 이동 반격단검 | 단검 | 이동 압박 중 회피 반격 AP 5 환급 | 초당 5, NO_RETRIGGER",
       "raw": [
         "1164",
@@ -737,6 +852,11 @@
         "BACKSTAB"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-DG-E21` 정제 흔적단검 | 단검·SWORD | 변이 약점 후면 4타가 정제 표식 1개 | 자원 생성 없음, 10초 | AGILE,BACKSTAB",
       "raw": [
         "1165",
@@ -768,6 +888,11 @@
         "DAGGER"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-DG-L31` 틈새 반격단검 | 단검 | 정확 회피 뒤 약점 브레이크 +16% | 8초 | 비약점 브레이크 -8%",
       "raw": [
         "1166",
@@ -799,6 +924,11 @@
         "AB35"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-OH-INTERRUPT` 공진 방패 | OFF_WEAPON | ABYSSAL 37 | 패링을 다른 중단 수단으로 취급, 같은 패턴 12초 | AB35",
       "raw": [
         "1167",
@@ -830,6 +960,11 @@
         "LG25"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-OH-PURIFY` 정화 차단막 | OFF_WEAPON | LEGENDARY 27 | 패링으로 오염 패턴 막으면 뒤 아군 오염 압력 -1, 15초 | LG25",
       "raw": [
         "1168",
@@ -861,6 +996,11 @@
         "PICKAXE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-PK-A41` 시설 천공곡괭이 | 곡괭이 | 재건 시설 20m 내 공성 적 PEN +10 | 비전투 채굴 보너스 없음",
       "raw": [
         "1169",
@@ -894,6 +1034,11 @@
         "MUTATION"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-PK-E21` 변이 천공곡괭이 | 곡괭이·PICKAXE | 변이 갑피 대상 PEN +12 | PEN 하드캡 | PENETRATE,MUTATION",
       "raw": [
         "1170",
@@ -925,6 +1070,11 @@
         "PICKAXE"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-PK-L31` 중장 천공곡괭이 | 곡괭이 | 채널·중장갑 브레이크 +15% | 대상별 6초 | 비장갑 피해 -6%",
       "raw": [
         "1171",
@@ -956,6 +1106,11 @@
         "STAFF"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-ST-A41` 반응 유지지팡이 | 지팡이 | 상태·오염 반응 영역 안 파티 RES +6 | 영역 1개, 같은 효과 중첩 없음",
       "raw": [
         "1172",
@@ -989,6 +1144,11 @@
         "AREA"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-ST-E21` 이동 정화지팡이 | 지팡이·BLAZE_ROD | 정화 영역 재배치 쿨다운 -10% | 전체 쿨다운 하한 | MAGIC,AREA",
       "raw": [
         "1173",
@@ -1020,6 +1180,11 @@
         "STAFF"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-ST-L31` 잔류 단절지팡이 | 지팡이 | 중단 뒤 적 잔류 장판 지속 -15% | 장판당 1회 | 직접 피해 -5%",
       "raw": [
         "1174",
@@ -1051,6 +1216,11 @@
         "SWORD"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SW-A41` 귀환 중재검 | 검 | 구조·패링을 서로 다른 플레이어가 8초 내 성공 시 파티 RES +6, 6초 | 자기 연속 발동 불가, 12초",
       "raw": [
         "1175",
@@ -1084,6 +1254,11 @@
         "CORRUPTION"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SW-E21` 정화 중재검 | 검·SWORD | 패링 후 개인 오염 획득 -8%, 8초 | 12초, 0% 미만 불가 | GUARD,CORRUPTION",
       "raw": [
         "1176",
@@ -1115,6 +1290,11 @@
         "SWORD"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SW-L31` 교대 패링검 | 검 | 다른 수단 뒤 패링 브레이크 +14% | 패턴당 1회 | 같은 패턴 연속 패링 -10%",
       "raw": [
         "1177",
@@ -1146,6 +1326,11 @@
         "TRIDENT"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-TR-A41` 중계 회귀삼지창 | 삼지창 | 회수선이 활성 중계선을 따르면 회수 속도 +15% | 급류·충성 비활성 유지",
       "raw": [
         "1178",
@@ -1179,6 +1364,11 @@
         "RECALL"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-TR-E21` 정화 회수삼지창 | 삼지창·TRIDENT | 회수선이 정화 영역 통과 시 폭 +10% | 회수당 1회 | THROW,RECALL",
       "raw": [
         "1179",
@@ -1211,6 +1401,11 @@
         "AP6"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-TR-L31` 왕복 파쇄삼지창 | 삼지창 | 투척·회수 서로 다른 적중 브레이크 +12% | 실행당 1회 | 회수 실패 AP 6 손실",
       "raw": [
         "1180",
@@ -1240,6 +1435,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-UA-A41` 빈손 구조띠 | 권투 | 빈손 구조·반격 교대 시 이동 페널티 -50% | 8초, 주무기 장착 즉시 비활성",
       "raw": [
         "1181",
@@ -1272,6 +1472,11 @@
         "COUNTER"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-UA-E21` 정화 반격고리 | 권투·ACCESSORY | 영역 밖 정확 회피 시 개인 오염 -1%p | 15초, 자원·보상 없음 | UNARMED,COUNTER",
       "raw": [
         "1182",
@@ -1301,6 +1506,11 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-UA-L31` 영점 반격띠 | 권투 | 정확 회피 반격 브레이크 +18% | 같은 패턴 감쇠 적용 | 피격 시 다음 반격 +0% 초기화",
       "raw": [
         "1183",
@@ -1333,6 +1543,11 @@
         "AP5"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-W01` 섭식 역류 무기 | 현재 주무기군 | 정화 취약 8초 중 핵심 액티브 피해·브레이크 +14% | 취약 밖 AP 회복 -5%",
       "raw": [
         "1184",
@@ -1365,6 +1580,11 @@
         "AP5"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-W01` 섭식 역류 무기 | 현재 주무기군 | 정화 취약 8초 중 핵심 액티브 피해·브레이크 +14% | 취약 밖 AP 회복 -5%",
       "raw": [
         "1185",
@@ -1397,6 +1617,11 @@
         "AP5"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-W01` 섭식 역류 무기 | 현재 주무기군 | 정화 취약 8초 중 핵심 액티브 피해·브레이크 +14% | 취약 밖 AP 회복 -5%",
       "raw": [
         "1186",
@@ -1429,6 +1654,11 @@
         "AP5"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-W01` 섭식 역류 무기 | 현재 주무기군 | 정화 취약 8초 중 핵심 액티브 피해·브레이크 +14% | 취약 밖 AP 회복 -5%",
       "raw": [
         "1187",
@@ -1461,6 +1691,11 @@
         "AP5"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-W01` 섭식 역류 무기 | 현재 주무기군 | 정화 취약 8초 중 핵심 액티브 피해·브레이크 +14% | 취약 밖 AP 회복 -5%",
       "raw": [
         "1188",
@@ -1493,6 +1728,11 @@
         "AP5"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-W01` 섭식 역류 무기 | 현재 주무기군 | 정화 취약 8초 중 핵심 액티브 피해·브레이크 +14% | 취약 밖 AP 회복 -5%",
       "raw": [
         "1189",
@@ -1525,6 +1765,11 @@
         "AP5"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-W01` 섭식 역류 무기 | 현재 주무기군 | 정화 취약 8초 중 핵심 액티브 피해·브레이크 +14% | 취약 밖 AP 회복 -5%",
       "raw": [
         "1190",
@@ -1557,6 +1802,11 @@
         "AP5"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-W01` 섭식 역류 무기 | 현재 주무기군 | 정화 취약 8초 중 핵심 액티브 피해·브레이크 +14% | 취약 밖 AP 회복 -5%",
       "raw": [
         "1191",
@@ -1589,6 +1839,11 @@
         "AP5"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B30-W01` 섭식 역류 무기 | 현재 주무기군 | 정화 취약 8초 중 핵심 액티브 피해·브레이크 +14% | 취약 밖 AP 회복 -5%",
       "raw": [
         "1192",
@@ -1621,6 +1876,11 @@
         "UNBREAKABLE6"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-W01` 공진 중단 무기 | 현재 주무기군 | INTERRUPTIBLE 채널 첫 기여 +18%, 패턴당 1회 | UNBREAKABLE 패턴 피해 -6%",
       "raw": [
         "1193",
@@ -1653,6 +1913,11 @@
         "UNBREAKABLE6"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-W01` 공진 중단 무기 | 현재 주무기군 | INTERRUPTIBLE 채널 첫 기여 +18%, 패턴당 1회 | UNBREAKABLE 패턴 피해 -6%",
       "raw": [
         "1194",
@@ -1685,6 +1950,11 @@
         "UNBREAKABLE6"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-W01` 공진 중단 무기 | 현재 주무기군 | INTERRUPTIBLE 채널 첫 기여 +18%, 패턴당 1회 | UNBREAKABLE 패턴 피해 -6%",
       "raw": [
         "1195",
@@ -1717,6 +1987,11 @@
         "UNBREAKABLE6"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-W01` 공진 중단 무기 | 현재 주무기군 | INTERRUPTIBLE 채널 첫 기여 +18%, 패턴당 1회 | UNBREAKABLE 패턴 피해 -6%",
       "raw": [
         "1196",
@@ -1749,6 +2024,11 @@
         "UNBREAKABLE6"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-W01` 공진 중단 무기 | 현재 주무기군 | INTERRUPTIBLE 채널 첫 기여 +18%, 패턴당 1회 | UNBREAKABLE 패턴 피해 -6%",
       "raw": [
         "1197",
@@ -1781,6 +2061,11 @@
         "UNBREAKABLE6"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-W01` 공진 중단 무기 | 현재 주무기군 | INTERRUPTIBLE 채널 첫 기여 +18%, 패턴당 1회 | UNBREAKABLE 패턴 피해 -6%",
       "raw": [
         "1198",
@@ -1813,6 +2098,11 @@
         "UNBREAKABLE6"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-W01` 공진 중단 무기 | 현재 주무기군 | INTERRUPTIBLE 채널 첫 기여 +18%, 패턴당 1회 | UNBREAKABLE 패턴 피해 -6%",
       "raw": [
         "1199",
@@ -1845,6 +2135,11 @@
         "UNBREAKABLE6"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-W01` 공진 중단 무기 | 현재 주무기군 | INTERRUPTIBLE 채널 첫 기여 +18%, 패턴당 1회 | UNBREAKABLE 패턴 피해 -6%",
       "raw": [
         "1200",
@@ -1877,6 +2172,11 @@
         "UNBREAKABLE6"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-B40-W01` 공진 중단 무기 | 현재 주무기군 | INTERRUPTIBLE 채널 첫 기여 +18%, 패턴당 1회 | UNBREAKABLE 패턴 피해 -6%",
       "raw": [
         "1201",
@@ -1908,6 +2208,11 @@
         "SPD3"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-PURIFIER` 경계 정화복 | EPIC 24→LG29 | 개인 오염 획득 -6% | 정화기/휴대 정화기 8m 내 피해 -8% | 정화 영역 밖 SPD -3%",
       "raw": [
         "1202",
@@ -1939,6 +2244,11 @@
         "SPD3"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-PURIFIER` 경계 정화복 | EPIC 24→LG29 | 개인 오염 획득 -6% | 정화기/휴대 정화기 8m 내 피해 -8% | 정화 영역 밖 SPD -3%",
       "raw": [
         "1203",
@@ -1970,6 +2280,11 @@
         "SPD3"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-PURIFIER` 경계 정화복 | EPIC 24→LG29 | 개인 오염 획득 -6% | 정화기/휴대 정화기 8m 내 피해 -8% | 정화 영역 밖 SPD -3%",
       "raw": [
         "1204",
@@ -2001,6 +2316,11 @@
         "SPD3"
       ],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-PURIFIER` 경계 정화복 | EPIC 24→LG29 | 개인 오염 획득 -6% | 정화기/휴대 정화기 8m 내 피해 -8% | 정화 영역 밖 SPD -3%",
       "raw": [
         "1205",
@@ -2030,6 +2350,11 @@
       "setId": "EQD50-SET-INTERRUPT",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-INTERRUPT` 중단 작업복 | LG34→AB39 | 중단 가능 전조 0.15초 조기 표시 | 다른 수단 뒤 브레이크 +8% | 동일 수단 연속 피해 -4%",
       "raw": [
         "1206",
@@ -2059,6 +2384,11 @@
       "setId": "EQD50-SET-INTERRUPT",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-INTERRUPT` 중단 작업복 | LG34→AB39 | 중단 가능 전조 0.15초 조기 표시 | 다른 수단 뒤 브레이크 +8% | 동일 수단 연속 피해 -4%",
       "raw": [
         "1207",
@@ -2088,6 +2418,11 @@
       "setId": "EQD50-SET-INTERRUPT",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-INTERRUPT` 중단 작업복 | LG34→AB39 | 중단 가능 전조 0.15초 조기 표시 | 다른 수단 뒤 브레이크 +8% | 동일 수단 연속 피해 -4%",
       "raw": [
         "1208",
@@ -2117,6 +2452,11 @@
       "setId": "EQD50-SET-INTERRUPT",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-INTERRUPT` 중단 작업복 | LG34→AB39 | 중단 가능 전조 0.15초 조기 표시 | 다른 수단 뒤 브레이크 +8% | 동일 수단 연속 피해 -4%",
       "raw": [
         "1209",
@@ -2146,6 +2486,11 @@
       "setId": "EQD50-SET-REBUILD",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-REBUILD` 첫불씨 방호복 | AB44→50 | 시설·중계 작업 중 피해 -10% | 구조/수리/교정 중단 임계 +20% | 직접 공격 피해 -5%",
       "raw": [
         "1210",
@@ -2175,6 +2520,11 @@
       "setId": "EQD50-SET-REBUILD",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-REBUILD` 첫불씨 방호복 | AB44→50 | 시설·중계 작업 중 피해 -10% | 구조/수리/교정 중단 임계 +20% | 직접 공격 피해 -5%",
       "raw": [
         "1211",
@@ -2204,6 +2554,11 @@
       "setId": "EQD50-SET-REBUILD",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-REBUILD` 첫불씨 방호복 | AB44→50 | 시설·중계 작업 중 피해 -10% | 구조/수리/교정 중단 임계 +20% | 직접 공격 피해 -5%",
       "raw": [
         "1212",
@@ -2233,6 +2588,11 @@
       "setId": "EQD50-SET-REBUILD",
       "tags": [],
       "stats": {},
+      "executionOpcode": "",
+      "harvestProfileId": "",
+      "resourceYieldMultiplier": 1.0,
+      "durabilityCostPerSuccess": 0,
+      "vanillaActionPassthrough": false,
       "effectText": "EQD50-SET-REBUILD` 첫불씨 방호복 | AB44→50 | 시설·중계 작업 중 피해 -10% | 구조/수리/교정 중단 임계 +20% | 직접 공격 피해 -5%",
       "raw": [
         "1213",

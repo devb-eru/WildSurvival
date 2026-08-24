@@ -16,20 +16,196 @@
       "const": "ws-content-r2"
     },
     "domain": {
-      "type": "string",
-      "minLength": 1
+      "const": "equipment"
     },
     "records": {
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
-          "id"
+          "id",
+          "sourceDocumentId",
+          "enabled",
+          "codexIndex",
+          "name",
+          "equipmentType",
+          "equipmentSlot",
+          "weaponClass",
+          "displayMaterial",
+          "definition",
+          "rarity",
+          "itemLevel",
+          "firstDay",
+          "maxDurability",
+          "toolTier",
+          "setId",
+          "tags",
+          "stats",
+          "executionOpcode",
+          "harvestProfileId",
+          "resourceYieldMultiplier",
+          "durabilityCostPerSuccess",
+          "vanillaActionPassthrough",
+          "effectText",
+          "raw"
         ],
         "properties": {
           "id": {
             "type": "string",
+            "pattern": "^(?:EQL-|EQD(?:20|50)-)"
+          },
+          "sourceDocumentId": {
+            "const": "TOOL-LIST-001"
+          },
+          "enabled": {
+            "const": true
+          },
+          "codexIndex": {
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 1999
+          },
+          "name": {
+            "type": "string",
             "minLength": 1
+          },
+          "equipmentType": {
+            "enum": [
+              "UTILITY",
+              "SW",
+              "AX",
+              "BO",
+              "CB",
+              "DG",
+              "BL",
+              "ST",
+              "PK",
+              "TR",
+              "UNARMED_SUPPORT",
+              "OFF",
+              "ARMOR",
+              "ACCESSORY",
+              "CHARM"
+            ]
+          },
+          "equipmentSlot": {
+            "enum": [
+              "INVENTORY",
+              "MAIN_WEAPON",
+              "OFF_WEAPON",
+              "ARMOR_HEAD",
+              "ARMOR_CHEST",
+              "ARMOR_LEGS",
+              "ARMOR_FEET",
+              "ACCESSORY",
+              "CHARM"
+            ]
+          },
+          "weaponClass": {
+            "enum": [
+              "",
+              "SWORD",
+              "AXE",
+              "BOW",
+              "CROSSBOW",
+              "DAGGER",
+              "MACE",
+              "STAFF",
+              "PICKAXE",
+              "TRIDENT"
+            ]
+          },
+          "displayMaterial": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$"
+          },
+          "definition": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rarity": {
+            "enum": [
+              "COMMON",
+              "UNCOMMON",
+              "RARE",
+              "EPIC",
+              "LEGENDARY",
+              "ABYSSAL"
+            ]
+          },
+          "itemLevel": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "firstDay": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "maxDurability": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "toolTier": {
+            "type": "integer",
+            "minimum": -1,
+            "maximum": 6
+          },
+          "setId": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "stats": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "executionOpcode": {
+            "enum": [
+              "",
+              "VANILLA_HARVEST_WITH_WS_TIER_GATE"
+            ]
+          },
+          "harvestProfileId": {
+            "enum": [
+              "",
+              "HARVEST_PICKAXE",
+              "HARVEST_AXE",
+              "HARVEST_SHOVEL",
+              "HARVEST_HOE"
+            ]
+          },
+          "resourceYieldMultiplier": {
+            "const": 1.0
+          },
+          "durabilityCostPerSuccess": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "vanillaActionPassthrough": {
+            "type": "boolean"
+          },
+          "effectText": {
+            "type": "string",
+            "minLength": 1
+          },
+          "raw": {
+            "type": "array",
+            "minItems": 6,
+            "maxItems": 6,
+            "items": {
+              "type": "string"
+            }
           }
         }
       }

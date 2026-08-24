@@ -65,7 +65,10 @@ public record ProductionContentCatalog(
     public record EquipmentEntry(String id, String name, String equipmentType, String equipmentSlot,
                                  String weaponClass, String displayMaterial, String rarity, int itemLevel,
                                  int firstDay, int maxDurability, int toolTier, String setId,
-                                 List<String> tags, Map<String, Double> stats, String effectText) {
+                                 List<String> tags, Map<String, Double> stats, String executionOpcode,
+                                 String harvestProfileId, double resourceYieldMultiplier,
+                                 int durabilityCostPerSuccess, boolean vanillaActionPassthrough,
+                                 String effectText) {
         public double stat(String id) {
             return stats.getOrDefault(id, 0.0);
         }
