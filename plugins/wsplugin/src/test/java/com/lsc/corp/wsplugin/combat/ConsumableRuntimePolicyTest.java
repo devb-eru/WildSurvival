@@ -17,6 +17,13 @@ class ConsumableRuntimePolicyTest {
 
     @Test
     void preservesExactStackAndTimingContracts() {
+        assertEquals(10.0, ConsumableRuntimePolicy.AP_STIM_INITIAL_AP);
+        assertEquals(3.0, ConsumableRuntimePolicy.AP_STIM_PULSE_AP);
+        assertEquals(5, ConsumableRuntimePolicy.AP_STIM_PULSE_COUNT);
+        assertEquals(20L, ConsumableRuntimePolicy.AP_STIM_PULSE_INTERVAL_TICKS);
+        assertEquals(25.0, ConsumableRuntimePolicy.apStimTotalAp());
+        assertEquals(0.10, ConsumableRuntimePolicy.BASE_RESCUE_BRACE_THRESHOLD_BONUS);
+        assertEquals(0.25, ConsumableRuntimePolicy.REINFORCED_RESCUE_BRACE_THRESHOLD_BONUS);
         assertEquals(1, ConsumableRuntimePolicy.removableStacks("WSI-CONS-BANDAGE"));
         assertEquals(2, ConsumableRuntimePolicy.removableStacks("WSI-CONS-ANTIDOTE_INJECTION"));
         assertEquals(160L, ConsumableRuntimePolicy.rationUseTicks(false));

@@ -727,7 +727,7 @@
         "C28-D"
       ],
       "primaryPath": "프레임·동력·렌즈·매질을 조립하고 세 교정 시험 완료",
-      "alternativePath": "시험 실패 데이터를 누적해 요구 난도를 점진적으로 명확화",
+      "alternativePath": "R03의 15초 주기 방향/잔차 단서와 R05의 유효 배치 후보 표시로 정답·지형 조건을 단계적으로 명확화",
       "unlockText": "`day49CalibrationComplete`, 최종 신호 준비",
       "clueText": "",
       "stateMachine": [
@@ -828,7 +828,7 @@
       ],
       "primaryPath": "자수정·정밀 부품·재건 부품 C 가공",
       "alternativePath": "관측 기록 5종과 보스 패턴 잔재로 보정",
-      "unlockText": "세 방향 신호 오차 범위 충족",
+      "unlockText": "동·서·남·북 중 회차에 잠긴 무작위 3방향과 방향별 정수 보정값을 GUI에서 모두 정확히 일치",
       "clueText": "재건 하위 계통 검증",
       "stateMachine": [
         "HIDDEN",
@@ -853,7 +853,7 @@
       ],
       "primaryPath": "자연 정화·변이 조직·균열 표본 세 범주 합성",
       "alternativePath": "정착 정화기의 누적 운전 기록과 희귀 촉매 소비",
-      "unlockText": "오염 단계가 다른 환경 두 곳에서 반응 유지",
+      "unlockText": "등록 플레이어가 방문한 환경 원장에서 서로 다른 환경 ID 두 곳을 선택해 각 10초 반응 유지",
       "clueText": "재건 하위 계통 검증",
       "stateMachine": [
         "HIDDEN",

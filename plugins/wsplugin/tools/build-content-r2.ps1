@@ -443,11 +443,11 @@ $recipeExact = @{
     'WSRCP-D30-CALL'='WSR-STABLE_CORE*2;WSR-PURIFY_MEDIUM*4;WSR-REFINED_MUTATION*3;WSR-SIGNAL_LENS*2';
     'WSRCP-D40-CALL'='WSR-INTERRUPT_CORE*2;WSR-HIGH_DENSITY_ALLOY*4;WSR-PATTERN_RESIDUE*6;WSR-RESONANCE_COIL*4';
     'WSRCP-FINAL-KEY'='WSR-STABILIZED_FRAME*2;WSR-POWER_MATRIX*2;WSR-CALIBRATED_LENS*2;WSR-PURIFY_MATRIX*2';
-    'WSRCP-R01'='WSR-STABILIZED_FRAME*12;WSR-HARD_AGGREGATE*16;PROOF:WSP-REBUILD-PART-A*1';
-    'WSRCP-R02'='WSR-POWER_MATRIX*6;WSR-RESONANCE_COIL*8;PROOF:WSP-REBUILD-PART-B*1';
-    'WSRCP-R03'='WSR-CALIBRATED_LENS*4;WSR-PATTERN_RESIDUE*6;PROOF:WSP-REBUILD-PART-C*1';
-    'WSRCP-R04'='WSR-PURIFY_MATRIX*6;WSR-PURIFY_CATALYST*10;PROOF:WSP-REBUILD-PART-D*1';
-    'WSRCP-R05'='WSR-HIGH_DENSITY_ALLOY*6;WSR-CALIBRATED_LENS*3;WSR-RESONANCE_COIL*6';
+    'WSRCP-R01'='WSR-STABILIZED_FRAME*6;WSR-HARD_AGGREGATE*10;PROOF:WSP-REBUILD-PART-A*1';
+    'WSRCP-R02'='WSR-POWER_MATRIX*3;WSR-RESONANCE_COIL*4;PROOF:WSP-REBUILD-PART-B*1';
+    'WSRCP-R03'='WSR-CALIBRATED_LENS*3;WSR-PATTERN_RESIDUE*4;PROOF:WSP-REBUILD-PART-C*1';
+    'WSRCP-R04'='WSR-PURIFY_MATRIX*3;WSR-PURIFY_CATALYST*6;PROOF:WSP-REBUILD-PART-D*1';
+    'WSRCP-R05'='WSR-HIGH_DENSITY_ALLOY*3;WSR-CALIBRATED_LENS*3;WSR-RESONANCE_COIL*3';
     'WSRCP-R06'='PROOF:FAC-R01_READY*1;PROOF:FAC-R02_READY*1;PROOF:FAC-R03_READY*1;PROOF:FAC-R04_READY*1;PROOF:FAC-R05_READY*1;PROOF:WSR-FINAL_SIGNAL_KEY*1';
     'WSRCP-D20-F01'='WSR-WOOD*5;WSR-STONE*3;WSR-IRON*3;WSR-HERB*3';
     'WSRCP-D20-F02'='WSR-WOOD*8;WSR-STONE*6;WSR-COPPER*6;WSR-REDSTONE*6;WSR-MAGIC_CRYSTAL*1';
@@ -1032,6 +1032,18 @@ foreach ($cells in $facilityRows) {
 }
 $itemById = [ordered]@{}
 foreach ($item in $items) { $itemById[$item.id] = $item }
+$facilityUpgradeProfiles = @{
+    'FP-PRODUCTION' = @(
+        @(12,2,10,4,0), @(8,0,12,6,2), @(10,0,18,10,6), @(12,0,24,16,10), @(14,0,30,20,16))
+    'FP-RESEARCH' = @(
+        @(10,2,8,12,2), @(6,0,10,14,4), @(8,0,14,20,8), @(10,0,18,28,12), @(12,0,22,34,18))
+    'FP-SURVIVAL' = @(
+        @(10,8,8,4,2), @(8,8,10,5,4), @(10,10,14,7,8), @(12,12,18,10,12), @(14,14,22,12,18))
+    'FP-LOGISTICS' = @(
+        @(14,2,10,10,0), @(10,0,12,12,2), @(12,0,16,18,6), @(16,0,20,24,10), @(18,0,26,30,14))
+    'FP-DEFENSE' = @(
+        @(8,2,12,4,0), @(6,0,14,5,2), @(8,0,18,8,4))
+}
 $facilities = foreach ($entry in $facilityById.GetEnumerator()) {
     $id = $entry.Key; $cells = $entry.Value; $tier = Facility-Tier $id
     $execution = $facilityExecutionById[$id]
@@ -1057,14 +1069,50 @@ $facilities = foreach ($entry in $facilityById.GetEnumerator()) {
     $fallback = if ($profile -and $profile.Count -gt 5) { $profile[5] }
         elseif ($tier -eq 'CAMP' -and $cells.Count -gt 5) { $cells[5] } else { '' }
     $coreMaterial = Facility-CoreMaterial $id $(if ($item) {$item.displayMaterial} else {''})
+    $maxLevel = Facility-MaxLevel $id
+    $levelCosts = @([ordered]@{
+        id=('FCOST-' + $id + '-L1');targetLevel=1;paymentMode='CRAFT_RECIPE_REFERENCE';recipeId=$recipeId
+        cost=[ordered]@{construction=0;survival=0;metal=0;signal=0;specialist=0}
+    })
+    if ($facilityUpgradeProfiles.ContainsKey($costProfile)) {
+        $profileCosts = $facilityUpgradeProfiles[$costProfile]
+        for ($level = 2; $level -le $maxLevel; $level++) {
+            $values = $profileCosts[$level - 1]
+            $levelCosts += [ordered]@{
+                id=('FCOST-' + $id + '-L' + $level);targetLevel=$level;paymentMode='RESOURCE_VALUE';recipeId=''
+                cost=[ordered]@{construction=$values[0];survival=$values[1];metal=$values[2];signal=$values[3];specialist=$values[4]}
+            }
+        }
+    }
+    $runtimeConfig = [ordered]@{}
+    if ($id -eq 'FAC-R03') {
+        $runtimeConfig = [ordered]@{
+            opcode='R03_CARDINAL_EXACT_MATCH';directionPool=@('NORTH','EAST','SOUTH','WEST');directionCount=3
+            valueMinimum=-20;valueMaximum=20;valueStep=1;clueIntervalTicks=300
+            clueOpcode='ROUND_ROBIN_DIRECTION_OR_SIGNED_RESIDUAL';passOpcode='EXACT_DIRECTION_SET_AND_VALUES'
+            seedFields=@('runId','facilityInstanceId','contentRevision');concurrencyPolicy='REVISION_COMPARE_AND_SWAP'
+        }
+    } elseif ($id -eq 'FAC-R04') {
+        $runtimeConfig = [ordered]@{
+            opcode='R04_VISITED_ENVIRONMENT_PAIR';ledger='RUN_VISITED_ENVIRONMENT_LEDGER'
+            environmentIdFormat='dimensionKey|biomeKey';requiredDistinctEnvironments=2;testDurationTicks=200
+            preserveCompletedSelection=$true
+        }
+    } elseif ($id -eq 'FAC-R05') {
+        $runtimeConfig = [ordered]@{
+            opcode='R05_R03_DIRECTION_STAKES';requiredStakes=3;horizontalDistanceMinimum=16;horizontalDistanceMaximum=48
+            bearingToleranceDegrees=22.5;verticalDifferenceMaximum=12;stakeSeparationMinimum=16;calibrationTicks=100
+            valueAuthority='FAC-R03_TARGET_BY_DIRECTION';orderPolicy='ANY';invalidates='MOVED_STAKE_ONLY'
+        }
+    }
     [ordered]@{
         id=$id;sourceDocumentId='FACILITY-LIST-001';enabled=$true;name=$cells[1];facilityTier=$tier
         representation=$cells[2];coreMaterial=$coreMaterial;networkPolicy=$(if ($tier -in @('PORTABLE','CAMP')) {'INDEPENDENT'} elseif ($tier -eq 'RECONSTRUCTION') {'CONNECTED_96'} else {'CONNECTED_24'})
-        itemId=$itemId;recipeId=$recipeId;firstDay=$firstDay;activationDay=$(if ($id -eq 'FAC-R06') {50} else {$firstDay});maxLevel=(Facility-MaxLevel $id)
+        itemId=$itemId;recipeId=$recipeId;firstDay=$firstDay;activationDay=$(if ($id -eq 'FAC-R06') {50} else {$firstDay});maxLevel=$maxLevel
         baseHp=(Facility-BaseHp $id $tier $threat);hpAuthority=$(if ($tier -eq 'RECONSTRUCTION') {'DOCUMENT_LOCK'} else {'IMPLEMENTATION_BASELINE'})
-        workSlots=$workSlots;threatValue=$threat;costProfile=$costProfile;unlockText=$unlockText
+        workSlots=$workSlots;threatValue=$threat;costProfile=$costProfile;levelCosts=@($levelCosts);unlockText=$unlockText
         effectOpcode=(Facility-Opcode $id);effectText=$cells[3];maintenanceText=$maintenanceText
-        portableFallback=$fallback;stateMachine=$stateMachine;raw=@($cells)
+        portableFallback=$fallback;stateMachine=$stateMachine;runtimeConfig=$runtimeConfig;raw=@($cells)
     }
 }
 $lootById = Find-IdRows $lootRows '^LOOT-[A-Z0-9-]+$'
@@ -1152,7 +1200,7 @@ $research = foreach ($cells in $researchRows) {
     $minimumDay = [int]$Matches[1]
     if ($cells[3] -notmatch '^(\d+)/(\d+)/(\d+)/(\d+),\s*(\d+)초$') { throw "Research cost/time malformed: $($cells[0])" }
     [ordered]@{
-        id=$cells[0];sourceDocumentId='RESEARCH-001';enabled=$true;minimumDay=$minimumDay
+        id=$cells[0];costId=('RCOST-' + $cells[0]);sourceDocumentId='RESEARCH-001';enabled=$true;minimumDay=$minimumDay
         prerequisiteText=$cells[1];comparisonInput=$cells[2]
         cost=[ordered]@{general=[int]$Matches[1];metal=[int]$Matches[2];signal=[int]$Matches[3];specialist=[int]$Matches[4]}
         durationSeconds=[int]$Matches[5];unlockText=$cells[4];stateMachine=@('HIDDEN','OBSERVABLE','HYPOTHESIZED','READY','QUEUED','PROCESSING','PAUSED','ANALYZED','UNLOCKED','MASTERED');raw=@($cells)
@@ -1638,9 +1686,9 @@ $researchSchema = [ordered]@{
     properties=[ordered]@{
         schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{const='research'}
         records=[ordered]@{type='array';minItems=25;maxItems=25;items=[ordered]@{
-            type='object';additionalProperties=$false;required=@('id','sourceDocumentId','enabled','minimumDay','prerequisiteText','comparisonInput','cost','durationSeconds','unlockText','stateMachine','raw')
+            type='object';additionalProperties=$false;required=@('id','costId','sourceDocumentId','enabled','minimumDay','prerequisiteText','comparisonInput','cost','durationSeconds','unlockText','stateMachine','raw')
             properties=[ordered]@{
-                id=[ordered]@{type='string';pattern='^RS-'};sourceDocumentId=[ordered]@{const='RESEARCH-001'};enabled=[ordered]@{const=$true};minimumDay=[ordered]@{type='integer';minimum=1;maximum=50}
+                id=[ordered]@{type='string';pattern='^RS-'};costId=[ordered]@{type='string';pattern='^RCOST-RS-'};sourceDocumentId=[ordered]@{const='RESEARCH-001'};enabled=[ordered]@{const=$true};minimumDay=[ordered]@{type='integer';minimum=1;maximum=50}
                 prerequisiteText=[ordered]@{type='string';minLength=1};comparisonInput=[ordered]@{type='string';minLength=1};durationSeconds=[ordered]@{type='integer';minimum=1};unlockText=[ordered]@{type='string';minLength=1}
                 cost=[ordered]@{type='object';additionalProperties=$false;required=@('general','metal','signal','specialist');properties=[ordered]@{general=[ordered]@{type='integer';minimum=0};metal=[ordered]@{type='integer';minimum=0};signal=[ordered]@{type='integer';minimum=0};specialist=[ordered]@{type='integer';minimum=0}}}
                 stateMachine=[ordered]@{type='array';minItems=10;maxItems=10;items=[ordered]@{type='string'}};raw=[ordered]@{type='array';minItems=5;maxItems=5;items=[ordered]@{type='string'}}

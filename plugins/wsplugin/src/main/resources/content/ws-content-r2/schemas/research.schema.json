@@ -27,6 +27,7 @@
         "additionalProperties": false,
         "required": [
           "id",
+          "costId",
           "sourceDocumentId",
           "enabled",
           "minimumDay",
@@ -42,6 +43,10 @@
           "id": {
             "type": "string",
             "pattern": "^RS-"
+          },
+          "costId": {
+            "type": "string",
+            "pattern": "^RCOST-RS-"
           },
           "sourceDocumentId": {
             "const": "RESEARCH-001"

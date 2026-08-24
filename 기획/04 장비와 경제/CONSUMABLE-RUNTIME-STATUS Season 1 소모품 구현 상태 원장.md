@@ -35,8 +35,8 @@ last_updated: 2026-08-24
 | `WSI-CONS-BANDAGE` | 붕대 | BLEED 1중첩 제거, 직접 회복 없음 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 무효 대상 무소비 구현. 실제 상태 아이콘·잔여 중첩 검증 필요 |
 | `WSI-CONS-REPAIR_KIT` | 야전 수리 키트 | 가장 손상된 장착 장비를 최대 내구 40%까지 복구 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 장비 선택 동률·BROKEN·동시 GUI E2E 필요 |
 | `WSI-CONS-PURIFY_AMPOULE` | 정화 앰풀 | 개인 오염 -15, STATUS 제거 없음, 전투당 2회 | `VERIFIED` | `NOT_STARTED` | `NOT_STARTED` | `BLOCKED` | 개인 오염 0~100 영속 필드와 단계 이벤트 구현 필요 |
-| `WSI-CONS-AP_STIM` | 응급 AP 자극제 | AP +30, 초과분 소멸, 탈진 해제 없음, 전투당 1회 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 임시 코드값을 권위 수치로 일치시킴. 무효·마지막 1개 경합 시험 필요 |
-| `WSI-CONS-RESCUE_BRACE` | 구조 고정대 | 다음 구조 첫 유효 틱부터 중단 피해 임계 +15% | `VERIFIED` | `NOT_STARTED` | `NOT_STARTED` | `BLOCKED` | 강화형과 비합산 최고값 예약·소비·취소 구현 필요 |
+| `WSI-CONS-AP_STIM` | 응급 AP 자극제 | 즉시 AP +10, 이후 5초간 초당 +3, 초과분 소멸, 탈진 해제 없음, 전투당 1회 | `VERIFIED` | `VERIFIED` | `IN_PROGRESS` | `BLOCKED` | 단일 지속 상태·저장·누락 틱 보정·지속 중 재사용 거부 구현. 재접속·재시작·마지막 1개 경합 E2E 필요 |
+| `WSI-CONS-RESCUE_BRACE` | 구조 고정대 | 다음 구조 첫 유효 틱부터 중단 피해 임계 +10% | `VERIFIED` | `IN_PROGRESS` | `NOT_STARTED` | `BLOCKED` | +10% 저장은 구현. 첫 유효 구조 틱 예약·소비와 강화형 비합산 교체 구현 필요 |
 | `WSI-CONS-PORTABLE_PURIFIER_CHARGE` | 휴대 정화기 충전 | 활성 FAC-P05 가동시간 60초 연장 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 동일 시설 다중 사용·철거/파괴 경합 E2E 필요 |
 | `WSI-CONS-ANTIDOTE_INJECTION` | 해독 주사 | POISON 최대 2중첩, 관리 밖 약한 독이면 효과 1개 제거 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 과다 정화를 제거함. 잔여 스택 포션 강도·지속시간 실제 판독 필요 |
 | `WSI-CONS-COOLING_SALVE` | 냉각 연고 | BURN 최대 2중첩 제거, 이후 5초간 새 BURN 지속시간 ×0.75 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 상태 PDC 저장·만료 구현. 재시작 경계와 연속 사용 E2E 필요 |

@@ -5,6 +5,7 @@
   "records": [
     {
       "id": "RS-D01-SAMPLE",
+      "costId": "RCOST-RS-D01-SAMPLE",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 1,
@@ -40,6 +41,7 @@
     },
     {
       "id": "RS-D03-SEPARATION",
+      "costId": "RCOST-RS-D03-SEPARATION",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 3,
@@ -75,6 +77,7 @@
     },
     {
       "id": "RS-D05-DOCTRINE-I",
+      "costId": "RCOST-RS-D05-DOCTRINE-I",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 5,
@@ -110,6 +113,7 @@
     },
     {
       "id": "RS-D07-FIELD-REPAIR",
+      "costId": "RCOST-RS-D07-FIELD-REPAIR",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 7,
@@ -145,6 +149,7 @@
     },
     {
       "id": "RS-D09-RESONANCE",
+      "costId": "RCOST-RS-D09-RESONANCE",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 9,
@@ -180,6 +185,7 @@
     },
     {
       "id": "RS-D11-NEURAL",
+      "costId": "RCOST-RS-D11-NEURAL",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 11,
@@ -215,6 +221,7 @@
     },
     {
       "id": "RS-D13-TOXIN",
+      "costId": "RCOST-RS-D13-TOXIN",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 13,
@@ -250,6 +257,7 @@
     },
     {
       "id": "RS-D15-DOCTRINE-II",
+      "costId": "RCOST-RS-D15-DOCTRINE-II",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 15,
@@ -285,6 +293,7 @@
     },
     {
       "id": "RS-D18-JAMMING",
+      "costId": "RCOST-RS-D18-JAMMING",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 18,
@@ -320,6 +329,7 @@
     },
     {
       "id": "RS-D20-AMALGAM",
+      "costId": "RCOST-RS-D20-AMALGAM",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 20,
@@ -355,6 +365,7 @@
     },
     {
       "id": "RS-D21-MOBILE-PURIFY",
+      "costId": "RCOST-RS-D21-MOBILE-PURIFY",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 21,
@@ -390,6 +401,7 @@
     },
     {
       "id": "RS-D23-MUTATION-MAP",
+      "costId": "RCOST-RS-D23-MUTATION-MAP",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 23,
@@ -425,6 +437,7 @@
     },
     {
       "id": "RS-D25-AUGMENT-RESONANCE",
+      "costId": "RCOST-RS-D25-AUGMENT-RESONANCE",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 25,
@@ -460,6 +473,7 @@
     },
     {
       "id": "RS-D27-RIFT-STABILITY",
+      "costId": "RCOST-RS-D27-RIFT-STABILITY",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 27,
@@ -495,6 +509,7 @@
     },
     {
       "id": "RS-D29-CORE-SIGNAL",
+      "costId": "RCOST-RS-D29-CORE-SIGNAL",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 29,
@@ -530,6 +545,7 @@
     },
     {
       "id": "RS-D31-BREAK-TELEMETRY",
+      "costId": "RCOST-RS-D31-BREAK-TELEMETRY",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 31,
@@ -565,6 +581,7 @@
     },
     {
       "id": "RS-D33-INTERRUPT",
+      "costId": "RCOST-RS-D33-INTERRUPT",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 33,
@@ -600,6 +617,7 @@
     },
     {
       "id": "RS-D36-PHASE-ARMOR",
+      "costId": "RCOST-RS-D36-PHASE-ARMOR",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 36,
@@ -635,6 +653,7 @@
     },
     {
       "id": "RS-D39-RESONANT-BREAKER",
+      "costId": "RCOST-RS-D39-RESONANT-BREAKER",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 39,
@@ -670,16 +689,17 @@
     },
     {
       "id": "RS-D41-REBUILD-A",
+      "costId": "RCOST-RS-D41-REBUILD-A",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 41,
       "prerequisiteText": "D41, C27",
       "comparisonInput": "부품 A+구조 기록 3",
       "cost": {
-        "general": 14,
-        "metal": 22,
-        "signal": 16,
-        "specialist": 22
+        "general": 8,
+        "metal": 12,
+        "signal": 12,
+        "specialist": 10
       },
       "durationSeconds": 160,
       "unlockText": "안정 프레임·FAC-R01",
@@ -699,22 +719,23 @@
         "RS-D41-REBUILD-A",
         "D41, C27",
         "부품 A+구조 기록 3",
-        "14/22/16/22, 160초",
+        "8/12/12/10, 160초",
         "안정 프레임·FAC-R01"
       ]
     },
     {
       "id": "RS-D42-REBUILD-B",
+      "costId": "RCOST-RS-D42-REBUILD-B",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 42,
       "prerequisiteText": "D42, C28-B",
       "comparisonInput": "부품 B+동력 기록 3",
       "cost": {
-        "general": 12,
-        "metal": 18,
-        "signal": 24,
-        "specialist": 24
+        "general": 8,
+        "metal": 12,
+        "signal": 14,
+        "specialist": 12
       },
       "durationSeconds": 170,
       "unlockText": "동력 행렬·FAC-R02",
@@ -734,22 +755,23 @@
         "RS-D42-REBUILD-B",
         "D42, C28-B",
         "부품 B+동력 기록 3",
-        "12/18/24/24, 170초",
+        "8/12/14/12, 170초",
         "동력 행렬·FAC-R02"
       ]
     },
     {
       "id": "RS-D43-REBUILD-C",
+      "costId": "RCOST-RS-D43-REBUILD-C",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 43,
       "prerequisiteText": "D43, C28-C",
       "comparisonInput": "부품 C+관측 기록 5",
       "cost": {
-        "general": 10,
-        "metal": 16,
-        "signal": 28,
-        "specialist": 24
+        "general": 8,
+        "metal": 12,
+        "signal": 16,
+        "specialist": 12
       },
       "durationSeconds": 180,
       "unlockText": "교정 렌즈·FAC-R03",
@@ -769,22 +791,23 @@
         "RS-D43-REBUILD-C",
         "D43, C28-C",
         "부품 C+관측 기록 5",
-        "10/16/28/24, 180초",
+        "8/12/16/12, 180초",
         "교정 렌즈·FAC-R03"
       ]
     },
     {
       "id": "RS-D44-REBUILD-D",
+      "costId": "RCOST-RS-D44-REBUILD-D",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 44,
       "prerequisiteText": "D44, C28-D",
       "comparisonInput": "부품 D+정화 3범주",
       "cost": {
-        "general": 12,
-        "metal": 16,
-        "signal": 20,
-        "specialist": 30
+        "general": 8,
+        "metal": 12,
+        "signal": 14,
+        "specialist": 14
       },
       "durationSeconds": 180,
       "unlockText": "정화 행렬·FAC-R04",
@@ -804,22 +827,23 @@
         "RS-D44-REBUILD-D",
         "D44, C28-D",
         "부품 D+정화 3범주",
-        "12/16/20/30, 180초",
+        "8/12/14/14, 180초",
         "정화 행렬·FAC-R04"
       ]
     },
     {
       "id": "RS-D47-SYNTHESIS",
+      "costId": "RCOST-RS-D47-SYNTHESIS",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 47,
       "prerequisiteText": "D47, A~D 연구",
       "comparisonInput": "네 하위 결과+대체 경로 1",
       "cost": {
-        "general": 18,
-        "metal": 28,
-        "signal": 32,
-        "specialist": 36
+        "general": 9,
+        "metal": 18,
+        "signal": 20,
+        "specialist": 16
       },
       "durationSeconds": 210,
       "unlockText": "C28 완료·R01~R04 결합 검사",
@@ -839,22 +863,23 @@
         "RS-D47-SYNTHESIS",
         "D47, A~D 연구",
         "네 하위 결과+대체 경로 1",
-        "18/28/32/36, 210초",
+        "9/18/20/16, 210초",
         "C28 완료·R01~R04 결합 검사"
       ]
     },
     {
       "id": "RS-D49-CALIBRATION",
+      "costId": "RCOST-RS-D49-CALIBRATION",
       "sourceDocumentId": "RESEARCH-001",
       "enabled": true,
       "minimumDay": 49,
       "prerequisiteText": "D49, C29",
-      "comparisonInput": "세 방향 오차+실패 축 기록",
+      "comparisonInput": "R03 방향 정답 3+R04 서로 다른 방문 환경 2+R05 말뚝 교정 3",
       "cost": {
-        "general": 20,
-        "metal": 30,
-        "signal": 36,
-        "specialist": 42
+        "general": 9,
+        "metal": 20,
+        "signal": 24,
+        "specialist": 18
       },
       "durationSeconds": 240,
       "unlockText": "최종 신호 키 제작·교정 상세 UI",
@@ -873,8 +898,8 @@
       "raw": [
         "RS-D49-CALIBRATION",
         "D49, C29",
-        "세 방향 오차+실패 축 기록",
-        "20/30/36/42, 240초",
+        "R03 방향 정답 3+R04 서로 다른 방문 환경 2+R05 말뚝 교정 3",
+        "9/20/24/18, 240초",
         "최종 신호 키 제작·교정 상세 UI"
       ]
     }

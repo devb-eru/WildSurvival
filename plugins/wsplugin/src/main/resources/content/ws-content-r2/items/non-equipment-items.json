@@ -192,7 +192,7 @@
       "ownership": "PERSONAL",
       "usePolicy": "QUICK_BINDABLE",
       "connectedFacilityId": "",
-      "effectText": "AP +30 즉시 회복, 초과분 소멸·탈진 해제 아님, 전투당 1회",
+      "effectText": "AP +10 즉시 회복, 이후 5초간 초당 +3, 초과분 소멸·탈진 해제 아님, 전투당 1회",
       "constraintText": "",
       "recipeId": "WSRCP-S06",
       "raw": [
@@ -202,7 +202,7 @@
         "6",
         "SUGAR",
         "8",
-        "AP +30 즉시 회복, 초과분 소멸·탈진 해제 아님, 전투당 1회",
+        "AP +10 즉시 회복, 이후 5초간 초당 +3, 초과분 소멸·탈진 해제 아님, 전투당 1회",
         "WSRCP-S06"
       ]
     },
@@ -221,7 +221,7 @@
       "ownership": "PERSONAL",
       "usePolicy": "QUICK_BINDABLE",
       "connectedFacilityId": "",
-      "effectText": "다음 구조 1회 중단 피해 임계 +15%, 강화형과 비합산",
+      "effectText": "다음 구조 1회 중단 피해 임계 +10%, 강화형과 비합산",
       "constraintText": "",
       "recipeId": "WSRCP-S07",
       "raw": [
@@ -231,7 +231,7 @@
         "3",
         "TRIPWIRE_HOOK",
         "8",
-        "다음 구조 1회 중단 피해 임계 +15%, 강화형과 비합산",
+        "다음 구조 1회 중단 피해 임계 +10%, 강화형과 비합산",
         "WSRCP-S07"
       ]
     },

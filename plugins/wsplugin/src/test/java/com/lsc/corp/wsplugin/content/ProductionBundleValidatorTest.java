@@ -23,7 +23,7 @@ class ProductionBundleValidatorTest {
         assertEquals("CORRUPTION_REDUCE", result.catalog().skillsById().get("ws.common.quick_purify.v1").effect());
         assertEquals("WSI-CONS-PURIFY_AMPOULE", result.catalog().skillsById().get("ws.common.quick_purify.v1").consumableId());
         assertTrue(result.catalog().skillsById().get("ws.common.quick_purify.v1").description().contains("오염 -15"));
-        assertTrue(result.catalog().skillsById().get("ws.common.ap_stim.v1").description().contains("AP +30"));
+        assertTrue(result.catalog().skillsById().get("ws.common.ap_stim.v1").description().contains("AP +10"));
         assertEquals("CONTROL_CLEANSE", result.catalog().skillsById().get("ws.common.control_break.v1").effect());
         assertEquals("WSI-CONS-NEURAL_STABILIZER", result.catalog().skillsById().get("ws.common.control_break.v1").consumableId());
         assertEquals(0.65, result.catalog().skillsById().get("ws.bow.barbed_rain.v1").damageCoefficient());
@@ -180,6 +180,20 @@ class ProductionBundleValidatorTest {
         assertEquals(107, result.catalog().eventsById().size());
         assertEquals("PR50-FINAL-WAIT", result.catalog().mainEventsByDay().get(50).getFirst().pressureProfileId());
         assertEquals(25, result.catalog().researchById().size());
+        assertEquals("RCOST-RS-D01-SAMPLE",
+                result.catalog().researchById().get("RS-D01-SAMPLE").costId());
+        assertEquals(121, result.catalog().facilitiesById().values().stream()
+                .mapToInt(facility -> facility.levelCosts().size()).sum());
+        assertEquals(121, result.catalog().facilitiesById().values().stream()
+                .flatMap(facility -> facility.levelCosts().stream()).map(cost -> cost.id()).distinct().count());
+        assertEquals(3, result.catalog().facilitiesById().get("FAC-R03").runtimeConfig()
+                .get("directionCount").getAsInt());
+        assertEquals(300, result.catalog().facilitiesById().get("FAC-R03").runtimeConfig()
+                .get("clueIntervalTicks").getAsInt());
+        assertEquals("dimensionKey|biomeKey", result.catalog().facilitiesById().get("FAC-R04").runtimeConfig()
+                .get("environmentIdFormat").getAsString());
+        assertEquals(22.5, result.catalog().facilitiesById().get("FAC-R05").runtimeConfig()
+                .get("bearingToleranceDegrees").getAsDouble());
         assertEquals(49, result.catalog().discoveriesById().size());
         assertEquals(30, result.catalog().discoveriesById().values().stream()
                 .filter(discovery -> "CORE".equals(discovery.kind())).count());

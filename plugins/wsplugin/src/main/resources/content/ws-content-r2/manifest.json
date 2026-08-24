@@ -72,7 +72,7 @@
       "path": "schemas/research.schema.json",
       "domain": "schema",
       "schema": "common.schema.json",
-      "sha256": "6442e1fbec35875838a9800c5d96a1282899683f28d36f92de9118c988f2e719"
+      "sha256": "34cbada3997b40b552c4b59bdfaa4f7a3ed13b1785d76ed2cd88363957388369"
     },
     {
       "path": "schemas/status.schema.json",
@@ -234,7 +234,7 @@
       "path": "items/non-equipment-items.json",
       "domain": "items",
       "schema": "item.schema.json",
-      "sha256": "5e6f3849d652ddaf3feace64dea3fc12c88b8ba6b99bf741d2b2cbba8c12f414"
+      "sha256": "a182d58a77a6b6f960bd1ccfa4f9f563717a9d625f6b78a182883c2721d759ce"
     },
     {
       "path": "items/codex-index.json",
@@ -246,7 +246,7 @@
       "path": "recipes/season1-recipes.json",
       "domain": "recipes",
       "schema": "recipe.schema.json",
-      "sha256": "acdc7f3b4a7f462e78ca2013fa899cc4b3894d057b043c22d9491b90f477a418"
+      "sha256": "e434b757bdc82c3bd5ec4dc0574b6480f56ba0e44916ab4f3efc131b193a30af"
     },
     {
       "path": "equipment/day01-10.json",
@@ -270,7 +270,7 @@
       "path": "facilities/season1-facilities.json",
       "domain": "facilities",
       "schema": "facility.schema.json",
-      "sha256": "4dec9149f88a2b527c5bfcd68b604ff5b1fd62625e9b3aa0a49202416fb1784c"
+      "sha256": "80a2c8a0c43873f6910009e7c078fec548eb152f1284067af1c11cc8461a287a"
     },
     {
       "path": "statuses/season1-statuses.json",
@@ -282,19 +282,19 @@
       "path": "research/season1-research.json",
       "domain": "research",
       "schema": "research.schema.json",
-      "sha256": "9ff7fb1aef0e35d3a51ba4a36f1e928f37dd030c5b75adf771dffdda666deb61"
+      "sha256": "9f462d33a19babffd439fdd66de9e6f7ac87f389b3d3b972b556250327b2b525"
     },
     {
       "path": "discoveries/season1-discoveries.json",
       "domain": "discoveries",
       "schema": "discovery.schema.json",
-      "sha256": "7b44ecd8f581e0b014bb4eb1247adcd8a14b5ef7d2138c8abe5d0ec181fea42f"
+      "sha256": "770d7716ec35fc8f9e528398dcd5b1896576ac5d540fadbdd77a288ef3c6309c"
     },
     {
       "path": "augments/personal-augments.json",
       "domain": "personal-augments",
       "schema": "augment.schema.json",
-      "sha256": "cd924e7b6fb09d6a09a3addbc3b5755511ceb087bf39333c68b7e26b08e97a81"
+      "sha256": "6a2a592f0787e203f9f7eee90676074ddac10aa997fbe976334f086b97df75a4"
     },
     {
       "path": "augments/party-augments.json",
@@ -306,7 +306,7 @@
       "path": "skills/player-skills.json",
       "domain": "player-skills",
       "schema": "skill.schema.json",
-      "sha256": "7b699a3721b2a98b94d950c7a486654ef1c9e59b1545f4592ec66c64a59438b4"
+      "sha256": "a2ecea3cbf92dcba290ca2142e3f185339a63011769fffe12aa893cacc4885ed"
     },
     {
       "path": "skills/entity-actions.json",

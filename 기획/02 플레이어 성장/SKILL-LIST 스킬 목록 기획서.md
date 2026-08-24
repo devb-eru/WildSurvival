@@ -196,7 +196,7 @@
 |---|---|---|---|---|---|
 | `ws.common.field_bandage.v1` | 전투 붕대 | 18, 12초 | 붕대 1 | 1.25초 채널, HP 8%+40 회복, BLEED 1중첩 제거 | `COMMON`, `HEALING`, `BLEED` |
 | `ws.common.quick_purify.v1` | 신속 정화 | 22, 15초 | 정화 앰풀 1 | 1초 채널, 개인 오염 -15; STATUS 제거 없음 | `COMMON`, `CORRUPTION`, `CONSUMABLE` |
-| `ws.common.ap_stim.v1` | 행동 자극 | 10, 30초 | AP 자극제 1 | 즉시 AP +30, 최대 AP 초과분 소멸; 탈진 해제 없음 | `COMMON`, `AP`, `CONSUMABLE` |
+| `ws.common.ap_stim.v1` | 행동 자극 | 10, 30초 | AP 자극제 1 | 즉시 AP +10, 이후 5초간 초당 +3; 최대 AP 초과분 소멸, 탈진 해제 없음 | `COMMON`, `AP`, `CONSUMABLE` |
 | `ws.common.threat_ping.v1` | 위협 지목 | 15, 12초 | 없음 | 24블록 대상 MARK 6초, 파티 브레이크 +4% | `COMMON`, `MARK`, `COOP` |
 | `ws.common.guard_step.v1` | 방어 보법 | 20, 8초 | 없음 | 0.8초 Damage Taken -20%, 무적 아님, 이동 거리 1.5블록 | `COMMON`, `GUARD`, `MOBILITY` |
 | `ws.common.break_call.v1` | 파쇄 지시 | 25, 15초 | 없음 | 대상 4초간 파티 BREAK_DAMAGE +6%, 보스 전체 상한 적용 | `COMMON`, `BREAK`, `COOP` |

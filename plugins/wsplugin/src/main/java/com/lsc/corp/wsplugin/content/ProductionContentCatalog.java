@@ -83,9 +83,10 @@ public record ProductionContentCatalog(
     public record FacilityEntry(String id, String name, String facilityTier, String representation,
                                 String coreMaterial, String networkPolicy, String itemId, String recipeId,
                                 int firstDay, int activationDay, int maxLevel, int baseHp, String hpAuthority, int workSlots,
-                                int threatValue, String costProfile, String unlockText, String effectOpcode,
+                                int threatValue, String costProfile, List<FacilityCostEntry> levelCosts,
+                                String unlockText, String effectOpcode,
                                 String effectText, String maintenanceText, String portableFallback,
-                                String stateMachine) {
+                                String stateMachine, JsonObject runtimeConfig) {
         public boolean portableDevice() {
             return "PORTABLE".equals(facilityTier);
         }
@@ -94,6 +95,9 @@ public record ProductionContentCatalog(
             return "RECONSTRUCTION".equals(facilityTier);
         }
     }
+
+    public record FacilityCostEntry(String id, int targetLevel, String paymentMode, String recipeId,
+                                    Map<String, Integer> cost) { }
 
     public record RecipeEntry(String id, String outputId, int outputAmount, String recipeType, String inputAuthority,
                               String layout, List<IngredientEntry> ingredients, List<String> raw) {
@@ -203,7 +207,7 @@ public record ProductionContentCatalog(
         }
     }
 
-    public record ResearchEntry(String id, int minimumDay, String prerequisiteText,
+    public record ResearchEntry(String id, String costId, int minimumDay, String prerequisiteText,
                                 String comparisonInput, Map<String, Integer> cost,
                                 int durationSeconds, String unlockText, List<String> stateMachine) { }
 

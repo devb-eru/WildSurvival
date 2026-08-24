@@ -187,6 +187,19 @@ public final class ProductionBundleValidator {
         }
         Map<String, ProductionContentCatalog.FacilityEntry> facilitiesById = new LinkedHashMap<>();
         for (JsonObject record : records(reader, "facilities/season1-facilities.json")) {
+            List<ProductionContentCatalog.FacilityCostEntry> levelCosts = new ArrayList<>();
+            for (JsonElement element : record.getAsJsonArray("levelCosts")) {
+                JsonObject levelCost = element.getAsJsonObject();
+                JsonObject costObject = levelCost.getAsJsonObject("cost");
+                Map<String, Integer> cost = new LinkedHashMap<>();
+                for (String key : List.of("construction", "survival", "metal", "signal", "specialist")) {
+                    cost.put(key, requiredInt(costObject, key));
+                }
+                levelCosts.add(new ProductionContentCatalog.FacilityCostEntry(
+                        requiredString(levelCost, "id"), requiredInt(levelCost, "targetLevel"),
+                        requiredString(levelCost, "paymentMode"), optionalString(levelCost, "recipeId", ""),
+                        Map.copyOf(cost)));
+            }
             ProductionContentCatalog.FacilityEntry facility = new ProductionContentCatalog.FacilityEntry(
                     requiredString(record, "id"), requiredString(record, "name"),
                     requiredString(record, "facilityTier"), requiredString(record, "representation"),
@@ -195,10 +208,10 @@ public final class ProductionBundleValidator {
                     requiredInt(record, "firstDay"), requiredInt(record, "activationDay"), requiredInt(record, "maxLevel"),
                     requiredInt(record, "baseHp"), requiredString(record, "hpAuthority"),
                     requiredInt(record, "workSlots"), requiredInt(record, "threatValue"),
-                    requiredString(record, "costProfile"), requiredString(record, "unlockText"),
+                    requiredString(record, "costProfile"), List.copyOf(levelCosts), requiredString(record, "unlockText"),
                     requiredString(record, "effectOpcode"), requiredString(record, "effectText"),
                     requiredString(record, "maintenanceText"), optionalString(record, "portableFallback", ""),
-                    requiredString(record, "stateMachine"));
+                    requiredString(record, "stateMachine"), record.getAsJsonObject("runtimeConfig").deepCopy());
             if (facilitiesById.putIfAbsent(facility.id(), facility) != null) {
                 throw new ContentValidationException("Duplicate facility profile " + facility.id());
             }
@@ -434,7 +447,7 @@ public final class ProductionBundleValidator {
                 cost.put(key, requiredInt(costObject, key));
             }
             ProductionContentCatalog.ResearchEntry research = new ProductionContentCatalog.ResearchEntry(
-                    requiredString(record, "id"), requiredInt(record, "minimumDay"),
+                    requiredString(record, "id"), requiredString(record, "costId"), requiredInt(record, "minimumDay"),
                     requiredString(record, "prerequisiteText"), requiredString(record, "comparisonInput"),
                     Map.copyOf(cost), requiredInt(record, "durationSeconds"),
                     requiredString(record, "unlockText"), stringArray(record, "stateMachine"));
@@ -1079,6 +1092,12 @@ public final class ProductionBundleValidator {
         }
         Set<String> recipeIds = catalog.recipes().stream().map(ProductionContentCatalog.RecipeEntry::id)
                 .collect(java.util.stream.Collectors.toSet());
+        Set<String> costIds = new HashSet<>();
+        for (ProductionContentCatalog.ResearchEntry research : catalog.researchById().values()) {
+            if (!research.costId().equals("RCOST-" + research.id()) || !costIds.add(research.costId())) {
+                throw new ContentValidationException("Invalid/duplicate research cost ID " + research.costId());
+            }
+        }
         Set<String> itemIds = new HashSet<>();
         for (ProductionContentCatalog.FacilityEntry facility : catalog.facilitiesById().values()) {
             if (!tiers.contains(facility.facilityTier()) || !networks.contains(facility.networkPolicy())
@@ -1104,6 +1123,31 @@ public final class ProductionBundleValidator {
             if (facility.reconstruction() && !"DOCUMENT_LOCK".equals(facility.hpAuthority())) {
                 throw new ContentValidationException("Reconstruction HP authority mismatch " + facility.id());
             }
+            if (facility.levelCosts().size() != facility.maxLevel()) {
+                throw new ContentValidationException("Facility level cost cardinality mismatch " + facility.id());
+            }
+            Set<Integer> targetLevels = new HashSet<>();
+            for (ProductionContentCatalog.FacilityCostEntry levelCost : facility.levelCosts()) {
+                if (!levelCost.id().equals("FCOST-" + facility.id() + "-L" + levelCost.targetLevel())
+                        || !costIds.add(levelCost.id()) || !targetLevels.add(levelCost.targetLevel())
+                        || levelCost.targetLevel() < 1 || levelCost.targetLevel() > facility.maxLevel()
+                        || levelCost.cost().values().stream().anyMatch(value -> value < 0)) {
+                    throw new ContentValidationException("Invalid/duplicate facility cost " + levelCost.id());
+                }
+                if (levelCost.targetLevel() == 1) {
+                    if (!"CRAFT_RECIPE_REFERENCE".equals(levelCost.paymentMode())
+                            || !facility.recipeId().equals(levelCost.recipeId())
+                            || levelCost.cost().values().stream().anyMatch(value -> value != 0)) {
+                        throw new ContentValidationException("Facility L1 must reference its recipe " + facility.id());
+                    }
+                } else if (!"RESOURCE_VALUE".equals(levelCost.paymentMode()) || !levelCost.recipeId().isBlank()
+                        || levelCost.cost().values().stream().allMatch(value -> value == 0)) {
+                    throw new ContentValidationException("Invalid facility upgrade payment " + levelCost.id());
+                }
+            }
+        }
+        if (costIds.size() != 146) {
+            throw new ContentValidationException("Cost ID cardinality mismatch " + costIds.size());
         }
     }
 

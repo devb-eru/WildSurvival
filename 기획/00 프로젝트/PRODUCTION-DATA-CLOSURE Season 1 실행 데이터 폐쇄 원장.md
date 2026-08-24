@@ -55,11 +55,13 @@
 
 | ID | 실행값 | 소비 시점 | 중첩·거부 |
 |---|---|---|---|
-| `WSI-CONS-AP_STIM` | 현재 AP `+30`, 최대 AP 초과분 소멸 | 검증 성공 뒤 즉시 | 전투당 1회, `EXHAUSTED`·탈진을 제거하지 않음 |
-| `WSI-CONS-RESCUE_BRACE` | 다음 구조의 피격 중단 피해 임계 `+15%` | 첫 유효 구조 진행 틱 | 강화형과 합산하지 않고 높은 값 하나만 예약 |
+| `WSI-CONS-AP_STIM` | 현재 AP 즉시 `+10`, 이후 5초간 매초 `+3`(총 +25), 최대 AP 초과분 소멸 | 검증 성공 뒤 즉시 소비·첫 회복, 이후 20틱 간격 5회 | 전투당 1회, 지속 중 재사용·갱신·중첩 거부, `EXHAUSTED`·탈진을 제거하지 않음 |
+| `WSI-CONS-RESCUE_BRACE` | 다음 구조의 피격 중단 피해 임계 `+10%` | 첫 유효 구조 진행 틱 | 강화형과 합산하지 않고 높은 값 하나만 예약 |
 | `WSI-CONS-REINFORCED_RESCUE_BRACE` | 다음 구조의 피격 중단 피해 임계 `+25%` | 첫 유효 구조 진행 틱 | 기본형 예약이 있으면 강화형으로 교체하고 기본형 예약은 유지 수량으로 반환 |
 
 구조 대상·거리·AP 검사가 실패하거나 첫 유효 진행 틱 전에 구조를 취소하면 고정대를 소비하지 않는다. 소비 후 같은 구조가 중단되면 효과와 수량은 반환하지 않는다.
+
+AP 자극제의 남은 펄스 수와 다음 펄스까지 남은 서버 틱은 플레이어 회차 상태에 저장한다. 재접속·청크 언로드와 무관하게 실행 중 회차의 서버 틱마다 감소하고 최대 AP 상한을 넘기지 않는다. 서버가 중단되어 틱이 발생하지 않은 시간은 5초에 산입하지 않으며, 재시작 뒤 저장된 남은 틱부터 계속한다.
 
 ## 4. 탄약 선택·효과 잠금
 
@@ -116,11 +118,15 @@
 
 | 시설 | 시작 조건 | 성공 증거 | 실패 조건·재시도 |
 |---|---|---|---|
-| `FAC-R03` | `ASSEMBLED`, R02 READY, 동일 96블록 네트워크 | `R03-BEARING-A/B/C` 세 펄스. 서로 다른 수평 방위 구간, 각 5초 채널, 오차 절댓값 `≤5°`; 세 증거 뒤 `READY` | 같은 방위 재사용, 이동·피격, 네트워크 단절. 성공한 방위는 보존 |
-| `FAC-R04` | `ASSEMBLED`, R02 READY | GUI의 `THERMAL`과 `CORRUPTION` 시험 펄스를 각 10초 유지하고 출력 `80~120%`; `R04-THERMAL`, `R04-CORRUPTION` 뒤 `READY` | 범위 이탈·동력 부족·출력 범위 이탈. 성공 범주는 보존 |
-| `FAC-R05` | R03 READY, 말뚝 3기 `PLACED` | R03 중심 16~48m, 말뚝 간 16~64m, 수평 삼각형 넓이 `≥96m²`. 북쪽에 가장 가까운 말뚝부터 시계 방향으로 각 5초 채널해 3기 `CALIBRATED` | 기하 조건 실패 시 위치만 재배치, 이미 소비한 제작 재료 복제·환불 없음 |
+| `FAC-R03` | `ASSEMBLED`, R02 READY, 동일 96블록 네트워크 | 시험 생성 시 동·서·남·북 중 중복 없는 3방향과 방향별 정수 보정값을 잠근다. GUI의 세 행에 방향·수치를 입력하고 방향 집합과 각 수치가 모두 정확히 같을 때 `R03-DIRECTION-MATCH:{direction}` 3개를 커밋해 `READY` | 15초마다 다음 입력 행 하나를 평가한다. 선택되지 않은 방향은 `NEGATIVE:DIRECTION`, 유효 방향은 `SIGNED_RESIDUAL=target-input`을 제공한다. 제출 실패는 자원·완료 증거를 소비하지 않음 |
+| `FAC-R04` | `ASSEMBLED`, R02 READY | 회차 방문 환경 원장에서 서로 다른 환경 ID 2개를 GUI로 선택한다. 각 선택을 10초 검사해 `R04-ENV-REACTION:{environmentId}` 두 증거 뒤 `READY` | 같은 환경 중복, 미방문 환경, 동력·네트워크 단절은 거부·정지한다. 먼저 성공한 환경은 보존 |
+| `FAC-R05` | R03 READY, 말뚝 3기 `PLACED` | R03에서 잠긴 세 방향의 각 방위 구간에 말뚝을 하나씩 배치하고 해당 방향·해답 수치를 GUI에 입력해 5초 교정한다. 세 `R05-STAKE-CALIBRATED:{direction}` 뒤 `CALIBRATED` | 같은 방향 중복, 거리·방위·높이·네트워크 실패 시 해당 말뚝만 재배치·재교정. 제작 재료 추가 소각·복제·자동 환불 없음 |
 
-R03 방위 구간은 시설 yaw 기준 `[−60°,60°]`, `[60°,180°]`, `[−180°,−60°]`로 고정한다. 경계값은 낮은 인덱스 구간에 포함해 한 펄스가 두 증거를 채우지 못하게 한다.
+R03 보정값은 시설 시험 시드로 각 방향마다 정수 `-20~+20`에서 독립 결정한다. GUI는 1단위 증감을 사용하고 세 입력 행의 방향 중복을 거부한다. 시드는 `runId+facilityInstanceId+contentRevision`으로 결정론적으로 만들고 선택 방향·값·현재 입력·평가 순서·마지막 단서 틱을 회차에 저장한다. 파티원이 동시에 수정할 때는 GUI가 연 `revision`과 현재 `revision`이 같을 때만 커밋하며, 불일치는 새로고침한다.
+
+R04 환경 ID는 Bukkit 레지스트리 키를 사용한 `dimensionKey|biomeKey`다. 등록 플레이어가 해당 환경에 실제 진입한 첫 틱에 `visitedEnvironment(environmentId, playerUuid, firstVisitedTick)`을 회차 원장에 추가하며, 시험 GUI는 이 원장만 보여 준다. 지형의 위험도·온도·오염 단계는 선택 자격에 영향을 주지 않고 두 ID가 서로 다르기만 하면 된다.
+
+R05 말뚝은 R03 중심과 같은 월드·96블록 네트워크에서 수평거리 `16~48m`, 해당 절대 방위 중심선 `±22.5°`, 높이 차 `≤12m`, 말뚝 상호 거리 `≥16m`를 만족해야 한다. 세 방향은 어떤 순서로든 교정할 수 있고, 이동한 말뚝의 증거만 무효화한다. 이 범위에 설치 가능한 지면이 없으면 같은 방향 구간 안의 가장 가까운 유효 블록 후보 5개를 GUI가 제시하며 강제 블록 생성은 하지 않는다.
 
 ## 7. 연구 25노드 기계 판독 계약
 
@@ -170,7 +176,7 @@ R03 방위 구간은 시설 yaw 기준 `[−60°,60°]`, `[60°,180°]`, `[−18
 | `RS-D43-REBUILD-C` | `PROOF WSP-REBUILD-PART-C + OBS RESONANCE_BEARING DISTINCT_CONTEXT 5` |
 | `RS-D44-REBUILD-D` | `PROOF WSP-REBUILD-PART-D + OBS PURIFY_REACTION DISTINCT_CONTEXT 3` |
 | `RS-D47-SYNTHESIS` | 앞선 A~D 연구 `UNLOCKED` + `OBS PORTABLE_FALLBACK_SUCCESS 1` |
-| `RS-D49-CALIBRATION` | `OBS R03_BEARING_PASS DISTINCT_CONTEXT 3 + OBS R03_BEARING_FAIL 1` |
+| `RS-D49-CALIBRATION` | `OBS R03_DIRECTION_MATCH DISTINCT_CONTEXT 3 + OBS R04_ENV_REACTION DISTINCT_CONTEXT 2 + OBS R05_STAKE_CALIBRATED DISTINCT_CONTEXT 3` |
 
 선행 발견·연구는 문자열에서 추론하지 않고 다음 데이터 리비전의 `prerequisiteDiscoveryIds[]`, `prerequisiteResearchIds[]`, `minimumDay` 필드로 분리한다. 위 술어는 `evidenceExpression` 구조체로 이동하며 `comparisonInput`은 표시 전용으로 남긴다.
 

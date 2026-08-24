@@ -110,6 +110,7 @@
 | `DISC-001` | `BASELINE_LOCKED` | 발견 상태·소급 판정 | G0 |
 | `DISC-LIST-001` | `DATA_LOCKED` | C01~C30 발견 노드 | G0 |
 | `FACILITY-LIST-001` | `DATA_LOCKED` | 시설 ID·역할 | G0 |
+| `COST-LIST-S1-001` | `DATA_LOCKED` | 연구 25개·시설 121개 고유 비용 ID, 인원 배율·회차 예산·이중 결제 금지 | DEV-300~600 |
 | `CORR-001~003` | `BASELINE_LOCKED` | 오염 수치·확산·정화 | G0 |
 | `CORR-LIST-001` | `DATA_LOCKED` | 오염 변이 목록 | G0 |
 | `EVENT-LIST-001` | `DATA_LOCKED` | 사건 유형·후보 정책 | G0 |
@@ -136,6 +137,7 @@
 | `OPS-001` | `IMPLEMENTATION_CONTRACT` | 명령·권한·복구 | G0 |
 | `DATA-REVISION-001` | `PARTIAL_R1` | Day 1~20 `ws-content-r1` | 기존 r1만 |
 | `DEV-ROADMAP-001` | `ACTIVE_CONTROL` | 프로토타입 우선 구현 단계·승인 게이트 | DEV-000~800 |
+| `PRODUCTION-DEV-ROADMAP-S1-001` | `ACTIVE_CONTROL` | 프로토타입 이후 P0~P8 실제 플레이 전환 순서·현재 사용자 정지점 | 다음 목표부터 |
 | `TEST-LAB-001` | `IMPLEMENTED_PROTOTYPE` | 격리 솔로 테스트·튜닝·가상 파티 계약 | `ws-prototype-r1` |
 
 ## 4. 공식 위임·완료 레지스트리

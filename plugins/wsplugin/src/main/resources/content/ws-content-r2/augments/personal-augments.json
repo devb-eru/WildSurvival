@@ -122,7 +122,7 @@
         "PARRY"
       ],
       "effectOpcode": "GUARD",
-      "effectText": "가드 충격 AP -12%, 패링 실패 후 가드 전환 비용 -3",
+      "effectText": "가드 충격 AP -12%, 패링 실패 뒤 단기 방어 +0.10초",
       "constraintText": "행동당 1회",
       "weightingText": "없음",
       "exclusiveWith": [],
@@ -131,7 +131,7 @@
         "AUG-S-005",
         "견고한 중심",
         "GUARD`, `PARRY",
-        "가드 충격 AP -12%, 패링 실패 후 가드 전환 비용 -3",
+        "가드 충격 AP -12%, 패링 실패 뒤 단기 방어 +0.10초",
         "행동당 1회",
         "없음"
       ]
@@ -1228,8 +1228,8 @@
         "SUPPORT"
       ],
       "effectOpcode": "GUARD",
-      "effectText": "방어 중 4블록 뒤 파티원의 받는 투사체 피해 -25%",
-      "constraintText": "자신의 이동속도 -20%, 초당 AP 4 추가",
+      "effectText": "단기 방어 중 4블록 뒤 파티원의 받는 투사체 피해 -25%",
+      "constraintText": "단기 방어 중 이동속도 -20%, 패링 시도 AP +5",
       "weightingText": "보조 방패 요구",
       "exclusiveWith": [],
       "evolution": false,
@@ -1237,8 +1237,8 @@
         "AUG-P-011",
         "이동하는 요새",
         "GUARD`, `SUPPORT",
-        "방어 중 4블록 뒤 파티원의 받는 투사체 피해 -25%",
-        "자신의 이동속도 -20%, 초당 AP 4 추가",
+        "단기 방어 중 4블록 뒤 파티원의 받는 투사체 피해 -25%",
+        "단기 방어 중 이동속도 -20%, 패링 시도 AP +5",
         "보조 방패 요구"
       ]
     },

@@ -1669,13 +1669,13 @@
       ],
       "unlockLevel": 1,
       "consumableId": "WSI-CONS-AP_STIM",
-      "description": "즉시 AP +30, 최대 AP 초과분 소멸; 탈진 해제 없음",
+      "description": "즉시 AP +10, 이후 5초간 초당 +3; 최대 AP 초과분 소멸, 탈진 해제 없음",
       "raw": [
         "ws.common.ap_stim.v1",
         "행동 자극",
         "10, 30초",
         "AP 자극제 1",
-        "즉시 AP +30, 최대 AP 초과분 소멸; 탈진 해제 없음",
+        "즉시 AP +10, 이후 5초간 초당 +3; 최대 AP 초과분 소멸, 탈진 해제 없음",
         "COMMON`, `AP`, `CONSUMABLE"
       ]
     },

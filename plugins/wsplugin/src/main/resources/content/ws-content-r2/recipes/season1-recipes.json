@@ -2530,14 +2530,14 @@
           "slot": 0,
           "kind": "ITEM",
           "key": "WSR-STABILIZED_FRAME",
-          "amount": 12,
+          "amount": 6,
           "consume": true
         },
         {
           "slot": 1,
           "kind": "ITEM",
           "key": "WSR-HARD_AGGREGATE",
-          "amount": 16,
+          "amount": 10,
           "consume": true
         },
         {
@@ -2569,14 +2569,14 @@
           "slot": 0,
           "kind": "ITEM",
           "key": "WSR-POWER_MATRIX",
-          "amount": 6,
+          "amount": 3,
           "consume": true
         },
         {
           "slot": 1,
           "kind": "ITEM",
           "key": "WSR-RESONANCE_COIL",
-          "amount": 8,
+          "amount": 4,
           "consume": true
         },
         {
@@ -2608,14 +2608,14 @@
           "slot": 0,
           "kind": "ITEM",
           "key": "WSR-CALIBRATED_LENS",
-          "amount": 4,
+          "amount": 3,
           "consume": true
         },
         {
           "slot": 1,
           "kind": "ITEM",
           "key": "WSR-PATTERN_RESIDUE",
-          "amount": 6,
+          "amount": 4,
           "consume": true
         },
         {
@@ -2647,14 +2647,14 @@
           "slot": 0,
           "kind": "ITEM",
           "key": "WSR-PURIFY_MATRIX",
-          "amount": 6,
+          "amount": 3,
           "consume": true
         },
         {
           "slot": 1,
           "kind": "ITEM",
           "key": "WSR-PURIFY_CATALYST",
-          "amount": 10,
+          "amount": 6,
           "consume": true
         },
         {
@@ -2686,7 +2686,7 @@
           "slot": 0,
           "kind": "ITEM",
           "key": "WSR-HIGH_DENSITY_ALLOY",
-          "amount": 6,
+          "amount": 3,
           "consume": true
         },
         {
@@ -2700,7 +2700,7 @@
           "slot": 2,
           "kind": "ITEM",
           "key": "WSR-RESONANCE_COIL",
-          "amount": 6,
+          "amount": 3,
           "consume": true
         }
       ],

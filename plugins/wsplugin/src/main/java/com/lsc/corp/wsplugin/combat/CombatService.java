@@ -273,6 +273,7 @@ public final class CombatService implements Listener {
 
     public void tick() {
         long now = Instant.now().toEpochMilli();
+        processApStimPulses();
         processQuickUseChannels();
         processProductionEnemyActions();
         processRevives(now);
@@ -1244,6 +1245,7 @@ public final class CombatService implements Listener {
             ActionBarService.notice(player, Component.text("필요 소모품이 없습니다: " + consumableId, NamedTextColor.RED), 40);
             return;
         }
+        if (!consumableId.isBlank() && !canApplyQuickItem(player, consumableId)) return;
         if (!consumableId.isBlank() && !canUseLimitedConsumable(player, consumableId)) return;
         double apCost = growth.skillApCost(player, skill.id(), skill.apCost());
         if (!runs.consumeAp(player, apCost)) {
@@ -1328,15 +1330,17 @@ public final class CombatService implements Listener {
                 cleanseWeakEffects(player); result = "개인 오염 감소 / 약한 상태 정화";
             }
             case "WSI-CONS-AP_STIM" -> {
-                runs.mutate(run -> {
-                    RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-                    state.ap = Math.min(state.maxAp, state.ap + 30.0);
-                });
-                result = "AP +30";
+                startApStim(player);
+                result = "AP +10 / 5초간 초당 +3";
             }
             case "WSI-CONS-RESCUE_BRACE" -> {
-                runs.mutate(run -> run.players.get(player.getUniqueId().toString()).rescueBraceCharges++);
-                result = "다음 구조 중단 저항 1회";
+                runs.mutate(run -> {
+                    RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                    state.rescueBraceCharges++;
+                    state.rescueInterruptThresholdBonus = Math.max(state.rescueInterruptThresholdBonus,
+                            ConsumableRuntimePolicy.BASE_RESCUE_BRACE_THRESHOLD_BONUS);
+                });
+                result = "다음 구조 중단 임계 +10%";
             }
             case "WSI-CONS-PORTABLE_PURIFIER_CHARGE" -> {
                 facilityService.extendPortablePurifier(player, 60_000L);
@@ -1367,7 +1371,8 @@ public final class CombatService implements Listener {
                 runs.mutate(run -> {
                     RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
                     state.rescueBraceCharges++;
-                    state.rescueInterruptThresholdBonus = Math.max(state.rescueInterruptThresholdBonus, 0.25);
+                    state.rescueInterruptThresholdBonus = Math.max(state.rescueInterruptThresholdBonus,
+                            ConsumableRuntimePolicy.REINFORCED_RESCUE_BRACE_THRESHOLD_BONUS);
                 });
                 result = "다음 구조 중단 임계 +25%";
             }
@@ -1508,6 +1513,8 @@ public final class CombatService implements Listener {
                 yield ConsumableRuntimePolicy.neuralCleansePriority().stream()
                         .anyMatch(status -> statuses.active(player, status));
             }
+            case "WSI-CONS-AP_STIM" -> runs.playerState(player.getUniqueId())
+                    .map(state -> state.apStimPulsesRemaining == 0).orElse(false);
             default -> true;
         };
         if (!allowed && !"WSI-CONS-NEURAL_STABILIZER".equals(id)) {
@@ -2702,10 +2709,7 @@ public final class CombatService implements Listener {
                 }
             }
             case "CLEANSE" -> cleanseWeakEffects(player);
-            case "AP_STIM" -> runs.mutate(run -> {
-                RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-                state.ap = Math.min(state.maxAp, state.ap + 25.0);
-            });
+            case "AP_STIM" -> startApStim(player);
             case "MARK" -> {
                 if (target != null) applyStatus(player, target, "MARK", skill.id(), 1.0,
                         6.0, 0.10, "common-mark:" + skill.id() + ":" + UUID.randomUUID());
@@ -2728,6 +2732,32 @@ public final class CombatService implements Listener {
             }
             default -> { }
         }
+    }
+
+    private void startApStim(Player player) {
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            state.ap = Math.min(state.maxAp, state.ap + ConsumableRuntimePolicy.AP_STIM_INITIAL_AP);
+            state.apStimPulsesRemaining = ConsumableRuntimePolicy.AP_STIM_PULSE_COUNT;
+            state.apStimTicksUntilNextPulse = (int) ConsumableRuntimePolicy.AP_STIM_PULSE_INTERVAL_TICKS;
+        });
+    }
+
+    private void processApStimPulses() {
+        runs.mutateTransient(run -> {
+            for (RunSnapshot.PlayerState state : run.players.values()) {
+                if (state.apStimPulsesRemaining <= 0) continue;
+                if (state.apStimTicksUntilNextPulse > 1) {
+                    state.apStimTicksUntilNextPulse--;
+                    continue;
+                }
+                state.ap = Math.min(state.maxAp,
+                        state.ap + ConsumableRuntimePolicy.AP_STIM_PULSE_AP);
+                state.apStimPulsesRemaining--;
+                state.apStimTicksUntilNextPulse = state.apStimPulsesRemaining == 0 ? 0
+                        : (int) ConsumableRuntimePolicy.AP_STIM_PULSE_INTERVAL_TICKS;
+            }
+        });
     }
 
     private boolean requireSkillReady(Player player, PrototypeContent.SkillDefinition skill) {

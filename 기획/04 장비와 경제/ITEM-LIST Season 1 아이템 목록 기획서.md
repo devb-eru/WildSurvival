@@ -51,8 +51,8 @@
 | 0103 | `WSI-AMMO-ARROW_BUNDLE` | 일반 화살 묶음 | 3 | ARROW | 64 | 활·석궁 공용 16발 단위 탄약 원장 충전 | `WSRCP-S03` |
 | 0104 | `WSI-AMMO-PIERCING_BOLT_BUNDLE` | 관통 볼트 묶음 | 5 | SPECTRAL_ARROW | 32 | 석궁 전용 8발, 첫 유효 적중 1체 PEN +12 | `WSRCP-S04` |
 | 0105 | `WSI-CONS-PURIFY_AMPOULE` | 정화 앰풀 | 5 | HONEY_BOTTLE | 8 | 개인 오염 -15, 상태 제거 없음, 전투당 2회 | `WSRCP-S05` |
-| 0106 | `WSI-CONS-AP_STIM` | 응급 AP 자극제 | 6 | SUGAR | 8 | AP +30 즉시 회복, 초과분 소멸·탈진 해제 아님, 전투당 1회 | `WSRCP-S06` |
-| 0107 | `WSI-CONS-RESCUE_BRACE` | 구조 고정대 | 3 | TRIPWIRE_HOOK | 8 | 다음 구조 1회 중단 피해 임계 +15%, 강화형과 비합산 | `WSRCP-S07` |
+| 0106 | `WSI-CONS-AP_STIM` | 응급 AP 자극제 | 6 | SUGAR | 8 | AP +10 즉시 회복, 이후 5초간 초당 +3, 초과분 소멸·탈진 해제 아님, 전투당 1회 | `WSRCP-S06` |
+| 0107 | `WSI-CONS-RESCUE_BRACE` | 구조 고정대 | 3 | TRIPWIRE_HOOK | 8 | 다음 구조 1회 중단 피해 임계 +10%, 강화형과 비합산 | `WSRCP-S07` |
 | 0108 | `WSI-CONS-PORTABLE_PURIFIER_CHARGE` | 휴대 정화기 충전 | 5 | GLOWSTONE_DUST | 16 | FAC-P05 60초 가동 | `WSRCP-S08` |
 | 0109 | `WSI-CONS-ANTIDOTE_INJECTION` | 해독 주사 | 11 | POTION | 8 | POISON 2중첩 또는 약한 독 1개 제거 | `WSRCP-D20-S01` |
 | 0110 | `WSI-CONS-COOLING_SALVE` | 냉각 연고 | 12 | SNOWBALL | 8 | BURN 2중첩 제거, 5초 화상 지속시간 -25% | `WSRCP-D20-S02` |
