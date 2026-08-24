@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contentRevision",
+    "domain",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "contentRevision": {
+      "const": "ws-content-r2.1"
+    },
+    "domain": {
+      "const": "recipes"
+    },
+    "records": {
+      "type": "array",
+      "minItems": 316,
+      "maxItems": 316,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "sourceDocumentId",
+          "enabled",
+          "outputId",
+          "outputAmount",
+          "recipeType",
+          "inputAuthority",
+          "layout",
+          "ingredients",
+          "minimumDay",
+          "requiredResearchId",
+          "requiredFacilityId",
+          "requiredFacilityLevel",
+          "processTicks",
+          "progressionReservePolicy",
+          "raw"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^WSRCP-"
+          },
+          "sourceDocumentId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "enabled": {
+            "const": true
+          },
+          "outputId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "outputAmount": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 64
+          },
+          "recipeType": {
+            "enum": [
+              "CRAFT",
+              "PROCESS",
+              "BOSS_CALL",
+              "FACILITY_KIT",
+              "EQUIPMENT_FORGE",
+              "UTILITY_FORGE",
+              "VIRTUAL_BUILD"
+            ]
+          },
+          "inputAuthority": {
+            "type": "string",
+            "minLength": 1
+          },
+          "layout": {
+            "enum": [
+              "ORDERED_3X3",
+              "CALL_FRAME",
+              "EQUIPMENT_FRAME",
+              "FACILITY_FRAME",
+              "REBUILD_FRAME"
+            ]
+          },
+          "ingredients": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 9,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "slot",
+                "kind",
+                "key",
+                "amount",
+                "consume"
+              ],
+              "properties": {
+                "slot": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 8
+                },
+                "kind": {
+                  "enum": [
+                    "ITEM",
+                    "TAG",
+                    "VANILLA",
+                    "PROOF"
+                  ]
+                },
+                "key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "amount": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 64
+                },
+                "consume": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "minimumDay": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "requiredResearchId": {
+            "type": "string"
+          },
+          "requiredFacilityId": {
+            "type": "string"
+          },
+          "requiredFacilityLevel": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "processTicks": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "progressionReservePolicy": {
+            "type": "string"
+          },
+          "raw": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

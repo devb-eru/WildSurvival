@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contentRevision",
+    "domain",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "contentRevision": {
+      "const": "ws-content-r2.1"
+    },
+    "domain": {
+      "const": "events"
+    },
+    "records": {
+      "type": "array",
+      "minItems": 18,
+      "maxItems": 55,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "sourceDocumentId",
+          "enabled",
+          "eventKind",
+          "firstDay",
+          "executionOpcode",
+          "raw"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sourceDocumentId": {
+            "enum": [
+              "EVENT-DATA-001",
+              "EVENT-DATA-D20-001",
+              "EVENT-DATA-D50-001"
+            ]
+          },
+          "enabled": {
+            "const": true
+          },
+          "eventKind": {
+            "enum": [
+              "RESOURCE_NODE",
+              "NATURAL_ACTIVITY",
+              "MAIN_EVENT",
+              "PRESSURE_PROFILE"
+            ]
+          },
+          "firstDay": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "executionOpcode": {
+            "enum": [
+              "SPAWN_RESOURCE_NODE",
+              "RUN_ACTIVITY_OBJECTIVE",
+              "RUN_EVENT_OBJECTIVE",
+              "RUN_PRESSURE_WAVES"
+            ]
+          },
+          "raw": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 8,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

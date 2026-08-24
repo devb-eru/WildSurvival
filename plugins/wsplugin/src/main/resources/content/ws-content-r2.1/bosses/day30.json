@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "bosses",
+  "records": [
+    {
+      "id": "BOSS-D30",
+      "sourceDocumentId": "BOSS-D30-001",
+      "enabled": true,
+      "name": "오염 섭식핵",
+      "kind": "BOSS",
+      "bukkitType": "MAGMA_CUBE",
+      "displayFallback": "MAGMA_CUBE+Display",
+      "firstDay": 30,
+      "dayProfile": "BOSS_DAY",
+      "role": "BOSS",
+      "budgetCost": 0,
+      "baseHp": 360000,
+      "defence": 150,
+      "attackDamage": 260,
+      "penetration": 0,
+      "breakMax": 20000,
+      "augmentSlots": 0,
+      "elite": true,
+      "actionBundleId": "ACTSET-BOSS-D30",
+      "entitySetId": "ENTSET-BOSS-D30",
+      "telegraphTicks": 30,
+      "cooldownTicks": 110,
+      "attackRange": 8.0,
+      "statusId": "",
+      "spawnPolicy": "BOSS_CALL_TRANSACTION",
+      "cleanupPolicy": "BOSS_END",
+      "rewardOwner": "CONTRIBUTORS",
+      "lootTableId": "LOOT-BOSS-D30",
+      "activityExp": 2500,
+      "flags": [
+        "BOSS",
+        "NO_DYNAMIC_AUGMENT"
+      ],
+      "raw": [
+        "BOSS-D30",
+        "오염 섭식핵",
+        "MAGMA_CUBE+Display",
+        "ACTSET-BOSS-D30",
+        "ENTSET-BOSS-D30",
+        "LOOT-BOSS-D30"
+      ]
+    }
+  ]
+}

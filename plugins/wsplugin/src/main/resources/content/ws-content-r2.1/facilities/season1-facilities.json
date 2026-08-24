@@ -1,0 +1,3314 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "facilities",
+  "records": [
+    {
+      "id": "FAC-P01",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "휴대 제작 꾸러미",
+      "facilityTier": "PORTABLE",
+      "representation": "번들/상자 아이템",
+      "coreMaterial": "BUNDLE",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-PORTABLE-CRAFT_KIT",
+      "recipeId": "WSRCP-F01",
+      "firstDay": 1,
+      "activationDay": 1,
+      "maxLevel": 1,
+      "baseHp": 1,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 0,
+      "costProfile": "PORTABLE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-P01-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F01",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "CRAFT_PORTABLE",
+      "effectText": "기초 제작·분해·복구 부품",
+      "maintenanceText": "처리시간 150%, 고급 장비 불가",
+      "portableFallback": "",
+      "stateMachine": "READY↔ACTIVE/COOLDOWN",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-P01",
+        "휴대 제작 꾸러미",
+        "번들/상자 아이템",
+        "기초 제작·분해·복구 부품",
+        "처리시간 150%, 고급 장비 불가"
+      ]
+    },
+    {
+      "id": "FAC-P02",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "야전 수리 키트",
+      "facilityTier": "PORTABLE",
+      "representation": "모루 아이템",
+      "coreMaterial": "ANVIL",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-CONS-REPAIR_KIT",
+      "recipeId": "WSRCP-S02",
+      "firstDay": 2,
+      "activationDay": 2,
+      "maxLevel": 1,
+      "baseHp": 1,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 0,
+      "costProfile": "PORTABLE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-P02-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-S02",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "REPAIR_FIELD",
+      "effectText": "BROKEN 장비 응급 복구",
+      "maintenanceText": "최대 내구 40%까지만, 소모품",
+      "portableFallback": "",
+      "stateMachine": "READY↔ACTIVE/COOLDOWN",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-P02",
+        "야전 수리 키트",
+        "모루 아이템",
+        "BROKEN 장비 응급 복구",
+        "최대 내구 40%까지만, 소모품"
+      ]
+    },
+    {
+      "id": "FAC-P03",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "표본 채취기",
+      "facilityTier": "PORTABLE",
+      "representation": "유리병/솔",
+      "coreMaterial": "BRUSH",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-PORTABLE-SAMPLE_EXTRACTOR",
+      "recipeId": "WSRCP-F08",
+      "firstDay": 5,
+      "activationDay": 5,
+      "maxLevel": 1,
+      "baseHp": 1,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 0,
+      "costProfile": "PORTABLE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-P03-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F08",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "SAMPLE_EXTRACT",
+      "effectText": "오염·생체·광물 표본 채취",
+      "maintenanceText": "피격·이동 시 중단",
+      "portableFallback": "",
+      "stateMachine": "READY↔ACTIVE/COOLDOWN",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-P03",
+        "표본 채취기",
+        "유리병/솔",
+        "오염·생체·광물 표본 채취",
+        "피격·이동 시 중단"
+      ]
+    },
+    {
+      "id": "FAC-P04",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "휴대 분석기",
+      "facilityTier": "PORTABLE",
+      "representation": "나침반/시계",
+      "coreMaterial": "COMPASS",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-PORTABLE-ANALYZER",
+      "recipeId": "WSRCP-F07",
+      "firstDay": 5,
+      "activationDay": 5,
+      "maxLevel": 1,
+      "baseHp": 1,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 0,
+      "costProfile": "PORTABLE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-P04-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F07",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "ANALYZE_PORTABLE",
+      "effectText": "증거 비교·신호 측정·소급 판정",
+      "maintenanceText": "한 번에 표본 2개, 느림",
+      "portableFallback": "",
+      "stateMachine": "READY↔ACTIVE/COOLDOWN",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-P04",
+        "휴대 분석기",
+        "나침반/시계",
+        "증거 비교·신호 측정·소급 판정",
+        "한 번에 표본 2개, 느림"
+      ]
+    },
+    {
+      "id": "FAC-P05",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "휴대 정화기",
+      "facilityTier": "PORTABLE",
+      "representation": "자수정 조각/양조기 아이콘",
+      "coreMaterial": "BREWING_STAND",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-PORTABLE-PURIFIER",
+      "recipeId": "WSRCP-F09",
+      "firstDay": 5,
+      "activationDay": 5,
+      "maxLevel": 1,
+      "baseHp": 1,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 0,
+      "costProfile": "PORTABLE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-P05-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F09",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "PURIFY_PORTABLE",
+      "effectText": "작은 반경 임시 정화장",
+      "maintenanceText": "촉매 소모, 60초, 출력 낮음",
+      "portableFallback": "",
+      "stateMachine": "READY↔ACTIVE/COOLDOWN",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-P05",
+        "휴대 정화기",
+        "자수정 조각/양조기 아이콘",
+        "작은 반경 임시 정화장",
+        "촉매 소모, 60초, 출력 낮음"
+      ]
+    },
+    {
+      "id": "FAC-P06",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "신호 말뚝",
+      "facilityTier": "PORTABLE",
+      "representation": "피뢰침/엔드 막대 아이템",
+      "coreMaterial": "LIGHTNING_ROD",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-PORTABLE-SIGNAL_STAKE",
+      "recipeId": "WSRCP-G01",
+      "firstDay": 6,
+      "activationDay": 6,
+      "maxLevel": 1,
+      "baseHp": 1,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 0,
+      "costProfile": "PORTABLE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-P06-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-G01",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "SIGNAL_STAKE",
+      "effectText": "공명 측정·동적 전장 후보 표시",
+      "maintenanceText": "회수 전 재사용 불가",
+      "portableFallback": "",
+      "stateMachine": "READY↔ACTIVE/COOLDOWN",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-P06",
+        "신호 말뚝",
+        "피뢰침/엔드 막대 아이템",
+        "공명 측정·동적 전장 후보 표시",
+        "회수 전 재사용 불가"
+      ]
+    },
+    {
+      "id": "FAC-P07",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "구조 신호기",
+      "facilityTier": "PORTABLE",
+      "representation": "종/회복 토템 아이콘",
+      "coreMaterial": "BELL",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-PORTABLE-RESCUE_BEACON",
+      "recipeId": "WSRCP-F10",
+      "firstDay": 8,
+      "activationDay": 8,
+      "maxLevel": 1,
+      "baseHp": 1,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 0,
+      "costProfile": "PORTABLE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-P07-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F10",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "RESCUE_BEACON",
+      "effectText": "빈사 위치 표시와 구조시간 소폭 감소",
+      "maintenanceText": "전투당 1회, 자동 구조 아님",
+      "portableFallback": "",
+      "stateMachine": "READY↔ACTIVE/COOLDOWN",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-P07",
+        "구조 신호기",
+        "종/회복 토템 아이콘",
+        "빈사 위치 표시와 구조시간 소폭 감소",
+        "전투당 1회, 자동 구조 아님"
+      ]
+    },
+    {
+      "id": "FAC-P08",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "휴대 보관 원장",
+      "facilityTier": "PORTABLE",
+      "representation": "책",
+      "coreMaterial": "WRITABLE_BOOK",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-PORTABLE-LEDGER",
+      "recipeId": "WSRCP-F11",
+      "firstDay": 12,
+      "activationDay": 12,
+      "maxLevel": 1,
+      "baseHp": 1,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 0,
+      "costProfile": "PORTABLE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-P08-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F11",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "LEDGER_REMOTE",
+      "effectText": "공용 원장 조회·소량 입출고 예약",
+      "maintenanceText": "실제 입출고는 비전투 안전 상태",
+      "portableFallback": "",
+      "stateMachine": "READY↔ACTIVE/COOLDOWN",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-P08",
+        "휴대 보관 원장",
+        "책",
+        "공용 원장 조회·소량 입출고 예약",
+        "실제 입출고는 비전투 안전 상태"
+      ]
+    },
+    {
+      "id": "FAC-C01",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "간이 작업대",
+      "facilityTier": "CAMP",
+      "representation": "작업대+통",
+      "coreMaterial": "CRAFTING_TABLE",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-FAC-C01-KIT",
+      "recipeId": "WSRCP-F02",
+      "firstDay": 1,
+      "activationDay": 1,
+      "maxLevel": 1,
+      "baseHp": 1000,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 2,
+      "costProfile": "CAMP",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-C01-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F02",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "CRAFT_BASIC",
+      "effectText": "기초 장비·부품, 작업 슬롯 1",
+      "maintenanceText": "2",
+      "portableFallback": "P01",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-C01",
+        "간이 작업대",
+        "작업대+통",
+        "기초 장비·부품, 작업 슬롯 1",
+        "2",
+        "P01"
+      ]
+    },
+    {
+      "id": "FAC-C02",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "야전 화로",
+      "facilityTier": "CAMP",
+      "representation": "화로+모닥불",
+      "coreMaterial": "FURNACE",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-FAC-C02-KIT",
+      "recipeId": "WSRCP-F03",
+      "firstDay": 1,
+      "activationDay": 1,
+      "maxLevel": 1,
+      "baseHp": 1100,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 3,
+      "costProfile": "CAMP",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-C02-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F03",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "SMELT",
+      "effectText": "제련·식량 가공, 연료 효율 100%",
+      "maintenanceText": "3",
+      "portableFallback": "바닐라 화로",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-C02",
+        "야전 화로",
+        "화로+모닥불",
+        "제련·식량 가공, 연료 효율 100%",
+        "3",
+        "바닐라 화로"
+      ]
+    },
+    {
+      "id": "FAC-C03",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "임시 보관함",
+      "facilityTier": "CAMP",
+      "representation": "통/상자",
+      "coreMaterial": "BARREL",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-FAC-C03-KIT",
+      "recipeId": "WSRCP-F04",
+      "firstDay": 1,
+      "activationDay": 1,
+      "maxLevel": 1,
+      "baseHp": 1000,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 2,
+      "costProfile": "CAMP",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-C03-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F04",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "STORAGE",
+      "effectText": "파티 등록 보관 9칸, 파괴 시 원장 보호",
+      "maintenanceText": "2",
+      "portableFallback": "개인 인벤토리",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-C03",
+        "임시 보관함",
+        "통/상자",
+        "파티 등록 보관 9칸, 파괴 시 원장 보호",
+        "2",
+        "개인 인벤토리"
+      ]
+    },
+    {
+      "id": "FAC-C04",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "침낭 표식",
+      "facilityTier": "CAMP",
+      "representation": "양탄자+랜턴",
+      "coreMaterial": "WHITE_CARPET",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-FAC-C04-KIT",
+      "recipeId": "WSRCP-F12",
+      "firstDay": 2,
+      "activationDay": 2,
+      "maxLevel": 1,
+      "baseHp": 900,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 1,
+      "costProfile": "CAMP",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-C04-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F12",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "REST",
+      "effectText": "재접속 안전 후보, 비전투 회복 보조",
+      "maintenanceText": "1",
+      "portableFallback": "마지막 유효 위치",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-C04",
+        "침낭 표식",
+        "양탄자+랜턴",
+        "재접속 안전 후보, 비전투 회복 보조",
+        "1",
+        "마지막 유효 위치"
+      ]
+    },
+    {
+      "id": "FAC-C05",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "간이 경보종",
+      "facilityTier": "CAMP",
+      "representation": "종+울타리",
+      "coreMaterial": "BELL",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-FAC-C05-KIT",
+      "recipeId": "WSRCP-F13",
+      "firstDay": 2,
+      "activationDay": 2,
+      "maxLevel": 1,
+      "baseHp": 1100,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 3,
+      "costProfile": "CAMP",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-C05-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F13",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "ALERT",
+      "effectText": "40블록 위험 방향 경고",
+      "maintenanceText": "3",
+      "portableFallback": "액션바 짧은 경고",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-C05",
+        "간이 경보종",
+        "종+울타리",
+        "40블록 위험 방향 경고",
+        "3",
+        "액션바 짧은 경고"
+      ]
+    },
+    {
+      "id": "FAC-C06",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "야전 약제대",
+      "facilityTier": "CAMP",
+      "representation": "모닥불+양조기",
+      "coreMaterial": "BREWING_STAND",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-FAC-C06-KIT",
+      "recipeId": "WSRCP-F05",
+      "firstDay": 3,
+      "activationDay": 3,
+      "maxLevel": 1,
+      "baseHp": 1100,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 3,
+      "costProfile": "CAMP",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-C06-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F05",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "MEDICAL_BASIC",
+      "effectText": "기본 해독·지혈·회복품",
+      "maintenanceText": "3",
+      "portableFallback": "인벤토리 조합",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-C06",
+        "야전 약제대",
+        "모닥불+양조기",
+        "기본 해독·지혈·회복품",
+        "3",
+        "인벤토리 조합"
+      ]
+    },
+    {
+      "id": "FAC-C07",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "소형 탄약대",
+      "facilityTier": "CAMP",
+      "representation": "화살 제조대/통",
+      "coreMaterial": "FLETCHING_TABLE",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-FAC-C07-KIT",
+      "recipeId": "WSRCP-F06",
+      "firstDay": 3,
+      "activationDay": 3,
+      "maxLevel": 1,
+      "baseHp": 1100,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 3,
+      "costProfile": "CAMP",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-C07-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F06",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "AMMO_BASIC",
+      "effectText": "일반 탄약 묶음 제작",
+      "maintenanceText": "3",
+      "portableFallback": "기본 제작대",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-C07",
+        "소형 탄약대",
+        "화살 제조대/통",
+        "일반 탄약 묶음 제작",
+        "3",
+        "기본 제작대"
+      ]
+    },
+    {
+      "id": "FAC-C08",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "임시 바리케이드",
+      "facilityTier": "CAMP",
+      "representation": "울타리·철창",
+      "coreMaterial": "IRON_BARS",
+      "networkPolicy": "INDEPENDENT",
+      "itemId": "WSI-FAC-C08-KIT",
+      "recipeId": "WSRCP-F14",
+      "firstDay": 3,
+      "activationDay": 3,
+      "maxLevel": 1,
+      "baseHp": 900,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 1,
+      "costProfile": "CAMP",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-C08-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-F14",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "BASIC",
+      "effectOpcode": "BARRICADE",
+      "effectText": "공세 전용 등록 방어 블록",
+      "maintenanceText": "배치당 1",
+      "portableFallback": "자연 지형·이동",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-C08",
+        "임시 바리케이드",
+        "울타리·철창",
+        "공세 전용 등록 방어 블록",
+        "배치당 1",
+        "자연 지형·이동"
+      ]
+    },
+    {
+      "id": "FAC-S01",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "정밀 제작대",
+      "facilityTier": "SETTLEMENT",
+      "representation": "대장장이 작업대+구리",
+      "coreMaterial": "SMITHING_TABLE",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S01-KIT",
+      "recipeId": "WSRCP-FAC-S01",
+      "firstDay": 11,
+      "activationDay": 11,
+      "maxLevel": 5,
+      "baseHp": 4100,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 2,
+      "threatValue": 8,
+      "costProfile": "FP-PRODUCTION",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S01-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S01",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S01-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 12,
+            "signal": 6,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-S01-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 18,
+            "signal": 10,
+            "specialist": 6
+          }
+        },
+        {
+          "id": "FCOST-FAC-S01-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 24,
+            "signal": 16,
+            "specialist": 10
+          }
+        },
+        {
+          "id": "FCOST-FAC-S01-L5",
+          "targetLevel": 5,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 14,
+            "survival": 0,
+            "metal": 30,
+            "signal": 20,
+            "specialist": 16
+          }
+        }
+      ],
+      "unlockText": "C11, Lv5",
+      "effectOpcode": "CRAFT_ADVANCED",
+      "effectText": "희귀 이상 장비·시설 부품 제작",
+      "maintenanceText": "작업당 연료 2, 위협 8",
+      "portableFallback": "P01, 시간 150%·고급 1슬롯",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S01",
+        "정밀 제작대",
+        "대장장이 작업대+구리",
+        "희귀 이상 장비·시설 부품 제작",
+        "2",
+        "8"
+      ]
+    },
+    {
+      "id": "FAC-S02",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "강화 단조대",
+      "facilityTier": "SETTLEMENT",
+      "representation": "모루+용광로",
+      "coreMaterial": "ANVIL",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S02-KIT",
+      "recipeId": "WSRCP-FAC-S02",
+      "firstDay": 11,
+      "activationDay": 11,
+      "maxLevel": 5,
+      "baseHp": 4300,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 10,
+      "costProfile": "FP-PRODUCTION",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S02-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S02",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S02-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 12,
+            "signal": 6,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-S02-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 18,
+            "signal": 10,
+            "specialist": 6
+          }
+        },
+        {
+          "id": "FCOST-FAC-S02-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 24,
+            "signal": 16,
+            "specialist": 10
+          }
+        },
+        {
+          "id": "FCOST-FAC-S02-L5",
+          "targetLevel": 5,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 14,
+            "survival": 0,
+            "metal": 30,
+            "signal": 20,
+            "specialist": 16
+          }
+        }
+      ],
+      "unlockText": "C11, Lv5",
+      "effectOpcode": "REPAIR_FULL",
+      "effectText": "100% 확정 강화, BROKEN 완전 수리",
+      "maintenanceText": "작업당 연료 3, 위협 10",
+      "portableFallback": "P02 40% 응급 복구",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S02",
+        "강화 단조대",
+        "모루+용광로",
+        "100% 확정 강화, BROKEN 완전 수리",
+        "1",
+        "10"
+      ]
+    },
+    {
+      "id": "FAC-S03",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "재련 조율기",
+      "facilityTier": "SETTLEMENT",
+      "representation": "숫돌+자수정",
+      "coreMaterial": "GRINDSTONE",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S03-KIT",
+      "recipeId": "WSRCP-FAC-S03",
+      "firstDay": 18,
+      "activationDay": 18,
+      "maxLevel": 5,
+      "baseHp": 4500,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 12,
+      "costProfile": "FP-RESEARCH",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S03-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S03",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S03-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 6,
+            "survival": 0,
+            "metal": 10,
+            "signal": 14,
+            "specialist": 4
+          }
+        },
+        {
+          "id": "FCOST-FAC-S03-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 14,
+            "signal": 20,
+            "specialist": 8
+          }
+        },
+        {
+          "id": "FCOST-FAC-S03-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 18,
+            "signal": 28,
+            "specialist": 12
+          }
+        },
+        {
+          "id": "FCOST-FAC-S03-L5",
+          "targetLevel": 5,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 22,
+            "signal": 34,
+            "specialist": 18
+          }
+        }
+      ],
+      "unlockText": "C18, Lv5",
+      "effectOpcode": "REFORGE",
+      "effectText": "옵션 잠금·재련, 천장 진행 저장",
+      "maintenanceText": "확정당 `WSR-REDSTONE×1`, 위협 12",
+      "portableFallback": "재련 불가, 기존 장비 사용 가능",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S03",
+        "재련 조율기",
+        "숫돌+자수정",
+        "옵션 잠금·재련, 천장 진행 저장",
+        "1",
+        "12"
+      ]
+    },
+    {
+      "id": "FAC-S04",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "분해·회수기",
+      "facilityTier": "SETTLEMENT",
+      "representation": "석재 절단기+호퍼",
+      "coreMaterial": "STONECUTTER",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S04-KIT",
+      "recipeId": "WSRCP-FAC-S04",
+      "firstDay": 11,
+      "activationDay": 11,
+      "maxLevel": 4,
+      "baseHp": 4000,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 2,
+      "threatValue": 7,
+      "costProfile": "FP-PRODUCTION",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S04-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S04",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S04-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 12,
+            "signal": 6,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-S04-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 18,
+            "signal": 10,
+            "specialist": 6
+          }
+        },
+        {
+          "id": "FCOST-FAC-S04-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 24,
+            "signal": 16,
+            "specialist": 10
+          }
+        }
+      ],
+      "unlockText": "C11, Lv4",
+      "effectOpcode": "SALVAGE",
+      "effectText": "장비 분해, 부산물·제작식 연구",
+      "maintenanceText": "작업당 연료 1, 위협 7",
+      "portableFallback": "P01 70% 시간·회수율 하한",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S04",
+        "분해·회수기",
+        "석재 절단기+호퍼",
+        "장비 분해, 부산물·제작식 연구",
+        "2",
+        "7"
+      ]
+    },
+    {
+      "id": "FAC-S05",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "탄약 압축기",
+      "facilityTier": "SETTLEMENT",
+      "representation": "화살 제조대+피스톤 표현",
+      "coreMaterial": "FLETCHING_TABLE",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S05-KIT",
+      "recipeId": "WSRCP-FAC-S05",
+      "firstDay": 11,
+      "activationDay": 11,
+      "maxLevel": 4,
+      "baseHp": 4000,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 2,
+      "threatValue": 7,
+      "costProfile": "FP-PRODUCTION",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S05-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S05",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S05-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 12,
+            "signal": 6,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-S05-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 18,
+            "signal": 10,
+            "specialist": 6
+          }
+        },
+        {
+          "id": "FCOST-FAC-S05-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 24,
+            "signal": 16,
+            "specialist": 10
+          }
+        }
+      ],
+      "unlockText": "탄약 제작식, Lv4",
+      "effectOpcode": "AMMO_ADVANCED",
+      "effectText": "특수 탄약·탄창 일괄 제작",
+      "maintenanceText": "묶음당 연료 1, 위협 7",
+      "portableFallback": "기본 제작대 소량 제작",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S05",
+        "탄약 압축기",
+        "화살 제조대+피스톤 표현",
+        "특수 탄약·탄창 일괄 제작",
+        "2",
+        "7"
+      ]
+    },
+    {
+      "id": "FAC-S06",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "연구 단말",
+      "facilityTier": "SETTLEMENT",
+      "representation": "독서대+책장",
+      "coreMaterial": "LECTERN",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S06-KIT",
+      "recipeId": "WSRCP-D20-F02",
+      "firstDay": 11,
+      "activationDay": 11,
+      "maxLevel": 5,
+      "baseHp": 4200,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 2,
+      "threatValue": 9,
+      "costProfile": "FP-RESEARCH",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S06-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-D20-F02",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S06-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 6,
+            "survival": 0,
+            "metal": 10,
+            "signal": 14,
+            "specialist": 4
+          }
+        },
+        {
+          "id": "FCOST-FAC-S06-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 14,
+            "signal": 20,
+            "specialist": 8
+          }
+        },
+        {
+          "id": "FCOST-FAC-S06-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 18,
+            "signal": 28,
+            "specialist": 12
+          }
+        },
+        {
+          "id": "FCOST-FAC-S06-L5",
+          "targetLevel": 5,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 22,
+            "signal": 34,
+            "specialist": 18
+          }
+        }
+      ],
+      "unlockText": "C11, Lv5",
+      "effectOpcode": "RESEARCH",
+      "effectText": "표본 분석, 발견 증거 비교, 도감",
+      "maintenanceText": "작업당 전력 2, 위협 9",
+      "portableFallback": "P04, 1슬롯·150%",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S06",
+        "연구 단말",
+        "독서대+책장",
+        "표본 분석, 발견 증거 비교, 도감",
+        "2",
+        "9"
+      ]
+    },
+    {
+      "id": "FAC-S07",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "관측 배열",
+      "facilityTier": "SETTLEMENT",
+      "representation": "피뢰침+망원경 아이콘",
+      "coreMaterial": "SPYGLASS",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S07-KIT",
+      "recipeId": "WSRCP-FAC-S07",
+      "firstDay": 14,
+      "activationDay": 14,
+      "maxLevel": 5,
+      "baseHp": 4500,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 12,
+      "costProfile": "FP-RESEARCH",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S07-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S07",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S07-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 6,
+            "survival": 0,
+            "metal": 10,
+            "signal": 14,
+            "specialist": 4
+          }
+        },
+        {
+          "id": "FCOST-FAC-S07-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 14,
+            "signal": 20,
+            "specialist": 8
+          }
+        },
+        {
+          "id": "FCOST-FAC-S07-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 18,
+            "signal": 28,
+            "specialist": 12
+          }
+        },
+        {
+          "id": "FCOST-FAC-S07-L5",
+          "targetLevel": 5,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 22,
+            "signal": 34,
+            "specialist": 18
+          }
+        }
+      ],
+      "unlockText": "C14, Lv5",
+      "effectOpcode": "FORECAST",
+      "effectText": "다음 압박 방향·전략·신호 오차 분석",
+      "maintenanceText": "Day당 전력 6, 위협 12",
+      "portableFallback": "P06 방향·강도만",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S07",
+        "관측 배열",
+        "피뢰침+망원경 아이콘",
+        "다음 압박 방향·전략·신호 오차 분석",
+        "1",
+        "12"
+      ]
+    },
+    {
+      "id": "FAC-S08",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "패턴 기록기",
+      "facilityTier": "SETTLEMENT",
+      "representation": "주크박스+표시 엔티티",
+      "coreMaterial": "JUKEBOX",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S08-KIT",
+      "recipeId": "WSRCP-FAC-S08",
+      "firstDay": 21,
+      "activationDay": 21,
+      "maxLevel": 5,
+      "baseHp": 4200,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 9,
+      "costProfile": "FP-RESEARCH",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S08-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S08",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S08-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 6,
+            "survival": 0,
+            "metal": 10,
+            "signal": 14,
+            "specialist": 4
+          }
+        },
+        {
+          "id": "FCOST-FAC-S08-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 14,
+            "signal": 20,
+            "specialist": 8
+          }
+        },
+        {
+          "id": "FCOST-FAC-S08-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 18,
+            "signal": 28,
+            "specialist": 12
+          }
+        },
+        {
+          "id": "FCOST-FAC-S08-L5",
+          "targetLevel": 5,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 22,
+            "signal": 34,
+            "specialist": 18
+          }
+        }
+      ],
+      "unlockText": "C21, Lv5",
+      "effectOpcode": "PATTERN_ANALYZE",
+      "effectText": "적 패턴 전조·대응 로그 분석",
+      "maintenanceText": "전투 기록당 전력 1, 위협 9",
+      "portableFallback": "P04 관측 3개 합성",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S08",
+        "패턴 기록기",
+        "주크박스+표시 엔티티",
+        "적 패턴 전조·대응 로그 분석",
+        "1",
+        "9"
+      ]
+    },
+    {
+      "id": "FAC-S09",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "증강 공명기",
+      "facilityTier": "SETTLEMENT",
+      "representation": "마법부여대+자수정",
+      "coreMaterial": "ENCHANTING_TABLE",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S09-KIT",
+      "recipeId": "WSRCP-D20-F05",
+      "firstDay": 15,
+      "activationDay": 15,
+      "maxLevel": 4,
+      "baseHp": 4700,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 14,
+      "costProfile": "FP-RESEARCH",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S09-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-D20-F05",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S09-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 6,
+            "survival": 0,
+            "metal": 10,
+            "signal": 14,
+            "specialist": 4
+          }
+        },
+        {
+          "id": "FCOST-FAC-S09-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 14,
+            "signal": 20,
+            "specialist": 8
+          }
+        },
+        {
+          "id": "FCOST-FAC-S09-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 18,
+            "signal": 28,
+            "specialist": 12
+          }
+        }
+      ],
+      "unlockText": "Lv15 잠금+C11, Lv4",
+      "effectOpcode": "AUGMENT_MANAGE",
+      "effectText": "증강 교체, 진화 계보·태그 검사",
+      "maintenanceText": "교체당 신호 3, 위협 14",
+      "portableFallback": "읽기 가능, 교체 불가",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S09",
+        "증강 공명기",
+        "마법부여대+자수정",
+        "증강 교체, 진화 계보·태그 검사",
+        "1",
+        "14"
+      ]
+    },
+    {
+      "id": "FAC-S10",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "훈련 단말",
+      "facilityTier": "SETTLEMENT",
+      "representation": "갑옷 거치대+표적 블록",
+      "coreMaterial": "TARGET",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S10-KIT",
+      "recipeId": "WSRCP-D20-F04",
+      "firstDay": 10,
+      "activationDay": 10,
+      "maxLevel": 3,
+      "baseHp": 3800,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 5,
+      "costProfile": "FP-RESEARCH",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S10-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-D20-F04",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S10-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 6,
+            "survival": 0,
+            "metal": 10,
+            "signal": 14,
+            "specialist": 4
+          }
+        },
+        {
+          "id": "FCOST-FAC-S10-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 14,
+            "signal": 20,
+            "specialist": 8
+          }
+        }
+      ],
+      "unlockText": "C10, Lv3",
+      "effectOpcode": "TRAINING",
+      "effectText": "모의 구조·CC·브레이크, 스탯 투자",
+      "maintenanceText": "위협 5, 연료 없음",
+      "portableFallback": "S02 구조 모의 사건",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S10",
+        "훈련 단말",
+        "갑옷 거치대+표적 블록",
+        "모의 구조·CC·브레이크, 스탯 투자",
+        "파티별 1",
+        "5"
+      ]
+    },
+    {
+      "id": "FAC-S11",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "치료소",
+      "facilityTier": "SETTLEMENT",
+      "representation": "양조기+침대",
+      "coreMaterial": "RED_BED",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S11-KIT",
+      "recipeId": "WSRCP-D20-F03",
+      "firstDay": 11,
+      "activationDay": 11,
+      "maxLevel": 5,
+      "baseHp": 4300,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 2,
+      "threatValue": 10,
+      "costProfile": "FP-SURVIVAL",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S11-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-D20-F03",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S11-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 8,
+            "metal": 10,
+            "signal": 5,
+            "specialist": 4
+          }
+        },
+        {
+          "id": "FCOST-FAC-S11-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 10,
+            "metal": 14,
+            "signal": 7,
+            "specialist": 8
+          }
+        },
+        {
+          "id": "FCOST-FAC-S11-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 12,
+            "metal": 18,
+            "signal": 10,
+            "specialist": 12
+          }
+        },
+        {
+          "id": "FCOST-FAC-S11-L5",
+          "targetLevel": 5,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 14,
+            "survival": 14,
+            "metal": 22,
+            "signal": 12,
+            "specialist": 18
+          }
+        }
+      ],
+      "unlockText": "C11, Lv5",
+      "effectOpcode": "MEDICAL",
+      "effectText": "부상 회복, 해독, 구조 보조",
+      "maintenanceText": "환자 부상 1단당 `WSR-RATION×1`, 위협 10",
+      "portableFallback": "C06 야전 약제대",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S11",
+        "치료소",
+        "양조기+침대",
+        "부상 회복, 해독, 구조 보조",
+        "2",
+        "10"
+      ]
+    },
+    {
+      "id": "FAC-S12",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "유품 회수대",
+      "facilityTier": "SETTLEMENT",
+      "representation": "영혼 모닥불+상자",
+      "coreMaterial": "SOUL_CAMPFIRE",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S12-KIT",
+      "recipeId": "WSRCP-FAC-S12",
+      "firstDay": 12,
+      "activationDay": 12,
+      "maxLevel": 3,
+      "baseHp": 4100,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 8,
+      "costProfile": "FP-SURVIVAL",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S12-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S12",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S12-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 8,
+            "metal": 10,
+            "signal": 5,
+            "specialist": 4
+          }
+        },
+        {
+          "id": "FCOST-FAC-S12-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 10,
+            "metal": 14,
+            "signal": 7,
+            "specialist": 8
+          }
+        }
+      ],
+      "unlockText": "DEATH 해금, Lv3",
+      "effectOpcode": "GRAVE_RECOVERY",
+      "effectText": "접근 불가 유품 복구 요청·귀속 확인",
+      "maintenanceText": "요청당 `WSR-REDSTONE×2`, 위협 8",
+      "portableFallback": "OPS 복구 요청, 자동 지급 없음",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S12",
+        "유품 회수대",
+        "영혼 모닥불+상자",
+        "접근 불가 유품 복구 요청·귀속 확인",
+        "1",
+        "8"
+      ]
+    },
+    {
+      "id": "FAC-S13",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "정화기",
+      "facilityTier": "SETTLEMENT",
+      "representation": "비콘+자수정 표현",
+      "coreMaterial": "BEACON",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S13-KIT",
+      "recipeId": "WSRCP-FAC-S13",
+      "firstDay": 15,
+      "activationDay": 15,
+      "maxLevel": 5,
+      "baseHp": 4900,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 16,
+      "costProfile": "FP-SURVIVAL",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S13-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S13",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S13-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 8,
+            "metal": 10,
+            "signal": 5,
+            "specialist": 4
+          }
+        },
+        {
+          "id": "FCOST-FAC-S13-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 10,
+            "metal": 14,
+            "signal": 7,
+            "specialist": 8
+          }
+        },
+        {
+          "id": "FCOST-FAC-S13-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 12,
+            "metal": 18,
+            "signal": 10,
+            "specialist": 12
+          }
+        },
+        {
+          "id": "FCOST-FAC-S13-L5",
+          "targetLevel": 5,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 14,
+            "survival": 14,
+            "metal": 22,
+            "signal": 12,
+            "specialist": 18
+          }
+        }
+      ],
+      "unlockText": "C15, Lv5",
+      "effectOpcode": "PURIFY",
+      "effectText": "시설망·플레이어·지역 오염 정화",
+      "maintenanceText": "분당 촉매 1, 위협 16",
+      "portableFallback": "P05 60초·작은 반경",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S13",
+        "정화기",
+        "비콘+자수정 표현",
+        "시설망·플레이어·지역 오염 정화",
+        "1",
+        "16"
+      ]
+    },
+    {
+      "id": "FAC-S14",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "정화 중계기",
+      "facilityTier": "SETTLEMENT",
+      "representation": "피뢰침+엔드 막대",
+      "coreMaterial": "END_ROD",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S14-KIT",
+      "recipeId": "WSRCP-FAC-S14",
+      "firstDay": 15,
+      "activationDay": 15,
+      "maxLevel": 4,
+      "baseHp": 3900,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 6,
+      "costProfile": "FP-LOGISTICS",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S14-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S14",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S14-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 12,
+            "signal": 12,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-S14-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 16,
+            "signal": 18,
+            "specialist": 6
+          }
+        },
+        {
+          "id": "FCOST-FAC-S14-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 16,
+            "survival": 0,
+            "metal": 20,
+            "signal": 24,
+            "specialist": 10
+          }
+        }
+      ],
+      "unlockText": "C15, Lv4",
+      "effectOpcode": "PURIFY_RELAY",
+      "effectText": "정화 출력 범위 전달",
+      "maintenanceText": "분당 전력 1, 위협 6",
+      "portableFallback": "휴대 정화기 분산",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S14",
+        "정화 중계기",
+        "피뢰침+엔드 막대",
+        "정화 출력 범위 전달",
+        "해당 없음",
+        "6"
+      ]
+    },
+    {
+      "id": "FAC-S15",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "환경 차폐기",
+      "facilityTier": "SETTLEMENT",
+      "representation": "구리 블록+철창",
+      "coreMaterial": "COPPER_BLOCK",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S15-KIT",
+      "recipeId": "WSRCP-FAC-S15",
+      "firstDay": 19,
+      "activationDay": 19,
+      "maxLevel": 4,
+      "baseHp": 4200,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 9,
+      "costProfile": "FP-SURVIVAL",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S15-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S15",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S15-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 8,
+            "metal": 10,
+            "signal": 5,
+            "specialist": 4
+          }
+        },
+        {
+          "id": "FCOST-FAC-S15-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 10,
+            "metal": 14,
+            "signal": 7,
+            "specialist": 8
+          }
+        },
+        {
+          "id": "FCOST-FAC-S15-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 12,
+            "metal": 18,
+            "signal": 10,
+            "specialist": 12
+          }
+        }
+      ],
+      "unlockText": "C19, Lv4",
+      "effectOpcode": "ENVIRONMENT_SHIELD",
+      "effectText": "낙뢰·오염 파동 등 특정 환경 위험 완화",
+      "maintenanceText": "활성 분당 전력 2, 위협 9",
+      "portableFallback": "엄폐·회피·소모품",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S15",
+        "환경 차폐기",
+        "구리 블록+철창",
+        "낙뢰·오염 파동 등 특정 환경 위험 완화",
+        "1",
+        "9"
+      ]
+    },
+    {
+      "id": "FAC-S16",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "공용 물류고",
+      "facilityTier": "SETTLEMENT",
+      "representation": "상자+통+엔더 상자 표현",
+      "coreMaterial": "ENDER_CHEST",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S16-KIT",
+      "recipeId": "WSRCP-FAC-S16",
+      "firstDay": 11,
+      "activationDay": 11,
+      "maxLevel": 5,
+      "baseHp": 4400,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 3,
+      "threatValue": 11,
+      "costProfile": "FP-LOGISTICS",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S16-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S16",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S16-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 12,
+            "signal": 12,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-S16-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 16,
+            "signal": 18,
+            "specialist": 6
+          }
+        },
+        {
+          "id": "FCOST-FAC-S16-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 16,
+            "survival": 0,
+            "metal": 20,
+            "signal": 24,
+            "specialist": 10
+          }
+        },
+        {
+          "id": "FCOST-FAC-S16-L5",
+          "targetLevel": 5,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 18,
+            "survival": 0,
+            "metal": 26,
+            "signal": 30,
+            "specialist": 14
+          }
+        }
+      ],
+      "unlockText": "C11, Lv5",
+      "effectOpcode": "SHARED_LEDGER",
+      "effectText": "가상 공용 원장 입출고·작업 예약",
+      "maintenanceText": "연결당 전력 1, 위협 11",
+      "portableFallback": "P08 조회·소량 예약",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S16",
+        "공용 물류고",
+        "상자+통+엔더 상자 표현",
+        "가상 공용 원장 입출고·작업 예약",
+        "3",
+        "11"
+      ]
+    },
+    {
+      "id": "FAC-S17",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "동력 분배기",
+      "facilityTier": "SETTLEMENT",
+      "representation": "레드스톤 블록+구리",
+      "coreMaterial": "REDSTONE_BLOCK",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S17-KIT",
+      "recipeId": "WSRCP-FAC-S17",
+      "firstDay": 18,
+      "activationDay": 18,
+      "maxLevel": 5,
+      "baseHp": 4600,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 13,
+      "costProfile": "FP-LOGISTICS",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S17-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S17",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S17-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 12,
+            "signal": 12,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-S17-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 16,
+            "signal": 18,
+            "specialist": 6
+          }
+        },
+        {
+          "id": "FCOST-FAC-S17-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 16,
+            "survival": 0,
+            "metal": 20,
+            "signal": 24,
+            "specialist": 10
+          }
+        },
+        {
+          "id": "FCOST-FAC-S17-L5",
+          "targetLevel": 5,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 18,
+            "survival": 0,
+            "metal": 26,
+            "signal": 30,
+            "specialist": 14
+          }
+        }
+      ],
+      "unlockText": "C18, Lv5",
+      "effectOpcode": "POWER_DISTRIBUTE",
+      "effectText": "연결 시설 동력·연료 분배",
+      "maintenanceText": "Lv1~5 손실 10/8/6/4/2%, 위협 13",
+      "portableFallback": "시설별 직접 연료",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S17",
+        "동력 분배기",
+        "레드스톤 블록+구리",
+        "연결 시설 동력·연료 분배",
+        "해당 없음",
+        "13"
+      ]
+    },
+    {
+      "id": "FAC-S18",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "이동 앵커",
+      "facilityTier": "SETTLEMENT",
+      "representation": "자석석+나침반",
+      "coreMaterial": "LODESTONE",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S18-KIT",
+      "recipeId": "WSRCP-FAC-S18",
+      "firstDay": 19,
+      "activationDay": 19,
+      "maxLevel": 4,
+      "baseHp": 4300,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 10,
+      "costProfile": "FP-LOGISTICS",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S18-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S18",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S18-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 12,
+            "signal": 12,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-S18-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 16,
+            "signal": 18,
+            "specialist": 6
+          }
+        },
+        {
+          "id": "FCOST-FAC-S18-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 16,
+            "survival": 0,
+            "metal": 20,
+            "signal": 24,
+            "specialist": 10
+          }
+        }
+      ],
+      "unlockText": "C19, Lv4",
+      "effectOpcode": "TRAVEL",
+      "effectText": "등록 앵커 사이 제한 빠른 이동",
+      "maintenanceText": "사용당 신호 3, 위협 10",
+      "portableFallback": "도보·중계 경로",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S18",
+        "이동 앵커",
+        "자석석+나침반",
+        "등록 앵커 사이 제한 빠른 이동",
+        "1",
+        "10"
+      ]
+    },
+    {
+      "id": "FAC-S19",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "세션 중계기",
+      "facilityTier": "SETTLEMENT",
+      "representation": "종+독서대",
+      "coreMaterial": "BELL",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S19-KIT",
+      "recipeId": "WSRCP-FAC-S19",
+      "firstDay": 11,
+      "activationDay": 11,
+      "maxLevel": 3,
+      "baseHp": 3700,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 4,
+      "costProfile": "FP-LOGISTICS",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S19-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S19",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S19-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 12,
+            "signal": 12,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-S19-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 12,
+            "survival": 0,
+            "metal": 16,
+            "signal": 18,
+            "specialist": 6
+          }
+        }
+      ],
+      "unlockText": "기본, Lv3",
+      "effectOpcode": "SESSION_RELAY",
+      "effectText": "정상 중단 투표·체크포인트 요청",
+      "maintenanceText": "Day당 전력 2, 위협 4",
+      "portableFallback": "명령 투표, 안전 상태만",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S19",
+        "세션 중계기",
+        "종+독서대",
+        "정상 중단 투표·체크포인트 요청",
+        "1",
+        "4"
+      ]
+    },
+    {
+      "id": "FAC-S20",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "공세 관측기",
+      "facilityTier": "SETTLEMENT",
+      "representation": "스컬크 센서+종",
+      "coreMaterial": "SCULK_SENSOR",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-S20-KIT",
+      "recipeId": "WSRCP-FAC-S20",
+      "firstDay": 14,
+      "activationDay": 14,
+      "maxLevel": 4,
+      "baseHp": 4500,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 1,
+      "threatValue": 12,
+      "costProfile": "FP-RESEARCH",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-S20-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-S20",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-S20-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 6,
+            "survival": 0,
+            "metal": 10,
+            "signal": 14,
+            "specialist": 4
+          }
+        },
+        {
+          "id": "FCOST-FAC-S20-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 14,
+            "signal": 20,
+            "specialist": 8
+          }
+        },
+        {
+          "id": "FCOST-FAC-S20-L4",
+          "targetLevel": 4,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 10,
+            "survival": 0,
+            "metal": 18,
+            "signal": 28,
+            "specialist": 12
+          }
+        }
+      ],
+      "unlockText": "C14, Lv4",
+      "effectOpcode": "ASSAULT_OBSERVE",
+      "effectText": "압박 모드·접근 방향·잔존 적 표시",
+      "maintenanceText": "Day당 전력 4, 위협 12",
+      "portableFallback": "액션바 방향·범주",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-S20",
+        "공세 관측기",
+        "스컬크 센서+종",
+        "압박 모드·접근 방향·잔존 적 표시",
+        "1",
+        "12"
+      ]
+    },
+    {
+      "id": "FAC-D01",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "보강벽 등록기",
+      "facilityTier": "DEFENSE",
+      "representation": "철 블록/철창",
+      "coreMaterial": "IRON_BARS",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-D01-KIT",
+      "recipeId": "WSRCP-FAC-D01",
+      "firstDay": 11,
+      "activationDay": 11,
+      "maxLevel": 3,
+      "baseHp": 1700,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 1,
+      "costProfile": "FP-DEFENSE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-D01-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-D01",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-D01-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 6,
+            "survival": 0,
+            "metal": 14,
+            "signal": 5,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-D01-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 18,
+            "signal": 8,
+            "specialist": 4
+          }
+        }
+      ],
+      "unlockText": "기본, Lv3",
+      "effectOpcode": "WALL_REGISTER",
+      "effectText": "지정 임시 벽을 공세 파괴 대상으로 등록",
+      "maintenanceText": "블록당 위협 1",
+      "portableFallback": "자연 지형·이동",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-D01",
+        "보강벽 등록기",
+        "철 블록/철창",
+        "지정 임시 벽을 공세 파괴 대상으로 등록",
+        "네트워크당 48블록",
+        "1/블록"
+      ]
+    },
+    {
+      "id": "FAC-D02",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "감속 함정",
+      "facilityTier": "DEFENSE",
+      "representation": "거미줄/트립와이어",
+      "coreMaterial": "TRIPWIRE_HOOK",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-D02-KIT",
+      "recipeId": "WSRCP-FAC-D02",
+      "firstDay": 14,
+      "activationDay": 14,
+      "maxLevel": 3,
+      "baseHp": 1900,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 3,
+      "costProfile": "FP-DEFENSE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-D02-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-D02",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-D02-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 6,
+            "survival": 0,
+            "metal": 14,
+            "signal": 5,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-D02-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 18,
+            "signal": 8,
+            "specialist": 4
+          }
+        }
+      ],
+      "unlockText": "C14, Lv3",
+      "effectOpcode": "SLOW_TRAP",
+      "effectText": "적 이동 감속, 강한 CC 아님",
+      "maintenanceText": "발동 12회 후 수리, 위협 3",
+      "portableFallback": "상태·이동 대응",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-D02",
+        "감속 함정",
+        "거미줄/트립와이어",
+        "적 이동 감속, 강한 CC 아님",
+        "8개",
+        "3"
+      ]
+    },
+    {
+      "id": "FAC-D03",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "충격 함정",
+      "facilityTier": "DEFENSE",
+      "representation": "피스톤/압력판",
+      "coreMaterial": "PISTON",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-D03-KIT",
+      "recipeId": "WSRCP-FAC-D03",
+      "firstDay": 21,
+      "activationDay": 21,
+      "maxLevel": 3,
+      "baseHp": 2000,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 4,
+      "costProfile": "FP-DEFENSE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-D03-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-D03",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-D03-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 6,
+            "survival": 0,
+            "metal": 14,
+            "signal": 5,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-D03-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 18,
+            "signal": 8,
+            "specialist": 4
+          }
+        }
+      ],
+      "unlockText": "C21, Lv3",
+      "effectOpcode": "IMPACT_TRAP",
+      "effectText": "낮은 브레이크·밀치기",
+      "maintenanceText": "발동 8회 후 수리, 위협 4",
+      "portableFallback": "무기 브레이크",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-D03",
+        "충격 함정",
+        "피스톤/압력판",
+        "낮은 브레이크·밀치기",
+        "6개",
+        "4"
+      ]
+    },
+    {
+      "id": "FAC-D04",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "유도 신호기",
+      "facilityTier": "DEFENSE",
+      "representation": "피뢰침/레드스톤 횃불",
+      "coreMaterial": "REDSTONE_TORCH",
+      "networkPolicy": "CONNECTED_24",
+      "itemId": "WSI-FAC-D04-KIT",
+      "recipeId": "WSRCP-FAC-D04",
+      "firstDay": 19,
+      "activationDay": 19,
+      "maxLevel": 3,
+      "baseHp": 2400,
+      "hpAuthority": "IMPLEMENTATION_BASELINE",
+      "workSlots": 0,
+      "threatValue": 8,
+      "costProfile": "FP-DEFENSE",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-D04-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-FAC-D04",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        },
+        {
+          "id": "FCOST-FAC-D04-L2",
+          "targetLevel": 2,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 6,
+            "survival": 0,
+            "metal": 14,
+            "signal": 5,
+            "specialist": 2
+          }
+        },
+        {
+          "id": "FCOST-FAC-D04-L3",
+          "targetLevel": 3,
+          "paymentMode": "RESOURCE_VALUE",
+          "recipeId": "",
+          "cost": {
+            "construction": 8,
+            "survival": 0,
+            "metal": 18,
+            "signal": 8,
+            "specialist": 4
+          }
+        }
+      ],
+      "unlockText": "C19, Lv3",
+      "effectOpcode": "TAUNT_BEACON",
+      "effectText": "제한 시간 적 목표 우선순위 변경",
+      "maintenanceText": "사용당 `WSR-REDSTONE×2`, 시설별 60초 재사용, 위협 8",
+      "portableFallback": "플레이어 유인·도발",
+      "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-D04",
+        "유도 신호기",
+        "피뢰침/레드스톤 횃불",
+        "제한 시간 적 목표 우선순위 변경",
+        "2개",
+        "8"
+      ]
+    },
+    {
+      "id": "FAC-R01",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "재건 조립 프레임",
+      "facilityTier": "RECONSTRUCTION",
+      "representation": "철·구리·석영 다중 블록",
+      "coreMaterial": "SMITHING_TABLE",
+      "networkPolicy": "CONNECTED_96",
+      "itemId": "",
+      "recipeId": "WSRCP-R01",
+      "firstDay": 41,
+      "activationDay": 41,
+      "maxLevel": 1,
+      "baseHp": 18000,
+      "hpAuthority": "DOCUMENT_LOCK",
+      "workSlots": 2,
+      "threatValue": 18,
+      "costProfile": "RECONSTRUCTION",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-R01-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-R01",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "C27, 부품 A",
+      "effectOpcode": "REBUILD_FRAME",
+      "effectText": "하위 계통 결합·시설 본체",
+      "maintenanceText": "C27, 부품 A",
+      "portableFallback": "",
+      "stateMachine": "PLANNED→ASSEMBLED→TESTING/CALIBRATING→READY",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-R01",
+        "재건 조립 프레임",
+        "철·구리·석영 다중 블록",
+        "하위 계통 결합·시설 본체",
+        "C27, 부품 A",
+        "18"
+      ]
+    },
+    {
+      "id": "FAC-R02",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "안정 동력 핵",
+      "facilityTier": "RECONSTRUCTION",
+      "representation": "레드스톤 램프+자수정",
+      "coreMaterial": "REDSTONE_LAMP",
+      "networkPolicy": "CONNECTED_96",
+      "itemId": "",
+      "recipeId": "WSRCP-R02",
+      "firstDay": 41,
+      "activationDay": 41,
+      "maxLevel": 1,
+      "baseHp": 16000,
+      "hpAuthority": "DOCUMENT_LOCK",
+      "workSlots": 1,
+      "threatValue": 22,
+      "costProfile": "RECONSTRUCTION",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-R02-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-R02",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "C28-B, 부품 B",
+      "effectOpcode": "REBUILD_POWER",
+      "effectText": "최종 장치 동력·과부하 시험",
+      "maintenanceText": "C28-B, 부품 B",
+      "portableFallback": "",
+      "stateMachine": "PLANNED→ASSEMBLED→TESTING/CALIBRATING→READY",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-R02",
+        "안정 동력 핵",
+        "레드스톤 램프+자수정",
+        "최종 장치 동력·과부하 시험",
+        "C28-B, 부품 B",
+        "22"
+      ]
+    },
+    {
+      "id": "FAC-R03",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "신호 렌즈 배열",
+      "facilityTier": "RECONSTRUCTION",
+      "representation": "비콘 유리+피뢰침",
+      "coreMaterial": "BEACON",
+      "networkPolicy": "CONNECTED_96",
+      "itemId": "",
+      "recipeId": "WSRCP-R03",
+      "firstDay": 41,
+      "activationDay": 41,
+      "maxLevel": 1,
+      "baseHp": 14000,
+      "hpAuthority": "DOCUMENT_LOCK",
+      "workSlots": 1,
+      "threatValue": 20,
+      "costProfile": "RECONSTRUCTION",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-R03-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-R03",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "C28-C, 부품 C",
+      "effectOpcode": "REBUILD_LENS",
+      "effectText": "세계 붕괴 핵 신호 교정",
+      "maintenanceText": "C28-C, 부품 C",
+      "portableFallback": "",
+      "stateMachine": "PLANNED→ASSEMBLED→TESTING/CALIBRATING→READY",
+      "runtimeConfig": {
+        "opcode": "R03_CARDINAL_EXACT_MATCH",
+        "directionPool": [
+          "NORTH",
+          "EAST",
+          "SOUTH",
+          "WEST"
+        ],
+        "directionCount": 3,
+        "valueMinimum": -20,
+        "valueMaximum": 20,
+        "valueStep": 1,
+        "clueIntervalTicks": 300,
+        "clueOpcode": "ROUND_ROBIN_DIRECTION_OR_SIGNED_RESIDUAL",
+        "passOpcode": "EXACT_DIRECTION_SET_AND_VALUES",
+        "seedFields": [
+          "runId",
+          "facilityInstanceId",
+          "contentRevision"
+        ],
+        "concurrencyPolicy": "REVISION_COMPARE_AND_SWAP"
+      },
+      "raw": [
+        "FAC-R03",
+        "신호 렌즈 배열",
+        "비콘 유리+피뢰침",
+        "세계 붕괴 핵 신호 교정",
+        "C28-C, 부품 C",
+        "20"
+      ]
+    },
+    {
+      "id": "FAC-R04",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "정화 매질실",
+      "facilityTier": "RECONSTRUCTION",
+      "representation": "유리+물+자수정",
+      "coreMaterial": "TINTED_GLASS",
+      "networkPolicy": "CONNECTED_96",
+      "itemId": "",
+      "recipeId": "WSRCP-R04",
+      "firstDay": 41,
+      "activationDay": 41,
+      "maxLevel": 1,
+      "baseHp": 16000,
+      "hpAuthority": "DOCUMENT_LOCK",
+      "workSlots": 1,
+      "threatValue": 22,
+      "costProfile": "RECONSTRUCTION",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-R04-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-R04",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "C28-D, 부품 D",
+      "effectOpcode": "REBUILD_PURIFY",
+      "effectText": "최종 정화 매질 저장·순환",
+      "maintenanceText": "C28-D, 부품 D",
+      "portableFallback": "",
+      "stateMachine": "PLANNED→ASSEMBLED→TESTING/CALIBRATING→READY",
+      "runtimeConfig": {
+        "opcode": "R04_VISITED_ENVIRONMENT_PAIR",
+        "ledger": "RUN_VISITED_ENVIRONMENT_LEDGER",
+        "environmentIdFormat": "dimensionKey|biomeKey",
+        "requiredDistinctEnvironments": 2,
+        "testDurationTicks": 200,
+        "preserveCompletedSelection": true
+      },
+      "raw": [
+        "FAC-R04",
+        "정화 매질실",
+        "유리+물+자수정",
+        "최종 정화 매질 저장·순환",
+        "C28-D, 부품 D",
+        "22"
+      ]
+    },
+    {
+      "id": "FAC-R05",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "교정 말뚝",
+      "facilityTier": "RECONSTRUCTION",
+      "representation": "자석석/엔드 막대",
+      "coreMaterial": "LODESTONE",
+      "networkPolicy": "CONNECTED_96",
+      "itemId": "",
+      "recipeId": "WSRCP-R05",
+      "firstDay": 41,
+      "activationDay": 41,
+      "maxLevel": 1,
+      "baseHp": 5000,
+      "hpAuthority": "DOCUMENT_LOCK",
+      "workSlots": 1,
+      "threatValue": 8,
+      "costProfile": "RECONSTRUCTION",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-R05-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-R05",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "C29, 3개",
+      "effectOpcode": "REBUILD_STAKES",
+      "effectText": "세 방향 오차 측정·안정화",
+      "maintenanceText": "C29, 3개",
+      "portableFallback": "",
+      "stateMachine": "PLANNED→ASSEMBLED→TESTING/CALIBRATING→READY",
+      "runtimeConfig": {
+        "opcode": "R05_R03_DIRECTION_STAKES",
+        "requiredStakes": 3,
+        "horizontalDistanceMinimum": 16,
+        "horizontalDistanceMaximum": 48,
+        "bearingToleranceDegrees": 22.5,
+        "verticalDifferenceMaximum": 12,
+        "stakeSeparationMinimum": 16,
+        "calibrationTicks": 100,
+        "valueAuthority": "FAC-R03_TARGET_BY_DIRECTION",
+        "orderPolicy": "ANY",
+        "invalidates": "MOVED_STAKE_ONLY"
+      },
+      "raw": [
+        "FAC-R05",
+        "교정 말뚝",
+        "자석석/엔드 막대",
+        "세 방향 오차 측정·안정화",
+        "C29, 3개",
+        "8"
+      ]
+    },
+    {
+      "id": "FAC-R06",
+      "sourceDocumentId": "FACILITY-LIST-001",
+      "enabled": true,
+      "name": "첫 재건 장치",
+      "facilityTier": "RECONSTRUCTION",
+      "representation": "R01~R05 결합 상태",
+      "coreMaterial": "RESPAWN_ANCHOR",
+      "networkPolicy": "CONNECTED_96",
+      "itemId": "",
+      "recipeId": "WSRCP-R06",
+      "firstDay": 49,
+      "activationDay": 50,
+      "maxLevel": 1,
+      "baseHp": 30000,
+      "hpAuthority": "DOCUMENT_LOCK",
+      "workSlots": 1,
+      "threatValue": 30,
+      "costProfile": "RECONSTRUCTION",
+      "levelCosts": [
+        {
+          "id": "FCOST-FAC-R06-L1",
+          "targetLevel": 1,
+          "paymentMode": "CRAFT_RECIPE_REFERENCE",
+          "recipeId": "WSRCP-R06",
+          "cost": {
+            "construction": 0,
+            "survival": 0,
+            "metal": 0,
+            "signal": 0,
+            "specialist": 0
+          }
+        }
+      ],
+      "unlockText": "C29, R01~R05 READY, 최종 신호 키",
+      "effectOpcode": "REBUILD_FINAL",
+      "effectText": "Day 50+ 최종 신호와 정화 유지",
+      "maintenanceText": "C29, R01~R05 READY, 최종 신호 키",
+      "portableFallback": "",
+      "stateMachine": "PLANNED→ASSEMBLED→TESTING/CALIBRATING→READY",
+      "runtimeConfig": {},
+      "raw": [
+        "FAC-R06",
+        "첫 재건 장치",
+        "R01~R05 결합 상태",
+        "Day 50+ 최종 신호와 정화 유지",
+        "C29, R01~R05 READY, 최종 신호 키",
+        "30"
+      ]
+    }
+  ]
+}

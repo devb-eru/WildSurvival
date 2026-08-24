@@ -107,8 +107,19 @@ tasks {
         dependsOn(classes)
     }
 
+    register<JavaExec>("validateCandidateContent") {
+        group = "verification"
+        description = "Validates the embedded 70-file ws-content-r2.1 candidate catalog bundle."
+        classpath = sourceSets["main"].runtimeClasspath
+        mainClass.set("com.lsc.corp.wsplugin.content.ProductionContentValidationCli")
+        args(layout.projectDirectory.dir("src/main/resources/content/ws-content-r2.1").asFile.absolutePath,
+                "ws-content-r2.1")
+        dependsOn(classes)
+    }
+
     check {
         dependsOn("validatePrototypeContent")
         dependsOn("validateProductionContent")
+        dependsOn("validateCandidateContent")
     }
 }

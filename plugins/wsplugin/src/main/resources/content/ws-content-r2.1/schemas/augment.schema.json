@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contentRevision",
+    "domain",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "contentRevision": {
+      "const": "ws-content-r2.1"
+    },
+    "domain": {
+      "enum": [
+        "personal-augments",
+        "party-augments"
+      ]
+    },
+    "records": {
+      "type": "array",
+      "minItems": 16,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "sourceDocumentId",
+          "enabled",
+          "name",
+          "tier",
+          "scope",
+          "tags",
+          "effectOpcode",
+          "effectText",
+          "constraintText",
+          "weightingText",
+          "exclusiveWith",
+          "evolution",
+          "executionSourceDocumentId",
+          "triggerIds",
+          "stateScope",
+          "parameterPayload",
+          "limitFallback",
+          "derivedEventFlags",
+          "raw"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^(?:AUG-[SGP]-\\d{3}|PAUG-\\d{3})$"
+          },
+          "sourceDocumentId": {
+            "enum": [
+              "AUG-LIST-001",
+              "AUG-LIST-002"
+            ]
+          },
+          "enabled": {
+            "const": true
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tier": {
+            "enum": [
+              "SILVER",
+              "GOLD",
+              "PRISM",
+              "PARTY"
+            ]
+          },
+          "scope": {
+            "enum": [
+              "PERSONAL",
+              "PARTY"
+            ]
+          },
+          "tags": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "effectOpcode": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]+$"
+          },
+          "effectText": {
+            "type": "string",
+            "minLength": 1
+          },
+          "constraintText": {
+            "type": "string"
+          },
+          "weightingText": {
+            "type": "string"
+          },
+          "exclusiveWith": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "evolution": {
+            "type": "boolean"
+          },
+          "executionSourceDocumentId": {
+            "const": "AUGMENT-EFFECT-LIST-001"
+          },
+          "triggerIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9_]+$"
+            }
+          },
+          "stateScope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parameterPayload": {
+            "type": "string",
+            "minLength": 1
+          },
+          "limitFallback": {
+            "type": "string",
+            "minLength": 1
+          },
+          "derivedEventFlags": {
+            "type": "array",
+            "minItems": 3,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "NO_AUGMENT_RETRIGGER",
+                "NO_REWARD",
+                "NO_CONTRIBUTION"
+              ]
+            }
+          },
+          "raw": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

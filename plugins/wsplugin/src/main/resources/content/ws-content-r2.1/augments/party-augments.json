@@ -1,0 +1,616 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "party-augments",
+  "records": [
+    {
+      "id": "PAUG-001",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "함께 걷는 자",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "MOBILITY",
+        "COOP"
+      ],
+      "effectOpcode": "FORMATION_MOBILITY_AND_DODGE_COST",
+      "effectText": "생존 파티원 12블록 내 2명 이상이면 이동속도 +6%, 회피 AP -3",
+      "constraintText": "혼자일 때 이동 +3%만 유지",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PARTY_FORMATION_CHANGED",
+        "MOVEMENT_QUERY",
+        "DODGE_COST_QUERY"
+      ],
+      "stateScope": "PARTY_PLAYER",
+      "parameterPayload": "nearbyRange=12; membersRequired=2; moveMultiplier=1.06; dodgeApFlat=-3; soloMoveMultiplier=1.03",
+      "limitFallback": "downedAndDeadExcluded=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-001",
+        "함께 걷는 자",
+        "MOBILITY`, `COOP",
+        "생존 파티원 12블록 내 2명 이상이면 이동속도 +6%, 회피 AP -3",
+        "혼자일 때 이동 +3%만 유지"
+      ]
+    },
+    {
+      "id": "PAUG-002",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "교대 방어",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "GUARD",
+        "COOP"
+      ],
+      "effectOpcode": "ALTERNATING_GUARD_PARTY_DAMAGE_WINDOW",
+      "effectText": "한 플레이어가 방어·패링 후 3초 내 다른 플레이어 공격 피해 +10%",
+      "constraintText": "대상별 4초",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "GUARD_RESOLVED",
+        "PARRY_RESOLVED",
+        "COMBAT_HIT_QUERY"
+      ],
+      "stateScope": "PARTY_PLAYER",
+      "parameterPayload": "handoffWindowTicks=60; otherPlayerDamageMultiplier=1.10",
+      "limitFallback": "targetIcdTicks=80; samePlayer=false",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-002",
+        "교대 방어",
+        "GUARD`, `COOP",
+        "한 플레이어가 방어·패링 후 3초 내 다른 플레이어 공격 피해 +10%",
+        "대상별 4초"
+      ]
+    },
+    {
+      "id": "PAUG-003",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "공동 약점 분석",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "BREAK",
+        "MARK"
+      ],
+      "effectOpcode": "MULTI_CONTRIBUTOR_TARGET_BREAK_WINDOW",
+      "effectText": "서로 다른 플레이어 2명이 같은 적을 4초 내 적중하면 받는 브레이크 +12% 5초",
+      "constraintText": "보스 +8%, 대상별 8초",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "COMBAT_HIT_COMMITTED"
+      ],
+      "stateScope": "PARTY_TARGET",
+      "parameterPayload": "contributorsRequired=2; contributionWindowTicks=80; breakTakenMultiplier=1.12; bossMultiplier=1.08; durationTicks=100",
+      "limitFallback": "targetIcdTicks=160",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-003",
+        "공동 약점 분석",
+        "BREAK`, `MARK",
+        "서로 다른 플레이어 2명이 같은 적을 4초 내 적중하면 받는 브레이크 +12% 5초",
+        "보스 +8%, 대상별 8초"
+      ]
+    },
+    {
+      "id": "PAUG-004",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "구조 연쇄",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "RESCUE",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "RESCUE_COMPLETE_PARTY_RECOVERY",
+      "effectText": "구조 완료 시 모든 생존 파티원 AP 10, 구조자·대상 HP 8% 회복",
+      "constraintText": "구조당 1회",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "RESCUE_COMPLETED"
+      ],
+      "stateScope": "PARTY_RESCUE",
+      "parameterPayload": "allSurvivorAp=10; rescuerHealMaxHp=0.08; targetHealMaxHp=0.08",
+      "limitFallback": "perRescueMax=1",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-004",
+        "구조 연쇄",
+        "RESCUE`, `SURVIVAL",
+        "구조 완료 시 모든 생존 파티원 AP 10, 구조자·대상 HP 8% 회복",
+        "구조당 1회"
+      ]
+    },
+    {
+      "id": "PAUG-005",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "분산 보급",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "RESOURCE",
+        "UTILITY"
+      ],
+      "effectOpcode": "MULTI_CATEGORY_COMMON_RESOURCE_BONUS",
+      "effectText": "서로 다른 획득 범주 기여자가 2명 이상인 Day의 공용 일반 재료 +10%",
+      "constraintText": "보스·고유 재료 제외",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "DAY_RESOURCE_SETTLEMENT_COMMITTING"
+      ],
+      "stateScope": "PARTY_DAY",
+      "parameterPayload": "distinctContributorCategories=2; commonResourceOutputMultiplier=1.10",
+      "limitFallback": "bossUniqueProfessionalReconstructionExcluded=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-005",
+        "분산 보급",
+        "RESOURCE`, `UTILITY",
+        "서로 다른 획득 범주 기여자가 2명 이상인 Day의 공용 일반 재료 +10%",
+        "보스·고유 재료 제외"
+      ]
+    },
+    {
+      "id": "PAUG-006",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "상태 공유 연구",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "STATUS",
+        "COOP"
+      ],
+      "effectOpcode": "THREE_STATUS_PARTY_DAMAGE_WINDOW",
+      "effectText": "파티가 서로 다른 약화 3종을 대상에 적용하면 5초간 상태 피해 +15%",
+      "constraintText": "대상별 10초, 강한 CC 제외",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "STATUS_APPLIED",
+        "STATUS_DAMAGE_QUERY"
+      ],
+      "stateScope": "PARTY_TARGET",
+      "parameterPayload": "distinctWeakStatusCategories=3; statusDamageMultiplier=1.15; durationTicks=100",
+      "limitFallback": "targetIcdTicks=200; hardCcExcluded=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-006",
+        "상태 공유 연구",
+        "STATUS`, `COOP",
+        "파티가 서로 다른 약화 3종을 대상에 적용하면 5초간 상태 피해 +15%",
+        "대상별 10초, 강한 CC 제외"
+      ]
+    },
+    {
+      "id": "PAUG-007",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "방어선 없는 방어",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "NOMAD",
+        "FACILITY"
+      ],
+      "effectOpcode": "PRESSURE_MODE_ADAPT_DAMAGE_REDUCTION",
+      "effectText": "추적 압박에서는 파티 이동 중 받는 피해 -6%, 시설 습격에서는 시설 받는 피해 -10%",
+      "constraintText": "압박 모드별 자동 변환",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PRESSURE_MODE_CHANGED",
+        "DAMAGE_TAKEN_QUERY",
+        "FACILITY_DAMAGE_QUERY"
+      ],
+      "stateScope": "PARTY",
+      "parameterPayload": "trackingMoveDamageTakenMultiplier=0.94; facilitySiegeDamageTakenMultiplier=0.90",
+      "limitFallback": "modeExclusive=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-007",
+        "방어선 없는 방어",
+        "NOMAD`, `FACILITY",
+        "추적 압박에서는 파티 이동 중 받는 피해 -6%, 시설 습격에서는 시설 받는 피해 -10%",
+        "압박 모드별 자동 변환"
+      ]
+    },
+    {
+      "id": "PAUG-008",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "정화 순환망",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "CORRUPTION",
+        "FACILITY"
+      ],
+      "effectOpcode": "PURIFY_HIGHEST_CORRUPTION_MEMBER",
+      "effectText": "파티원이 정화될 때 가장 오염 높은 생존자 오염 1%p 추가 감소",
+      "constraintText": "8초, 시설 없어도 소모품 발동",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PLAYER_PURIFY_COMMITTED"
+      ],
+      "stateScope": "PARTY",
+      "parameterPayload": "highestCorruptionExtraDelta=-1",
+      "limitFallback": "icdTicks=160; consumableWorksWithoutFacility=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-008",
+        "정화 순환망",
+        "CORRUPTION`, `FACILITY",
+        "파티원이 정화될 때 가장 오염 높은 생존자 오염 1%p 추가 감소",
+        "8초, 시설 없어도 소모품 발동"
+      ]
+    },
+    {
+      "id": "PAUG-009",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "탄약 공방",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "AMMO",
+        "CRAFT"
+      ],
+      "effectOpcode": "AMMO_CRAFT_OUTPUT_AND_COST_MODIFIERS",
+      "effectText": "일반 탄약 제작량 +20%, 특수 탄약 비용 -10%",
+      "constraintText": "고유·보스 탄약 제외",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "CRAFT_OUTPUT_QUERY",
+        "CRAFT_COST_QUERY"
+      ],
+      "stateScope": "PARTY_CRAFT_TX",
+      "parameterPayload": "normalAmmoOutputMultiplier=1.20; specialAmmoCostMultiplier=0.90",
+      "limitFallback": "uniqueAndBossAmmoExcluded=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-009",
+        "탄약 공방",
+        "AMMO`, `CRAFT",
+        "일반 탄약 제작량 +20%, 특수 탄약 비용 -10%",
+        "고유·보스 탄약 제외"
+      ]
+    },
+    {
+      "id": "PAUG-010",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "전술 예비력",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "AP",
+        "COOP"
+      ],
+      "effectOpcode": "LOW_AP_MEMBER_OTHER_REGEN",
+      "effectText": "파티원 한 명이 AP 20% 아래면 다른 생존자 AP 회복 +2/초",
+      "constraintText": "대상 1명, 중첩 없음",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PARTY_AP_STATE_CHANGED",
+        "AP_REGEN_QUERY"
+      ],
+      "stateScope": "PARTY",
+      "parameterPayload": "lowApThreshold=0.20; otherSurvivorRegenPerSecond=2",
+      "limitFallback": "lowMemberTargetMax=1; stacksMax=1",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-010",
+        "전술 예비력",
+        "AP`, `COOP",
+        "파티원 한 명이 AP 20% 아래면 다른 생존자 AP 회복 +2/초",
+        "대상 1명, 중첩 없음"
+      ]
+    },
+    {
+      "id": "PAUG-011",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "패턴 인계",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "PATTERN",
+        "COOP"
+      ],
+      "effectOpcode": "PATTERN_RESPONSE_HANDOFF_REDUCTION",
+      "effectText": "한 플레이어가 패턴 대응에 성공하면 4초간 다른 파티원의 같은 패턴 받는 피해 -12%",
+      "constraintText": "패턴별 8초",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PATTERN_RESPONSE_COMMITTED",
+        "PATTERN_DAMAGE_QUERY"
+      ],
+      "stateScope": "PARTY_PATTERN",
+      "parameterPayload": "handoffTicks=80; otherPlayerSamePatternDamageTakenMultiplier=0.88",
+      "limitFallback": "patternIcdTicks=160; originalResponderExcluded=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-011",
+        "패턴 인계",
+        "PATTERN`, `COOP",
+        "한 플레이어가 패턴 대응에 성공하면 4초간 다른 파티원의 같은 패턴 받는 피해 -12%",
+        "패턴별 8초"
+      ]
+    },
+    {
+      "id": "PAUG-012",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "잔존 압박 해체",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "ENCOUNTER",
+        "BREAK"
+      ],
+      "effectOpcode": "LAST_MAJOR_ENEMY_BREAK_AND_CORRUPTION_REDUCE",
+      "effectText": "잔존 주요 적 브레이크 -10%, 잔존 오염 증가 -20%",
+      "constraintText": "일반 공세만",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "ENCOUNTER_MAJOR_COUNT_CHANGED",
+        "BREAK_MAX_QUERY",
+        "CORRUPTION_GAIN_QUERY"
+      ],
+      "stateScope": "PARTY_ENCOUNTER",
+      "parameterPayload": "lastMajorEnemyBreakMaxMultiplier=0.90; remainingCorruptionGainMultiplier=0.80",
+      "limitFallback": "normalAssaultOnly=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-012",
+        "잔존 압박 해체",
+        "ENCOUNTER`, `BREAK",
+        "잔존 주요 적 브레이크 -10%, 잔존 오염 증가 -20%",
+        "일반 공세만"
+      ]
+    },
+    {
+      "id": "PAUG-013",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "고유 장비 공방",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "EQUIPMENT",
+        "CRAFT"
+      ],
+      "effectOpcode": "FIRST_BOSS_EQUIPMENT_COMMON_COST_DISCOUNT",
+      "effectText": "해금된 보스 고유 장비 최초 제작의 일반 재료 비용 -15%",
+      "constraintText": "템플릿별 1회",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "CRAFT_COST_QUERY",
+        "CRAFT_COMMITTED"
+      ],
+      "stateScope": "PARTY_TEMPLATE",
+      "parameterPayload": "firstBossEquipmentCommonCostMultiplier=0.85",
+      "limitFallback": "perTemplateMax=1; specialAndBossMaterialExcluded=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-013",
+        "고유 장비 공방",
+        "EQUIPMENT`, `CRAFT",
+        "해금된 보스 고유 장비 최초 제작의 일반 재료 비용 -15%",
+        "템플릿별 1회"
+      ]
+    },
+    {
+      "id": "PAUG-014",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "재건의 합의",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "RECONSTRUCTION",
+        "COOP"
+      ],
+      "effectOpcode": "CONTRIBUTION_RECONSTRUCTION_SPEED",
+      "effectText": "서로 다른 기여 범주 3개 달성 시 재건 시설 작업속도 +12%",
+      "constraintText": "Day 41 이후, 1인 잔존 시 +4%",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "CONTRIBUTION_CATEGORY_COMMITTED",
+        "FACILITY_WORK_SPEED_QUERY"
+      ],
+      "stateScope": "PARTY_DAY",
+      "parameterPayload": "distinctContributionCategories=3; reconstructionSpeedMultiplier=1.12; soloMultiplier=1.04",
+      "limitFallback": "minimumDay=41",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-014",
+        "재건의 합의",
+        "RECONSTRUCTION`, `COOP",
+        "서로 다른 기여 범주 3개 달성 시 재건 시설 작업속도 +12%",
+        "Day 41 이후, 1인 잔존 시 +4%"
+      ]
+    },
+    {
+      "id": "PAUG-015",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "마지막 대형",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "SURVIVAL",
+        "RISK"
+      ],
+      "effectOpcode": "HALF_SURVIVORS_MAX_HP_AND_AP_REGEN",
+      "effectText": "생존자가 절반 이하가 되면 남은 파티원 최대 HP +10%, AP 회복 +10%",
+      "constraintText": "보상 배율 증가 없음",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "LIFE_STATE_CHANGED",
+        "MAX_HP_QUERY",
+        "AP_REGEN_QUERY"
+      ],
+      "stateScope": "PARTY",
+      "parameterPayload": "survivorRatioThreshold=0.50; maxHpMultiplier=1.10; apRegenMultiplier=1.10",
+      "limitFallback": "rewardMultiplier=1.0; reversibleAtSafeRecount=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-015",
+        "마지막 대형",
+        "SURVIVAL`, `RISK",
+        "생존자가 절반 이하가 되면 남은 파티원 최대 HP +10%, AP 회복 +10%",
+        "보상 배율 증가 없음"
+      ]
+    },
+    {
+      "id": "PAUG-016",
+      "sourceDocumentId": "AUG-LIST-002",
+      "enabled": true,
+      "name": "다중 전선",
+      "tier": "PARTY",
+      "scope": "PARTY",
+      "tags": [
+        "AREA",
+        "COOP"
+      ],
+      "effectOpcode": "SPLIT_FRONT_PARTY_DAMAGE",
+      "effectText": "서로 10블록 이상 떨어진 생존자들이 각자 전투 중이면 주는 피해 +6%",
+      "constraintText": "최대 +6%, 분산 강요 패턴에는 비활성",
+      "weightingText": "",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PARTY_FORMATION_CHANGED",
+        "DAMAGE_OUTPUT_QUERY"
+      ],
+      "stateScope": "PARTY_ENCOUNTER",
+      "parameterPayload": "minimumSeparation=10; outgoingDamageMultiplier=1.06",
+      "limitFallback": "bothInCombat=true; maxMultiplier=1.06; forcedSplitPatternDisabled=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "PAUG-016",
+        "다중 전선",
+        "AREA`, `COOP",
+        "서로 10블록 이상 떨어진 생존자들이 각자 전투 중이면 주는 피해 +6%",
+        "최대 +6%, 분산 강요 패턴에는 비활성"
+      ]
+    }
+  ]
+}

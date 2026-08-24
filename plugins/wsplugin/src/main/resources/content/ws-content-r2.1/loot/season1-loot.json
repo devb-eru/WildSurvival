@@ -1,0 +1,2554 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "loot",
+  "records": [
+    {
+      "id": "LOOT-EN-D1-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D1-01",
+      "profile": "COMBAT-D10",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-WOOD",
+        "WSR-STONE",
+        "WSR-FIBER",
+        "WSR-COAL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-TISSUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "COMMON": 0.02,
+        "UNCOMMON": 0.005
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D1-01",
+        "EN-D1-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D1-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D1-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D1-02",
+      "profile": "COMBAT-D10",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-WOOD",
+        "WSR-STONE",
+        "WSR-FIBER",
+        "WSR-COAL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-TISSUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "COMMON": 0.02,
+        "UNCOMMON": 0.005
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D1-02",
+        "EN-D1-02",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D1-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D11-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D11-01",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D11-01",
+        "EN-D11-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D11-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D11-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D11-02",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D11-02",
+        "EN-D11-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D11-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D12-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D12-01",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D12-01",
+        "EN-D12-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D12-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D12-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D12-02",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D12-02",
+        "EN-D12-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D12-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D13-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D13-01",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D13-01",
+        "EN-D13-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D13-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D13-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D13-02",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D13-02",
+        "EN-D13-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D13-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D14-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D14-01",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D14-01",
+        "EN-D14-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D14-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D14-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D14-02",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D14-02",
+        "EN-D14-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D14-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D15-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D15-01",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D15-01",
+        "EN-D15-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D15-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D15-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D15-02",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D15-02",
+        "EN-D15-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D15-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D16-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D16-01",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D16-01",
+        "EN-D16-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D16-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D16-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D16-02",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D16-02",
+        "EN-D16-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D16-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D17-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D17-01",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D17-01",
+        "EN-D17-01",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D17-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D17-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D17-02",
+      "profile": "COMBAT-D20",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER"
+      ],
+      "guaranteedMin": 2,
+      "guaranteedMax": 4,
+      "specialtyPool": [
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "RARE": 0.015,
+        "UNCOMMON": 0.04
+      },
+      "pityLimit": 16,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D17-02",
+        "EN-D17-02",
+        "COMBAT-D20",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D17-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D18-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D18-E01",
+      "profile": "ELITE",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [],
+      "guaranteedMin": 2,
+      "guaranteedMax": 2,
+      "specialtyPool": [],
+      "specialtyMin": 2,
+      "specialtyMax": 4,
+      "equipmentChances": {
+        "BLUEPRINT": 0.12,
+        "CURRENT_CAP": 0.08
+      },
+      "pityLimit": 6,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "CURRENT_DAY_RESOURCE_POOL",
+        "SAMPLE_ELIGIBLE",
+        "BLUEPRINT_ELIGIBLE"
+      ],
+      "raw": [
+        "LOOT-EN-D18-E01",
+        "EN-D18-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D18-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D18-E02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D18-E02",
+      "profile": "ELITE",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [],
+      "guaranteedMin": 2,
+      "guaranteedMax": 2,
+      "specialtyPool": [],
+      "specialtyMin": 2,
+      "specialtyMax": 4,
+      "equipmentChances": {
+        "BLUEPRINT": 0.12,
+        "CURRENT_CAP": 0.08
+      },
+      "pityLimit": 6,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "CURRENT_DAY_RESOURCE_POOL",
+        "SAMPLE_ELIGIBLE",
+        "BLUEPRINT_ELIGIBLE"
+      ],
+      "raw": [
+        "LOOT-EN-D18-E02",
+        "EN-D18-E02",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D18-E02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D19-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D19-E01",
+      "profile": "ELITE",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [],
+      "guaranteedMin": 2,
+      "guaranteedMax": 2,
+      "specialtyPool": [],
+      "specialtyMin": 2,
+      "specialtyMax": 4,
+      "equipmentChances": {
+        "BLUEPRINT": 0.12,
+        "CURRENT_CAP": 0.08
+      },
+      "pityLimit": 6,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "CURRENT_DAY_RESOURCE_POOL",
+        "SAMPLE_ELIGIBLE",
+        "BLUEPRINT_ELIGIBLE"
+      ],
+      "raw": [
+        "LOOT-EN-D19-E01",
+        "EN-D19-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D19-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D2-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D2-01",
+      "profile": "COMBAT-D10",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-WOOD",
+        "WSR-STONE",
+        "WSR-FIBER",
+        "WSR-COAL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-TISSUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "COMMON": 0.02,
+        "UNCOMMON": 0.005
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D2-01",
+        "EN-D2-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D2-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D21-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D21-01",
+      "profile": "COMBAT-D30",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-REINFORCED_ALLOY",
+        "WSR-NEURAL_CIRCUIT"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-PURIFY_CATALYST",
+        "WSR-RIFT_POWDER"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "EPIC": 0.012,
+        "RARE": 0.04
+      },
+      "pityLimit": 18,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D21-01",
+        "EN-D21-01",
+        "COMBAT-D30",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D21-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D22-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D22-01",
+      "profile": "COMBAT-D30",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-REINFORCED_ALLOY",
+        "WSR-NEURAL_CIRCUIT"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-PURIFY_CATALYST",
+        "WSR-RIFT_POWDER"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "EPIC": 0.012,
+        "RARE": 0.04
+      },
+      "pityLimit": 18,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D22-01",
+        "EN-D22-01",
+        "COMBAT-D30",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D22-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D23-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D23-01",
+      "profile": "COMBAT-D30",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-REINFORCED_ALLOY",
+        "WSR-NEURAL_CIRCUIT"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-PURIFY_CATALYST",
+        "WSR-RIFT_POWDER"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "EPIC": 0.012,
+        "RARE": 0.04
+      },
+      "pityLimit": 18,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D23-01",
+        "EN-D23-01",
+        "COMBAT-D30",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D23-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D24-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D24-01",
+      "profile": "COMBAT-D30",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-REINFORCED_ALLOY",
+        "WSR-NEURAL_CIRCUIT"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-PURIFY_CATALYST",
+        "WSR-RIFT_POWDER"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "EPIC": 0.012,
+        "RARE": 0.04
+      },
+      "pityLimit": 18,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D24-01",
+        "EN-D24-01",
+        "COMBAT-D30",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D24-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D27-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D27-01",
+      "profile": "COMBAT-D30",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-REINFORCED_ALLOY",
+        "WSR-NEURAL_CIRCUIT"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-PURIFY_CATALYST",
+        "WSR-RIFT_POWDER"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 2,
+      "equipmentChances": {
+        "EPIC": 0.012,
+        "RARE": 0.04
+      },
+      "pityLimit": 18,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D27-01",
+        "EN-D27-01",
+        "COMBAT-D30",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D27-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D28-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D28-E01",
+      "profile": "ELITE",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [],
+      "guaranteedMin": 2,
+      "guaranteedMax": 2,
+      "specialtyPool": [],
+      "specialtyMin": 2,
+      "specialtyMax": 4,
+      "equipmentChances": {
+        "BLUEPRINT": 0.12,
+        "CURRENT_CAP": 0.08
+      },
+      "pityLimit": 6,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "CURRENT_DAY_RESOURCE_POOL",
+        "SAMPLE_ELIGIBLE",
+        "BLUEPRINT_ELIGIBLE"
+      ],
+      "raw": [
+        "LOOT-EN-D28-E01",
+        "EN-D28-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D28-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D31-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D31-01",
+      "profile": "COMBAT-D40",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-HARD_AGGREGATE",
+        "WSR-RESONANCE_COIL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-PATTERN_RESIDUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "EPIC": 0.03,
+        "LEGENDARY": 0.008
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D31-01",
+        "EN-D31-01",
+        "COMBAT-D40",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D31-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D33-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D33-01",
+      "profile": "COMBAT-D40",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-HARD_AGGREGATE",
+        "WSR-RESONANCE_COIL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-PATTERN_RESIDUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "EPIC": 0.03,
+        "LEGENDARY": 0.008
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D33-01",
+        "EN-D33-01",
+        "COMBAT-D40",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D33-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D34-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D34-01",
+      "profile": "COMBAT-D40",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-HARD_AGGREGATE",
+        "WSR-RESONANCE_COIL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-PATTERN_RESIDUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "EPIC": 0.03,
+        "LEGENDARY": 0.008
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D34-01",
+        "EN-D34-01",
+        "COMBAT-D40",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D34-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D37-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D37-01",
+      "profile": "COMBAT-D40",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-HARD_AGGREGATE",
+        "WSR-RESONANCE_COIL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-PATTERN_RESIDUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "EPIC": 0.03,
+        "LEGENDARY": 0.008
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D37-01",
+        "EN-D37-01",
+        "COMBAT-D40",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D37-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D38-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D38-E01",
+      "profile": "ELITE",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [],
+      "guaranteedMin": 2,
+      "guaranteedMax": 2,
+      "specialtyPool": [],
+      "specialtyMin": 2,
+      "specialtyMax": 4,
+      "equipmentChances": {
+        "BLUEPRINT": 0.12,
+        "CURRENT_CAP": 0.08
+      },
+      "pityLimit": 6,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "CURRENT_DAY_RESOURCE_POOL",
+        "SAMPLE_ELIGIBLE",
+        "BLUEPRINT_ELIGIBLE"
+      ],
+      "raw": [
+        "LOOT-EN-D38-E01",
+        "EN-D38-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D38-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D4-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D4-01",
+      "profile": "COMBAT-D10",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-WOOD",
+        "WSR-STONE",
+        "WSR-FIBER",
+        "WSR-COAL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-TISSUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "COMMON": 0.02,
+        "UNCOMMON": 0.005
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D4-01",
+        "EN-D4-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D4-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D4-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D4-02",
+      "profile": "COMBAT-D10",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-WOOD",
+        "WSR-STONE",
+        "WSR-FIBER",
+        "WSR-COAL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-TISSUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "COMMON": 0.02,
+        "UNCOMMON": 0.005
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D4-02",
+        "EN-D4-02",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D4-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D41-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D41-01",
+      "profile": "COMBAT-D50",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-HIGH_DENSITY_ALLOY"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 2,
+      "specialtyPool": [
+        "WSR-STABLE_CORE",
+        "WSR-CALIBRATED_LENS",
+        "WSR-POWER_MATRIX",
+        "WSR-PURIFY_MATRIX",
+        "WSR-STATUS_PLATE",
+        "WSR-INTERRUPT_CORE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "ABYSSAL": 0.0,
+        "LEGENDARY": 0.02
+      },
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D41-01",
+        "EN-D41-01",
+        "COMBAT-D50",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D41-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D44-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D44-01",
+      "profile": "COMBAT-D50",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-HIGH_DENSITY_ALLOY"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 2,
+      "specialtyPool": [
+        "WSR-STABLE_CORE",
+        "WSR-CALIBRATED_LENS",
+        "WSR-POWER_MATRIX",
+        "WSR-PURIFY_MATRIX",
+        "WSR-STATUS_PLATE",
+        "WSR-INTERRUPT_CORE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "ABYSSAL": 0.0,
+        "LEGENDARY": 0.02
+      },
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D44-01",
+        "EN-D44-01",
+        "COMBAT-D50",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D44-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D46-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D46-E01",
+      "profile": "ELITE",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [],
+      "guaranteedMin": 2,
+      "guaranteedMax": 2,
+      "specialtyPool": [],
+      "specialtyMin": 2,
+      "specialtyMax": 4,
+      "equipmentChances": {
+        "BLUEPRINT": 0.12,
+        "CURRENT_CAP": 0.08
+      },
+      "pityLimit": 6,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "CURRENT_DAY_RESOURCE_POOL",
+        "SAMPLE_ELIGIBLE",
+        "BLUEPRINT_ELIGIBLE"
+      ],
+      "raw": [
+        "LOOT-EN-D46-E01",
+        "EN-D46-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D46-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D47-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D47-01",
+      "profile": "COMBAT-D50",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-HIGH_DENSITY_ALLOY"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 2,
+      "specialtyPool": [
+        "WSR-STABLE_CORE",
+        "WSR-CALIBRATED_LENS",
+        "WSR-POWER_MATRIX",
+        "WSR-PURIFY_MATRIX",
+        "WSR-STATUS_PLATE",
+        "WSR-INTERRUPT_CORE"
+      ],
+      "specialtyMin": 1,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "ABYSSAL": 0.0,
+        "LEGENDARY": 0.02
+      },
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D47-01",
+        "EN-D47-01",
+        "COMBAT-D50",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D47-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D49-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D49-E01",
+      "profile": "ELITE",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [],
+      "guaranteedMin": 2,
+      "guaranteedMax": 2,
+      "specialtyPool": [],
+      "specialtyMin": 2,
+      "specialtyMax": 4,
+      "equipmentChances": {
+        "BLUEPRINT": 0.12,
+        "CURRENT_CAP": 0.08
+      },
+      "pityLimit": 6,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "CURRENT_DAY_RESOURCE_POOL",
+        "SAMPLE_ELIGIBLE",
+        "BLUEPRINT_ELIGIBLE"
+      ],
+      "raw": [
+        "LOOT-EN-D49-E01",
+        "EN-D49-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D49-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D5-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D5-01",
+      "profile": "COMBAT-D10",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-WOOD",
+        "WSR-STONE",
+        "WSR-FIBER",
+        "WSR-COAL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-TISSUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "COMMON": 0.02,
+        "UNCOMMON": 0.005
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D5-01",
+        "EN-D5-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D5-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D6-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D6-01",
+      "profile": "COMBAT-D10",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-WOOD",
+        "WSR-STONE",
+        "WSR-FIBER",
+        "WSR-COAL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-TISSUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "COMMON": 0.02,
+        "UNCOMMON": 0.005
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D6-01",
+        "EN-D6-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D6-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D6-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D6-02",
+      "profile": "COMBAT-D10",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-WOOD",
+        "WSR-STONE",
+        "WSR-FIBER",
+        "WSR-COAL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-TISSUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "COMMON": 0.02,
+        "UNCOMMON": 0.005
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D6-02",
+        "EN-D6-02",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D6-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D7-01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D7-01",
+      "profile": "COMBAT-D10",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-WOOD",
+        "WSR-STONE",
+        "WSR-FIBER",
+        "WSR-COAL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-TISSUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "COMMON": 0.02,
+        "UNCOMMON": 0.005
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D7-01",
+        "EN-D7-01",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D7-01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D7-02",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D7-02",
+      "profile": "COMBAT-D10",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [
+        "WSR-WOOD",
+        "WSR-STONE",
+        "WSR-FIBER",
+        "WSR-COAL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [
+        "WSR-TISSUE"
+      ],
+      "specialtyMin": 0,
+      "specialtyMax": 1,
+      "equipmentChances": {
+        "COMMON": 0.02,
+        "UNCOMMON": 0.005
+      },
+      "pityLimit": 20,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [],
+      "raw": [
+        "LOOT-EN-D7-02",
+        "EN-D7-02",
+        "COMBAT-D10",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D7-02"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D8-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D8-E01",
+      "profile": "ELITE",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [],
+      "guaranteedMin": 2,
+      "guaranteedMax": 2,
+      "specialtyPool": [],
+      "specialtyMin": 2,
+      "specialtyMax": 4,
+      "equipmentChances": {
+        "BLUEPRINT": 0.12,
+        "CURRENT_CAP": 0.08
+      },
+      "pityLimit": 6,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "CURRENT_DAY_RESOURCE_POOL",
+        "SAMPLE_ELIGIBLE",
+        "BLUEPRINT_ELIGIBLE"
+      ],
+      "raw": [
+        "LOOT-EN-D8-E01",
+        "EN-D8-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D8-E01"
+      ]
+    },
+    {
+      "id": "LOOT-EN-D9-E01",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "EN-D9-E01",
+      "profile": "ELITE",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "COMBAT_ROLL",
+      "guaranteedPool": [],
+      "guaranteedMin": 2,
+      "guaranteedMax": 2,
+      "specialtyPool": [],
+      "specialtyMin": 2,
+      "specialtyMax": 4,
+      "equipmentChances": {
+        "BLUEPRINT": 0.12,
+        "CURRENT_CAP": 0.08
+      },
+      "pityLimit": 6,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "CURRENT_DAY_RESOURCE_POOL",
+        "SAMPLE_ELIGIBLE",
+        "BLUEPRINT_ELIGIBLE"
+      ],
+      "raw": [
+        "LOOT-EN-D9-E01",
+        "EN-D9-E01",
+        "ELITE",
+        "CONTRIBUTOR_ROUND_ROBIN",
+        "battleBundleId+EN-D9-E01"
+      ]
+    },
+    {
+      "id": "LOOT-BOSS-D10",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "BOSS-D10",
+      "profile": "BOSS",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "BOSS_FIXED_AND_CHOICE",
+      "guaranteedPool": [],
+      "guaranteedMin": 0,
+      "guaranteedMax": 0,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [
+        {
+          "itemId": "WSP-BOSS-D10-CORE",
+          "amounts": [
+            1,
+            1,
+            1
+          ],
+          "scope": "RUN_PROOF"
+        },
+        {
+          "itemId": "WSP-REBUILD-PART-A",
+          "amounts": [
+            1,
+            1,
+            1
+          ],
+          "scope": "RUN_PROOF"
+        },
+        {
+          "itemId": "WSR-RESONANT_RESIDUE",
+          "amounts": [
+            6,
+            7,
+            8
+          ],
+          "scope": "PARTY_DISTRIBUTED"
+        }
+      ],
+      "equipmentSelectionProfile": "EQL-D10",
+      "partyAugmentMilestone": 1,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "COMPLETION_ONCE",
+        "INBOX_PERSISTENT"
+      ],
+      "raw": [
+        "LOOT-BOSS-D10",
+        "BOSS-D10",
+        "WSP-BOSS-D10-CORE, WSP-REBUILD-PART-A",
+        "EQL-D10 후보 3→1, PAUG 1회차",
+        "WSR-RESONANT_RESIDUE 6/7/8"
+      ]
+    },
+    {
+      "id": "LOOT-BOSS-D20",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "BOSS-D20",
+      "profile": "BOSS",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "BOSS_FIXED_AND_CHOICE",
+      "guaranteedPool": [],
+      "guaranteedMin": 0,
+      "guaranteedMax": 0,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [
+        {
+          "itemId": "WSP-REBUILD-PART-B",
+          "amounts": [
+            1,
+            1,
+            1
+          ],
+          "scope": "RUN_PROOF"
+        },
+        {
+          "itemId": "WSR-NEURAL_RESIDUE",
+          "amounts": [
+            8,
+            10,
+            12
+          ],
+          "scope": "PARTY_DISTRIBUTED"
+        }
+      ],
+      "equipmentSelectionProfile": "EQD20-LG",
+      "partyAugmentMilestone": 2,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "COMPLETION_ONCE",
+        "INBOX_PERSISTENT"
+      ],
+      "raw": [
+        "LOOT-BOSS-D20",
+        "BOSS-D20",
+        "WSP-REBUILD-PART-B",
+        "EQD20-LG 후보 3→1, PAUG 2회차",
+        "WSR-NEURAL_RESIDUE 8/10/12"
+      ]
+    },
+    {
+      "id": "LOOT-BOSS-D30",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "BOSS-D30",
+      "profile": "BOSS",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "BOSS_FIXED_AND_CHOICE",
+      "guaranteedPool": [],
+      "guaranteedMin": 0,
+      "guaranteedMax": 0,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [
+        {
+          "itemId": "WSP-REBUILD-PART-C",
+          "amounts": [
+            1,
+            1,
+            1
+          ],
+          "scope": "RUN_PROOF"
+        },
+        {
+          "itemId": "WSR-REFINED_MUTATION",
+          "amounts": [
+            8,
+            10,
+            12
+          ],
+          "scope": "PARTY_DISTRIBUTED"
+        },
+        {
+          "itemId": "WSR-PURIFY_MEDIUM",
+          "amounts": [
+            6,
+            8,
+            10
+          ],
+          "scope": "PARTY_DISTRIBUTED"
+        }
+      ],
+      "equipmentSelectionProfile": "EQD50-B30",
+      "partyAugmentMilestone": 3,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "COMPLETION_ONCE",
+        "INBOX_PERSISTENT"
+      ],
+      "raw": [
+        "LOOT-BOSS-D30",
+        "BOSS-D30",
+        "WSP-REBUILD-PART-C",
+        "EQD50-B30 후보 3→1, PAUG 3회차",
+        "WSR-REFINED_MUTATION 8/10/12, WSR-PURIFY_MEDIUM 6/8/10"
+      ]
+    },
+    {
+      "id": "LOOT-BOSS-D40",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "BOSS-D40",
+      "profile": "BOSS",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "BOSS_FIXED_AND_CHOICE",
+      "guaranteedPool": [],
+      "guaranteedMin": 0,
+      "guaranteedMax": 0,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [
+        {
+          "itemId": "WSP-REBUILD-PART-D",
+          "amounts": [
+            1,
+            1,
+            1
+          ],
+          "scope": "RUN_PROOF"
+        },
+        {
+          "itemId": "WSR-PATTERN_RESIDUE",
+          "amounts": [
+            10,
+            13,
+            16
+          ],
+          "scope": "PARTY_DISTRIBUTED"
+        },
+        {
+          "itemId": "WSR-HIGH_DENSITY_ALLOY",
+          "amounts": [
+            7,
+            9,
+            11
+          ],
+          "scope": "PARTY_DISTRIBUTED"
+        }
+      ],
+      "equipmentSelectionProfile": "EQD50-B40",
+      "partyAugmentMilestone": 4,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "COMPLETION_ONCE",
+        "INBOX_PERSISTENT"
+      ],
+      "raw": [
+        "LOOT-BOSS-D40",
+        "BOSS-D40",
+        "WSP-REBUILD-PART-D",
+        "EQD50-B40 후보 3→1, PAUG 4회차",
+        "WSR-PATTERN_RESIDUE 10/13/16, WSR-HIGH_DENSITY_ALLOY 7/9/11"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-BASIC",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "ENT-NODE-BASIC",
+      "profile": "RESOURCE_NODE",
+      "distribution": "HARVESTER_PERSONAL",
+      "executionOpcode": "NODE_HARVEST",
+      "guaranteedPool": [
+        "WSR-WOOD",
+        "WSR-STONE",
+        "WSR-FIBER",
+        "WSR-LEATHER",
+        "WSR-RATION",
+        "WSR-COAL"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 1,
+      "noReward": false,
+      "flags": [
+        "PRESERVE_ON_TOOL_FAILURE",
+        "NO_VANILLA_DOUBLE_DROP"
+      ],
+      "raw": [
+        "LOOT-NODE-BASIC",
+        "ENT-NODE-BASIC",
+        "WSR-WOOD/STONE/FIBER/LEATHER/RATION/COAL",
+        "T0~T1, 채집자 개인"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-INDUSTRIAL",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "ENT-NODE-INDUSTRIAL",
+      "profile": "RESOURCE_NODE",
+      "distribution": "HARVESTER_PERSONAL",
+      "executionOpcode": "NODE_HARVEST",
+      "guaranteedPool": [
+        "WSR-IRON",
+        "WSR-COPPER",
+        "WSR-GOLD",
+        "WSR-REDSTONE",
+        "WSR-AMETHYST"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 1,
+      "requiredToolTierMax": 2,
+      "noReward": false,
+      "flags": [
+        "PRESERVE_ON_TOOL_FAILURE",
+        "NO_VANILLA_DOUBLE_DROP"
+      ],
+      "raw": [
+        "LOOT-NODE-INDUSTRIAL",
+        "ENT-NODE-INDUSTRIAL",
+        "WSR-IRON/COPPER/GOLD/REDSTONE/AMETHYST",
+        "T1~T2, 채집자 개인"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-MEDICAL",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "ENT-NODE-MEDICAL",
+      "profile": "RESOURCE_NODE",
+      "distribution": "HARVESTER_PERSONAL",
+      "executionOpcode": "NODE_HARVEST",
+      "guaranteedPool": [
+        "WSR-HERB",
+        "WSR-ELASTIC_FIBER",
+        "WSR-TOXIN_SAMPLE",
+        "WSR-THERMAL_SAMPLE",
+        "WSR-HEMATIC_SAMPLE",
+        "WSR-NEURAL_SAMPLE"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 3,
+      "requiredToolTierMax": 3,
+      "noReward": false,
+      "flags": [
+        "PRESERVE_ON_TOOL_FAILURE",
+        "NO_VANILLA_DOUBLE_DROP"
+      ],
+      "raw": [
+        "LOOT-NODE-MEDICAL",
+        "ENT-NODE-MEDICAL",
+        "WSR-HERB/ELASTIC_FIBER/상태 표본",
+        "T3, 채집자 개인"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-CORRUPTED",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "ENT-NODE-CORRUPTED",
+      "profile": "RESOURCE_NODE",
+      "distribution": "HARVESTER_PERSONAL",
+      "executionOpcode": "NODE_HARVEST",
+      "guaranteedPool": [
+        "WSR-TISSUE",
+        "WSR-MUTATION_SHARD",
+        "WSR-VITAL_TISSUE"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 2,
+      "requiredToolTierMax": 4,
+      "noReward": false,
+      "flags": [
+        "PRESERVE_ON_TOOL_FAILURE",
+        "NO_VANILLA_DOUBLE_DROP"
+      ],
+      "raw": [
+        "LOOT-NODE-CORRUPTED",
+        "ENT-NODE-CORRUPTED",
+        "WSR-TISSUE/MUTATION_SHARD/VITAL_TISSUE",
+        "T2~T4, 채집자 개인"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-RIFT",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "ENT-NODE-RIFT",
+      "profile": "RESOURCE_NODE",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "NODE_HARVEST",
+      "guaranteedPool": [
+        "WSR-PURIFY_CATALYST",
+        "WSR-RIFT_POWDER",
+        "WSR-REFINED_MUTATION"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 4,
+      "requiredToolTierMax": 5,
+      "noReward": false,
+      "flags": [
+        "PRESERVE_ON_TOOL_FAILURE",
+        "NO_VANILLA_DOUBLE_DROP"
+      ],
+      "raw": [
+        "LOOT-NODE-RIFT",
+        "ENT-NODE-RIFT",
+        "WSR-PURIFY_CATALYST/RIFT_POWDER/REFINED_MUTATION",
+        "T4~T5, 사건 contributor 분배"
+      ]
+    },
+    {
+      "id": "LOOT-NODE-RECONSTRUCTION",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "ENT-NODE-RECONSTRUCTION",
+      "profile": "RESOURCE_NODE",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "NODE_HARVEST",
+      "guaranteedPool": [
+        "WSR-HARD_AGGREGATE",
+        "WSR-RESONANCE_COIL",
+        "WSR-PATTERN_RESIDUE",
+        "WSR-HIGH_DENSITY_ALLOY"
+      ],
+      "guaranteedMin": 1,
+      "guaranteedMax": 3,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 5,
+      "requiredToolTierMax": 6,
+      "noReward": false,
+      "flags": [
+        "PRESERVE_ON_TOOL_FAILURE",
+        "NO_VANILLA_DOUBLE_DROP"
+      ],
+      "raw": [
+        "LOOT-NODE-RECONSTRUCTION",
+        "ENT-NODE-RECONSTRUCTION",
+        "WSR-HARD_AGGREGATE/RESONANCE_COIL/PATTERN_RESIDUE/HIGH_DENSITY_ALLOY",
+        "T5~T6, contributor 분배"
+      ]
+    },
+    {
+      "id": "LOOT-ENCOUNTER-COMMON",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "일반 사건",
+      "profile": "EVENT",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "CURRENT_DAY_COMBAT",
+      "guaranteedPool": [],
+      "guaranteedMin": 0,
+      "guaranteedMax": 0,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "NO_FLOOR_DROP",
+        "INBOX_PERSISTENT"
+      ],
+      "raw": [
+        "LOOT-ENCOUNTER-COMMON",
+        "일반 사건",
+        "Day profile 일반 자원, contributor 분배"
+      ]
+    },
+    {
+      "id": "LOOT-ENCOUNTER-ELITE",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "정예 사건",
+      "profile": "EVENT",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "ELITE_ONCE",
+      "guaranteedPool": [],
+      "guaranteedMin": 0,
+      "guaranteedMax": 0,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "NO_FLOOR_DROP",
+        "INBOX_PERSISTENT"
+      ],
+      "raw": [
+        "LOOT-ENCOUNTER-ELITE",
+        "정예 사건",
+        "ELITE profile, 전투 묶음당 1회"
+      ]
+    },
+    {
+      "id": "LOOT-ENCOUNTER-ASSAULT",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "시설/추적 공세",
+      "profile": "EVENT",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "ASSAULT_SUCCESS",
+      "guaranteedPool": [],
+      "guaranteedMin": 0,
+      "guaranteedMax": 0,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "NO_FLOOR_DROP",
+        "INBOX_PERSISTENT"
+      ],
+      "raw": [
+        "LOOT-ENCOUNTER-ASSAULT",
+        "시설/추적 공세",
+        "방어 성공 가치, 자동 시설 피해만으로 claim 불가"
+      ]
+    },
+    {
+      "id": "LOOT-DISCOVERY",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "발견·연구",
+      "profile": "EVENT",
+      "distribution": "OWNER",
+      "executionOpcode": "UNLOCK_ONLY",
+      "guaranteedPool": [],
+      "guaranteedMin": 0,
+      "guaranteedMax": 0,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "NO_FLOOR_DROP",
+        "INBOX_PERSISTENT"
+      ],
+      "raw": [
+        "LOOT-DISCOVERY",
+        "발견·연구",
+        "recipe/도감/Story 해금, 자원 복제 없음"
+      ]
+    },
+    {
+      "id": "LOOT-SALVAGE-EQUIPMENT",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "FAC-S04 분해",
+      "profile": "EVENT",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "SALVAGE_FORMULA",
+      "guaranteedPool": [],
+      "guaranteedMin": 0,
+      "guaranteedMax": 0,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "NO_FLOOR_DROP",
+        "INBOX_PERSISTENT"
+      ],
+      "raw": [
+        "LOOT-SALVAGE-EQUIPMENT",
+        "FAC-S04 분해",
+        "일반 50%, 가공 70%, 강화 35%, 고유 분해 금지"
+      ]
+    },
+    {
+      "id": "LOOT-RECOVERY",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "사망·시설·관리자 복구",
+      "profile": "EVENT",
+      "distribution": "CONTRIBUTOR_ROUND_ROBIN",
+      "executionOpcode": "RETURN_ORIGINAL_TRANSACTION",
+      "guaranteedPool": [],
+      "guaranteedMin": 0,
+      "guaranteedMax": 0,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": false,
+      "flags": [
+        "NO_FLOOR_DROP",
+        "INBOX_PERSISTENT"
+      ],
+      "raw": [
+        "LOOT-RECOVERY",
+        "사망·시설·관리자 복구",
+        "새 roll 없음, 원 transaction 결과만 반환"
+      ]
+    },
+    {
+      "id": "LOOT-NONE",
+      "sourceDocumentId": "LOOT-LIST-001",
+      "enabled": true,
+      "sourceId": "1",
+      "profile": "EMPTY",
+      "distribution": "NONE",
+      "executionOpcode": "EMPTY",
+      "guaranteedPool": [],
+      "guaranteedMin": 0,
+      "guaranteedMax": 0,
+      "specialtyPool": [],
+      "specialtyMin": 0,
+      "specialtyMax": 0,
+      "equipmentChances": {},
+      "pityLimit": 0,
+      "fixedEntries": [],
+      "equipmentSelectionProfile": "",
+      "partyAugmentMilestone": 0,
+      "requiredToolTierMin": 0,
+      "requiredToolTierMax": 0,
+      "noReward": true,
+      "flags": [
+        "NO_REWARD",
+        "NO_ROLL",
+        "NO_CLAIM"
+      ],
+      "raw": [
+        "LOOT-NONE",
+        "1"
+      ]
+    }
+  ]
+}

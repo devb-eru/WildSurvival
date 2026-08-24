@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contentRevision",
+    "domain",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "contentRevision": {
+      "const": "ws-content-r2.1"
+    },
+    "domain": {
+      "const": "player-skills"
+    },
+    "records": {
+      "type": "array",
+      "minItems": 64,
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "sourceDocumentId",
+          "enabled",
+          "kind",
+          "name",
+          "weaponClass",
+          "apCost",
+          "cooldownTicks",
+          "damageCoefficient",
+          "breakDamage",
+          "range",
+          "arcDegrees",
+          "maxTargets",
+          "effect",
+          "tags",
+          "unlockLevel",
+          "consumableId",
+          "description",
+          "executionSourceDocumentId",
+          "operationIds",
+          "executionProfile",
+          "targetSpec",
+          "costSpec",
+          "parameterPayload",
+          "failurePolicy",
+          "childEntityIds",
+          "raw"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^ws\\."
+          },
+          "sourceDocumentId": {
+            "const": "SKILL-LIST-001"
+          },
+          "enabled": {
+            "const": true
+          },
+          "kind": {
+            "enum": [
+              "BASIC",
+              "WEAPON_ACTIVE",
+              "COMMON_ACTIVE",
+              "CONTEXT"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "weaponClass": {
+            "type": "string",
+            "minLength": 1
+          },
+          "apCost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "cooldownTicks": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "damageCoefficient": {
+            "type": "number",
+            "minimum": 0
+          },
+          "breakDamage": {
+            "type": "number",
+            "minimum": 0
+          },
+          "range": {
+            "type": "number",
+            "minimum": 0
+          },
+          "arcDegrees": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 360
+          },
+          "maxTargets": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "effect": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unlockLevel": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "consumableId": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "executionSourceDocumentId": {
+            "const": "SKILL-EFFECT-LIST-001"
+          },
+          "operationIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9_]+$"
+            }
+          },
+          "executionProfile": {
+            "type": "string",
+            "minLength": 1
+          },
+          "targetSpec": {
+            "type": "string",
+            "minLength": 1
+          },
+          "costSpec": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parameterPayload": {
+            "type": "string",
+            "minLength": 1
+          },
+          "failurePolicy": {
+            "type": "string",
+            "pattern": "^SKFP-"
+          },
+          "childEntityIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^ENT-"
+            }
+          },
+          "raw": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -6,7 +6,7 @@
   "targetContentRevision": "ws-content-r2.1",
   "migrationSourceRevision": "ws-content-r2",
   "activationPolicy": "NEW_RUN_ONLY",
-  "contractStatus": "CONTRACT_READY",
+  "contractStatus": "L0_VALIDATED",
   "storyContentPolicy": "CHAPTER_REVIEW_DEFERRED_UNTIL_P8",
   "lockedRevisions": {
     "schemaVersion": 2,

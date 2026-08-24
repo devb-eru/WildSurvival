@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "bosses",
+  "records": [
+    {
+      "id": "BOSS-D20",
+      "sourceDocumentId": "BOSS-D20-001",
+      "enabled": true,
+      "name": "신경 접합체",
+      "kind": "BOSS",
+      "bukkitType": "IRON_GOLEM",
+      "displayFallback": "IRON_GOLEM+Display",
+      "firstDay": 20,
+      "dayProfile": "BOSS_DAY",
+      "role": "BOSS",
+      "budgetCost": 0,
+      "baseHp": 175000,
+      "defence": 105,
+      "attackDamage": 200,
+      "penetration": 0,
+      "breakMax": 14000,
+      "augmentSlots": 0,
+      "elite": true,
+      "actionBundleId": "ACTSET-BOSS-D20",
+      "entitySetId": "ENTSET-BOSS-D20",
+      "telegraphTicks": 28,
+      "cooldownTicks": 100,
+      "attackRange": 6.0,
+      "statusId": "",
+      "spawnPolicy": "BOSS_CALL_TRANSACTION",
+      "cleanupPolicy": "BOSS_END",
+      "rewardOwner": "CONTRIBUTORS",
+      "lootTableId": "LOOT-BOSS-D20",
+      "activityExp": 2000,
+      "flags": [
+        "BOSS",
+        "NO_DYNAMIC_AUGMENT"
+      ],
+      "raw": [
+        "BOSS-D20",
+        "신경 접합체",
+        "IRON_GOLEM+Display",
+        "ACTSET-BOSS-D20",
+        "ENTSET-BOSS-D20",
+        "LOOT-BOSS-D20"
+      ]
+    }
+  ]
+}

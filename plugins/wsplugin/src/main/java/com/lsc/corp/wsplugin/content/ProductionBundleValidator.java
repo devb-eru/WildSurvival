@@ -20,7 +20,28 @@ import java.util.Set;
 
 public final class ProductionBundleValidator {
     public static final String REVISION = "ws-content-r2";
+    public static final String CANDIDATE_REVISION = "ws-content-r2.1";
     private static final int MANIFEST_ENTRIES = 68;
+    private final String revision;
+
+    public ProductionBundleValidator() {
+        this(REVISION);
+    }
+
+    public ProductionBundleValidator(String revision) {
+        if (!Set.of(REVISION, CANDIDATE_REVISION).contains(revision)) {
+            throw new IllegalArgumentException("Unsupported production content revision " + revision);
+        }
+        this.revision = revision;
+    }
+
+    public String revision() {
+        return revision;
+    }
+
+    private boolean candidate() {
+        return CANDIDATE_REVISION.equals(revision);
+    }
 
     public ValidationResult validateDirectory(Path root) throws ContentValidationException {
         Path normalized = root.toAbsolutePath().normalize();
@@ -36,13 +57,13 @@ public final class ProductionBundleValidator {
             byte[] lockBytes = reader.read("content-lock.yaml");
             byte[] manifestBytes = reader.read("manifest.json");
             Map<String, String> lock = parseYamlLock(new String(lockBytes, StandardCharsets.UTF_8));
-            requireEquals("content-revision", REVISION, lock.get("content-revision"));
+            requireEquals("content-revision", revision, lock.get("content-revision"));
             requireEquals("activation-policy", "NEW_RUN_ONLY", lock.get("activation-policy"));
             requireHash("manifest.json", lock.get("manifest-sha256"), manifestBytes);
 
             JsonObject manifest = JsonParser.parseString(new String(manifestBytes, StandardCharsets.UTF_8)).getAsJsonObject();
             requireNumber(manifest, "schemaVersion", 2);
-            requireString(manifest, "contentRevision", REVISION);
+            requireString(manifest, "contentRevision", revision);
             requireString(manifest, "activationPolicy", "NEW_RUN_ONLY");
             requireString(manifest, "storyRevision", "ws-story-s1-r1");
             JsonArray files = manifest.getAsJsonArray("files");
@@ -97,10 +118,10 @@ public final class ProductionBundleValidator {
             counts.put("drawLocks", count(reader, "fixtures/draw-locks.json"));
             counts.put("softlocks", count(reader, "fixtures/softlock-scenarios.json"));
             Map<String, Integer> expected = Map.ofEntries(
-                    Map.entry("materials", 59), Map.entry("items", 61), Map.entry("tools", 214),
-                    Map.entry("recipes", 315), Map.entry("codex", 334), Map.entry("skills", 64),
+                    Map.entry("materials", 59), Map.entry("items", candidate() ? 62 : 61), Map.entry("tools", 214),
+                    Map.entry("recipes", candidate() ? 316 : 315), Map.entry("codex", candidate() ? 335 : 334), Map.entry("skills", 64),
                     Map.entry("personalAugments", 50), Map.entry("partyAugments", 16), Map.entry("statuses", 21),
-                    Map.entry("enemies", 53), Map.entry("bosses", 4), Map.entry("support", 34),
+                    Map.entry("enemies", 53), Map.entry("bosses", 4), Map.entry("support", candidate() ? 35 : 34),
                     Map.entry("facilities", 46), Map.entry("loot", 62), Map.entry("days", 50),
                     Map.entry("research", 25), Map.entry("storyScenes", 73), Map.entry("storyLogs", 9),
                     Map.entry("discoveries", 49),
@@ -159,7 +180,10 @@ public final class ProductionBundleValidator {
                     requiredString(record, "effectText"), requiredString(record, "recipeId"),
                     requiredString(record, "textKey"), requiredString(record, "customModelKey"),
                     requiredString(record, "ownership"), requiredString(record, "usePolicy"),
-                    optionalString(record, "connectedFacilityId", ""), optionalString(record, "constraintText", ""));
+                    optionalString(record, "connectedFacilityId", ""), optionalString(record, "constraintText", ""),
+                    optionalString(record, "requiredResearchId", ""), optionalInt(record, "minimumFacilityLevel", 0),
+                    optionalInt(record, "channelTicks", 0), optionalInt(record, "perTargetRunLimit", 0),
+                    optionalBoolean(record, "wipeAllowed", true), optionalString(record, "progressionReservePolicy", ""));
             nonEquipmentItemsById.put(item.id(), item);
         }
         Map<String, ProductionContentCatalog.EquipmentEntry> equipmentById = new LinkedHashMap<>();
@@ -262,7 +286,10 @@ public final class ProductionBundleValidator {
             ProductionContentCatalog.RecipeEntry recipe = new ProductionContentCatalog.RecipeEntry(id,
                     requiredString(record, "outputId"), requiredInt(record, "outputAmount"),
                     optionalString(record, "recipeType", "UNKNOWN"), optionalString(record, "inputAuthority", "UNKNOWN"),
-                    optionalString(record, "layout", "UNKNOWN"), List.copyOf(ingredients), List.copyOf(raw));
+                    optionalString(record, "layout", "UNKNOWN"), List.copyOf(ingredients), List.copyOf(raw),
+                    optionalInt(record, "minimumDay", 1), optionalString(record, "requiredResearchId", ""),
+                    optionalString(record, "requiredFacilityId", ""), optionalInt(record, "requiredFacilityLevel", 0),
+                    optionalInt(record, "processTicks", 0), optionalString(record, "progressionReservePolicy", ""));
             recipes.add(recipe);
             byOutput.computeIfAbsent(recipe.outputId(), ignored -> new ArrayList<>()).add(recipe);
         }
@@ -280,7 +307,11 @@ public final class ProductionBundleValidator {
                     requiredDouble(record, "breakDamage"), requiredDouble(record, "range"),
                     requiredDouble(record, "arcDegrees"), requiredInt(record, "maxTargets"),
                     requiredString(record, "effect"), List.copyOf(tags), requiredInt(record, "unlockLevel"),
-                    optionalString(record, "consumableId", ""), requiredString(record, "description"));
+                    optionalString(record, "consumableId", ""), requiredString(record, "description"),
+                    stringArray(record, "operationIds"), optionalString(record, "executionProfile", ""),
+                    optionalString(record, "targetSpec", ""), optionalString(record, "costSpec", ""),
+                    optionalString(record, "parameterPayload", ""), optionalString(record, "failurePolicy", ""),
+                    stringArray(record, "childEntityIds"));
             if (skillsById.putIfAbsent(skill.id(), skill) != null) {
                 throw new ContentValidationException("Duplicate skill ID " + skill.id());
             }
@@ -346,7 +377,8 @@ public final class ProductionBundleValidator {
                     requiredString(record, "id"), requiredString(record, "kind"),
                     requiredString(record, "bukkitType"), requiredString(record, "displayFallback"),
                     requiredString(record, "cleanupPolicy"), requiredString(record, "lootTableId"),
-                    requiredString(record, "ownerPolicy"), record.get("persistent").getAsBoolean());
+                    requiredString(record, "ownerPolicy"), record.get("persistent").getAsBoolean(),
+                    stringArray(record, "flags"));
             if (supportEntitiesById.putIfAbsent(support.id(), support) != null) {
                 throw new ContentValidationException("Duplicate support entity profile " + support.id());
             }
@@ -366,7 +398,14 @@ public final class ProductionBundleValidator {
                         requiredInt(action, "recoveryTicks"), requiredInt(action, "cooldownTicks"),
                         requiredDouble(action, "range"), requiredDouble(action, "damage"),
                         requiredDouble(action, "penetration"), requiredDouble(action, "breakDamage"),
-                        optionalString(action, "statusId", "")));
+                        optionalString(action, "statusId", ""), optionalString(action, "profileId", ""),
+                        optionalString(action, "cooldownMode", "TICKS"), optionalString(action, "cooldownTrigger", ""),
+                        optionalString(action, "targetPolicy", ""), optionalString(action, "damageSpec", ""),
+                        optionalString(action, "penetrationSpec", ""), optionalString(action, "breakDamageSpec", ""),
+                        optionalString(action, "statusStacksSpec", ""), optionalString(action, "statusDurationTicksSpec", ""),
+                        optionalString(action, "effectOpcode", ""), optionalString(action, "effectParameters", ""),
+                        stringArray(action, "childEntityIds"), optionalString(action, "childEntitySource", ""),
+                        stringArray(action, "tags"), stringArray(action, "responseTags")));
             }
             ProductionContentCatalog.ActionBundleEntry bundle = new ProductionContentCatalog.ActionBundleEntry(
                     requiredString(record, "id"), requiredString(record, "ownerId"),
@@ -557,7 +596,10 @@ public final class ProductionBundleValidator {
                     requiredString(record, "scope"), tags, requiredString(record, "effectOpcode"),
                     requiredString(record, "effectText"), optionalString(record, "constraintText", ""),
                     optionalString(record, "weightingText", ""), exclusiveWith,
-                    record.has("evolution") && record.get("evolution").getAsBoolean()));
+                    record.has("evolution") && record.get("evolution").getAsBoolean(),
+                    stringArray(record, "triggerIds"), optionalString(record, "stateScope", ""),
+                    optionalString(record, "parameterPayload", ""), optionalString(record, "limitFallback", ""),
+                    stringArray(record, "derivedEventFlags")));
         }
         return result;
     }
@@ -766,6 +808,24 @@ public final class ProductionBundleValidator {
                 }
             }
         }
+        if (candidate()) {
+            ProductionContentCatalog.RecipeEntry revival = catalog.recipes().stream()
+                    .filter(recipe -> "WSRCP-D31-S01".equals(recipe.id())).findFirst()
+                    .orElseThrow(() -> new ContentValidationException("Revival recipe missing"));
+            Map<Integer, String> expectedSlots = Map.of(0, "WSR-PURIFY_CATALYST", 2, "WSR-PURIFY_CATALYST",
+                    3, "WSR-BIO_MEDIUM", 4, "WSR-INTERRUPT_CORE", 5, "WSR-BIO_MEDIUM", 7, "WSR-NEURAL_CIRCUIT");
+            Map<Integer, String> actualSlots = new LinkedHashMap<>();
+            for (ProductionContentCatalog.IngredientEntry ingredient : revival.ingredients()) {
+                actualSlots.put(ingredient.slot(), ingredient.key());
+            }
+            if (!"WSI-CONS-REVIVAL_CORE".equals(revival.outputId()) || !actualSlots.equals(expectedSlots)
+                    || revival.minimumDay() != 33 || !"RS-D33-INTERRUPT".equals(revival.requiredResearchId())
+                    || !"FAC-S11".equals(revival.requiredFacilityId()) || revival.requiredFacilityLevel() != 4
+                    || revival.processTicks() != 1200
+                    || !"PROGRESSION_RESERVE_DAY40_FINAL".equals(revival.progressionReservePolicy())) {
+                throw new ContentValidationException("Revival recipe authority mismatch");
+            }
+        }
         Set<String> lootIds = ids(reader, "loot/season1-loot.json");
         for (String path : List.of("enemies/day01-10.json", "enemies/day11-20.json", "enemies/day21-50.json",
                 "entities/support-entities.json", "bosses/day10.json", "bosses/day20.json", "bosses/day30.json", "bosses/day40.json")) {
@@ -840,6 +900,18 @@ public final class ProductionBundleValidator {
             if (!skill.consumableId().isBlank() && !catalog.itemsById().containsKey(skill.consumableId())) {
                 throw new ContentValidationException("Unknown skill consumable " + skill.id() + " -> " + skill.consumableId());
             }
+            if (candidate() && (skill.operationIds().isEmpty() || skill.executionProfile().isBlank()
+                    || skill.targetSpec().isBlank() || skill.costSpec().isBlank()
+                    || skill.parameterPayload().isBlank() || !skill.failurePolicy().startsWith("SKFP-"))) {
+                throw new ContentValidationException("Candidate skill execution contract missing " + skill.id());
+            }
+            if (candidate()) {
+                for (String childId : skill.childEntityIds()) {
+                    if (!catalog.supportEntitiesById().containsKey(childId)) {
+                        throw new ContentValidationException("Unknown skill child entity " + skill.id() + " -> " + childId);
+                    }
+                }
+            }
         }
         for (String weaponClass : weaponClasses) {
             long basics = catalog.skills().stream().filter(skill -> "BASIC".equals(skill.kind())
@@ -863,6 +935,7 @@ public final class ProductionBundleValidator {
         if (!tiers.equals(Map.of("SILVER", 18L, "GOLD", 18L, "PRISM", 14L))) {
             throw new ContentValidationException("Personal augment tier mismatch " + tiers);
         }
+        Set<String> candidateOpcodes = new HashSet<>();
         for (ProductionContentCatalog.AugmentEntry augment : catalog.augmentsById().values()) {
             if (augment.name().isBlank() || augment.effectOpcode().isBlank() || augment.effectText().isBlank()
                     || augment.tags().isEmpty()) {
@@ -872,9 +945,17 @@ public final class ProductionBundleValidator {
                     || (!augment.personal() && !"PARTY".equals(augment.tier()))) {
                 throw new ContentValidationException("Augment scope/tier mismatch " + augment.id());
             }
-            if (!AugmentRuntimeContract.supports(augment.effectOpcode())) {
+            if (!candidate() && !AugmentRuntimeContract.supports(augment.effectOpcode())) {
                 throw new ContentValidationException("Unknown augment runtime opcode " + augment.id()
                         + " -> " + augment.effectOpcode());
+            }
+            if (candidate() && (!candidateOpcodes.add(augment.effectOpcode()) || augment.triggerIds().isEmpty()
+                    || augment.stateScope().isBlank() || augment.parameterPayload().isBlank()
+                    || augment.limitFallback().isBlank()
+                    || !augment.derivedEventFlags().containsAll(List.of(
+                    "NO_AUGMENT_RETRIGGER", "NO_REWARD", "NO_CONTRIBUTION"))
+                    || augment.effectOpcode().equals(augment.tags().getFirst()))) {
+                throw new ContentValidationException("Invalid candidate augment execution contract " + augment.id());
             }
             for (String exclusive : augment.exclusiveWith()) {
                 ProductionContentCatalog.AugmentEntry other = catalog.augmentsById().get(exclusive);
@@ -910,7 +991,8 @@ public final class ProductionBundleValidator {
     }
 
     private void validateItemCatalog(ProductionContentCatalog catalog) throws ContentValidationException {
-        if (catalog.materialsById().size() != 59 || catalog.nonEquipmentItemsById().size() != 61) {
+        if (catalog.materialsById().size() != 59
+                || catalog.nonEquipmentItemsById().size() != (candidate() ? 62 : 61)) {
             throw new ContentValidationException("Material/item catalog cardinality mismatch");
         }
         Set<String> acquisitionKinds = Set.of("HARVEST", "CRAFTED", "ENCOUNTER", "PARTY_REWARD", "PROOF");
@@ -930,8 +1012,9 @@ public final class ProductionBundleValidator {
         }
         Set<String> recipeIds = catalog.recipes().stream().map(ProductionContentCatalog.RecipeEntry::id)
                 .collect(java.util.stream.Collectors.toSet());
-        Map<String, Long> expectedCategories = Map.of("CONS", 13L, "AMMO", 5L, "PORTABLE", 7L,
-                "FAC", 32L, "CALL", 4L);
+        Map<String, Long> expectedCategories = candidate()
+                ? Map.of("CONS", 13L, "AMMO", 5L, "PORTABLE", 7L, "FAC", 32L, "CALL", 4L, "REVIVAL", 1L)
+                : Map.of("CONS", 13L, "AMMO", 5L, "PORTABLE", 7L, "FAC", 32L, "CALL", 4L);
         Map<String, Long> actualCategories = catalog.nonEquipmentItemsById().values().stream().collect(
                 java.util.stream.Collectors.groupingBy(ProductionContentCatalog.ItemEntry::category,
                         java.util.stream.Collectors.counting()));
@@ -939,10 +1022,10 @@ public final class ProductionBundleValidator {
             throw new ContentValidationException("Item category cardinality mismatch " + actualCategories);
         }
         Map<String, String> expectedOwnership = Map.of("CONS", "PERSONAL", "AMMO", "PERSONAL",
-                "PORTABLE", "PARTY", "FAC", "PARTY", "CALL", "PARTY_BOUND");
+                "PORTABLE", "PARTY", "FAC", "PARTY", "CALL", "PARTY_BOUND", "REVIVAL", "PARTY_BOUND");
         Map<String, String> expectedUsePolicy = Map.of("CONS", "QUICK_BINDABLE", "AMMO", "AMMO_LEDGER_DEPOSIT",
                 "PORTABLE", "PORTABLE_FACILITY_ACTION", "FAC", "FACILITY_PLACEMENT",
-                "CALL", "BOSS_CALL_TRANSACTION");
+                "CALL", "BOSS_CALL_TRANSACTION", "REVIVAL", "FACILITY_REVIVAL_TRANSACTION");
         for (ProductionContentCatalog.ItemEntry item : catalog.nonEquipmentItemsById().values()) {
             if (item.stackLimit() < 1 || item.stackLimit() > 64 || item.effectText().isBlank()
                     || item.firstDay() < 1 || item.firstDay() > 50) {
@@ -966,6 +1049,14 @@ public final class ProductionBundleValidator {
                 String expectedFacilityId = item.id().replace("WSI-FAC-", "FAC-").replace("-KIT", "");
                 if (!item.connectedFacilityId().equals(expectedFacilityId)) {
                     throw new ContentValidationException("Facility kit mapping mismatch " + item.id());
+                }
+            } else if ("REVIVAL".equals(item.category())) {
+                if (!"FAC-S11".equals(item.connectedFacilityId()) || item.firstDay() != 33
+                        || !"RS-D33-INTERRUPT".equals(item.requiredResearchId())
+                        || item.minimumFacilityLevel() != 4 || item.channelTicks() != 200
+                        || item.perTargetRunLimit() != 1 || item.wipeAllowed()
+                        || !"PROGRESSION_RESERVE_DAY40_FINAL".equals(item.progressionReservePolicy())) {
+                    throw new ContentValidationException("Revival item contract mismatch " + item.id());
                 }
             } else if (!item.connectedFacilityId().isBlank()) {
                 throw new ContentValidationException("Unexpected facility mapping " + item.id());
@@ -1153,7 +1244,8 @@ public final class ProductionBundleValidator {
 
     private void validateEntityProfiles(ProductionContentCatalog catalog) throws ContentValidationException {
         if (catalog.enemiesById().size() != 53 || catalog.bossesById().size() != 4
-                || catalog.supportEntitiesById().size() != 34 || catalog.actionBundlesById().size() != 57) {
+                || catalog.supportEntitiesById().size() != (candidate() ? 35 : 34)
+                || catalog.actionBundlesById().size() != 57) {
             throw new ContentValidationException("Entity profile cardinality mismatch enemies="
                     + catalog.enemiesById().size() + " bosses=" + catalog.bossesById().size()
                     + " support=" + catalog.supportEntitiesById().size() + " actions="
@@ -1166,6 +1258,7 @@ public final class ProductionBundleValidator {
                 "CORRUPTION", "BREAK_LINE", "RECONSTRUCTION_PRESSURE");
         Set<String> statuses = new HashSet<>(catalog.statusesById().keySet());
         statuses.add("");
+        if (candidate()) statuses.addAll(Set.of("NONE", "CORRUPTION_PRESSURE", "SOURCE_STATUS", "SCRIPTED_COMPOSITE"));
         long noReward = 0;
         for (ProductionContentCatalog.EnemyEntry enemy : catalog.enemiesById().values()) {
             if (!roles.contains(enemy.role()) || !dayProfiles.contains(enemy.dayProfile())
@@ -1221,26 +1314,64 @@ public final class ProductionBundleValidator {
                 throw new ContentValidationException("Invalid support entity profile " + support.id());
             }
         }
+        if (candidate()) {
+            ProductionContentCatalog.SupportEntityEntry follower = catalog.supportEntitiesById()
+                    .get("ENT-D18-SILENT-FOLLOWER");
+            if (follower == null || !follower.flags().containsAll(List.of("NO_REWARD", "NO_SAMPLE",
+                    "NO_AUGMENT_TRIGGER", "NO_CONTRIBUTION", "NO_COLLISION", "CHORUS_VISUALIZER"))) {
+                throw new ContentValidationException("Silent follower execution contract missing");
+            }
+        }
         Set<String> owners = new HashSet<>(catalog.enemiesById().keySet());
         owners.addAll(catalog.bossesById().keySet());
+        Set<String> knownEntityIds = new HashSet<>(owners);
+        knownEntityIds.addAll(catalog.supportEntitiesById().keySet());
+        long enemyActionCount = 0;
+        Set<String> actionIds = new HashSet<>();
         for (ProductionContentCatalog.ActionBundleEntry bundle : catalog.actionBundlesById().values()) {
             if (!owners.contains(bundle.ownerId()) || bundle.actions().isEmpty()
                     || !bundle.stateMachine().equals(List.of("READY", "TELEGRAPH", "STARTUP", "ACTIVE", "RECOVERY"))) {
                 throw new ContentValidationException("Invalid entity action bundle " + bundle.id());
             }
+            if ("ENEMY_ACTION_BUNDLE".equals(bundle.kind())) enemyActionCount += bundle.actions().size();
             for (ProductionContentCatalog.ActionEntry action : bundle.actions()) {
-                if (action.id().isBlank() || action.name().isBlank() || action.telegraphTicks() < 5
+                boolean baseInvalid = action.id().isBlank() || action.name().isBlank()
                         || action.startupTicks() < 0 || action.activeTicks() <= 0 || action.recoveryTicks() < 0
+                        || action.penetration() < 0 || action.breakDamage() < 0;
+                boolean legacyInvalid = !candidate() && (action.telegraphTicks() < 5
                         || action.cooldownTicks() <= action.telegraphTicks() || action.range() <= 0
-                        || action.damage() <= 0 || action.penetration() < 0 || action.breakDamage() < 0) {
+                        || action.damage() <= 0);
+                boolean candidateInvalid = candidate() && (!actionIds.add(action.id())
+                        || action.id().endsWith("-PRIMARY") || action.profileId().isBlank()
+                        || !Set.of("TICKS", "PASSIVE", "ONCE_PER_ENCOUNTER", "HP_THRESHOLD", "HP_THRESHOLDS")
+                        .contains(action.cooldownMode()) || action.targetPolicy().isBlank()
+                        || action.damageSpec().isBlank() || action.penetrationSpec().isBlank()
+                        || action.breakDamageSpec().isBlank() || action.statusStacksSpec().isBlank()
+                        || action.statusDurationTicksSpec().isBlank() || action.effectOpcode().isBlank()
+                        || action.tags().isEmpty() || action.responseTags().size() < 2
+                        || ("TICKS".equals(action.cooldownMode()) && action.cooldownTicks() <= action.telegraphTicks())
+                        || (!"TICKS".equals(action.cooldownMode()) && action.cooldownTicks() != 0));
+                if (baseInvalid || legacyInvalid || candidateInvalid) {
                     throw new ContentValidationException("Invalid entity action " + bundle.id() + " -> " + action.id());
+                }
+                if (candidate()) {
+                    for (String childId : action.childEntityIds()) {
+                        if (!knownEntityIds.contains(childId)) {
+                            throw new ContentValidationException("Unknown action child " + action.id() + " -> " + childId);
+                        }
+                    }
+                    if (!Set.of("", "SOURCE_PATTERN").contains(action.childEntitySource())) {
+                        throw new ContentValidationException("Unknown action child source " + action.id());
+                    }
                 }
             }
         }
         long actionCount = catalog.actionBundlesById().values().stream()
                 .mapToLong(bundle -> bundle.actions().size()).sum();
-        if (actionCount != 101) {
-            throw new ContentValidationException("Entity action count must be 101, got " + actionCount);
+        long expectedActionCount = candidate() ? 117 : 101;
+        if (actionCount != expectedActionCount || (candidate() && enemyActionCount != 69)) {
+            throw new ContentValidationException("Entity action count mismatch total=" + actionCount
+                    + " enemy=" + enemyActionCount);
         }
     }
 
@@ -1687,7 +1818,7 @@ public final class ProductionBundleValidator {
         JsonObject graph = onlyRecord(reader, "fixtures/reference-graph.json");
         rejectAuthorityStub(graph);
         if (stringArray(graph, "progressionSteps").size() != 17
-                || graph.getAsJsonObject("cardinalities").size() != 13
+                || graph.getAsJsonObject("cardinalities").size() != (candidate() ? 15 : 13)
                 || stringArray(graph, "invariants").size() != 4) {
             throw new ContentValidationException("Invalid production reference graph fixture");
         }
@@ -1732,7 +1863,7 @@ public final class ProductionBundleValidator {
     private List<JsonObject> records(ResourceReader reader, String path) throws Exception {
         JsonObject root = JsonParser.parseString(new String(reader.read(path), StandardCharsets.UTF_8)).getAsJsonObject();
         requireNumber(root, "schemaVersion", 2);
-        requireString(root, "contentRevision", REVISION);
+        requireString(root, "contentRevision", revision);
         JsonArray array = root.getAsJsonArray("records");
         if (array == null) throw new ContentValidationException("records missing in " + path);
         List<JsonObject> result = new ArrayList<>();
@@ -1777,6 +1908,9 @@ public final class ProductionBundleValidator {
     }
     private static int optionalInt(JsonObject object, String key, int fallback) {
         return object.has(key) && !object.get(key).isJsonNull() ? object.get(key).getAsInt() : fallback;
+    }
+    private static boolean optionalBoolean(JsonObject object, String key, boolean fallback) {
+        return object.has(key) && !object.get(key).isJsonNull() ? object.get(key).getAsBoolean() : fallback;
     }
     private static void requireString(JsonObject object, String key, String expected) throws ContentValidationException {
         requireEquals(key, expected, requiredString(object, key));

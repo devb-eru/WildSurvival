@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contentRevision",
+    "domain",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "contentRevision": {
+      "const": "ws-content-r2.1"
+    },
+    "domain": {
+      "const": "support-entities"
+    },
+    "records": {
+      "type": "array",
+      "minItems": 35,
+      "maxItems": 35,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "sourceDocumentId",
+          "enabled",
+          "kind",
+          "bukkitType",
+          "displayFallback",
+          "cleanupPolicy",
+          "lootTableId",
+          "ownerPolicy",
+          "persistent",
+          "flags",
+          "raw"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^ENT-"
+          },
+          "sourceDocumentId": {
+            "const": "ENTITY-LIST-001"
+          },
+          "enabled": {
+            "const": true
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "bukkitType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "displayFallback": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cleanupPolicy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "lootTableId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ownerPolicy": {
+            "enum": [
+              "PLAYER",
+              "PARENT",
+              "SYSTEM"
+            ]
+          },
+          "persistent": {
+            "type": "boolean"
+          },
+          "flags": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "raw": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

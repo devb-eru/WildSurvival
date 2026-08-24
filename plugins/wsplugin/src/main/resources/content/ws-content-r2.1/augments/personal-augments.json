@@ -1,0 +1,1957 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "personal-augments",
+  "records": [
+    {
+      "id": "AUG-S-001",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "가벼운 발걸음",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "DODGE",
+        "AP",
+        "BRIDGE"
+      ],
+      "effectOpcode": "DODGE_AP_COST_FLAT_REDUCE",
+      "effectText": "회피 AP 비용 -4",
+      "constraintText": "최소 비용 하한 적용",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "DODGE_COST_QUERY"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "dodgeApFlat=-4",
+      "limitFallback": "finalCostMin=COMBAT_DODGE_COST_FLOOR",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-001",
+        "가벼운 발걸음",
+        "DODGE`, `AP`, `BRIDGE",
+        "회피 AP 비용 -4",
+        "최소 비용 하한 적용",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-002",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "숨 고르기",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "AP",
+        "RECOVERY",
+        "BRIDGE"
+      ],
+      "effectOpcode": "AP_REGEN_AFTER_DAMAGE_FREE_WINDOW",
+      "effectText": "피해를 받지 않은 4초 후 AP 회복 +3/초",
+      "constraintText": "전투 중에도 조건 검사",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "DAMAGE_TAKEN_COMMITTED",
+        "COMBAT_TICK"
+      ],
+      "stateScope": "PLAYER_ENCOUNTER",
+      "parameterPayload": "damageFreeTicks=80; apRegenPerSecond=3",
+      "limitFallback": "combatAllowed=true; resetOnValidDamage=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-002",
+        "숨 고르기",
+        "AP`, `RECOVERY`, `BRIDGE",
+        "피해를 받지 않은 4초 후 AP 회복 +3/초",
+        "전투 중에도 조건 검사",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-003",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "응급 지혈",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "SURVIVAL",
+        "BLEED",
+        "BRIDGE"
+      ],
+      "effectOpcode": "BLEED_DURATION_REDUCE_AND_CLEAR_HEAL",
+      "effectText": "받는 출혈 지속시간 -25%, 출혈 해제 시 HP 2% 회복",
+      "constraintText": "8초",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "STATUS_DURATION_QUERY",
+        "STATUS_CLEARED"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "bleedDurationMultiplier=0.75; clearHealMaxHp=0.02",
+      "limitFallback": "icdTicks=160; nonBleedClear=false",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-003",
+        "응급 지혈",
+        "SURVIVAL`, `BLEED`, `BRIDGE",
+        "받는 출혈 지속시간 -25%, 출혈 해제 시 HP 2% 회복",
+        "8초",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-004",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "정화 호흡",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "CORRUPTION",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "CORRUPTION_GAIN_REDUCE_AND_PURIFY_SCALE",
+      "effectText": "개인 오염 획득 -10%, 정화 소모품 효과 +10%",
+      "constraintText": "오염 감소 하한 적용",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "CORRUPTION_GAIN_QUERY",
+        "CONSUMABLE_EFFECT_QUERY"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "corruptionGainMultiplier=0.90; purifyConsumableMultiplier=1.10",
+      "limitFallback": "corruptionFloor=0; statusCleanseBonus=0",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-004",
+        "정화 호흡",
+        "CORRUPTION`, `SURVIVAL",
+        "개인 오염 획득 -10%, 정화 소모품 효과 +10%",
+        "오염 감소 하한 적용",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-005",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "견고한 중심",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "GUARD",
+        "PARRY"
+      ],
+      "effectOpcode": "GUARD_IMPACT_REDUCE_AND_FAILED_PARRY_SHORT_GUARD_EXTEND",
+      "effectText": "가드 충격 AP -12%, 패링 실패 뒤 단기 방어 +0.10초",
+      "constraintText": "행동당 1회",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "GUARD_RESOLVED",
+        "PARRY_RESOLVED",
+        "SHORT_GUARD_DURATION_QUERY"
+      ],
+      "stateScope": "PLAYER_ACTION",
+      "parameterPayload": "guardImpactApMultiplier=0.88; failedParryShortGuardExtendTicks=2",
+      "limitFallback": "perActionMax=1",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-005",
+        "견고한 중심",
+        "GUARD`, `PARRY",
+        "가드 충격 AP -12%, 패링 실패 뒤 단기 방어 +0.10초",
+        "행동당 1회",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-006",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "약점 기록",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "BREAK",
+        "MARK"
+      ],
+      "effectOpcode": "TARGET_HIT_STREAK_BREAK_WINDOW",
+      "effectText": "같은 대상 3회 유효 적중 시 4초간 브레이크 피해 +12%",
+      "constraintText": "대상별 6초",
+      "weightingText": "브레이크 비적용 대상 제외",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "COMBAT_HIT_COMMITTED"
+      ],
+      "stateScope": "PLAYER_TARGET",
+      "parameterPayload": "requiredHits=3; hitWindowTicks=80; breakMultiplier=1.12; buffTicks=80",
+      "limitFallback": "targetIcdTicks=120; noBreakTarget=INELIGIBLE",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-006",
+        "약점 기록",
+        "BREAK`, `MARK",
+        "같은 대상 3회 유효 적중 시 4초간 브레이크 피해 +12%",
+        "대상별 6초",
+        "브레이크 비적용 대상 제외"
+      ]
+    },
+    {
+      "id": "AUG-S-007",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "정밀 반복",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "COMBO",
+        "HIT"
+      ],
+      "effectOpcode": "COMBO_FINISHER_NEXT_BASIC_HIT_BUFF",
+      "effectText": "콤보 마지막 단계 명중 시 다음 일반 공격 HIT +12",
+      "constraintText": "4초, 중첩 없음",
+      "weightingText": "콤보 무기 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "COMBO_FINISHER_HIT",
+        "BASIC_ATTACK_RESOLVED"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "nextBasicHitFlat=12; expiryTicks=80",
+      "limitFallback": "stacksMax=1; comboWeaponsWeighted=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-007",
+        "정밀 반복",
+        "COMBO`, `HIT",
+        "콤보 마지막 단계 명중 시 다음 일반 공격 HIT +12",
+        "4초, 중첩 없음",
+        "콤보 무기 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-008",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "예비 탄약",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "AMMO",
+        "RANGED"
+      ],
+      "effectOpcode": "NORMAL_AMMO_CONSERVE_ROLL",
+      "effectText": "일반 탄약 소비 시 15% 확률로 미소비",
+      "constraintText": "시전당 1회",
+      "weightingText": "활·석궁 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "AMMO_CONSUME_REQUESTED"
+      ],
+      "stateScope": "PLAYER_CAST",
+      "parameterPayload": "normalAmmoConserveChance=0.15",
+      "limitFallback": "perCastRollMax=1; specialAmmo=false",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-008",
+        "예비 탄약",
+        "AMMO`, `RANGED",
+        "일반 탄약 소비 시 15% 확률로 미소비",
+        "시전당 1회",
+        "활·석궁 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-009",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "빠른 손질",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "RELOAD",
+        "RANGED"
+      ],
+      "effectOpcode": "RELOAD_TIME_AND_MOVE_PENALTY_REDUCE",
+      "effectText": "장전시간 -10%, 장전 중 이동 페널티 -10%",
+      "constraintText": "장전 하한 적용",
+      "weightingText": "석궁 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "RELOAD_PROFILE_QUERY"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "reloadTimeMultiplier=0.90; reloadMovePenaltyMultiplier=0.90",
+      "limitFallback": "reloadFloor=WEAPON_PROFILE_FLOOR; crossbowWeighted=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-009",
+        "빠른 손질",
+        "RELOAD`, `RANGED",
+        "장전시간 -10%, 장전 중 이동 페널티 -10%",
+        "장전 하한 적용",
+        "석궁 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-010",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "잔류 마력",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "MAGIC",
+        "AREA"
+      ],
+      "effectOpcode": "PERSISTENT_AREA_END_AP_RESTORE",
+      "effectText": "지속 영역 종료 시 최대 AP 4% 회복",
+      "constraintText": "영역별 1회, 6초",
+      "weightingText": "지팡이 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "AREA_EFFECT_ENDED"
+      ],
+      "stateScope": "PLAYER_AREA_INSTANCE",
+      "parameterPayload": "areaEndApMaxRatio=0.04",
+      "limitFallback": "perAreaMax=1; icdTicks=120; staffWeighted=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-010",
+        "잔류 마력",
+        "MAGIC`, `AREA",
+        "지속 영역 종료 시 최대 AP 4% 회복",
+        "영역별 1회, 6초",
+        "지팡이 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-011",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "충격 흡수",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "SHIELD",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "SHIELD_DEPLETED_NEXT_DAMAGE_REDUCE",
+      "effectText": "보호막이 전부 소모될 때 받는 다음 피해 -10%",
+      "constraintText": "6초",
+      "weightingText": "보호막 출처 보유 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "SHIELD_DEPLETED",
+        "DAMAGE_TAKEN_COMMITTED"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "nextDamageTakenMultiplier=0.90; expiryTicks=120",
+      "limitFallback": "stacksMax=1; shieldSourceRequired=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-011",
+        "충격 흡수",
+        "SHIELD`, `SURVIVAL",
+        "보호막이 전부 소모될 때 받는 다음 피해 -10%",
+        "6초",
+        "보호막 출처 보유 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-012",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "짧은 반격",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "COUNTER",
+        "DODGE"
+      ],
+      "effectOpcode": "PRECISION_DODGE_NEXT_ATTACK_BUFF",
+      "effectText": "정확 회피 후 2초 내 첫 공격 피해 +8%",
+      "constraintText": "회피당 1회",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PRECISION_DODGE_COMMITTED",
+        "COMBAT_HIT_COMMITTED"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "nextAttackDamageMultiplier=1.08; expiryTicks=40",
+      "limitFallback": "perPrecisionDodgeMax=1",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-012",
+        "짧은 반격",
+        "COUNTER`, `DODGE",
+        "정확 회피 후 2초 내 첫 공격 피해 +8%",
+        "회피당 1회",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-013",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "상처 관찰",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "STATUS",
+        "BLEED",
+        "POISON"
+      ],
+      "effectOpcode": "DOT_TARGET_HIT_AND_BREAK_BONUS",
+      "effectText": "DOT가 있는 적에게 HIT +8, 브레이크 +5%",
+      "constraintText": "상시",
+      "weightingText": "DOT 태그 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "COMBAT_HIT_QUERY"
+      ],
+      "stateScope": "PLAYER_TARGET",
+      "parameterPayload": "dotTargetHitFlat=8; dotTargetBreakMultiplier=1.05",
+      "limitFallback": "requiresAnyDot=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-013",
+        "상처 관찰",
+        "STATUS`, `BLEED`, `POISON",
+        "DOT가 있는 적에게 HIT +8, 브레이크 +5%",
+        "상시",
+        "DOT 태그 가중"
+      ]
+    },
+    {
+      "id": "AUG-S-014",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "구조 본능",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "RESCUE",
+        "SUPPORT"
+      ],
+      "effectOpcode": "RESCUE_TIME_REDUCE_AND_COMPLETE_AP",
+      "effectText": "구조 채널링 시간 -10%, 구조 완료 후 두 플레이어 AP 5 회복",
+      "constraintText": "구조당 1회",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "RESCUE_PROFILE_QUERY",
+        "RESCUE_COMPLETED"
+      ],
+      "stateScope": "PLAYER_RESCUE",
+      "parameterPayload": "rescueTimeMultiplier=0.90; rescuerAp=5; targetAp=5",
+      "limitFallback": "perRescueMax=1",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-014",
+        "구조 본능",
+        "RESCUE`, `SUPPORT",
+        "구조 채널링 시간 -10%, 구조 완료 후 두 플레이어 AP 5 회복",
+        "구조당 1회",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-015",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "현장 수리",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "UTILITY",
+        "FACILITY"
+      ],
+      "effectOpcode": "EMERGENCY_REPAIR_COST_AND_INTERRUPT_BONUS",
+      "effectText": "긴급 수리 자원 비용 -8%, 피격 중단 임계 피해 +10%",
+      "constraintText": "상시",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "REPAIR_COST_QUERY",
+        "REPAIR_INTERRUPT_QUERY"
+      ],
+      "stateScope": "PLAYER_REPAIR",
+      "parameterPayload": "emergencyRepairCommonCostMultiplier=0.92; interruptThresholdMultiplier=1.10",
+      "limitFallback": "repairOnly=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-015",
+        "현장 수리",
+        "UTILITY`, `FACILITY",
+        "긴급 수리 자원 비용 -8%, 피격 중단 임계 피해 +10%",
+        "상시",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-016",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "전투 관측",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "MARK",
+        "UTILITY"
+      ],
+      "effectOpcode": "FIRST_PATTERN_RESPONSE_BREAK_EXPOSE",
+      "effectText": "엘리트·보스 패턴을 처음 회피/방어하면 5초간 대상 받는 브레이크 +6%",
+      "constraintText": "대상 패턴별 1회",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PATTERN_RESPONSE_COMMITTED"
+      ],
+      "stateScope": "PLAYER_TARGET_PATTERN",
+      "parameterPayload": "targetBreakTakenMultiplier=1.06; durationTicks=100",
+      "limitFallback": "perTargetPatternMax=1; eliteOrBossOnly=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-016",
+        "전투 관측",
+        "MARK`, `UTILITY",
+        "엘리트·보스 패턴을 처음 회피/방어하면 5초간 대상 받는 브레이크 +6%",
+        "대상 패턴별 1회",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-017",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "낮은 자세",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "TENACITY",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "HARD_CC_DURATION_AND_FORCED_MOVE_REDUCE",
+      "effectText": "강한 CC 지속시간 -10%, 강제 이동 세기 -8%",
+      "constraintText": "저항 하드캡 적용",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "STATUS_DURATION_QUERY",
+        "FORCED_MOVE_QUERY"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "hardCcDurationMultiplier=0.90; forcedMoveStrengthMultiplier=0.92",
+      "limitFallback": "statusResistanceHardCap=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-017",
+        "낮은 자세",
+        "TENACITY`, `SURVIVAL",
+        "강한 CC 지속시간 -10%, 강제 이동 세기 -8%",
+        "저항 하드캡 적용",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-S-018",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "절약 가공",
+      "tier": "SILVER",
+      "scope": "PERSONAL",
+      "tags": [
+        "RESOURCE",
+        "UTILITY"
+      ],
+      "effectOpcode": "PORTABLE_CRAFT_CONSERVE_ROLL",
+      "effectText": "휴대 가공 시 일반 재료 8% 확률 미소비",
+      "constraintText": "작업당 1회",
+      "weightingText": "전투 보상 아님",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "CRAFT_COST_COMMITTING"
+      ],
+      "stateScope": "PLAYER_CRAFT_TX",
+      "parameterPayload": "portableCommonMaterialConserveChance=0.08",
+      "limitFallback": "perWorkRollMax=1; combatReward=false",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-S-018",
+        "절약 가공",
+        "RESOURCE`, `UTILITY",
+        "휴대 가공 시 일반 재료 8% 확률 미소비",
+        "작업당 1회",
+        "전투 보상 아님"
+      ]
+    },
+    {
+      "id": "AUG-G-001",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "완벽한 간격",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "DODGE",
+        "COUNTER"
+      ],
+      "effectOpcode": "PRECISION_DODGE_DAMAGE_AND_BREAK_COUNTER",
+      "effectText": "정확 회피 시 다음 공격 피해 +18%, 브레이크 +15%",
+      "constraintText": "4초, 회피당 1회",
+      "weightingText": "AUG-G-002` 강한 배타",
+      "exclusiveWith": [
+        "AUG-G-002"
+      ],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PRECISION_DODGE_COMMITTED",
+        "COMBAT_HIT_COMMITTED"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "nextAttackDamageMultiplier=1.18; nextAttackBreakMultiplier=1.15; expiryTicks=80",
+      "limitFallback": "perPrecisionDodgeMax=1; exclusive=AUG-G-002",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-001",
+        "완벽한 간격",
+        "DODGE`, `COUNTER",
+        "정확 회피 시 다음 공격 피해 +18%, 브레이크 +15%",
+        "4초, 회피당 1회",
+        "AUG-G-002` 강한 배타"
+      ]
+    },
+    {
+      "id": "AUG-G-002",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "연속 기동",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "DODGE",
+        "MOBILITY"
+      ],
+      "effectOpcode": "DODGE_AP_REFUND_WITH_DECAY",
+      "effectText": "회피 성공 시 회피 AP 30% 환급, 연속 발동마다 절반 감소",
+      "constraintText": "6초 내 3단 감쇠",
+      "weightingText": "AUG-G-001` 강한 배타",
+      "exclusiveWith": [
+        "AUG-G-001"
+      ],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "DODGE_COMMITTED"
+      ],
+      "stateScope": "PLAYER_ENCOUNTER",
+      "parameterPayload": "refundRatio=0.30; consecutiveDecayMultiplier=0.50; chainWindowTicks=120",
+      "limitFallback": "chainMax=3; exclusive=AUG-G-001",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-002",
+        "연속 기동",
+        "DODGE`, `MOBILITY",
+        "회피 성공 시 회피 AP 30% 환급, 연속 발동마다 절반 감소",
+        "6초 내 3단 감쇠",
+        "AUG-G-001` 강한 배타"
+      ]
+    },
+    {
+      "id": "AUG-G-003",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "방패 너머",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "PARRY",
+        "BREAK"
+      ],
+      "effectOpcode": "PARRY_BREAK_AND_NEXT_SKILL_AP_DISCOUNT",
+      "effectText": "패링 성공 시 대상 브레이크 +20%, 다음 스킬 AP -8",
+      "constraintText": "5초",
+      "weightingText": "방어·패링 가능 장비 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PARRY_COMMITTED",
+        "SKILL_COST_QUERY"
+      ],
+      "stateScope": "PLAYER_TARGET",
+      "parameterPayload": "parryBreakMultiplier=1.20; nextSkillApFlat=-8; expiryTicks=100",
+      "limitFallback": "perParryMax=1; defenceEquipmentWeighted=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-003",
+        "방패 너머",
+        "PARRY`, `BREAK",
+        "패링 성공 시 대상 브레이크 +20%, 다음 스킬 AP -8",
+        "5초",
+        "방어·패링 가능 장비 가중"
+      ]
+    },
+    {
+      "id": "AUG-G-004",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "파열 계산",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "BREAK",
+        "BURST"
+      ],
+      "effectOpcode": "BREAK_SUCCESS_TARGET_VULNERABILITY",
+      "effectText": "브레이크 성공 시 대상에게 6초간 받는 피해 +8%",
+      "constraintText": "대상별 12초",
+      "weightingText": "보스 상한 +5%",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "BREAK_SUCCESS_COMMITTED"
+      ],
+      "stateScope": "PLAYER_TARGET",
+      "parameterPayload": "targetDamageTakenMultiplier=1.08; bossMultiplier=1.05; durationTicks=120",
+      "limitFallback": "targetIcdTicks=240",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-004",
+        "파열 계산",
+        "BREAK`, `BURST",
+        "브레이크 성공 시 대상에게 6초간 받는 피해 +8%",
+        "대상별 12초",
+        "보스 상한 +5%"
+      ]
+    },
+    {
+      "id": "AUG-G-005",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "상태 촉매",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "STATUS",
+        "CONSUME"
+      ],
+      "effectOpcode": "TWO_DEBUFF_DURATION_CONSUME_DAMAGE",
+      "effectText": "서로 다른 약화 2종 대상 공격 시 하나의 남은 시간을 1초 소비해 추가 피해 ATK 35%",
+      "constraintText": "대상별 4초",
+      "weightingText": "강한 CC 소비 불가",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "COMBAT_HIT_COMMITTED",
+        "STATUS_DURATION_COMMITTING"
+      ],
+      "stateScope": "PLAYER_TARGET",
+      "parameterPayload": "distinctWeakStatuses=2; consumedDurationTicks=20; extraDamageCoeff=0.35",
+      "limitFallback": "targetIcdTicks=80; hardCcConsumable=false",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-005",
+        "상태 촉매",
+        "STATUS`, `CONSUME",
+        "서로 다른 약화 2종 대상 공격 시 하나의 남은 시간을 1초 소비해 추가 피해 ATK 35%",
+        "대상별 4초",
+        "강한 CC 소비 불가"
+      ]
+    },
+    {
+      "id": "AUG-G-006",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "잔혹한 누적",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "BLEED",
+        "MULTIHIT"
+      ],
+      "effectOpcode": "MAX_BLEED_BASIC_FINISHER_DAMAGE",
+      "effectText": "출혈 최대 중첩 대상에게 일반 공격 마지막 타격 +22%",
+      "constraintText": "실행당 1회",
+      "weightingText": "출혈 빌드 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "BASIC_COMBO_FINISHER_HIT"
+      ],
+      "stateScope": "PLAYER_TARGET",
+      "parameterPayload": "maxBleedBasicFinisherMultiplier=1.22",
+      "limitFallback": "perBasicExecutionMax=1; maxBleedRequired=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-006",
+        "잔혹한 누적",
+        "BLEED`, `MULTIHIT",
+        "출혈 최대 중첩 대상에게 일반 공격 마지막 타격 +22%",
+        "실행당 1회",
+        "출혈 빌드 가중"
+      ]
+    },
+    {
+      "id": "AUG-G-007",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "독성 순환",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "POISON",
+        "AP"
+      ],
+      "effectOpcode": "POISON_HP_DAMAGE_AP_RESTORE",
+      "effectText": "독 틱이 실제 HP 피해를 줄 때 AP 1 회복",
+      "constraintText": "초당 최대 4",
+      "weightingText": "보상 비적용 대상 제외",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "STATUS_DAMAGE_COMMITTED"
+      ],
+      "stateScope": "PLAYER_SECOND",
+      "parameterPayload": "apPerPoisonHpTick=1",
+      "limitFallback": "apPerSecondMax=4; noRewardTarget=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-007",
+        "독성 순환",
+        "POISON`, `AP",
+        "독 틱이 실제 HP 피해를 줄 때 AP 1 회복",
+        "초당 최대 4",
+        "보상 비적용 대상 제외"
+      ]
+    },
+    {
+      "id": "AUG-G-008",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "연소 확산",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "BURN",
+        "AREA"
+      ],
+      "effectOpcode": "BURN_THREE_STACK_AREA_SPREAD",
+      "effectText": "화상 대상 처치가 아닌 화상 3중첩 도달 시 주변 3블록에 1중첩 전이",
+      "constraintText": "5초",
+      "weightingText": "소환물·훈련 제외",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "STATUS_STACK_CHANGED"
+      ],
+      "stateScope": "PLAYER_TARGET",
+      "parameterPayload": "triggerBurnStacks=3; spreadRadius=3; spreadStacks=1",
+      "limitFallback": "icdTicks=100; summonAndTrainingExcluded=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-008",
+        "연소 확산",
+        "BURN`, `AREA",
+        "화상 대상 처치가 아닌 화상 3중첩 도달 시 주변 3블록에 1중첩 전이",
+        "5초",
+        "소환물·훈련 제외"
+      ]
+    },
+    {
+      "id": "AUG-G-009",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "탄약 조율",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "AMMO",
+        "STATUS"
+      ],
+      "effectOpcode": "SPECIAL_AMMO_STATUS_DAMAGE_TRADE",
+      "effectText": "특수 탄약의 상태 적중 +12, 기본 피해 -5%",
+      "constraintText": "상시",
+      "weightingText": "탄약 무기만",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "AMMO_EFFECT_QUERY",
+        "PROJECTILE_DAMAGE_QUERY"
+      ],
+      "stateScope": "PLAYER_PROJECTILE",
+      "parameterPayload": "specialAmmoStatusHitFlat=12; projectileDamageMultiplier=0.95",
+      "limitFallback": "ammoWeaponRequired=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-009",
+        "탄약 조율",
+        "AMMO`, `STATUS",
+        "특수 탄약의 상태 적중 +12, 기본 피해 -5%",
+        "상시",
+        "탄약 무기만"
+      ]
+    },
+    {
+      "id": "AUG-G-010",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "관통 궤도",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "RANGED",
+        "PIERCE"
+      ],
+      "effectOpcode": "PROJECTILE_PENETRATION_FALLOFF_REDUCE",
+      "effectText": "투사체 첫 관통 후 다음 대상 피해 감소를 20%p 완화",
+      "constraintText": "투사체당 1회",
+      "weightingText": "활·석궁·삼지창 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PROJECTILE_PENETRATION_HIT"
+      ],
+      "stateScope": "PLAYER_PROJECTILE",
+      "parameterPayload": "postPenetrationFalloffRelief=0.20",
+      "limitFallback": "perProjectileMax=1; projectileWeaponWeighted=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-010",
+        "관통 궤도",
+        "RANGED`, `PIERCE",
+        "투사체 첫 관통 후 다음 대상 피해 감소를 20%p 완화",
+        "투사체당 1회",
+        "활·석궁·삼지창 가중"
+      ]
+    },
+    {
+      "id": "AUG-G-011",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "마력 환류",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "MAGIC",
+        "AP"
+      ],
+      "effectOpcode": "HIGH_AP_MULTI_TARGET_REFUND",
+      "effectText": "AP 30 이상 스킬이 2명 이상 유효 적중하면 AP 8 환급",
+      "constraintText": "시전당 1회, 4초",
+      "weightingText": "지팡이 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "SKILL_HIT_COMMITTED"
+      ],
+      "stateScope": "PLAYER_CAST",
+      "parameterPayload": "skillApThreshold=30; uniqueTargetMinimum=2; apRefund=8",
+      "limitFallback": "perCastMax=1; icdTicks=80; staffWeighted=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-011",
+        "마력 환류",
+        "MAGIC`, `AP",
+        "AP 30 이상 스킬이 2명 이상 유효 적중하면 AP 8 환급",
+        "시전당 1회, 4초",
+        "지팡이 가중"
+      ]
+    },
+    {
+      "id": "AUG-G-012",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "충격 연쇄",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "HEAVY",
+        "AREA",
+        "BREAK"
+      ],
+      "effectOpcode": "HEAVY_BREAK_AREA_SPLASH",
+      "effectText": "단일 타격 브레이크 20 이상이면 주변 3블록에 원래 브레이크의 25%",
+      "constraintText": "5초",
+      "weightingText": "둔기·도끼·곡괭이 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "BREAK_DAMAGE_COMMITTED"
+      ],
+      "stateScope": "PLAYER_TARGET",
+      "parameterPayload": "singleHitBreakMinimum=20; splashRadius=3; splashBreakRatio=0.25",
+      "limitFallback": "icdTicks=100; heavyWeaponWeighted=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-012",
+        "충격 연쇄",
+        "HEAVY`, `AREA`, `BREAK",
+        "단일 타격 브레이크 20 이상이면 주변 3블록에 원래 브레이크의 25%",
+        "5초",
+        "둔기·도끼·곡괭이 가중"
+      ]
+    },
+    {
+      "id": "AUG-G-013",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "응급 보호막",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "SURVIVAL",
+        "SHIELD"
+      ],
+      "effectOpcode": "LOW_HP_EMERGENCY_SHIELD",
+      "effectText": "HP 30% 아래 진입 시 최대 HP 12% 보호막 5초",
+      "constraintText": "35초",
+      "weightingText": "중첩 없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "HP_THRESHOLD_ENTERED"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "hpThreshold=0.30; shieldMaxHp=0.12; shieldTicks=100",
+      "limitFallback": "icdTicks=700; stacksMax=1",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-013",
+        "응급 보호막",
+        "SURVIVAL`, `SHIELD",
+        "HP 30% 아래 진입 시 최대 HP 12% 보호막 5초",
+        "35초",
+        "중첩 없음"
+      ]
+    },
+    {
+      "id": "AUG-G-014",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "정화 전환",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "CORRUPTION",
+        "AP"
+      ],
+      "effectOpcode": "CORRUPTION_STAGE_DOWN_AP_AND_RESIST",
+      "effectText": "개인 오염 단계 하락 시 AP 20 회복, 다음 상태 저항 +15",
+      "constraintText": "15초",
+      "weightingText": "없음",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "CORRUPTION_STAGE_CHANGED"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "stageDownAp=20; nextStatusResistanceFlat=15; buffExpiryTicks=300",
+      "limitFallback": "icdTicks=300",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-014",
+        "정화 전환",
+        "CORRUPTION`, `AP",
+        "개인 오염 단계 하락 시 AP 20 회복, 다음 상태 저항 +15",
+        "15초",
+        "없음"
+      ]
+    },
+    {
+      "id": "AUG-G-015",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "구조 파동",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "RESCUE",
+        "SUPPORT"
+      ],
+      "effectOpcode": "RESCUE_COMPLETE_NEARBY_PARTY_HEAL",
+      "effectText": "구조 완료 시 5블록 파티원에게 최대 HP 5% 회복",
+      "constraintText": "구조당 1회",
+      "weightingText": "자기 구조 미적용",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "RESCUE_COMPLETED"
+      ],
+      "stateScope": "PLAYER_RESCUE",
+      "parameterPayload": "partyRadius=5; healMaxHp=0.05",
+      "limitFallback": "perRescueMax=1; selfRescueExcluded=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-015",
+        "구조 파동",
+        "RESCUE`, `SUPPORT",
+        "구조 완료 시 5블록 파티원에게 최대 HP 5% 회복",
+        "구조당 1회",
+        "자기 구조 미적용"
+      ]
+    },
+    {
+      "id": "AUG-G-016",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "장비 적응",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "EQUIPMENT",
+        "BRIDGE"
+      ],
+      "effectOpcode": "LOADOUT_TAG_ADAPT_ATTACK_OR_DEFENCE",
+      "effectText": "현재 무기 태그와 일치하는 증강 2개 이상이면 ATK +7%, 불일치 시 DEF +7",
+      "constraintText": "2초마다 재평가",
+      "weightingText": "단일 출처",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "LOADOUT_REEVALUATED"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "matchingAugmentMinimum=2; attackMultiplier=1.07; fallbackDefenceFlat=7; reevaluateTicks=40",
+      "limitFallback": "singleSource=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-016",
+        "장비 적응",
+        "EQUIPMENT`, `BRIDGE",
+        "현재 무기 태그와 일치하는 증강 2개 이상이면 ATK +7%, 불일치 시 DEF +7",
+        "2초마다 재평가",
+        "단일 출처"
+      ]
+    },
+    {
+      "id": "AUG-G-017",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "예측 관측",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "PATTERN",
+        "UTILITY"
+      ],
+      "effectOpcode": "PATTERN_RESPONSE_EARLY_TELEGRAPH",
+      "effectText": "같은 패턴을 처음 대응한 뒤 해당 패턴 전조 UI 0.15초 조기 표시",
+      "constraintText": "패턴별",
+      "weightingText": "보스 데이터 안전선 적용",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PATTERN_RESPONSE_COMMITTED",
+        "TELEGRAPH_PRESENTING"
+      ],
+      "stateScope": "PLAYER_PATTERN",
+      "parameterPayload": "telegraphAdvanceTicks=3",
+      "limitFallback": "perPatternLearning=true; bossSafetyMinimum=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-017",
+        "예측 관측",
+        "PATTERN`, `UTILITY",
+        "같은 패턴을 처음 대응한 뒤 해당 패턴 전조 UI 0.15초 조기 표시",
+        "패턴별",
+        "보스 데이터 안전선 적용"
+      ]
+    },
+    {
+      "id": "AUG-G-018",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "불굴의 흐름",
+      "tier": "GOLD",
+      "scope": "PERSONAL",
+      "tags": [
+        "TENACITY",
+        "AP"
+      ],
+      "effectOpcode": "HARD_CC_END_AP_AND_DODGE_DISCOUNT",
+      "effectText": "강한 CC 종료 시 AP 10, 다음 회피 비용 -5",
+      "constraintText": "8초",
+      "weightingText": "면역된 CC 미발동",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "HARD_CC_ENDED",
+        "DODGE_COST_QUERY"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "hardCcEndAp=10; nextDodgeApFlat=-5; expiryTicks=160",
+      "limitFallback": "icdTicks=160; immuneCcDoesNotTrigger=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-G-018",
+        "불굴의 흐름",
+        "TENACITY`, `AP",
+        "강한 CC 종료 시 AP 10, 다음 회피 비용 -5",
+        "8초",
+        "면역된 CC 미발동"
+      ]
+    },
+    {
+      "id": "AUG-P-001",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "한계 돌파",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "BURST",
+        "RISK"
+      ],
+      "effectOpcode": "LOW_HP_DAMAGE_BREAK_AND_HEALING_TRADE",
+      "effectText": "HP 40% 이하에서 주는 피해 +22%, 브레이크 +15%",
+      "constraintText": "받는 회복 -20%",
+      "weightingText": "AUG-P-002` 강한 배타",
+      "exclusiveWith": [
+        "AUG-P-002"
+      ],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "HP_THRESHOLD_CHANGED",
+        "DAMAGE_OUTPUT_QUERY",
+        "HEALING_RECEIVED_QUERY"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "hpThreshold=0.40; damageMultiplier=1.22; breakMultiplier=1.15; healingReceivedMultiplier=0.80",
+      "limitFallback": "exclusive=AUG-P-002",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-001",
+        "한계 돌파",
+        "BURST`, `RISK",
+        "HP 40% 이하에서 주는 피해 +22%, 브레이크 +15%",
+        "받는 회복 -20%",
+        "AUG-P-002` 강한 배타"
+      ]
+    },
+    {
+      "id": "AUG-P-002",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "불가침 궤도",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "DODGE",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "TWO_PRECISION_DODGES_NEXT_HIT_REDUCE",
+      "effectText": "정확 회피 2회 후 다음 피격 70% 감소",
+      "constraintText": "주는 피해 -8%, 12초",
+      "weightingText": "AUG-P-001` 강한 배타",
+      "exclusiveWith": [
+        "AUG-P-001"
+      ],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PRECISION_DODGE_COMMITTED",
+        "DAMAGE_TAKEN_COMMITTED"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "precisionDodgesRequired=2; nextDamageTakenMultiplier=0.30; outgoingDamageMultiplier=0.92; expiryTicks=240",
+      "limitFallback": "stacksMax=1; exclusive=AUG-P-001",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-002",
+        "불가침 궤도",
+        "DODGE`, `SURVIVAL",
+        "정확 회피 2회 후 다음 피격 70% 감소",
+        "주는 피해 -8%, 12초",
+        "AUG-P-001` 강한 배타"
+      ]
+    },
+    {
+      "id": "AUG-P-003",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "영점 반격",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "PARRY",
+        "COUNTER",
+        "BREAK"
+      ],
+      "effectOpcode": "BOSS_PARRY_BREAK_AND_PARTY_AP",
+      "effectText": "보스 패링 성공 시 패턴 브레이크 +35% 및 파티 AP 5 회복",
+      "constraintText": "패턴별 10초, 같은 실행 1회",
+      "weightingText": "보상·아군 공격 제외",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "PARRY_COMMITTED"
+      ],
+      "stateScope": "PLAYER_TARGET_PATTERN",
+      "parameterPayload": "bossParryBreakMultiplier=1.35; partyAp=5; partyRadius=32",
+      "limitFallback": "patternIcdTicks=200; sameExecutionMax=1; rewardAndFriendlyExcluded=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-003",
+        "영점 반격",
+        "PARRY`, `COUNTER`, `BREAK",
+        "보스 패링 성공 시 패턴 브레이크 +35% 및 파티 AP 5 회복",
+        "패턴별 10초, 같은 실행 1회",
+        "보상·아군 공격 제외"
+      ]
+    },
+    {
+      "id": "AUG-P-004",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "붕괴 설계",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "BREAK",
+        "EVOLUTION"
+      ],
+      "effectOpcode": "BREAK_REVEAL_WEAKNESS_AND_PERSONAL_DAMAGE",
+      "effectText": "브레이크 성공 후 8초간 대상 약점 태그 하나를 추가 공개하고 개인 피해 +16%",
+      "constraintText": "보스 피해 +10% 상한",
+      "weightingText": "진화 계열 F01",
+      "exclusiveWith": [],
+      "evolution": true,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "BREAK_SUCCESS_COMMITTED"
+      ],
+      "stateScope": "PLAYER_TARGET",
+      "parameterPayload": "weaknessTagsRevealed=1; durationTicks=160; personalDamageMultiplier=1.16; bossDamageMultiplier=1.10",
+      "limitFallback": "targetMax=1; evolutionFamily=F01",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-004",
+        "붕괴 설계",
+        "BREAK`, `EVOLUTION",
+        "브레이크 성공 후 8초간 대상 약점 태그 하나를 추가 공개하고 개인 피해 +16%",
+        "보스 피해 +10% 상한",
+        "진화 계열 F01"
+      ]
+    },
+    {
+      "id": "AUG-P-005",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "만성 독성체",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "POISON",
+        "RISK"
+      ],
+      "effectOpcode": "POISON_CAP_DAMAGE_AND_PURIFY_TRADE",
+      "effectText": "독 최대 중첩 +2, 독 피해 +25%",
+      "constraintText": "자신의 정화 효과 -15%",
+      "weightingText": "독 빌드 가중",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "STATUS_CAP_QUERY",
+        "STATUS_DAMAGE_QUERY",
+        "PURIFY_EFFECT_QUERY"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "poisonMaxStacksDelta=2; poisonDamageMultiplier=1.25; ownPurifyMultiplier=0.85",
+      "limitFallback": "poisonBuildWeighted=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-005",
+        "만성 독성체",
+        "POISON`, `RISK",
+        "독 최대 중첩 +2, 독 피해 +25%",
+        "자신의 정화 효과 -15%",
+        "독 빌드 가중"
+      ]
+    },
+    {
+      "id": "AUG-P-006",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "피의 박동",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "BLEED",
+        "HEALING"
+      ],
+      "effectOpcode": "BLEED_LIFESTEAL_AND_OVERHEAL_SHIELD",
+      "effectText": "출혈 피해의 8%를 회복, 최대 HP 초과분은 4초 보호막",
+      "constraintText": "초당 최대 HP 2%, 광역 감쇠",
+      "weightingText": "생명력 흡수 상한 공유",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "STATUS_DAMAGE_COMMITTED"
+      ],
+      "stateScope": "PLAYER_SECOND",
+      "parameterPayload": "bleedHealRatio=0.08; overhealShieldTicks=80; areaHealMultiplier=0.50",
+      "limitFallback": "healPerSecondMaxHp=0.02; globalLifestealCap=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-006",
+        "피의 박동",
+        "BLEED`, `HEALING",
+        "출혈 피해의 8%를 회복, 최대 HP 초과분은 4초 보호막",
+        "초당 최대 HP 2%, 광역 감쇠",
+        "생명력 흡수 상한 공유"
+      ]
+    },
+    {
+      "id": "AUG-P-007",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "원소 융합",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "MAGIC",
+        "ELEMENT",
+        "EVOLUTION"
+      ],
+      "effectOpcode": "TWO_ELEMENT_STATUS_FUSION",
+      "effectText": "화상·빙결·감전 계열 중 서로 다른 2종이 만나면 융합 폭발 ATK 65%",
+      "constraintText": "대상별 6초",
+      "weightingText": "강한 CC 추가 없음",
+      "exclusiveWith": [],
+      "evolution": true,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "STATUS_APPLIED"
+      ],
+      "stateScope": "PLAYER_TARGET",
+      "parameterPayload": "distinctElementStatuses=2; fusionDamageCoeff=0.65",
+      "limitFallback": "targetIcdTicks=120; extraHardCc=false; evolutionFamily=ELEMENT",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-007",
+        "원소 융합",
+        "MAGIC`, `ELEMENT`, `EVOLUTION",
+        "화상·빙결·감전 계열 중 서로 다른 2종이 만나면 융합 폭발 ATK 65%",
+        "대상별 6초",
+        "강한 CC 추가 없음"
+      ]
+    },
+    {
+      "id": "AUG-P-008",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "무한 탄창의 역설",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "AMMO",
+        "RISK"
+      ],
+      "effectOpcode": "AMMO_CONSERVE_AND_ACTION_COST_TRADE",
+      "effectText": "탄약 미소비 확률 +45%",
+      "constraintText": "재장전·발사 AP 비용 +20%, 최종 미소비 상한 75%",
+      "weightingText": "원거리 탄약 무기만",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "AMMO_CONSUME_REQUESTED",
+        "RELOAD_COST_QUERY",
+        "SHOT_COST_QUERY"
+      ],
+      "stateScope": "PLAYER_CAST",
+      "parameterPayload": "ammoConserveChanceDelta=0.45; reloadApMultiplier=1.20; shotApMultiplier=1.20",
+      "limitFallback": "finalConserveChanceCap=0.75; ammoWeaponRequired=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-008",
+        "무한 탄창의 역설",
+        "AMMO`, `RISK",
+        "탄약 미소비 확률 +45%",
+        "재장전·발사 AP 비용 +20%, 최종 미소비 상한 75%",
+        "원거리 탄약 무기만"
+      ]
+    },
+    {
+      "id": "AUG-P-009",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "회귀하는 창",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "TRIDENT",
+        "RECALL",
+        "EVOLUTION"
+      ],
+      "effectOpcode": "TRIDENT_RECALL_PATH_REHIT",
+      "effectText": "삼지창 회수 경로 적에게 60% 계수로 1회 재적중",
+      "constraintText": "회수 AP +8, 대상별 1회",
+      "weightingText": "삼지창 전용",
+      "exclusiveWith": [],
+      "evolution": true,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "TRIDENT_RECALL_HIT"
+      ],
+      "stateScope": "PLAYER_TARGET_CAST",
+      "parameterPayload": "recallRehitDamageCoeff=0.60; recallApFlat=8",
+      "limitFallback": "perTargetCastMax=1; tridentOnly=true; evolutionFamily=TRIDENT",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-009",
+        "회귀하는 창",
+        "TRIDENT`, `RECALL`, `EVOLUTION",
+        "삼지창 회수 경로 적에게 60% 계수로 1회 재적중",
+        "회수 AP +8, 대상별 1회",
+        "삼지창 전용"
+      ]
+    },
+    {
+      "id": "AUG-P-010",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "맨손의 증명",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "UNARMED",
+        "COUNTER",
+        "EVOLUTION"
+      ],
+      "effectOpcode": "UNARMED_COUNTER_DEFENCE_IGNORE_AND_BREAK",
+      "effectText": "권투 정확 회피 반격이 대상 DEF 35% 무시, 브레이크 2배",
+      "constraintText": "반격 외 일반 피해 -8%",
+      "weightingText": "권투 전용",
+      "exclusiveWith": [],
+      "evolution": true,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "UNARMED_COUNTER_HIT"
+      ],
+      "stateScope": "PLAYER_TARGET",
+      "parameterPayload": "counterDefenceIgnoreRatio=0.35; counterBreakMultiplier=2.00; nonCounterDamageMultiplier=0.92",
+      "limitFallback": "unarmedOnly=true; evolutionFamily=UNARMED",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-010",
+        "맨손의 증명",
+        "UNARMED`, `COUNTER`, `EVOLUTION",
+        "권투 정확 회피 반격이 대상 DEF 35% 무시, 브레이크 2배",
+        "반격 외 일반 피해 -8%",
+        "권투 전용"
+      ]
+    },
+    {
+      "id": "AUG-P-011",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "이동하는 요새",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "GUARD",
+        "SUPPORT"
+      ],
+      "effectOpcode": "SHORT_GUARD_PROJECTILE_PARTY_AURA_WITH_PARRY_SURCHARGE",
+      "effectText": "단기 방어 중 4블록 뒤 파티원의 받는 투사체 피해 -25%",
+      "constraintText": "단기 방어 중 이동속도 -20%, 패링 시도 AP +5",
+      "weightingText": "보조 방패 요구",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "SHORT_GUARD_STARTED",
+        "PROJECTILE_DAMAGE_QUERY",
+        "MOVEMENT_QUERY",
+        "PARRY_COST_QUERY"
+      ],
+      "stateScope": "PLAYER_ACTION",
+      "parameterPayload": "rearPartyRadius=4; projectileDamageTakenMultiplier=0.75; guardMoveMultiplier=0.80; parryApFlat=5",
+      "limitFallback": "offShieldRequired=true; shortGuardOnly=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-011",
+        "이동하는 요새",
+        "GUARD`, `SUPPORT",
+        "단기 방어 중 4블록 뒤 파티원의 받는 투사체 피해 -25%",
+        "단기 방어 중 이동속도 -20%, 패링 시도 AP +5",
+        "보조 방패 요구"
+      ]
+    },
+    {
+      "id": "AUG-P-012",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "오염 공생",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "CORRUPTION",
+        "RISK"
+      ],
+      "effectOpcode": "CORRUPTION_STAGE_OFFENCE_AND_PURIFY_TRADE",
+      "effectText": "개인 오염 단계당 ATK·상태 적중 +4%, 최대 +16%",
+      "constraintText": "받는 정화 -25%, 단계 5에서는 추가 증가 없음",
+      "weightingText": "정화 전환과 약한 충돌",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "CORRUPTION_STAGE_CHANGED",
+        "DAMAGE_OUTPUT_QUERY",
+        "PURIFY_EFFECT_QUERY"
+      ],
+      "stateScope": "PLAYER",
+      "parameterPayload": "perCorruptionStageAttack=0.04; perStageStatusHit=0.04; maximumBonus=0.16; purifyReceivedMultiplier=0.75",
+      "limitFallback": "stage5AdditionalBonus=0",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-012",
+        "오염 공생",
+        "CORRUPTION`, `RISK",
+        "개인 오염 단계당 ATK·상태 적중 +4%, 최대 +16%",
+        "받는 정화 -25%, 단계 5에서는 추가 증가 없음",
+        "정화 전환과 약한 충돌"
+      ]
+    },
+    {
+      "id": "AUG-P-013",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "시간 압축",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "COOLDOWN",
+        "RISK"
+      ],
+      "effectOpcode": "HIGH_AP_HIT_REDUCE_OTHER_COOLDOWNS",
+      "effectText": "AP 50 이상 스킬 적중 시 다른 스킬 쿨다운 1초 감소",
+      "constraintText": "8초, 해당 스킬 AP +15",
+      "weightingText": "자기 쿨다운 미감소",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "SKILL_HIT_COMMITTED",
+        "COOLDOWN_COMMITTING"
+      ],
+      "stateScope": "PLAYER_CAST",
+      "parameterPayload": "skillApThreshold=50; otherCooldownReduceTicks=20; skillApFlat=15",
+      "limitFallback": "icdTicks=160; selfCooldownExcluded=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-013",
+        "시간 압축",
+        "COOLDOWN`, `RISK",
+        "AP 50 이상 스킬 적중 시 다른 스킬 쿨다운 1초 감소",
+        "8초, 해당 스킬 AP +15",
+        "자기 쿨다운 미감소"
+      ]
+    },
+    {
+      "id": "AUG-P-014",
+      "sourceDocumentId": "AUG-LIST-001",
+      "enabled": true,
+      "name": "마지막 구조선",
+      "tier": "PRISM",
+      "scope": "PERSONAL",
+      "tags": [
+        "RESCUE",
+        "PARTY",
+        "SURVIVAL"
+      ],
+      "effectOpcode": "OTHER_RESCUE_START_DAMAGE_REDUCE_AND_AP_ZERO",
+      "effectText": "다른 파티원 구조 시작 시 구조자·대상 50% 피해 감소",
+      "constraintText": "구조 후 자신 AP 0, 45초",
+      "weightingText": "자기 구조 제외",
+      "exclusiveWith": [],
+      "evolution": false,
+      "executionSourceDocumentId": "AUGMENT-EFFECT-LIST-001",
+      "triggerIds": [
+        "RESCUE_STARTED",
+        "RESCUE_COMPLETED",
+        "DAMAGE_TAKEN_QUERY"
+      ],
+      "stateScope": "PLAYER_RESCUE",
+      "parameterPayload": "rescuerAndTargetDamageTakenMultiplier=0.50; completionSelfAp=0",
+      "limitFallback": "icdTicks=900; selfRescueExcluded=true",
+      "derivedEventFlags": [
+        "NO_AUGMENT_RETRIGGER",
+        "NO_REWARD",
+        "NO_CONTRIBUTION"
+      ],
+      "raw": [
+        "AUG-P-014",
+        "마지막 구조선",
+        "RESCUE`, `PARTY`, `SURVIVAL",
+        "다른 파티원 구조 시작 시 구조자·대상 50% 피해 감소",
+        "구조 후 자신 AP 0, 45초",
+        "자기 구조 제외"
+      ]
+    }
+  ]
+}

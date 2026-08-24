@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "ops-telemetry",
+  "records": [
+    {
+      "id": "OPS-TELEMETRY",
+      "sourceDocumentId": "QA-BALANCE-001",
+      "enabled": true,
+      "rawRetentionDays": 30,
+      "aggregateRetentionDays": 180,
+      "anonymousRunStatsPermanent": true,
+      "eventTypes": [
+        "RUN_CREATED",
+        "DAY_BUDGET_LOCKED",
+        "DAY_COMPLETED",
+        "ENCOUNTER_STARTED",
+        "ENCOUNTER_ENDED",
+        "BOSS_PHASE",
+        "COMBAT_ACTION",
+        "AUGMENT_TRIGGER",
+        "PLAYER_DOWN",
+        "PLAYER_DEATH",
+        "PLAYER_REVIVE",
+        "FACILITY_STATE_CHANGED",
+        "SOFTLOCK_RECOVERY",
+        "PERFORMANCE_STATE",
+        "FINAL_TRANSACTION",
+        "RUN_ENDED"
+      ],
+      "kpiIds": [
+        "KPI-01",
+        "KPI-02",
+        "KPI-03",
+        "KPI-04",
+        "KPI-05",
+        "KPI-06",
+        "KPI-07",
+        "KPI-08",
+        "KPI-09",
+        "KPI-10",
+        "KPI-11",
+        "KPI-12"
+      ],
+      "testLevels": [
+        "L0",
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5"
+      ],
+      "activeRunHotTuning": false,
+      "activationPolicy": "NEW_RUN_ONLY"
+    }
+  ]
+}

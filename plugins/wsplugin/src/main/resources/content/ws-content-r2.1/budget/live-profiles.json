@@ -1,0 +1,616 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "budget",
+  "records": [
+    {
+      "id": "STD-BALANCED",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "STANDARD",
+      "intent": "기준",
+      "multipliers": {
+        "progressExp": 1.0,
+        "activityExp": 1.0,
+        "commonResource": 1.0,
+        "criticalPathSupply": 1.0,
+        "personalSupply": 1.0,
+        "encounterThreat": 1.0,
+        "eliteMutation": 1.0,
+        "environmentPressure": 1.0,
+        "facilityPressure": 1.0,
+        "bossPattern": 1.0
+      },
+      "selectionWeights": {
+        "STORY_EASY": {
+          "STD-BALANCED": 100,
+          "STD-LEAN": 0,
+          "STD-FRONTIER": 0,
+          "STD-TACTICAL": 0,
+          "STD-RECOVERY": 0
+        },
+        "NORMAL": {
+          "STD-BALANCED": 35,
+          "STD-LEAN": 15,
+          "STD-FRONTIER": 25,
+          "STD-TACTICAL": 15,
+          "STD-RECOVERY": 10
+        },
+        "HARD": {
+          "STD-BALANCED": 20,
+          "STD-LEAN": 20,
+          "STD-FRONTIER": 30,
+          "STD-TACTICAL": 20,
+          "STD-RECOVERY": 10
+        },
+        "UNKNOWN": {
+          "STD-BALANCED": 10,
+          "STD-LEAN": 20,
+          "STD-FRONTIER": 30,
+          "STD-TACTICAL": 30,
+          "STD-RECOVERY": 10
+        }
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "STD-BALANCED",
+        "STANDARD",
+        "기준"
+      ]
+    },
+    {
+      "id": "STD-LEAN",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "STANDARD",
+      "intent": "낮은 활동 보상, 낮은 공세",
+      "multipliers": {
+        "progressExp": 1.0,
+        "activityExp": 0.75,
+        "commonResource": 0.85,
+        "criticalPathSupply": 0.75,
+        "personalSupply": 0.85,
+        "encounterThreat": 0.9,
+        "eliteMutation": 0.9,
+        "environmentPressure": 1.0,
+        "facilityPressure": 0.9,
+        "bossPattern": 1.0
+      },
+      "selectionWeights": {
+        "STORY_EASY": {
+          "STD-BALANCED": 100,
+          "STD-LEAN": 0,
+          "STD-FRONTIER": 0,
+          "STD-TACTICAL": 0,
+          "STD-RECOVERY": 0
+        },
+        "NORMAL": {
+          "STD-BALANCED": 35,
+          "STD-LEAN": 15,
+          "STD-FRONTIER": 25,
+          "STD-TACTICAL": 15,
+          "STD-RECOVERY": 10
+        },
+        "HARD": {
+          "STD-BALANCED": 20,
+          "STD-LEAN": 20,
+          "STD-FRONTIER": 30,
+          "STD-TACTICAL": 20,
+          "STD-RECOVERY": 10
+        },
+        "UNKNOWN": {
+          "STD-BALANCED": 10,
+          "STD-LEAN": 20,
+          "STD-FRONTIER": 30,
+          "STD-TACTICAL": 30,
+          "STD-RECOVERY": 10
+        }
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "STD-LEAN",
+        "STANDARD",
+        "낮은 활동 보상, 낮은 공세"
+      ]
+    },
+    {
+      "id": "STD-FRONTIER",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "STANDARD",
+      "intent": "고수익·고압",
+      "multipliers": {
+        "progressExp": 1.0,
+        "activityExp": 1.25,
+        "commonResource": 1.15,
+        "criticalPathSupply": 1.0,
+        "personalSupply": 1.1,
+        "encounterThreat": 1.25,
+        "eliteMutation": 1.15,
+        "environmentPressure": 1.2,
+        "facilityPressure": 1.1,
+        "bossPattern": 1.1
+      },
+      "selectionWeights": {
+        "STORY_EASY": {
+          "STD-BALANCED": 100,
+          "STD-LEAN": 0,
+          "STD-FRONTIER": 0,
+          "STD-TACTICAL": 0,
+          "STD-RECOVERY": 0
+        },
+        "NORMAL": {
+          "STD-BALANCED": 35,
+          "STD-LEAN": 15,
+          "STD-FRONTIER": 25,
+          "STD-TACTICAL": 15,
+          "STD-RECOVERY": 10
+        },
+        "HARD": {
+          "STD-BALANCED": 20,
+          "STD-LEAN": 20,
+          "STD-FRONTIER": 30,
+          "STD-TACTICAL": 20,
+          "STD-RECOVERY": 10
+        },
+        "UNKNOWN": {
+          "STD-BALANCED": 10,
+          "STD-LEAN": 20,
+          "STD-FRONTIER": 30,
+          "STD-TACTICAL": 30,
+          "STD-RECOVERY": 10
+        }
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "STD-FRONTIER",
+        "STANDARD",
+        "고수익·고압"
+      ]
+    },
+    {
+      "id": "STD-TACTICAL",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "STANDARD",
+      "intent": "변이·보스 패턴 중심",
+      "multipliers": {
+        "progressExp": 1.0,
+        "activityExp": 1.0,
+        "commonResource": 0.9,
+        "criticalPathSupply": 0.9,
+        "personalSupply": 1.0,
+        "encounterThreat": 1.15,
+        "eliteMutation": 1.35,
+        "environmentPressure": 1.1,
+        "facilityPressure": 1.15,
+        "bossPattern": 1.25
+      },
+      "selectionWeights": {
+        "STORY_EASY": {
+          "STD-BALANCED": 100,
+          "STD-LEAN": 0,
+          "STD-FRONTIER": 0,
+          "STD-TACTICAL": 0,
+          "STD-RECOVERY": 0
+        },
+        "NORMAL": {
+          "STD-BALANCED": 35,
+          "STD-LEAN": 15,
+          "STD-FRONTIER": 25,
+          "STD-TACTICAL": 15,
+          "STD-RECOVERY": 10
+        },
+        "HARD": {
+          "STD-BALANCED": 20,
+          "STD-LEAN": 20,
+          "STD-FRONTIER": 30,
+          "STD-TACTICAL": 20,
+          "STD-RECOVERY": 10
+        },
+        "UNKNOWN": {
+          "STD-BALANCED": 10,
+          "STD-LEAN": 20,
+          "STD-FRONTIER": 30,
+          "STD-TACTICAL": 30,
+          "STD-RECOVERY": 10
+        }
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "STD-TACTICAL",
+        "STANDARD",
+        "변이·보스 패턴 중심"
+      ]
+    },
+    {
+      "id": "STD-RECOVERY",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "STANDARD",
+      "intent": "최근 소프트락 위험 복구",
+      "multipliers": {
+        "progressExp": 1.0,
+        "activityExp": 0.75,
+        "commonResource": 1.25,
+        "criticalPathSupply": 1.25,
+        "personalSupply": 1.1,
+        "encounterThreat": 0.8,
+        "eliteMutation": 0.8,
+        "environmentPressure": 0.85,
+        "facilityPressure": 0.8,
+        "bossPattern": 0.9
+      },
+      "selectionWeights": {
+        "STORY_EASY": {
+          "STD-BALANCED": 100,
+          "STD-LEAN": 0,
+          "STD-FRONTIER": 0,
+          "STD-TACTICAL": 0,
+          "STD-RECOVERY": 0
+        },
+        "NORMAL": {
+          "STD-BALANCED": 35,
+          "STD-LEAN": 15,
+          "STD-FRONTIER": 25,
+          "STD-TACTICAL": 15,
+          "STD-RECOVERY": 10
+        },
+        "HARD": {
+          "STD-BALANCED": 20,
+          "STD-LEAN": 20,
+          "STD-FRONTIER": 30,
+          "STD-TACTICAL": 20,
+          "STD-RECOVERY": 10
+        },
+        "UNKNOWN": {
+          "STD-BALANCED": 10,
+          "STD-LEAN": 20,
+          "STD-FRONTIER": 30,
+          "STD-TACTICAL": 30,
+          "STD-RECOVERY": 10
+        }
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "STD-RECOVERY",
+        "STANDARD",
+        "최근 소프트락 위험 복구"
+      ]
+    },
+    {
+      "id": "CH-SURGE",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "CHAOS",
+      "intent": "고보상 다단 공세",
+      "multipliers": {
+        "progressExp": 1.5,
+        "activityExp": 3.0,
+        "commonResource": 2.0,
+        "criticalPathSupply": 1.0,
+        "personalSupply": 2.0,
+        "encounterThreat": 3.0,
+        "eliteMutation": 2.0,
+        "environmentPressure": 2.0,
+        "facilityPressure": 2.0,
+        "bossPattern": 2.0
+      },
+      "selectionWeights": {
+        "CH-SURGE": 25,
+        "CH-FAMINE": 20,
+        "CH-HUNT": 20,
+        "CH-STORM": 20,
+        "CH-BOSS-LAB": 10,
+        "CH-OVERFLOW": 5,
+        "CH-SAFE-FALLBACK": 0
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "CH-SURGE",
+        "CHAOS",
+        "고보상 다단 공세"
+      ]
+    },
+    {
+      "id": "CH-FAMINE",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "CHAOS",
+      "intent": "선택 소비 압박, 필수 경로 유지",
+      "multipliers": {
+        "progressExp": 1.0,
+        "activityExp": 1.0,
+        "commonResource": 0.5,
+        "criticalPathSupply": 0.75,
+        "personalSupply": 0.75,
+        "encounterThreat": 2.0,
+        "eliteMutation": 2.0,
+        "environmentPressure": 3.0,
+        "facilityPressure": 2.0,
+        "bossPattern": 1.5
+      },
+      "selectionWeights": {
+        "CH-SURGE": 25,
+        "CH-FAMINE": 20,
+        "CH-HUNT": 20,
+        "CH-STORM": 20,
+        "CH-BOSS-LAB": 10,
+        "CH-OVERFLOW": 5,
+        "CH-SAFE-FALLBACK": 0
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "CH-FAMINE",
+        "CHAOS",
+        "선택 소비 압박, 필수 경로 유지"
+      ]
+    },
+    {
+      "id": "CH-HUNT",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "CHAOS",
+      "intent": "적·변이 극대화",
+      "multipliers": {
+        "progressExp": 1.0,
+        "activityExp": 2.0,
+        "commonResource": 1.25,
+        "criticalPathSupply": 1.0,
+        "personalSupply": 1.5,
+        "encounterThreat": 5.0,
+        "eliteMutation": 5.0,
+        "environmentPressure": 2.0,
+        "facilityPressure": 3.0,
+        "bossPattern": 3.0
+      },
+      "selectionWeights": {
+        "CH-SURGE": 25,
+        "CH-FAMINE": 20,
+        "CH-HUNT": 20,
+        "CH-STORM": 20,
+        "CH-BOSS-LAB": 10,
+        "CH-OVERFLOW": 5,
+        "CH-SAFE-FALLBACK": 0
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "CH-HUNT",
+        "CHAOS",
+        "적·변이 극대화"
+      ]
+    },
+    {
+      "id": "CH-STORM",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "CHAOS",
+      "intent": "환경·시설 방어",
+      "multipliers": {
+        "progressExp": 1.0,
+        "activityExp": 1.5,
+        "commonResource": 1.5,
+        "criticalPathSupply": 1.0,
+        "personalSupply": 1.25,
+        "encounterThreat": 2.0,
+        "eliteMutation": 3.0,
+        "environmentPressure": 8.0,
+        "facilityPressure": 5.0,
+        "bossPattern": 2.0
+      },
+      "selectionWeights": {
+        "CH-SURGE": 25,
+        "CH-FAMINE": 20,
+        "CH-HUNT": 20,
+        "CH-STORM": 20,
+        "CH-BOSS-LAB": 10,
+        "CH-OVERFLOW": 5,
+        "CH-SAFE-FALLBACK": 0
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "CH-STORM",
+        "CHAOS",
+        "환경·시설 방어"
+      ]
+    },
+    {
+      "id": "CH-BOSS-LAB",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "CHAOS",
+      "intent": "순차 패턴 극단 시험",
+      "multipliers": {
+        "progressExp": 1.0,
+        "activityExp": 1.0,
+        "commonResource": 1.0,
+        "criticalPathSupply": 1.0,
+        "personalSupply": 1.0,
+        "encounterThreat": 1.5,
+        "eliteMutation": 2.0,
+        "environmentPressure": 1.5,
+        "facilityPressure": 1.5,
+        "bossPattern": 10.0
+      },
+      "selectionWeights": {
+        "CH-SURGE": 25,
+        "CH-FAMINE": 20,
+        "CH-HUNT": 20,
+        "CH-STORM": 20,
+        "CH-BOSS-LAB": 10,
+        "CH-OVERFLOW": 5,
+        "CH-SAFE-FALLBACK": 0
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "CH-BOSS-LAB",
+        "CHAOS",
+        "순차 패턴 극단 시험"
+      ]
+    },
+    {
+      "id": "CH-OVERFLOW",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "CHAOS",
+      "intent": "최고 부하, 5% 희귀 후보",
+      "multipliers": {
+        "progressExp": 3.0,
+        "activityExp": 10.0,
+        "commonResource": 10.0,
+        "criticalPathSupply": 1.5,
+        "personalSupply": 5.0,
+        "encounterThreat": 10.0,
+        "eliteMutation": 8.0,
+        "environmentPressure": 5.0,
+        "facilityPressure": 5.0,
+        "bossPattern": 6.0
+      },
+      "selectionWeights": {
+        "CH-SURGE": 25,
+        "CH-FAMINE": 20,
+        "CH-HUNT": 20,
+        "CH-STORM": 20,
+        "CH-BOSS-LAB": 10,
+        "CH-OVERFLOW": 5,
+        "CH-SAFE-FALLBACK": 0
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "CH-OVERFLOW",
+        "CHAOS",
+        "최고 부하, 5% 희귀 후보"
+      ]
+    },
+    {
+      "id": "CH-SAFE-FALLBACK",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "PROFILE",
+      "mode": "CHAOS",
+      "intent": "상관 검사 전부 실패 시 안전 폴백",
+      "multipliers": {
+        "progressExp": 1.5,
+        "activityExp": 3.0,
+        "commonResource": 2.0,
+        "criticalPathSupply": 1.0,
+        "personalSupply": 2.0,
+        "encounterThreat": 2.0,
+        "eliteMutation": 2.0,
+        "environmentPressure": 2.0,
+        "facilityPressure": 2.0,
+        "bossPattern": 2.0
+      },
+      "selectionWeights": {
+        "CH-SURGE": 25,
+        "CH-FAMINE": 20,
+        "CH-HUNT": 20,
+        "CH-STORM": 20,
+        "CH-BOSS-LAB": 10,
+        "CH-OVERFLOW": 5,
+        "CH-SAFE-FALLBACK": 0
+      },
+      "lockPolicy": "DAY_SNAPSHOT_BEFORE_START",
+      "raw": [
+        "CH-SAFE-FALLBACK",
+        "CHAOS",
+        "상관 검사 전부 실패 시 안전 폴백"
+      ]
+    },
+    {
+      "id": "BP-C01",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "CONSTRAINT",
+      "expressionText": "criticalPathSupply < 0.50 거부",
+      "failureOpcode": "REJECT_OR_SAFE_FALLBACK",
+      "raw": [
+        "BP-C01",
+        "criticalPathSupply < 0.50 거부"
+      ]
+    },
+    {
+      "id": "BP-C02",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "CONSTRAINT",
+      "expressionText": "commonResource < 0.75 && encounterThreat > 3.00이면 personalSupply >= 1.50 필요",
+      "failureOpcode": "REJECT_OR_SAFE_FALLBACK",
+      "raw": [
+        "BP-C02",
+        "commonResource < 0.75 && encounterThreat > 3.00이면 personalSupply >= 1.50 필요"
+      ]
+    },
+    {
+      "id": "BP-C03",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "CONSTRAINT",
+      "expressionText": "environmentPressure > 5.00이면 정화 대체 사건 1개 예약",
+      "failureOpcode": "REJECT_OR_SAFE_FALLBACK",
+      "raw": [
+        "BP-C03",
+        "environmentPressure > 5.00이면 정화 대체 사건 1개 예약"
+      ]
+    },
+    {
+      "id": "BP-C04",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "CONSTRAINT",
+      "expressionText": "facilityPressure > 3.00이면 같은 Day 영구 파괴·철거 잠금",
+      "failureOpcode": "REJECT_OR_SAFE_FALLBACK",
+      "raw": [
+        "BP-C04",
+        "facilityPressure > 3.00이면 같은 Day 영구 파괴·철거 잠금"
+      ]
+    },
+    {
+      "id": "BP-C05",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "CONSTRAINT",
+      "expressionText": "bossPattern > 6.00이면 보스 HP·피해 난이도 배율 외 추가 증가 금지",
+      "failureOpcode": "REJECT_OR_SAFE_FALLBACK",
+      "raw": [
+        "BP-C05",
+        "bossPattern > 6.00이면 보스 HP·피해 난이도 배율 외 추가 증가 금지"
+      ]
+    },
+    {
+      "id": "BP-C06",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "CONSTRAINT",
+      "expressionText": "남은 Day 필수 진행 불가능 시 RECOVERY 강제",
+      "failureOpcode": "REJECT_OR_SAFE_FALLBACK",
+      "raw": [
+        "BP-C06",
+        "남은 Day 필수 진행 불가능 시 RECOVERY 강제"
+      ]
+    },
+    {
+      "id": "BP-C07",
+      "sourceDocumentId": "BUDGET-PROFILE-001",
+      "enabled": true,
+      "recordKind": "CONSTRAINT",
+      "expressionText": "활성 개체 p95 상한 초과 시 단계 수 증가·동시량 감소",
+      "failureOpcode": "REJECT_OR_SAFE_FALLBACK",
+      "raw": [
+        "BP-C07",
+        "활성 개체 p95 상한 초과 시 단계 수 증가·동시량 감소"
+      ]
+    }
+  ]
+}

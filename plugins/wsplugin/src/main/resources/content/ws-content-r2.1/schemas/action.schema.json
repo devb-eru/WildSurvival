@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contentRevision",
+    "domain",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "contentRevision": {
+      "const": "ws-content-r2.1"
+    },
+    "domain": {
+      "const": "entity-actions"
+    },
+    "records": {
+      "type": "array",
+      "minItems": 57,
+      "maxItems": 57,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "sourceDocumentId",
+          "enabled",
+          "ownerId",
+          "kind",
+          "actions",
+          "stateMachine",
+          "raw"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sourceDocumentId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "enabled": {
+            "const": true
+          },
+          "ownerId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "ENEMY_ACTION_BUNDLE",
+              "BOSS_ACTION_SET"
+            ]
+          },
+          "stateMachine": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 5,
+            "items": {
+              "type": "string"
+            }
+          },
+          "raw": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 12,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "name",
+                "profileId",
+                "telegraphTicks",
+                "startupTicks",
+                "activeTicks",
+                "recoveryTicks",
+                "cooldownTicks",
+                "cooldownMode",
+                "cooldownTrigger",
+                "range",
+                "targetPolicy",
+                "damage",
+                "damageSpec",
+                "penetration",
+                "penetrationSpec",
+                "breakDamage",
+                "breakDamageSpec",
+                "statusId",
+                "statusStacksSpec",
+                "statusDurationTicksSpec",
+                "effectOpcode",
+                "effectParameters",
+                "childEntityIds",
+                "childEntitySource",
+                "tags",
+                "responseTags"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "not": {
+                    "pattern": "-PRIMARY$"
+                  }
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "profileId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "telegraphTicks": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "startupTicks": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "activeTicks": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "recoveryTicks": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "cooldownTicks": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "cooldownMode": {
+                  "enum": [
+                    "TICKS",
+                    "PASSIVE",
+                    "ONCE_PER_ENCOUNTER",
+                    "HP_THRESHOLD",
+                    "HP_THRESHOLDS"
+                  ]
+                },
+                "cooldownTrigger": {
+                  "type": "string"
+                },
+                "range": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "targetPolicy": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "damage": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "damageSpec": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "penetration": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "penetrationSpec": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "breakDamage": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "breakDamageSpec": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "statusId": {
+                  "type": "string"
+                },
+                "statusStacksSpec": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "statusDurationTicksSpec": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "effectOpcode": {
+                  "type": "string",
+                  "pattern": "^[A-Z][A-Z0-9_]+$"
+                },
+                "effectParameters": {
+                  "type": "string"
+                },
+                "childEntityIds": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "childEntitySource": {
+                  "enum": [
+                    "",
+                    "SOURCE_PATTERN"
+                  ]
+                },
+                "tags": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "responseTags": {
+                  "type": "array",
+                  "minItems": 2,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

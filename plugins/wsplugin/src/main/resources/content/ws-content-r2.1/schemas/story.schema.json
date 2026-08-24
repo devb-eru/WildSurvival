@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contentRevision",
+    "domain",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "contentRevision": {
+      "const": "ws-content-r2.1"
+    },
+    "domain": {
+      "enum": [
+        "story-scenes",
+        "story-logs"
+      ]
+    },
+    "records": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 73,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "sourceDocumentId",
+          "enabled",
+          "raw"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^(ST[0-9]-|LOG-O)"
+          },
+          "sourceDocumentId": {
+            "const": "STORY-DATA-S1-001"
+          },
+          "enabled": {
+            "const": true
+          },
+          "raw": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

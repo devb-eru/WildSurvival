@@ -292,7 +292,7 @@ r1→r2 활성 회차 마이그레이션은 제공하지 않는다. 운영자가
 | `RELEASE_CANDIDATE` | 폐쇄 플레이 가능 |
 | `LIVE_LOCKED` | 운영 승인, 신규 회차 포인터 교체 가능 |
 
-현재 `ws-content-r2`는 70개 파일과 기존 수량으로 `L0_VALIDATED`지만, 이 계약의 대상 `ws-content-r2.1`은 P0 기획 입력만 잠긴 `CONTRACT_READY`다. r2.1의 생성기·schema·data·manifest가 62/316/335/64/66/21/69/92 수량과 명시 필드를 산출하고 새 해시로 L0을 통과하기 전에는 `BUNDLE_BUILT` 또는 `L0_VALIDATED`로 올리지 않는다.
+2026-08-24 기준 `ws-content-r2`는 기존 70개 파일과 수량으로 계속 `L0_VALIDATED`이며 불변이다. `ws-content-r2.1`도 별도 70개 파일, 62/316/335/64/66/21/69/92 수량, 명시 실행 필드, manifest 해시 `c8f42722a19d4923ede77505d480ac3d5f279b983b6e5c180da18f04d839f511`로 전수 schema·참조·카탈로그 검증과 결정적 재생성을 통과해 `L0_VALIDATED`가 됐다. 이 승격은 후보 번들 검증 상태이며 신규 일반 회차 기본 포인터나 `LIVE_LOCKED` 승인을 뜻하지 않는다.
 
 ## 13. 완료 기준
 

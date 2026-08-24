@@ -1,16 +1,20 @@
 param(
-    [string]$OutputRoot
+    [string]$OutputRoot,
+    [string]$ContentRevision = 'ws-content-r2.1'
 )
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
+if ($ContentRevision -ne 'ws-content-r2.1') {
+    throw "The ws-content-r2 source bundle is immutable. This generator only emits ws-content-r2.1."
+}
 if ([string]::IsNullOrWhiteSpace($OutputRoot)) {
-    $OutputRoot = Join-Path $repoRoot 'plugins\wsplugin\src\main\resources\content\ws-content-r2'
+    $OutputRoot = Join-Path $repoRoot "plugins\wsplugin\src\main\resources\content\$ContentRevision"
 }
 $OutputRoot = [IO.Path]::GetFullPath($OutputRoot)
-$expectedSuffix = [IO.Path]::Combine('content', 'ws-content-r2')
+$expectedSuffix = [IO.Path]::Combine('content', $ContentRevision)
 if (-not $OutputRoot.EndsWith($expectedSuffix, [StringComparison]::OrdinalIgnoreCase)) {
-    throw "OutputRoot must end in content/ws-content-r2: $OutputRoot"
+    throw "OutputRoot must end in content/${ContentRevision}: $OutputRoot"
 }
 
 $utf8 = [Text.UTF8Encoding]::new($false)
@@ -86,7 +90,7 @@ function Fallback-Material([string]$Id) {
     return 'PAPER'
 }
 function Domain([string]$Name, [object[]]$Records) {
-    return [ordered]@{ schemaVersion = 2; contentRevision = 'ws-content-r2'; domain = $Name; records = @($Records) }
+    return [ordered]@{ schemaVersion = 2; contentRevision = $ContentRevision; domain = $Name; records = @($Records) }
 }
 function Raw-Record([string]$Id, [string]$Source, [object[]]$Cells) {
     return [ordered]@{ id = $Id; sourceDocumentId = $Source; enabled = $true; raw = @($Cells) }
@@ -428,6 +432,7 @@ $recipeExact = @{
     'WSRCP-D50-S01'='WSI-AMMO-ARROW_BUNDLE*1;WSR-PURIFY_CATALYST*1;WSR-REFINED_MUTATION*1';
     'WSRCP-D50-S02'='WSI-AMMO-PIERCING_BOLT_BUNDLE*1;WSR-RESONANCE_COIL*1;WSR-PATTERN_RESIDUE*1';
     'WSRCP-D50-S03'='WSI-AMMO-ARROW_BUNDLE*1;WSR-POWER_MATRIX*1;WSR-STERILE_GEL*2';
+    'WSRCP-D31-S01'='WSR-PURIFY_CATALYST*1;WSR-PURIFY_CATALYST*1;WSR-BIO_MEDIUM*1;WSR-INTERRUPT_CORE*1;WSR-BIO_MEDIUM*1;WSR-NEURAL_CIRCUIT*1';
     'WSRCP-F01'='WSR-WOOD*4;WSR-STONE*2;WSR-FIBER*2'; 'WSRCP-F02'='WSR-WOOD*6;WSR-STONE*4;WSR-IRON*2';
     'WSRCP-F03'='WSR-STONE*8;WSR-COAL*2;WSR-IRON*1'; 'WSRCP-F04'='WSR-WOOD*8;WSR-IRON*2';
     'WSRCP-F05'='WSR-WOOD*4;WSR-STONE*4;WSR-IRON*2;WSR-LEATHER*2'; 'WSRCP-F06'='WSR-WOOD*4;WSR-STONE*2;WSR-IRON*2';
@@ -483,9 +488,12 @@ $equipmentD50Rows = Read-TableRows '기획\04 장비와 경제\EQUIP-DATA Day 21
 $equipmentDetailById = Find-IdRows @($equipmentListRows + $equipmentD20Rows + $equipmentD50Rows) '(?:EQL|EQD20|EQD50)-[A-Z0-9{}*_-]+'
 $recipeRows = Read-TableRows '기획\04 장비와 경제\RECIPE-LIST Season 1 조합법 목록 기획서.md'
 $skillRows = Read-TableRows '기획\02 플레이어 성장\SKILL-LIST 스킬 목록 기획서.md'
+$skillEffectRows = Read-TableRows '기획\02 플레이어 성장\SKILL-EFFECT-LIST Season 1 스킬 실행 효과 목록 기획서.md'
 $personalAugmentRows = Read-TableRows '기획\02 플레이어 성장\AUGMENT-PERSONAL-LIST Season 1 개인 증강 목록 기획서.md'
 $partyAugmentRows = Read-TableRows '기획\02 플레이어 성장\AUGMENT-PARTY-LIST Season 1 파티 증강 목록 기획서.md'
+$augmentEffectRows = Read-TableRows '기획\02 플레이어 성장\AUGMENT-EFFECT-LIST Season 1 증강 실행 효과 목록 기획서.md'
 $entityRows = Read-TableRows '기획\06 사건과 적\ENTITY-LIST Season 1 엔티티 목록 기획서.md'
+$enemyActionRows = Read-TableRows '기획\06 사건과 적\ENEMY-ACTION-LIST Season 1 적 행동 목록 기획서.md'
 $enemyBaseRows = Read-TableRows '기획\06 사건과 적\ENEMY 적 역할 및 템플릿 기획서.md'
 $enemyD20Rows = Read-TableRows '기획\06 사건과 적\ENEMY-DATA Day 11-20 적 목록 기획서.md'
 $enemyD50Rows = Read-TableRows '기획\06 사건과 적\ENEMY-DATA Day 21-50 적 실행 데이터 기획서.md'
@@ -573,7 +581,21 @@ $items = foreach ($cells in $itemRows) {
     $effectText = ''
     $constraintText = ''
     $recipeCell = ''
-    if ($id -match '^WSI-(CONS|AMMO)-') {
+    $requiredResearchId = ''
+    $minimumFacilityLevel = 0
+    $channelTicks = 0
+    $perTargetRunLimit = 0
+    $wipeAllowed = $true
+    $progressionReservePolicy = ''
+    if ($id -eq 'WSI-CONS-REVIVAL_CORE') {
+        if ($cells.Count -ne 8) { throw "ITEM-LIST revival row shape mismatch: $id ($($cells.Count))" }
+        $category = 'REVIVAL'; $name = $cells[2]; $firstDay = [int]$cells[3]
+        $displayMaterial = $cells[4]; $stackLimit = [int]$cells[5]; $effectText = $cells[6]; $recipeCell = $cells[7]
+        $ownership = 'PARTY_BOUND'; $usePolicy = 'FACILITY_REVIVAL_TRANSACTION'; $connectedFacilityId = 'FAC-S11'
+        $requiredResearchId = 'RS-D33-INTERRUPT'; $minimumFacilityLevel = 4; $channelTicks = 200
+        $perTargetRunLimit = 1; $wipeAllowed = $false; $progressionReservePolicy = 'PROGRESSION_RESERVE_DAY40_FINAL'
+        $constraintText = 'SAFE_ONLY; TARGET_PER_RUN=1; PARTY_WIPE_REJECT; FAC-S11_LEVEL=4'
+    } elseif ($id -match '^WSI-(CONS|AMMO)-') {
         if ($cells.Count -ne 8) { throw "ITEM-LIST consumable/ammo row shape mismatch: $id ($($cells.Count))" }
         $category = $Matches[1]; $name = $cells[2]; $firstDay = [int]$cells[3]
         $displayMaterial = $cells[4]; $stackLimit = [int]$cells[5]; $effectText = $cells[6]; $recipeCell = $cells[7]
@@ -607,6 +629,9 @@ $items = foreach ($cells in $itemRows) {
         stackLimit = $stackLimit; ownership = $ownership; usePolicy = $usePolicy
         connectedFacilityId = $connectedFacilityId; effectText = $effectText; constraintText = $constraintText
         recipeId = $recipeId
+        requiredResearchId = $requiredResearchId; minimumFacilityLevel = $minimumFacilityLevel
+        channelTicks = $channelTicks; perTargetRunLimit = $perTargetRunLimit; wipeAllowed = $wipeAllowed
+        progressionReservePolicy = $progressionReservePolicy
         raw = @($cells)
     }
 }
@@ -764,7 +789,8 @@ $recipes = foreach ($entry in $recipesById.GetEnumerator()) {
     $layout = 'ORDERED_3X3'
     $ingredients = @()
     if ($recipeExact.ContainsKey($entry.Key)) {
-        $ingredients = @(Ingredients-FromSpec $recipeExact[$entry.Key])
+        $ingredientSlots = $(if ($entry.Key -eq 'WSRCP-D31-S01') { @(0,2,3,4,5,7) } else { @(0,1,2,3,4,5,6,7,8) })
+        $ingredients = @(Ingredients-FromSpec $recipeExact[$entry.Key] $ingredientSlots)
         if ($recipeType -eq 'BOSS_CALL') { $layout = 'CALL_FRAME' }
         elseif ($recipeType -eq 'EQUIPMENT_FORGE') { $layout = 'EQUIPMENT_FRAME' }
         elseif ($recipeType -eq 'FACILITY_KIT') { $layout = 'FACILITY_FRAME' }
@@ -819,18 +845,41 @@ $recipes = foreach ($entry in $recipesById.GetEnumerator()) {
     }
     if ($ingredients.Count -eq 0) { throw "No executable inputs compiled for $($entry.Key) ($recipeType)" }
     $outputAmount = $(if ($recipeAmounts.ContainsKey($entry.Key)) { [int]$recipeAmounts[$entry.Key] } else { 1 })
+    $isRevivalRecipe = $entry.Key -eq 'WSRCP-D31-S01'
     [ordered]@{
         id = $entry.Key; sourceDocumentId = 'RECIPE-LIST-001'; enabled = $true
         outputId = $outputId; outputAmount = $outputAmount; recipeType = $recipeType
         inputAuthority = $(if ($idIndex + 3 -lt $cells.Count) { $cells[$idIndex + 3] } else { 'RECIPE-LIST-001' })
         layout = $layout; ingredients = @($ingredients); raw = @($cells)
+        minimumDay = $(if ($isRevivalRecipe) {33} else {1})
+        requiredResearchId = $(if ($isRevivalRecipe) {'RS-D33-INTERRUPT'} else {''})
+        requiredFacilityId = $(if ($isRevivalRecipe) {'FAC-S11'} else {''})
+        requiredFacilityLevel = $(if ($isRevivalRecipe) {4} else {0})
+        processTicks = $(if ($isRevivalRecipe) {1200} else {0})
+        progressionReservePolicy = $(if ($isRevivalRecipe) {'PROGRESSION_RESERVE_DAY40_FINAL'} else {''})
     }
 }
 
 $skillPattern = '^ws\.(basic|sword|axe|bow|crossbow|dagger|blunt|staff|pickaxe|trident|unarmed|common|context)\.[a-z0-9_.-]+$'
 $skillsById = Find-IdRows $skillRows $skillPattern
+$skillOperationsById = [ordered]@{}
+$skillExecutionById = [ordered]@{}
+foreach ($cells in $skillEffectRows) {
+    if ($cells.Count -eq 2 -and $cells[0] -match $skillPattern) {
+        $skillOperationsById[$cells[0]] = [string[]]@($cells[1] -replace '`','' -split ',' | ForEach-Object {$_.Trim()} | Where-Object {$_})
+    } elseif ($cells.Count -eq 6 -and $cells[0] -match $skillPattern -and $cells[5] -match '^SKFP-') {
+        $skillExecutionById[$cells[0]] = $cells
+    }
+}
+if ($skillOperationsById.Count -ne 64 -or $skillExecutionById.Count -ne 64) {
+    throw "Skill execution authority mismatch operations=$($skillOperationsById.Count) parameters=$($skillExecutionById.Count)"
+}
 $skills = foreach ($entry in $skillsById.GetEnumerator()) {
     $id = $entry.Key; $cells = $entry.Value; $joined = $cells -join ' '
+    if (-not $skillOperationsById.Contains($id) -or -not $skillExecutionById.Contains($id)) {
+        throw "Skill execution authority missing: $id"
+    }
+    $executionCells = $skillExecutionById[$id]
     $kind = if ($id.StartsWith('ws.basic.')) {'BASIC'} elseif ($id.StartsWith('ws.common.')) {'COMMON_ACTIVE'} elseif ($id.StartsWith('ws.context.')) {'CONTEXT'} else {'WEAPON_ACTIVE'}
     $weaponClass = if ($kind -eq 'BASIC') {$cells[1]} elseif ($kind -eq 'WEAPON_ACTIVE') { $id.Split('.')[1].ToUpperInvariant() } elseif ($kind -eq 'COMMON_ACTIVE') {'COMMON'} else {'CONTEXT'}
     if ($weaponClass -eq 'SWORD') {$weaponClass='SWORD'} elseif ($weaponClass -eq 'BLUNT') {$weaponClass='MACE'}
@@ -878,9 +927,26 @@ $skills = foreach ($entry in $skillsById.GetEnumerator()) {
         'ap_stim' {'WSI-CONS-AP_STIM'} 'rescue_line' {'WSI-CONS-RESCUE_BRACE'}
         'emergency_cover' {'WSI-CONS-REPAIR_KIT'} default {''}
     }
+    $childEntityIds = [string[]]@([regex]::Matches($executionCells[4], '(?<![A-Z0-9_-])ENT-[A-Z0-9-]+') |
+        ForEach-Object {$_.Value} | Select-Object -Unique)
     [ordered]@{id=$id;sourceDocumentId='SKILL-LIST-001';enabled=$true;kind=$kind;name=$name;weaponClass=$weaponClass
         apCost=$apCost;cooldownTicks=$cooldownTicks;damageCoefficient=$damage;breakDamage=$breakDamage;range=$range;arcDegrees=$arc
-        maxTargets=$maxTargets;effect=$effect;tags=@($tags);unlockLevel=$unlockLevel;consumableId=$consumableId;description=$effectText;raw=@($cells)}
+        maxTargets=$maxTargets;effect=$effect;tags=@($tags);unlockLevel=$unlockLevel;consumableId=$consumableId;description=$effectText
+        executionSourceDocumentId='SKILL-EFFECT-LIST-001';operationIds=[string[]]@($skillOperationsById[$id])
+        executionProfile=$executionCells[1];targetSpec=$executionCells[2];costSpec=$executionCells[3]
+        parameterPayload=$executionCells[4];failurePolicy=$executionCells[5];childEntityIds=$childEntityIds;raw=@($cells)}
+}
+$augmentEffectById = [ordered]@{}
+$augmentParametersById = [ordered]@{}
+foreach ($cells in $augmentEffectRows) {
+    if ($cells.Count -eq 4 -and $cells[0] -match '^(?:AUG-[SGP]-\d{3}|PAUG-\d{3})$' -and $cells[1] -match '^[A-Z][A-Z0-9_]+$') {
+        $augmentEffectById[$cells[0]] = $cells
+    } elseif ($cells.Count -eq 3 -and $cells[0] -match '^(?:AUG-[SGP]-\d{3}|PAUG-\d{3})$' -and $cells[1] -match '=') {
+        $augmentParametersById[$cells[0]] = $cells
+    }
+}
+if ($augmentEffectById.Count -ne 66 -or $augmentParametersById.Count -ne 66) {
+    throw "Augment execution authority mismatch effects=$($augmentEffectById.Count) parameters=$($augmentParametersById.Count)"
 }
 function Compile-Augment([string]$Id, [string]$Source, [string[]]$Cells, [string]$Scope) {
     $tier = if ($Id.StartsWith('AUG-S-')) {'SILVER'} elseif ($Id.StartsWith('AUG-G-')) {'GOLD'} elseif ($Id.StartsWith('AUG-P-')) {'PRISM'} else {'PARTY'}
@@ -889,16 +955,19 @@ function Compile-Augment([string]$Id, [string]$Source, [string[]]$Cells, [string
     $constraintText = if ($Cells.Count -gt 4) {$Cells[4]} else {''}
     $weightingText = if ($Cells.Count -gt 5) {$Cells[5]} else {''}
     $exclusive = @([regex]::Matches(($Cells -join ' '), 'AUG-[SGP]-\d{3}') | ForEach-Object {$_.Value} | Where-Object {$_ -ne $Id} | Select-Object -Unique)
-    $opcode = if ($Id -eq 'AUG-S-001') {'DODGE_COST'} elseif ($Id -eq 'AUG-S-002') {'AP_REGEN'}
-        elseif ($Id -eq 'AUG-S-008') {'AMMO_CONSERVE'} elseif ($Id -eq 'AUG-S-014') {'REVIVE_SPEED'}
-        elseif ($Id -eq 'AUG-S-018') {'CRAFT_CONSERVE'} elseif ($Id -eq 'AUG-P-001') {'LOW_HP_BURST'}
-        elseif ($Id -eq 'AUG-P-008') {'AMMO_PARADOX'} elseif ($Id -eq 'AUG-P-009') {'TRIDENT_RECALL'}
-        elseif ($Id -eq 'AUG-P-010') {'UNARMED_COUNTER'} elseif ($Id -eq 'PAUG-004') {'PARTY_REVIVE'}
-        elseif ($Id -eq 'PAUG-005') {'PARTY_RESOURCE'} elseif ($Id -eq 'PAUG-009') {'PARTY_AMMO_CRAFT'}
-        elseif ($Id -eq 'PAUG-010') {'PARTY_AP_REGEN'} elseif ($tags.Count) {$tags[0]} else {'GENERAL'}
+    if (-not $augmentEffectById.Contains($Id) -or -not $augmentParametersById.Contains($Id)) {
+        throw "Augment execution authority missing: $Id"
+    }
+    $effectCells = $augmentEffectById[$Id]
+    $parameterCells = $augmentParametersById[$Id]
+    $opcode = $effectCells[1]
+    $triggerIds = [string[]]@($effectCells[2] -replace '`','' -split ',' | ForEach-Object {$_.Trim()} | Where-Object {$_})
     [ordered]@{id=$Id;sourceDocumentId=$Source;enabled=$true;name=$Cells[1];tier=$tier;scope=$Scope
         tags=@($tags);effectOpcode=$opcode;effectText=$effectText;constraintText=$constraintText;weightingText=$weightingText
-        exclusiveWith=@($exclusive);evolution=($tags -contains 'EVOLUTION');raw=@($Cells)}
+        exclusiveWith=@($exclusive);evolution=($tags -contains 'EVOLUTION')
+        executionSourceDocumentId='AUGMENT-EFFECT-LIST-001';triggerIds=$triggerIds;stateScope=$effectCells[3]
+        parameterPayload=$parameterCells[1];limitFallback=$parameterCells[2]
+        derivedEventFlags=@('NO_AUGMENT_RETRIGGER','NO_REWARD','NO_CONTRIBUTION');raw=@($Cells)}
 }
 $personalById = Find-IdRows $personalAugmentRows '^AUG-[SGP]-\d{3}$'
 $personalAugments = foreach ($entry in $personalById.GetEnumerator()) { Compile-Augment $entry.Key 'AUG-LIST-001' $entry.Value 'PERSONAL' }
@@ -973,19 +1042,75 @@ $supportEntities = foreach ($entry in $supportById.GetEnumerator()) {
     $type = @('ARROW','SNOWBALL','TRIDENT','FIREWORK_ROCKET','BLOCK_DISPLAY','TEXT_DISPLAY','INTERACTION','ITEM_DISPLAY','ZOMBIE','SKELETON','SLIME','AREA_EFFECT_CLOUD','SHULKER_BULLET','IRON_GOLEM') |
         Where-Object { $fallback -match [regex]::Escape(($_ -replace '_ROCKET','')) } | Select-Object -First 1
     if (-not $type) { $type = 'INTERACTION' }
+    $supportFlags = [Collections.Generic.List[string]]::new()
+    if ($entry.Key -eq 'ENT-D18-SILENT-FOLLOWER') {
+        $supportFlags.AddRange([string[]]@('NO_REWARD','NO_SAMPLE','NO_AUGMENT_TRIGGER','NO_CONTRIBUTION','NO_COLLISION','CHORUS_VISUALIZER'))
+    }
     [ordered]@{
         id=$entry.Key;sourceDocumentId='ENTITY-LIST-001';enabled=$true;kind=$cells[1];bukkitType=$type
         displayFallback=$fallback;cleanupPolicy=$cells[3];lootTableId=$cells[4];ownerPolicy=$(if ($entry.Key -like 'ENT-PROJ-PLAYER-*') {'PLAYER'} elseif ($entry.Key -like 'ENT-B*' -or $entry.Key -like 'ENT-F50-*') {'PARENT'} else {'SYSTEM'})
-        persistent=($entry.Key -eq 'ENT-NODE-RECONSTRUCTION');raw=@($cells)
+        persistent=($entry.Key -eq 'ENT-NODE-RECONSTRUCTION');flags=@($supportFlags);raw=@($cells)
     }
 }
+$enemyActionAuthority = @($enemyActionRows | Where-Object {
+    $_.Count -eq 11 -and $_[0] -match '^ED(?:10|20|50)-[A-Z0-9-]+$' -and $_[1] -match '^EN-(?:D\d+|F50)-[A-Z0-9]+$'
+})
+if ($enemyActionAuthority.Count -ne 69) { throw "Expected 69 explicit enemy actions, got $($enemyActionAuthority.Count)" }
+$enemyActionsByOwner = [ordered]@{}
+foreach ($cells in $enemyActionAuthority) {
+    $ownerId = $cells[1]
+    if (-not $enemyActionsByOwner.Contains($ownerId)) { $enemyActionsByOwner[$ownerId] = [Collections.Generic.List[object]]::new() }
+    $timing = @($cells[3].Split('/'))
+    if ($timing.Count -ne 5) { throw "Invalid action timing: $($cells[0]) -> $($cells[3])" }
+    $cooldownToken = $timing[4]
+    $cooldownMode = 'TICKS'; $cooldownTicks = 0; $cooldownTrigger = ''
+    if ($cooldownToken -match '^\d+$') { $cooldownTicks = [int]$cooldownToken }
+    else {
+        switch ($cooldownToken) {
+            'PASSIVE' { $cooldownMode='PASSIVE'; $cooldownTrigger='ALWAYS' }
+            'ONCE' { $cooldownMode='ONCE_PER_ENCOUNTER'; $cooldownTrigger='ENCOUNTER_START' }
+            'ONCE_HP30' { $cooldownMode='HP_THRESHOLD'; $cooldownTrigger='HP_RATIO_0.30' }
+            'HP66_33' { $cooldownMode='HP_THRESHOLDS'; $cooldownTrigger='HP_RATIO_0.66,0.33' }
+            default { throw "Unknown action cooldown token: $($cells[0]) -> $cooldownToken" }
+        }
+    }
+    $range = 0.0; $targetPolicy = $cells[4]
+    if ($cells[4] -match '^([0-9]+(?:\.[0-9]+)?)\s+(.+)$') { $range=[double]$Matches[1]; $targetPolicy=$Matches[2] }
+    $damageParts = @($cells[5].Split('/'))
+    if ($damageParts.Count -ne 3) { throw "Invalid action damage tuple: $($cells[0]) -> $($cells[5])" }
+    $damage = $(if ($damageParts[0] -match '^source') {0.0} else {First-Number $damageParts[0] 0})
+    $penetration = First-Number $damageParts[1] 0
+    $breakDamage = $(if ($damageParts[2] -match '^source') {0.0} else {First-Number $damageParts[2] 0})
+    $statusParts = @($cells[6].Split(':'))
+    if ($statusParts.Count -ne 3) { throw "Invalid action status tuple: $($cells[0]) -> $($cells[6])" }
+    if ($cells[7] -notmatch '^([A-Z][A-Z0-9_]+)(?:\((.*)\))?$') { throw "Invalid action opcode: $($cells[0]) -> $($cells[7])" }
+    $effectOpcode = $Matches[1]; $effectParameters = $(if ($Matches[2]) {$Matches[2]} else {''})
+    $childEntitySource = ''
+    $childEntityIds = [Collections.Generic.List[string]]::new()
+    if ($cells[8] -eq 'sourcePatternChildIds') { $childEntitySource='SOURCE_PATTERN' }
+    elseif ($cells[8] -ne '—') {
+        foreach ($childId in @($cells[8].Split(',') | ForEach-Object {$_.Trim()} | Where-Object {$_})) { $childEntityIds.Add($childId) }
+    }
+    $action = [ordered]@{
+        id=$cells[0];name=$cells[0];profileId=$cells[2]
+        telegraphTicks=[int]$timing[0];startupTicks=[int]$timing[1];activeTicks=[int]$timing[2];recoveryTicks=[int]$timing[3]
+        cooldownTicks=$cooldownTicks;cooldownMode=$cooldownMode;cooldownTrigger=$cooldownTrigger
+        range=$range;targetPolicy=$targetPolicy;damage=$damage;damageSpec=$damageParts[0]
+        penetration=$penetration;penetrationSpec=$damageParts[1];breakDamage=$breakDamage;breakDamageSpec=$damageParts[2]
+        statusId=$statusParts[0];statusStacksSpec=$statusParts[1];statusDurationTicksSpec=$statusParts[2]
+        effectOpcode=$effectOpcode;effectParameters=$effectParameters
+        childEntityIds=@($childEntityIds);childEntitySource=$childEntitySource
+        tags=[string[]]@($cells[9].Split(',') | ForEach-Object {$_.Trim()} | Where-Object {$_})
+        responseTags=[string[]]@($cells[10].Split(',') | ForEach-Object {$_.Trim()} | Where-Object {$_})
+    }
+    $enemyActionsByOwner[$ownerId].Add($action)
+}
+if ($enemyActionsByOwner.Count -ne 53) { throw "Expected 53 enemy action owners, got $($enemyActionsByOwner.Count)" }
 $actions = foreach ($enemy in $enemies) {
+    if (-not $enemyActionsByOwner.Contains($enemy.id)) { throw "Enemy action owner missing: $($enemy.id)" }
     [ordered]@{
-        id=$enemy.actionBundleId;sourceDocumentId=$enemy.sourceDocumentId;enabled=$true;ownerId=$enemy.id;kind='ENEMY_ACTION_BUNDLE'
-        actions=@([ordered]@{id=($enemy.actionBundleId + '-PRIMARY');name=$enemy.primaryActionName;telegraphTicks=$enemy.telegraphTicks;startupTicks=4
-            activeTicks=4;recoveryTicks=10;cooldownTicks=$enemy.cooldownTicks;range=$enemy.attackRange;damage=$enemy.attackDamage
-            penetration=$enemy.penetration;breakDamage=[Math]::Max(0,[Math]::Round($enemy.breakMax * 0.08));statusId=$enemy.statusId})
-        stateMachine=@('READY','TELEGRAPH','STARTUP','ACTIVE','RECOVERY');raw=@($enemy.raw)
+        id=$enemy.actionBundleId;sourceDocumentId='ENEMY-ACTION-LIST-001';enabled=$true;ownerId=$enemy.id;kind='ENEMY_ACTION_BUNDLE'
+        actions=@($enemyActionsByOwner[$enemy.id]);stateMachine=@('READY','TELEGRAPH','STARTUP','ACTIVE','RECOVERY');raw=@($enemy.raw)
     }
 }
 foreach ($boss in $bosses) {
@@ -1012,6 +1137,11 @@ foreach ($boss in $bosses) {
             id=$id;name=$id;telegraphTicks=$telegraphTicks;startupTicks=4;activeTicks=6;recoveryTicks=16
             cooldownTicks=[Math]::Max($boss.cooldownTicks, $telegraphTicks + 40);range=$range;damage=$damage
             penetration=$boss.penetration;breakDamage=[Math]::Round($boss.breakMax * 0.03);statusId=$status
+            profileId='BOSS_PATTERN';cooldownMode='TICKS';cooldownTrigger='';targetPolicy='PATTERN_AUTHORITY'
+            damageSpec=[string]$damage;penetrationSpec=[string]$boss.penetration;breakDamageSpec=[string]([Math]::Round($boss.breakMax * 0.03))
+            statusStacksSpec=$(if ($status) {'1'} else {'0'});statusDurationTicksSpec=$(if ($status) {'AUTHORITY'} else {'0'})
+            effectOpcode='BOSS_PATTERN_AUTHORITY';effectParameters=$executionCell;childEntityIds=@();childEntitySource=''
+            tags=@('BOSS','PATTERN');responseTags=@('PATTERN_RESPONSE','POSITION')
         }
     }
     $actions += [ordered]@{
@@ -1496,7 +1626,7 @@ $softlockRecords = @(
 $referenceGraph = @([ordered]@{
     id='REFERENCE-GRAPH-S1';sourceDocumentId='CONTENT-GRAPH-AUDIT-001';enabled=$true
     progressionSteps=@('START_CANDIDATE_VALIDATED','CRAFT_UNLOCKED_WITH_ANY_LOG_4','PERSONAL_LEDGER_3X3_CRAFT','BASIC_LOADOUT','DISCOVERY_C01_C07','BOSS_D10_PART_A','DAY11_SETTLEMENT_AND_OPTIONAL_FAC_S16','STATUS_SAMPLE_AND_D20_CALL','BOSS_D20_PART_B','MUTATION_PURIFY_AND_D30_CALL','BOSS_D30_PART_C','INTERRUPT_RESONANCE_AND_D40_CALL','BOSS_D40_PART_D','R01_R05_TESTED','FINAL_KEY_AND_R06_READY_LOCKED','DAY50_FINAL_THREE_STAGES','FIRST_SIGNAL_SENT_DAY51_PLUS')
-    cardinalities=[ordered]@{materials=59;items=61;equipment=214;codex=334;recipes=315;skills=64;personalAugments=50;partyAugments=16;enemies=53;bosses=4;supportEntities=34;facilities=46;loot=62}
+    cardinalities=[ordered]@{materials=59;items=62;equipment=214;codex=335;recipes=316;skills=64;personalAugments=50;partyAugments=16;enemyActions=69;enemies=53;bosses=4;supportEntities=35;entityTemplates=92;facilities=46;loot=62}
     invariants=@('CRAFT_BEFORE_SHARED_LEDGER','PARTS_A_D_EXISTENCE_ONLY','R06_READY_LOCKED_BEFORE_DAY50','FINAL_KEY_CONSUMED_AFTER_STAGE1_MANIFEST')})
 
 $opsAdmin = @([ordered]@{
@@ -1510,8 +1640,8 @@ $opsTelemetry = @([ordered]@{
     eventTypes=@('RUN_CREATED','DAY_BUDGET_LOCKED','DAY_COMPLETED','ENCOUNTER_STARTED','ENCOUNTER_ENDED','BOSS_PHASE','COMBAT_ACTION','AUGMENT_TRIGGER','PLAYER_DOWN','PLAYER_DEATH','PLAYER_REVIVE','FACILITY_STATE_CHANGED','SOFTLOCK_RECOVERY','PERFORMANCE_STATE','FINAL_TRANSACTION','RUN_ENDED')
     kpiIds=@('KPI-01','KPI-02','KPI-03','KPI-04','KPI-05','KPI-06','KPI-07','KPI-08','KPI-09','KPI-10','KPI-11','KPI-12');testLevels=@('L0','L1','L2','L3','L4','L5');activeRunHotTuning=$false;activationPolicy='NEW_RUN_ONLY'})
 
-$expected = [ordered]@{ materials=59; items=61; tools=214; recipes=315; codex=334; skills=64; personalAugments=50; partyAugments=16; enemies=53; bosses=4; support=34; facilities=46; loot=62; research=25; discoveries=49; storyScenes=73; storyLogs=9; eventsD10=34; eventsD20=18; eventsD50=55; final=32; budget=19; drawLocks=14; softlocks=7 }
-$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; facilities=@($facilities).Count; loot=@($loot).Count; research=@($research).Count; discoveries=@($discoveries).Count; storyScenes=@($storyScenes).Count; storyLogs=@($storyLogs).Count; eventsD10=@($eventsD10).Count; eventsD20=@($eventsD20).Count; eventsD50=@($eventsD50).Count; final=@($finalRecords).Count; budget=@($budgetRecords).Count; drawLocks=@($drawLocks).Count; softlocks=@($softlockRecords).Count }
+$expected = [ordered]@{ materials=59; items=62; tools=214; recipes=316; codex=335; skills=64; personalAugments=50; partyAugments=16; enemyActions=69; enemies=53; bosses=4; support=35; entityTemplates=92; facilities=46; loot=62; research=25; discoveries=49; storyScenes=73; storyLogs=9; eventsD10=34; eventsD20=18; eventsD50=55; final=32; budget=19; drawLocks=14; softlocks=7 }
+$actual = [ordered]@{ materials=@($materials).Count; items=@($items).Count; tools=@($tools).Count; recipes=@($recipes).Count; codex=@($codex).Count; skills=@($skills).Count; personalAugments=@($personalAugments).Count; partyAugments=@($partyAugments).Count; enemyActions=@($enemyActionAuthority).Count; enemies=@($enemies).Count; bosses=@($bosses).Count; support=@($supportEntities).Count; entityTemplates=(@($enemies).Count + @($bosses).Count + @($supportEntities).Count); facilities=@($facilities).Count; loot=@($loot).Count; research=@($research).Count; discoveries=@($discoveries).Count; storyScenes=@($storyScenes).Count; storyLogs=@($storyLogs).Count; eventsD10=@($eventsD10).Count; eventsD20=@($eventsD20).Count; eventsD50=@($eventsD50).Count; final=@($finalRecords).Count; budget=@($budgetRecords).Count; drawLocks=@($drawLocks).Count; softlocks=@($softlockRecords).Count }
 foreach ($key in $expected.Keys) {
     if ($actual[$key] -ne $expected[$key]) { throw "Cardinality mismatch $key expected=$($expected[$key]) actual=$($actual[$key])" }
 }
@@ -1588,7 +1718,7 @@ $genericSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema'; type='object'; additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
     properties=[ordered]@{
-        schemaVersion=[ordered]@{ const=2 }; contentRevision=[ordered]@{ const='ws-content-r2' }
+        schemaVersion=[ordered]@{ const=2 }; contentRevision=[ordered]@{ const=$ContentRevision }
         domain=[ordered]@{ type='string'; minLength=1 }; records=[ordered]@{ type='array'; items=[ordered]@{ type='object'; required=@('id'); properties=[ordered]@{ id=[ordered]@{type='string';minLength=1} } } }
     }
 }
@@ -1596,7 +1726,7 @@ $manifestSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema'; type='object'; additionalProperties=$false
     required=@('schemaVersion','contentRevision','activationPolicy','storyRevision','budgetPolicyRevision','files')
     properties=[ordered]@{
-        schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; activationPolicy=[ordered]@{const='NEW_RUN_ONLY'}
+        schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const=$ContentRevision}; activationPolicy=[ordered]@{const='NEW_RUN_ONLY'}
         storyRevision=[ordered]@{const='ws-story-s1-r1'}; budgetPolicyRevision=[ordered]@{const='budget-live-r2'}
         files=[ordered]@{type='array';minItems=68;maxItems=68;items=[ordered]@{type='object'}}
     }
@@ -1605,7 +1735,7 @@ $daySchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
     properties=[ordered]@{
-        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{const='days'}
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const=$ContentRevision};domain=[ordered]@{const='days'}
         records=[ordered]@{type='array';minItems=50;maxItems=50;items=[ordered]@{
             type='object';additionalProperties=$false
             required=@('id','sourceDocumentId','enabled','day','progressExp','activityExp','totalExp','cumulativeExp','expectedEndLevel','endLevelText','threatBudget3','resourceBudgetAuthority','resourceBudgetTotals','eventIds','bossId','milestoneText','finalAvailable','completionAllowed','stateMachine')
@@ -1623,10 +1753,10 @@ $recipeSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema'; type='object'; additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
     properties=[ordered]@{
-        schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; domain=[ordered]@{const='recipes'}
-        records=[ordered]@{type='array';minItems=315;maxItems=315;items=[ordered]@{
+        schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const=$ContentRevision}; domain=[ordered]@{const='recipes'}
+        records=[ordered]@{type='array';minItems=316;maxItems=316;items=[ordered]@{
             type='object';additionalProperties=$false
-            required=@('id','sourceDocumentId','enabled','outputId','outputAmount','recipeType','inputAuthority','layout','ingredients','raw')
+            required=@('id','sourceDocumentId','enabled','outputId','outputAmount','recipeType','inputAuthority','layout','ingredients','minimumDay','requiredResearchId','requiredFacilityId','requiredFacilityLevel','processTicks','progressionReservePolicy','raw')
             properties=[ordered]@{
                 id=[ordered]@{type='string';pattern='^WSRCP-'};sourceDocumentId=[ordered]@{type='string';minLength=1};enabled=[ordered]@{const=$true}
                 outputId=[ordered]@{type='string';minLength=1};outputAmount=[ordered]@{type='integer';minimum=1;maximum=64}
@@ -1636,6 +1766,8 @@ $recipeSchema = [ordered]@{
                     type='object';additionalProperties=$false;required=@('slot','kind','key','amount','consume')
                     properties=[ordered]@{slot=[ordered]@{type='integer';minimum=0;maximum=8};kind=[ordered]@{enum=@('ITEM','TAG','VANILLA','PROOF')};key=[ordered]@{type='string';minLength=1};amount=[ordered]@{type='integer';minimum=1;maximum=64};consume=[ordered]@{type='boolean'}}
                 }}
+                minimumDay=[ordered]@{type='integer';minimum=1;maximum=50};requiredResearchId=[ordered]@{type='string'};requiredFacilityId=[ordered]@{type='string'}
+                requiredFacilityLevel=[ordered]@{type='integer';minimum=0;maximum=5};processTicks=[ordered]@{type='integer';minimum=0};progressionReservePolicy=[ordered]@{type='string'}
                 raw=[ordered]@{type='array';items=[ordered]@{type='string'}}
             }
         }}
@@ -1645,16 +1777,18 @@ $itemSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema'; type='object'; additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
     properties=[ordered]@{
-        schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; domain=[ordered]@{const='items'}
-        records=[ordered]@{type='array';minItems=61;maxItems=61;items=[ordered]@{
+        schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const=$ContentRevision}; domain=[ordered]@{const='items'}
+        records=[ordered]@{type='array';minItems=62;maxItems=62;items=[ordered]@{
             type='object';additionalProperties=$false
-            required=@('id','sourceDocumentId','enabled','codexIndex','textKey','customModelKey','name','firstDay','displayMaterial','category','stackLimit','ownership','usePolicy','connectedFacilityId','effectText','constraintText','recipeId','raw')
+            required=@('id','sourceDocumentId','enabled','codexIndex','textKey','customModelKey','name','firstDay','displayMaterial','category','stackLimit','ownership','usePolicy','connectedFacilityId','effectText','constraintText','recipeId','requiredResearchId','minimumFacilityLevel','channelTicks','perTargetRunLimit','wipeAllowed','progressionReservePolicy','raw')
             properties=[ordered]@{
                 id=[ordered]@{type='string';pattern='^WSI-'};sourceDocumentId=[ordered]@{const='ITEM-LIST-001'};enabled=[ordered]@{const=$true};codexIndex=[ordered]@{type='integer';minimum=100;maximum=199}
                 textKey=[ordered]@{type='string';pattern='^item\.wildsurvival\.[a-z0-9_]+$'};customModelKey=[ordered]@{type='string';pattern='^wildsurvival:item/[a-z0-9_]+$'};name=[ordered]@{type='string';minLength=1}
-                firstDay=[ordered]@{type='integer';minimum=1;maximum=50};displayMaterial=[ordered]@{type='string';pattern='^[A-Z][A-Z0-9_]*$'};category=[ordered]@{enum=@('CONS','AMMO','PORTABLE','FAC','CALL')};stackLimit=[ordered]@{type='integer';minimum=1;maximum=64}
-                ownership=[ordered]@{enum=@('PERSONAL','PARTY','PARTY_BOUND')};usePolicy=[ordered]@{enum=@('QUICK_BINDABLE','AMMO_LEDGER_DEPOSIT','PORTABLE_FACILITY_ACTION','FACILITY_PLACEMENT','BOSS_CALL_TRANSACTION')}
+                firstDay=[ordered]@{type='integer';minimum=1;maximum=50};displayMaterial=[ordered]@{type='string';pattern='^[A-Z][A-Z0-9_]*$'};category=[ordered]@{enum=@('CONS','AMMO','PORTABLE','FAC','CALL','REVIVAL')};stackLimit=[ordered]@{type='integer';minimum=1;maximum=64}
+                ownership=[ordered]@{enum=@('PERSONAL','PARTY','PARTY_BOUND')};usePolicy=[ordered]@{enum=@('QUICK_BINDABLE','AMMO_LEDGER_DEPOSIT','PORTABLE_FACILITY_ACTION','FACILITY_PLACEMENT','BOSS_CALL_TRANSACTION','FACILITY_REVIVAL_TRANSACTION')}
                 connectedFacilityId=[ordered]@{type='string';pattern='^(?:|FAC-[PCSD][0-9]{2})$'};effectText=[ordered]@{type='string';minLength=1};constraintText=[ordered]@{type='string'};recipeId=[ordered]@{type='string';pattern='^WSRCP-[A-Z0-9-]+$'}
+                requiredResearchId=[ordered]@{type='string'};minimumFacilityLevel=[ordered]@{type='integer';minimum=0;maximum=5};channelTicks=[ordered]@{type='integer';minimum=0}
+                perTargetRunLimit=[ordered]@{type='integer';minimum=0;maximum=1};wipeAllowed=[ordered]@{type='boolean'};progressionReservePolicy=[ordered]@{type='string'}
                 raw=[ordered]@{type='array';minItems=8;maxItems=9;items=[ordered]@{type='string'}}
             }
         }}
@@ -1664,7 +1798,7 @@ $equipmentSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema'; type='object'; additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
     properties=[ordered]@{
-        schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; domain=[ordered]@{const='equipment'}
+        schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const=$ContentRevision}; domain=[ordered]@{const='equipment'}
         records=[ordered]@{type='array';items=[ordered]@{
             type='object';additionalProperties=$false
             required=@('id','sourceDocumentId','enabled','codexIndex','name','equipmentType','equipmentSlot','weaponClass','displayMaterial','definition','rarity','itemLevel','firstDay','maxDurability','toolTier','baseTemplateId','statInheritancePolicy','setId','tags','stats','effectProfileId','executionOpcode','harvestProfileId','resourceYieldMultiplier','durabilityCostPerSuccess','vanillaActionPassthrough','effectText','raw')
@@ -1684,7 +1818,7 @@ $researchSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
     properties=[ordered]@{
-        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{const='research'}
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const=$ContentRevision};domain=[ordered]@{const='research'}
         records=[ordered]@{type='array';minItems=25;maxItems=25;items=[ordered]@{
             type='object';additionalProperties=$false;required=@('id','costId','sourceDocumentId','enabled','minimumDay','prerequisiteText','comparisonInput','cost','durationSeconds','unlockText','stateMachine','raw')
             properties=[ordered]@{
@@ -1700,7 +1834,7 @@ $discoverySchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
     properties=[ordered]@{
-        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{const='discoveries'}
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const=$ContentRevision};domain=[ordered]@{const='discoveries'}
         records=[ordered]@{type='array';minItems=49;maxItems=49;items=[ordered]@{type='object';additionalProperties=$false
             required=@('id','canonicalId','sourceDocumentId','enabled','kind','name','recommendedDayMin','recommendedDayMax','prerequisiteIds','primaryPath','alternativePath','unlockText','clueText','stateMachine')
             properties=[ordered]@{id=[ordered]@{type='string';pattern='^(?:C\d{2}(?:-[A-D])?|O\d{2})$'};canonicalId=[ordered]@{type='string';pattern='^DISC-'};sourceDocumentId=[ordered]@{const='DISC-LIST-001'};enabled=[ordered]@{const=$true};kind=[ordered]@{enum=@('CORE','CORE_SUB','OPTIONAL')};name=[ordered]@{type='string';minLength=1};recommendedDayMin=[ordered]@{type='integer';minimum=1;maximum=50};recommendedDayMax=[ordered]@{type='integer';minimum=1;maximum=50};prerequisiteIds=[ordered]@{type='array';items=[ordered]@{type='string'}};primaryPath=[ordered]@{type='string'};alternativePath=[ordered]@{type='string'};unlockText=[ordered]@{type='string';minLength=1};clueText=[ordered]@{type='string'};stateMachine=[ordered]@{type='array';minItems=6;maxItems=6;items=[ordered]@{type='string'}}}
@@ -1711,7 +1845,7 @@ $storySchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
     properties=[ordered]@{
-        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{enum=@('story-scenes','story-logs')}
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const=$ContentRevision};domain=[ordered]@{enum=@('story-scenes','story-logs')}
         records=[ordered]@{type='array';minItems=9;maxItems=73;items=[ordered]@{type='object';required=@('id','sourceDocumentId','enabled','raw');properties=[ordered]@{id=[ordered]@{type='string';pattern='^(ST[0-9]-|LOG-O)'};sourceDocumentId=[ordered]@{const='STORY-DATA-S1-001'};enabled=[ordered]@{const=$true};raw=[ordered]@{type='array';minItems=4;maxItems=4;items=[ordered]@{type='string'}}}}}
     }
 }
@@ -1719,7 +1853,7 @@ $eventSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
     properties=[ordered]@{
-        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{const='events'}
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const=$ContentRevision};domain=[ordered]@{const='events'}
         records=[ordered]@{type='array';minItems=18;maxItems=55;items=[ordered]@{
             type='object';required=@('id','sourceDocumentId','enabled','eventKind','firstDay','executionOpcode','raw')
             properties=[ordered]@{id=[ordered]@{type='string';minLength=1};sourceDocumentId=[ordered]@{enum=@('EVENT-DATA-001','EVENT-DATA-D20-001','EVENT-DATA-D50-001')};enabled=[ordered]@{const=$true};eventKind=[ordered]@{enum=@('RESOURCE_NODE','NATURAL_ACTIVITY','MAIN_EVENT','PRESSURE_PROFILE')};firstDay=[ordered]@{type='integer';minimum=1;maximum=50};executionOpcode=[ordered]@{enum=@('SPAWN_RESOURCE_NODE','RUN_ACTIVITY_OBJECTIVE','RUN_EVENT_OBJECTIVE','RUN_PRESSURE_WAVES')};raw=[ordered]@{type='array';minItems=4;maxItems=8;items=[ordered]@{type='string'}}}
@@ -1730,16 +1864,87 @@ $finalSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
     properties=[ordered]@{
-        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const='ws-content-r2'};domain=[ordered]@{const='final'}
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const=$ContentRevision};domain=[ordered]@{const='final'}
         records=[ordered]@{type='array';minItems=32;maxItems=32;items=[ordered]@{type='object';required=@('id','sourceDocumentId','enabled','recordKind','executionOpcode','raw');properties=[ordered]@{id=[ordered]@{type='string';minLength=1};sourceDocumentId=[ordered]@{const='FINAL-DATA-001'};enabled=[ordered]@{const=$true};recordKind=[ordered]@{enum=@('OBJECTIVE','FINAL_BOSS','OBJECTIVE_COMPONENT','WAVE_PROFILE','BOSS_PHASE','BOSS_PATTERN','COMPLETION_STEP')};executionOpcode=[ordered]@{type='string';minLength=1};raw=[ordered]@{type='array';minItems=2;items=[ordered]@{type='string'}}}}}
+    }
+}
+$skillSchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const=$ContentRevision};domain=[ordered]@{const='player-skills'}
+        records=[ordered]@{type='array';minItems=64;maxItems=64;items=[ordered]@{type='object';additionalProperties=$false
+            required=@('id','sourceDocumentId','enabled','kind','name','weaponClass','apCost','cooldownTicks','damageCoefficient','breakDamage','range','arcDegrees','maxTargets','effect','tags','unlockLevel','consumableId','description','executionSourceDocumentId','operationIds','executionProfile','targetSpec','costSpec','parameterPayload','failurePolicy','childEntityIds','raw')
+            properties=[ordered]@{
+                id=[ordered]@{type='string';pattern='^ws\.'};sourceDocumentId=[ordered]@{const='SKILL-LIST-001'};enabled=[ordered]@{const=$true}
+                kind=[ordered]@{enum=@('BASIC','WEAPON_ACTIVE','COMMON_ACTIVE','CONTEXT')};name=[ordered]@{type='string';minLength=1};weaponClass=[ordered]@{type='string';minLength=1}
+                apCost=[ordered]@{type='number';minimum=0};cooldownTicks=[ordered]@{type='integer';minimum=0};damageCoefficient=[ordered]@{type='number';minimum=0};breakDamage=[ordered]@{type='number';minimum=0};range=[ordered]@{type='number';minimum=0};arcDegrees=[ordered]@{type='number';minimum=0;maximum=360};maxTargets=[ordered]@{type='integer';minimum=1};effect=[ordered]@{type='string';minLength=1};tags=[ordered]@{type='array';items=[ordered]@{type='string'}};unlockLevel=[ordered]@{type='integer';minimum=1};consumableId=[ordered]@{type='string'};description=[ordered]@{type='string';minLength=1}
+                executionSourceDocumentId=[ordered]@{const='SKILL-EFFECT-LIST-001'};operationIds=[ordered]@{type='array';minItems=1;uniqueItems=$true;items=[ordered]@{type='string';pattern='^[A-Z][A-Z0-9_]+$'}}
+                executionProfile=[ordered]@{type='string';minLength=1};targetSpec=[ordered]@{type='string';minLength=1};costSpec=[ordered]@{type='string';minLength=1};parameterPayload=[ordered]@{type='string';minLength=1};failurePolicy=[ordered]@{type='string';pattern='^SKFP-'}
+                childEntityIds=[ordered]@{type='array';uniqueItems=$true;items=[ordered]@{type='string';pattern='^ENT-'}};raw=[ordered]@{type='array';items=[ordered]@{type='string'}}
+            }
+        }}
+    }
+}
+$augmentSchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const=$ContentRevision};domain=[ordered]@{enum=@('personal-augments','party-augments')}
+        records=[ordered]@{type='array';minItems=16;maxItems=50;items=[ordered]@{type='object';additionalProperties=$false
+            required=@('id','sourceDocumentId','enabled','name','tier','scope','tags','effectOpcode','effectText','constraintText','weightingText','exclusiveWith','evolution','executionSourceDocumentId','triggerIds','stateScope','parameterPayload','limitFallback','derivedEventFlags','raw')
+            properties=[ordered]@{
+                id=[ordered]@{type='string';pattern='^(?:AUG-[SGP]-\d{3}|PAUG-\d{3})$'};sourceDocumentId=[ordered]@{enum=@('AUG-LIST-001','AUG-LIST-002')};enabled=[ordered]@{const=$true};name=[ordered]@{type='string';minLength=1};tier=[ordered]@{enum=@('SILVER','GOLD','PRISM','PARTY')};scope=[ordered]@{enum=@('PERSONAL','PARTY')}
+                tags=[ordered]@{type='array';minItems=1;uniqueItems=$true;items=[ordered]@{type='string'}};effectOpcode=[ordered]@{type='string';pattern='^[A-Z][A-Z0-9_]+$'};effectText=[ordered]@{type='string';minLength=1};constraintText=[ordered]@{type='string'};weightingText=[ordered]@{type='string'};exclusiveWith=[ordered]@{type='array';uniqueItems=$true;items=[ordered]@{type='string'}};evolution=[ordered]@{type='boolean'}
+                executionSourceDocumentId=[ordered]@{const='AUGMENT-EFFECT-LIST-001'};triggerIds=[ordered]@{type='array';minItems=1;uniqueItems=$true;items=[ordered]@{type='string';pattern='^[A-Z][A-Z0-9_]+$'}};stateScope=[ordered]@{type='string';minLength=1};parameterPayload=[ordered]@{type='string';minLength=1};limitFallback=[ordered]@{type='string';minLength=1}
+                derivedEventFlags=[ordered]@{type='array';minItems=3;uniqueItems=$true;items=[ordered]@{enum=@('NO_AUGMENT_RETRIGGER','NO_REWARD','NO_CONTRIBUTION')}};raw=[ordered]@{type='array';items=[ordered]@{type='string'}}
+            }
+        }}
+    }
+}
+$actionSchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const=$ContentRevision};domain=[ordered]@{const='entity-actions'}
+        records=[ordered]@{type='array';minItems=57;maxItems=57;items=[ordered]@{type='object';additionalProperties=$false
+            required=@('id','sourceDocumentId','enabled','ownerId','kind','actions','stateMachine','raw')
+            properties=[ordered]@{
+                id=[ordered]@{type='string';minLength=1};sourceDocumentId=[ordered]@{type='string';minLength=1};enabled=[ordered]@{const=$true};ownerId=[ordered]@{type='string';minLength=1};kind=[ordered]@{enum=@('ENEMY_ACTION_BUNDLE','BOSS_ACTION_SET')};stateMachine=[ordered]@{type='array';minItems=5;maxItems=5;items=[ordered]@{type='string'}};raw=[ordered]@{type='array';items=[ordered]@{type='string'}}
+                actions=[ordered]@{type='array';minItems=1;maxItems=12;items=[ordered]@{type='object';additionalProperties=$false
+                    required=@('id','name','profileId','telegraphTicks','startupTicks','activeTicks','recoveryTicks','cooldownTicks','cooldownMode','cooldownTrigger','range','targetPolicy','damage','damageSpec','penetration','penetrationSpec','breakDamage','breakDamageSpec','statusId','statusStacksSpec','statusDurationTicksSpec','effectOpcode','effectParameters','childEntityIds','childEntitySource','tags','responseTags')
+                    properties=[ordered]@{
+                        id=[ordered]@{type='string';minLength=1;not=[ordered]@{pattern='-PRIMARY$'}};name=[ordered]@{type='string';minLength=1};profileId=[ordered]@{type='string';minLength=1}
+                        telegraphTicks=[ordered]@{type='integer';minimum=0};startupTicks=[ordered]@{type='integer';minimum=0};activeTicks=[ordered]@{type='integer';minimum=1};recoveryTicks=[ordered]@{type='integer';minimum=0};cooldownTicks=[ordered]@{type='integer';minimum=0};cooldownMode=[ordered]@{enum=@('TICKS','PASSIVE','ONCE_PER_ENCOUNTER','HP_THRESHOLD','HP_THRESHOLDS')};cooldownTrigger=[ordered]@{type='string'}
+                        range=[ordered]@{type='number';minimum=0};targetPolicy=[ordered]@{type='string';minLength=1};damage=[ordered]@{type='number';minimum=0};damageSpec=[ordered]@{type='string';minLength=1};penetration=[ordered]@{type='number';minimum=0};penetrationSpec=[ordered]@{type='string';minLength=1};breakDamage=[ordered]@{type='number';minimum=0};breakDamageSpec=[ordered]@{type='string';minLength=1}
+                        statusId=[ordered]@{type='string'};statusStacksSpec=[ordered]@{type='string';minLength=1};statusDurationTicksSpec=[ordered]@{type='string';minLength=1};effectOpcode=[ordered]@{type='string';pattern='^[A-Z][A-Z0-9_]+$'};effectParameters=[ordered]@{type='string'}
+                        childEntityIds=[ordered]@{type='array';uniqueItems=$true;items=[ordered]@{type='string'}};childEntitySource=[ordered]@{enum=@('','SOURCE_PATTERN')};tags=[ordered]@{type='array';minItems=1;uniqueItems=$true;items=[ordered]@{type='string'}};responseTags=[ordered]@{type='array';minItems=2;uniqueItems=$true;items=[ordered]@{type='string'}}
+                    }
+                }}
+            }
+        }}
+    }
+}
+$entitySchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2};contentRevision=[ordered]@{const=$ContentRevision};domain=[ordered]@{const='support-entities'}
+        records=[ordered]@{type='array';minItems=35;maxItems=35;items=[ordered]@{type='object';additionalProperties=$false
+            required=@('id','sourceDocumentId','enabled','kind','bukkitType','displayFallback','cleanupPolicy','lootTableId','ownerPolicy','persistent','flags','raw')
+            properties=[ordered]@{id=[ordered]@{type='string';pattern='^ENT-'};sourceDocumentId=[ordered]@{const='ENTITY-LIST-001'};enabled=[ordered]@{const=$true};kind=[ordered]@{type='string';minLength=1};bukkitType=[ordered]@{type='string';minLength=1};displayFallback=[ordered]@{type='string';minLength=1};cleanupPolicy=[ordered]@{type='string';minLength=1};lootTableId=[ordered]@{type='string';minLength=1};ownerPolicy=[ordered]@{enum=@('PLAYER','PARENT','SYSTEM')};persistent=[ordered]@{type='boolean'};flags=[ordered]@{type='array';uniqueItems=$true;items=[ordered]@{type='string'}};raw=[ordered]@{type='array';items=[ordered]@{type='string'}}}
+        }}
     }
 }
 foreach ($name in $schemaNames) {
     if ($name -eq 'status') {
-        Write-CanonicalArtifact 'schemas/status.schema.json'
+        $statusSchema = Get-Content -Raw -Encoding UTF8 (Join-Path $canonicalContentRoot 'schemas/status.schema.json') | ConvertFrom-Json -AsHashtable
+        $statusSchema.properties.contentRevision.const = $ContentRevision
+        $statusSchema.properties.records.items.properties.sourceDocumentId = [ordered]@{enum=@('STATUS-002','STATUS-002+SKILL-LIST-001')}
+        Write-Json 'schemas/status.schema.json' $statusSchema
         continue
     }
-    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'day') { $daySchema } elseif ($name -eq 'item') { $itemSchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'equipment') { $equipmentSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'discovery') { $discoverySchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } else { $genericSchema }
+    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'day') { $daySchema } elseif ($name -eq 'item') { $itemSchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'equipment') { $equipmentSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'discovery') { $discoverySchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } elseif ($name -eq 'skill') { $skillSchema } elseif ($name -eq 'augment') { $augmentSchema } elseif ($name -eq 'action') { $actionSchema } elseif ($name -eq 'entity') { $entitySchema } else { $genericSchema }
     Write-Json "schemas/$name.schema.json" $schema
 }
 
@@ -1763,7 +1968,9 @@ $data['equipment/day01-10.json'] = Domain 'equipment' $equipmentEarly
 $data['equipment/day11-20.json'] = Domain 'equipment' $equipmentD20
 $data['equipment/day21-50.json'] = Domain 'equipment' $equipmentD50
 $data['facilities/season1-facilities.json'] = Domain 'facilities' $facilities
-$data['statuses/season1-statuses.json'] = Get-Content -Raw -Encoding UTF8 (Join-Path $canonicalContentRoot 'statuses/season1-statuses.json') | ConvertFrom-Json -AsHashtable
+$statusData = Get-Content -Raw -Encoding UTF8 (Join-Path $canonicalContentRoot 'statuses/season1-statuses.json') | ConvertFrom-Json -AsHashtable
+$statusData.contentRevision = $ContentRevision
+$data['statuses/season1-statuses.json'] = $statusData
 $data['research/season1-research.json'] = Domain 'research' $research
 $data['discoveries/season1-discoveries.json'] = Domain 'discoveries' $discoveries
 $data['augments/personal-augments.json'] = Domain 'personal-augments' $personalAugments
@@ -1788,8 +1995,7 @@ $data['ops/admin-commands.json'] = Domain 'ops-admin' $opsAdmin
 $data['ops/telemetry-contract.json'] = Domain 'ops-telemetry' $opsTelemetry
 if ($data.Count -ne 43) { throw "Expected 43 data files, got $($data.Count)" }
 foreach ($entry in $data.GetEnumerator()) {
-    if ($entry.Key -eq 'statuses/season1-statuses.json') { Write-CanonicalArtifact $entry.Key }
-    else { Write-Json $entry.Key $entry.Value }
+    Write-Json $entry.Key $entry.Value
 }
 
 function Sha256([string]$Path) {
@@ -1798,7 +2004,7 @@ function Sha256([string]$Path) {
     finally { $stream.Dispose() }
 }
 $schemaForDomain = [ordered]@{
-    days='day'; 'days-endless'='day'; events='event'; enemies='enemy'; resources='resource'; materials='resource'; items='item'; codex='codex'; recipes='recipe'
+    days='day'; 'days-endless'='common'; events='event'; enemies='enemy'; resources='resource'; materials='resource'; items='item'; codex='codex'; recipes='recipe'
     equipment='equipment'; facilities='facility'; statuses='status'; research='research'; discoveries='discovery'; 'personal-augments'='augment'; 'party-augments'='augment'; 'player-skills'='skill'; 'entity-actions'='action'
     'support-entities'='entity'; loot='loot'; bosses='boss'; final='final'; 'story-scenes'='story'; 'story-logs'='story'; budget='budget'; migrations='migration'
     'fixture-cardinality'='common'; 'fixture-reference-graph'='common'; 'fixture-draw-locks'='common'; 'fixture-softlocks'='common'; 'ops-admin'='ops'; 'ops-telemetry'='ops'
@@ -1815,14 +2021,14 @@ foreach ($entry in $data.GetEnumerator()) {
 }
 if ($files.Count -ne 68) { throw "Expected 68 manifest entries, got $($files.Count)" }
 $manifest = [ordered]@{
-    schemaVersion=2;contentRevision='ws-content-r2';activationPolicy='NEW_RUN_ONLY';storyRevision='ws-story-s1-r1'
+    schemaVersion=2;contentRevision=$ContentRevision;activationPolicy='NEW_RUN_ONLY';storyRevision='ws-story-s1-r1'
     budgetPolicyRevision='budget-live-r2';drawRevision='draw-s1-r2';rulesRevision='rules-s1-r2';resourcePackContract='ws-rp-s1-r1';files=@($files)
 }
 Write-Json 'manifest.json' $manifest
 $manifestHash = Sha256 (Join-Path $OutputRoot 'manifest.json')
 $lock = @"
 schema-version: 2
-content-revision: "ws-content-r2"
+content-revision: "$ContentRevision"
 manifest: "manifest.json"
 manifest-sha256: "$manifestHash"
 activation-policy: "NEW_RUN_ONLY"

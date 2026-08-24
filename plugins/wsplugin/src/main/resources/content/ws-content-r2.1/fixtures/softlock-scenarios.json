@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "fixture-softlocks",
+  "records": [
+    {
+      "id": "GRAPH-FIX-001",
+      "sourceDocumentId": "CONTENT-GRAPH-AUDIT-001",
+      "enabled": true,
+      "finding": "RI 도구가 Day14 강화 합금을 요구해 Day11 T3 채집 잠금",
+      "correction": "Day5 정련 합금 기반",
+      "mustRemainSatisfied": true
+    },
+    {
+      "id": "GRAPH-FIX-002",
+      "sourceDocumentId": "CONTENT-GRAPH-AUDIT-001",
+      "enabled": true,
+      "finding": "RS 도구가 Day25 정제 변이를 요구해 Day21 T4 채집 잠금",
+      "correction": "Day21 촉매+기존 강화 합금 기반",
+      "mustRemainSatisfied": true
+    },
+    {
+      "id": "GRAPH-FIX-003",
+      "sourceDocumentId": "CONTENT-GRAPH-AUDIT-001",
+      "enabled": true,
+      "finding": "HD 도구가 Day37 고밀도 합금을 요구해 Day31 T5 진입 잠금",
+      "correction": "Day31 골재+이전 세션 재료 기반",
+      "mustRemainSatisfied": true
+    },
+    {
+      "id": "GRAPH-FIX-004",
+      "sourceDocumentId": "CONTENT-GRAPH-AUDIT-001",
+      "enabled": true,
+      "finding": "RC 도구가 Day44 안정 프레임을 요구해 Day41 T6 진입 잠금",
+      "correction": "시설 가공 가능한 Day41 동력 행렬 기반",
+      "mustRemainSatisfied": true
+    },
+    {
+      "id": "GRAPH-FIX-005",
+      "sourceDocumentId": "CONTENT-GRAPH-AUDIT-001",
+      "enabled": true,
+      "finding": "R06 조합 ID 부재",
+      "correction": "WSRCP-R06→FAC-R06@READY_LOCKED",
+      "mustRemainSatisfied": true
+    },
+    {
+      "id": "GRAPH-FIX-006",
+      "sourceDocumentId": "CONTENT-GRAPH-AUDIT-001",
+      "enabled": true,
+      "finding": "자원 노드 entity가 LOOT-NONE 참조",
+      "correction": "노드 6종을 LOOT-NODE 6종에 연결",
+      "mustRemainSatisfied": true
+    },
+    {
+      "id": "GRAPH-FIX-007",
+      "sourceDocumentId": "CONTENT-GRAPH-AUDIT-001",
+      "enabled": true,
+      "finding": "Craft 해금 원목 없는 spawn seed 가능",
+      "correction": "시작 후보 12회 검증+회차당 원목4 폴백 Manifest",
+      "mustRemainSatisfied": true
+    }
+  ]
+}

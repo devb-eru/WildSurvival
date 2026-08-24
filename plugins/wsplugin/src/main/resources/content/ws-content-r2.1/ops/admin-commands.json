@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "ops-admin",
+  "records": [
+    {
+      "id": "OPS-ADMIN-COMMANDS",
+      "sourceDocumentId": "OPS-001",
+      "enabled": true,
+      "dryRunRequiredForMutation": true,
+      "confirmTokenTtlSeconds": 60,
+      "reasonMinLength": 10,
+      "reasonMaxLength": 200,
+      "permissionNodes": [
+        "wildsurvival.admin.inspect",
+        "wildsurvival.admin.validate",
+        "wildsurvival.admin.audit",
+        "wildsurvival.admin.snapshot",
+        "wildsurvival.admin.recover.transaction",
+        "wildsurvival.admin.recover.item",
+        "wildsurvival.admin.recover.encounter",
+        "wildsurvival.admin.recover.reward",
+        "wildsurvival.admin.recover.run",
+        "wildsurvival.admin.content.reload",
+        "wildsurvival.admin.migrate",
+        "wildsurvival.admin.root.day"
+      ],
+      "queryCommands": [
+        "/ws admin content validate",
+        "/ws admin inspect run",
+        "/ws admin inspect player",
+        "/ws admin inspect item",
+        "/ws admin inspect facility",
+        "/ws admin inspect day",
+        "/ws admin inspect encounter",
+        "/ws admin inspect reward",
+        "/ws admin inspect augment-lock",
+        "/ws admin inspect story",
+        "/ws admin snapshot list",
+        "/ws admin audit query"
+      ],
+      "mutationCommands": [
+        "/ws admin content reload",
+        "/ws admin snapshot create",
+        "/ws admin recover transaction",
+        "/ws admin recover item",
+        "/ws admin recover encounter",
+        "/ws admin recover reward",
+        "/ws admin recover run",
+        "/ws admin override day",
+        "/ws admin migrate plan",
+        "/ws admin migrate apply"
+      ],
+      "forbiddenCapabilities": [
+        "GENERIC_SET",
+        "GENERIC_GIVE",
+        "FINAL_GATE_BYPASS",
+        "ACTIVE_RUN_REVISION_SWAP"
+      ]
+    }
+  ]
+}

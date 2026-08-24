@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contentRevision",
+    "domain",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "contentRevision": {
+      "const": "ws-content-r2.1"
+    },
+    "domain": {
+      "const": "discoveries"
+    },
+    "records": {
+      "type": "array",
+      "minItems": 49,
+      "maxItems": 49,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "canonicalId",
+          "sourceDocumentId",
+          "enabled",
+          "kind",
+          "name",
+          "recommendedDayMin",
+          "recommendedDayMax",
+          "prerequisiteIds",
+          "primaryPath",
+          "alternativePath",
+          "unlockText",
+          "clueText",
+          "stateMachine"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^(?:C\\d{2}(?:-[A-D])?|O\\d{2})$"
+          },
+          "canonicalId": {
+            "type": "string",
+            "pattern": "^DISC-"
+          },
+          "sourceDocumentId": {
+            "const": "DISC-LIST-001"
+          },
+          "enabled": {
+            "const": true
+          },
+          "kind": {
+            "enum": [
+              "CORE",
+              "CORE_SUB",
+              "OPTIONAL"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "recommendedDayMin": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "recommendedDayMax": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "prerequisiteIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "primaryPath": {
+            "type": "string"
+          },
+          "alternativePath": {
+            "type": "string"
+          },
+          "unlockText": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clueText": {
+            "type": "string"
+          },
+          "stateMachine": {
+            "type": "array",
+            "minItems": 6,
+            "maxItems": 6,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1444 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "events",
+  "records": [
+    {
+      "id": "EV50-D21-MOVING-BORDER",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 21,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "이동 경계 3회 측정→전후 표본 2쌍",
+      "telegraphSpaceText": "최근 이동 경로 3점, 20초 방향음",
+      "failureAlternativeText": "범용 오염 표식으로 전환, 표본 직접 지급 없음",
+      "pressureProfileId": "PR50-CORRUPTION-TRAIL",
+      "partyThreat": [
+        32,
+        42,
+        51
+      ],
+      "requiredConnectionText": "C14, RS-D21",
+      "rewardText": "정화 촉매",
+      "raw": [
+        "EV50-D21-MOVING-BORDER",
+        "이동 경계 3회 측정→전후 표본 2쌍",
+        "최근 이동 경로 3점, 20초 방향음",
+        "범용 오염 표식으로 전환, 표본 직접 지급 없음"
+      ]
+    },
+    {
+      "id": "EV50-D22-MUTATION-MIRROR",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 22,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "같은 계열 변이 2체 관측→다른 대응 축 2개 기록",
+      "telegraphSpaceText": "변이 아이콘 2개 공개",
+      "failureAlternativeText": "처치 대신 90초 관측 가능",
+      "pressureProfileId": "PR50-MUTATION-SPLIT",
+      "partyThreat": [
+        34,
+        44,
+        54
+      ],
+      "requiredConnectionText": "변이 비교",
+      "rewardText": "변이 표본",
+      "raw": [
+        "EV50-D22-MUTATION-MIRROR",
+        "같은 계열 변이 2체 관측→다른 대응 축 2개 기록",
+        "변이 아이콘 2개 공개",
+        "처치 대신 90초 관측 가능"
+      ]
+    },
+    {
+      "id": "EV50-D23-PURIFIER-PARASITE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 23,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "출력 흡수선 2개 절단→정화 30초 유지",
+      "telegraphSpaceText": "시설 또는 휴대 정화기 중심",
+      "failureAlternativeText": "시설 없으면 FAC-P05 가상 출력점 2개",
+      "pressureProfileId": "PR50-PURIFY-JAM",
+      "partyThreat": [
+        36,
+        47,
+        58
+      ],
+      "requiredConnectionText": "C15~C17",
+      "rewardText": "균열 가루·촉매",
+      "raw": [
+        "EV50-D23-PURIFIER-PARASITE",
+        "출력 흡수선 2개 절단→정화 30초 유지",
+        "시설 또는 휴대 정화기 중심",
+        "시설 없으면 FAC-P05 가상 출력점 2개"
+      ]
+    },
+    {
+      "id": "EV50-D24-LEDGER-TRACK",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 24,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "운반자 표식 이전 2회→추적자 제압",
+      "telegraphSpaceText": "실제 아이템 강탈 없음",
+      "failureAlternativeText": "원장·상자 파괴 없음, 표식 시간 초과 후 재시도",
+      "pressureProfileId": "PR50-CARGO-HUNT",
+      "partyThreat": [
+        38,
+        49,
+        61
+      ],
+      "requiredConnectionText": "운반 방어",
+      "rewardText": "금속·신호",
+      "raw": [
+        "EV50-D24-LEDGER-TRACK",
+        "운반자 표식 이전 2회→추적자 제압",
+        "실제 아이템 강탈 없음",
+        "원장·상자 파괴 없음, 표식 시간 초과 후 재시도"
+      ]
+    },
+    {
+      "id": "EV50-D25-MUTATION-MAP",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 25,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "변이 3범주·2출처 등록→연구 큐 제출",
+      "telegraphSpaceText": "지형 무관 Display 표본판",
+      "failureAlternativeText": "부족 범주는 EVT-C02 가중 +50%",
+      "pressureProfileId": "PR50-AUGMENTED-MUTATION",
+      "partyThreat": [
+        40,
+        52,
+        64
+      ],
+      "requiredConnectionText": "RS-D25",
+      "rewardText": "정제 변이",
+      "raw": [
+        "EV50-D25-MUTATION-MAP",
+        "변이 3범주·2출처 등록→연구 큐 제출",
+        "지형 무관 Display 표본판",
+        "부족 범주는 EVT-C02 가중 +50%"
+      ]
+    },
+    {
+      "id": "EV50-D26-CONFLICTED-ORDER",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 26,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "서로 상충한 두 신호 중 순차 안정화",
+      "telegraphSpaceText": "동시 입력 요구 없음",
+      "failureAlternativeText": "한 축 완료 보존, 다음 Day 재후보",
+      "pressureProfileId": "PR50-DUAL-OBJECTIVE",
+      "partyThreat": [
+        42,
+        55,
+        67
+      ],
+      "requiredConnectionText": "C18",
+      "rewardText": "신호·연구 기록",
+      "raw": [
+        "EV50-D26-CONFLICTED-ORDER",
+        "서로 상충한 두 신호 중 순차 안정화",
+        "동시 입력 요구 없음",
+        "한 축 완료 보존, 다음 Day 재후보"
+      ]
+    },
+    {
+      "id": "EV50-D27-RIFT-STABILITY",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 27,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "이동 균열 3회 추적→6초 봉합",
+      "telegraphSpaceText": "방향 8분면·강도 3단계",
+      "failureAlternativeText": "놓치면 C04로 재후보, 자원 직접 생성 금지",
+      "pressureProfileId": "PR50-PURIFY-JAM",
+      "partyThreat": [
+        44,
+        57,
+        70
+      ],
+      "requiredConnectionText": "C19, RS-D27",
+      "rewardText": "안정화 코어",
+      "raw": [
+        "EV50-D27-RIFT-STABILITY",
+        "이동 균열 3회 추적→6초 봉합",
+        "방향 8분면·강도 3단계",
+        "놓치면 C04로 재후보, 자원 직접 생성 금지"
+      ]
+    },
+    {
+      "id": "EV50-D28-ABYSSAL-COST",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 28,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "심연 대가 3종 미리보기→고위험 표본 1개 회수",
+      "telegraphSpaceText": "전투 전 비가역 경고",
+      "failureAlternativeText": "선택·제작을 강제하지 않음",
+      "pressureProfileId": "PR50-ELITE-MUTATION",
+      "partyThreat": [
+        47,
+        61,
+        75
+      ],
+      "requiredConnectionText": "심연 대가 공개",
+      "rewardText": "정화 매질",
+      "raw": [
+        "EV50-D28-ABYSSAL-COST",
+        "심연 대가 3종 미리보기→고위험 표본 1개 회수",
+        "전투 전 비가역 경고",
+        "선택·제작을 강제하지 않음"
+      ]
+    },
+    {
+      "id": "EV50-D29-CORE-TRIANGULATION",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 29,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "3방향 신호 측정→호출 공간 검사",
+      "telegraphSpaceText": "35초, 3말뚝 순차 가능",
+      "failureAlternativeText": "위치 실패 시 말뚝 무료 재배치 1회",
+      "pressureProfileId": "PR50-BOSS-PRELUDE-30",
+      "partyThreat": [
+        50,
+        65,
+        80
+      ],
+      "requiredConnectionText": "C20·호출",
+      "rewardText": "렌즈·호출 보충",
+      "raw": [
+        "EV50-D29-CORE-TRIANGULATION",
+        "3방향 신호 측정→호출 공간 검사",
+        "35초, 3말뚝 순차 가능",
+        "위치 실패 시 말뚝 무료 재배치 1회"
+      ]
+    },
+    {
+      "id": "EV50-D31-BREAK-TELEMETRY",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 31,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "서로 다른 브레이크 수단 3개 기록",
+      "telegraphSpaceText": "훈련 보상 없음 태그 대상 포함 가능",
+      "failureAlternativeText": "1인도 actionTag 3개로 완료",
+      "pressureProfileId": "PR50-HEAVY-CHANNEL",
+      "partyThreat": [
+        50,
+        65,
+        80
+      ],
+      "requiredConnectionText": "C21, RS-D31",
+      "rewardText": "경화 골재",
+      "raw": [
+        "EV50-D31-BREAK-TELEMETRY",
+        "서로 다른 브레이크 수단 3개 기록",
+        "훈련 보상 없음 태그 대상 포함 가능",
+        "1인도 actionTag 3개로 완료"
+      ]
+    },
+    {
+      "id": "EV50-D32-TAG-TRIAL",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 32,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "INTERRUPTIBLE/PARTIAL/UNBREAKABLE 각각 1회 대응",
+      "telegraphSpaceText": "문자+아이콘+소리",
+      "failureAlternativeText": "실패 기록도 연구 비교에 인정, 보상은 성공분만",
+      "pressureProfileId": "PR50-INTERRUPT-TAGS",
+      "partyThreat": [
+        53,
+        69,
+        85
+      ],
+      "requiredConnectionText": "중단 태그",
+      "rewardText": "공진 코일",
+      "raw": [
+        "EV50-D32-TAG-TRIAL",
+        "INTERRUPTIBLE/PARTIAL/UNBREAKABLE 각각 1회 대응",
+        "문자+아이콘+소리",
+        "실패 기록도 연구 비교에 인정, 보상은 성공분만"
+      ]
+    },
+    {
+      "id": "EV50-D33-SIEGE-BORE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 33,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "시설 또는 이동 신호 2목표 중 하나 보호",
+      "telegraphSpaceText": "건축 무차별 파괴 없음",
+      "failureAlternativeText": "시설 없으면 파티 표식 추적 모드",
+      "pressureProfileId": "PR50-FACILITY-SIEGE",
+      "partyThreat": [
+        56,
+        73,
+        90
+      ],
+      "requiredConnectionText": "C22",
+      "rewardText": "수리·골재",
+      "raw": [
+        "EV50-D33-SIEGE-BORE",
+        "시설 또는 이동 신호 2목표 중 하나 보호",
+        "건축 무차별 파괴 없음",
+        "시설 없으면 파티 표식 추적 모드"
+      ]
+    },
+    {
+      "id": "EV50-D34-METHOD-DECAY",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 34,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "같은 수단 2회→다른 수단 교대",
+      "telegraphSpaceText": "감쇠 수치 HUD",
+      "failureAlternativeText": "특정 무기 불필요, 회피 후 공격도 다른 축",
+      "pressureProfileId": "PR50-PARRY-LEARN",
+      "partyThreat": [
+        59,
+        77,
+        94
+      ],
+      "requiredConnectionText": "C23",
+      "rewardText": "패턴 잔재",
+      "raw": [
+        "EV50-D34-METHOD-DECAY",
+        "같은 수단 2회→다른 수단 교대",
+        "감쇠 수치 HUD",
+        "특정 무기 불필요, 회피 후 공격도 다른 축"
+      ]
+    },
+    {
+      "id": "EV50-D35-FOUR-AUTHORITIES",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 35,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "부품 A~D 기록 비교, 전투 중 2개 신호 보호",
+      "telegraphSpaceText": "부품 소각·월드 드롭 없음",
+      "failureAlternativeText": "원장 불일치 시 사건 동결·감사",
+      "pressureProfileId": "PR50-AUGMENTED-BREAK",
+      "partyThreat": [
+        62,
+        81,
+        99
+      ],
+      "requiredConnectionText": "Lv35·기록",
+      "rewardText": "공진·연구",
+      "raw": [
+        "EV50-D35-FOUR-AUTHORITIES",
+        "부품 A~D 기록 비교, 전투 중 2개 신호 보호",
+        "부품 소각·월드 드롭 없음",
+        "원장 불일치 시 사건 동결·감사"
+      ]
+    },
+    {
+      "id": "EV50-D36-RESIDUAL-FIELD",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 36,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "채널 중단→남은 장판 3개 안전 해제",
+      "telegraphSpaceText": "PARTIAL 아이콘",
+      "failureAlternativeText": "중단 성공이 장판 삭제로 오인되지 않게 표시",
+      "pressureProfileId": "PR50-RESIDUAL-HAZARD",
+      "partyThreat": [
+        65,
+        85,
+        104
+      ],
+      "requiredConnectionText": "C24",
+      "rewardText": "패턴 잔재",
+      "raw": [
+        "EV50-D36-RESIDUAL-FIELD",
+        "채널 중단→남은 장판 3개 안전 해제",
+        "PARTIAL 아이콘",
+        "중단 성공이 장판 삭제로 오인되지 않게 표시"
+      ]
+    },
+    {
+      "id": "EV50-D37-BREAK-SUTURE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 37,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "봉합자 채널 2회 중단→주요 적 브레이크",
+      "telegraphSpaceText": "지원 1체 상한",
+      "failureAlternativeText": "봉합 회복은 게이지 15%/회, HP 회복 없음",
+      "pressureProfileId": "PR50-BREAK-HEALER",
+      "partyThreat": [
+        68,
+        88,
+        109
+      ],
+      "requiredConnectionText": "수단 교대",
+      "rewardText": "고밀도 합금",
+      "raw": [
+        "EV50-D37-BREAK-SUTURE",
+        "봉합자 채널 2회 중단→주요 적 브레이크",
+        "지원 1체 상한",
+        "봉합 회복은 게이지 15%/회, HP 회복 없음"
+      ]
+    },
+    {
+      "id": "EV50-D38-PHASE-ELITE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 38,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "3페이즈 브레이크·내성 관측",
+      "telegraphSpaceText": "페이즈 전환 3초 안전",
+      "failureAlternativeText": "게이지 0, 누적 내성 유지",
+      "pressureProfileId": "PR50-PHASE-ELITE",
+      "partyThreat": [
+        72,
+        94,
+        115
+      ],
+      "requiredConnectionText": "RS-D36",
+      "rewardText": "위상 기록·합금",
+      "raw": [
+        "EV50-D38-PHASE-ELITE",
+        "3페이즈 브레이크·내성 관측",
+        "페이즈 전환 3초 안전",
+        "게이지 0, 누적 내성 유지"
+      ]
+    },
+    {
+      "id": "EV50-D39-INTERRUPT-CORE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 39,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "패턴 4종 기록→호출 세트 공간 검사",
+      "telegraphSpaceText": "40초 보스 전조",
+      "failureAlternativeText": "호출 소비는 Day 40 전 금지",
+      "pressureProfileId": "PR50-BOSS-PRELUDE-40",
+      "partyThreat": [
+        76,
+        99,
+        122
+      ],
+      "requiredConnectionText": "C26·호출",
+      "rewardText": "중단 코어",
+      "raw": [
+        "EV50-D39-INTERRUPT-CORE",
+        "패턴 4종 기록→호출 세트 공간 검사",
+        "40초 보스 전조",
+        "호출 소비는 Day 40 전 금지"
+      ]
+    },
+    {
+      "id": "EV50-D41-FOUR-PARTS",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 41,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "A~D 공명선 4개 순차 확인",
+      "telegraphSpaceText": "시설 또는 휴대 원장",
+      "failureAlternativeText": "부품은 존재 증명만, 손상 없음",
+      "pressureProfileId": "PR50-AUGMENT-HERALD",
+      "partyThreat": [
+        64,
+        83,
+        102
+      ],
+      "requiredConnectionText": "C27, 연구 A",
+      "rewardText": "안정 프레임",
+      "raw": [
+        "EV50-D41-FOUR-PARTS",
+        "A~D 공명선 4개 순차 확인",
+        "시설 또는 휴대 원장",
+        "부품은 존재 증명만, 손상 없음"
+      ]
+    },
+    {
+      "id": "EV50-D42-POWER-TEST",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 42,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "출력 60초 중 45초 유효 유지",
+      "telegraphSpaceText": "FAC-R02 또는 시험 프레임",
+      "failureAlternativeText": "실패 축 공개, 재료 추가 소각 없음",
+      "pressureProfileId": "PR50-RIFT-POWER",
+      "partyThreat": [
+        68,
+        88,
+        109
+      ],
+      "requiredConnectionText": "C28-B",
+      "rewardText": "동력 행렬",
+      "raw": [
+        "EV50-D42-POWER-TEST",
+        "출력 60초 중 45초 유효 유지",
+        "FAC-R02 또는 시험 프레임",
+        "실패 축 공개, 재료 추가 소각 없음"
+      ]
+    },
+    {
+      "id": "EV50-D43-CONTRADICTION",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 43,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "상충 증강 2쌍 판독→안전 조합 선택",
+      "telegraphSpaceText": "선택은 전투 프로필에만",
+      "failureAlternativeText": "영구 증강 변경 없음",
+      "pressureProfileId": "PR50-DUAL-AUGMENT",
+      "partyThreat": [
+        72,
+        94,
+        115
+      ],
+      "requiredConnectionText": "C28-C/D",
+      "rewardText": "렌즈·정화 행렬",
+      "raw": [
+        "EV50-D43-CONTRADICTION",
+        "상충 증강 2쌍 판독→안전 조합 선택",
+        "선택은 전투 프로필에만",
+        "영구 증강 변경 없음"
+      ]
+    },
+    {
+      "id": "EV50-D44-SPLIT-RETURN",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 44,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "시설/파티 2목표를 순차 또는 분담 방어",
+      "telegraphSpaceText": "1인 순차 시간 +30초",
+      "failureAlternativeText": "두 목표 동시 입력 금지",
+      "pressureProfileId": "PR50-SPLIT-FRONT",
+      "partyThreat": [
+        76,
+        99,
+        122
+      ],
+      "requiredConnectionText": "시설/유목 분기",
+      "rewardText": "안정 프레임",
+      "raw": [
+        "EV50-D44-SPLIT-RETURN",
+        "시설/파티 2목표를 순차 또는 분담 방어",
+        "1인 순차 시간 +30초",
+        "두 목표 동시 입력 금지"
+      ]
+    },
+    {
+      "id": "EV50-D45-BUILD-SUMMARY",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 45,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "최종 태그 요약 확인→재련 전환 1회 미리보기",
+      "telegraphSpaceText": "성능 평가·순위 없음",
+      "failureAlternativeText": "선택하지 않아도 완료",
+      "pressureProfileId": "PR50-FINAL-BUILD",
+      "partyThreat": [
+        80,
+        104,
+        128
+      ],
+      "requiredConnectionText": "Lv45 접근",
+      "rewardText": "재련 전환 자원",
+      "raw": [
+        "EV50-D45-BUILD-SUMMARY",
+        "최종 태그 요약 확인→재련 전환 1회 미리보기",
+        "성능 평가·순위 없음",
+        "선택하지 않아도 완료"
+      ]
+    },
+    {
+      "id": "EV50-D46-BOSS-ECHO",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 46,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "이전 보스 축 1개 축약 정예 대응",
+      "telegraphSpaceText": "원본보다 피해·복잡도 낮음",
+      "failureAlternativeText": "보스 고유 보상·부품 없음",
+      "pressureProfileId": "PR50-ECHO-ELITE",
+      "partyThreat": [
+        84,
+        109,
+        134
+      ],
+      "requiredConnectionText": "마지막 개인 증강",
+      "rewardText": "패턴 잔재",
+      "raw": [
+        "EV50-D46-BOSS-ECHO",
+        "이전 보스 축 1개 축약 정예 대응",
+        "원본보다 피해·복잡도 낮음",
+        "보스 고유 보상·부품 없음"
+      ]
+    },
+    {
+      "id": "EV50-D47-RELAY-LINE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 47,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "이동 중계 3점 연결→60초 유지",
+      "telegraphSpaceText": "경로 40~80m, 강제 고정 기지 없음",
+      "failureAlternativeText": "휴대 중계기 3개 대체",
+      "pressureProfileId": "PR50-MOVING-RELAY",
+      "partyThreat": [
+        88,
+        114,
+        141
+      ],
+      "requiredConnectionText": "RS-D47",
+      "rewardText": "동력·렌즈",
+      "raw": [
+        "EV50-D47-RELAY-LINE",
+        "이동 중계 3점 연결→60초 유지",
+        "경로 40~80m, 강제 고정 기지 없음",
+        "휴대 중계기 3개 대체"
+      ]
+    },
+    {
+      "id": "EV50-D48-FOUR-SYSTEMS",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 48,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "R01~R04 시험 중 3개 성공→나머지 복구",
+      "telegraphSpaceText": "동시 작업 2개 상한",
+      "failureAlternativeText": "한 축 실패가 완료 축을 초기화하지 않음",
+      "pressureProfileId": "PR50-RECONSTRUCTION-SIEGE",
+      "partyThreat": [
+        92,
+        120,
+        147
+      ],
+      "requiredConnectionText": "C28 완료",
+      "rewardText": "R01~R04 재료",
+      "raw": [
+        "EV50-D48-FOUR-SYSTEMS",
+        "R01~R04 시험 중 3개 성공→나머지 복구",
+        "동시 작업 2개 상한",
+        "한 축 실패가 완료 축을 초기화하지 않음"
+      ]
+    },
+    {
+      "id": "EV50-D49-THREE-CALIBRATIONS",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 49,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "방향·출력·정화 오차 3축 교정",
+      "telegraphSpaceText": "세 말뚝 순차",
+      "failureAlternativeText": "3회 실패 시 오차 범위·축 전부 공개",
+      "pressureProfileId": "PR50-COLLAPSE-GATE",
+      "partyThreat": [
+        96,
+        125,
+        154
+      ],
+      "requiredConnectionText": "C29·키",
+      "rewardText": "최종 신호 키 경로",
+      "raw": [
+        "EV50-D49-THREE-CALIBRATIONS",
+        "방향·출력·정화 오차 3축 교정",
+        "세 말뚝 순차",
+        "3회 실패 시 오차 범위·축 전부 공개"
+      ]
+    },
+    {
+      "id": "EV50-D50-READINESS",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 50,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "objectiveText": "누락 범주 검사→해금 경로 1개 강화",
+      "telegraphSpaceText": "Final 시작 전만",
+      "failureAlternativeText": "Final 키·부품·C30 직접 지급 없음",
+      "pressureProfileId": "PR50-FINAL-WAIT",
+      "partyThreat": [
+        100,
+        130,
+        160
+      ],
+      "requiredConnectionText": "Day 잠금·Final",
+      "rewardText": "준비 보충, 새 고유품 없음",
+      "raw": [
+        "EV50-D50-READINESS",
+        "누락 범주 검사→해금 경로 1개 강화",
+        "Final 시작 전만",
+        "Final 키·부품·C30 직접 지급 없음"
+      ]
+    },
+    {
+      "id": "PR50-CORRUPTION-TRAIL",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 21,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D21·D22 + CHASER",
+      "waveCount": 3,
+      "limitText": "오염 흔적 2개",
+      "dayAssignments": [
+        {
+          "day": 21,
+          "partyThreat": [
+            32,
+            42,
+            51
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-CORRUPTION-TRAIL",
+        "D21·D22 + CHASER",
+        "3",
+        "오염 흔적 2개"
+      ]
+    },
+    {
+      "id": "PR50-MUTATION-SPLIT",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 22,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D22 + 일반 두 역할",
+      "waveCount": 3,
+      "limitText": "변이 2축, 강한 CC 1",
+      "dayAssignments": [
+        {
+          "day": 22,
+          "partyThreat": [
+            34,
+            44,
+            54
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-MUTATION-SPLIT",
+        "D22 + 일반 두 역할",
+        "3",
+        "변이 2축, 강한 CC 1"
+      ]
+    },
+    {
+      "id": "PR50-PURIFY-JAM",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 23,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D23·D27 + 지원",
+      "waveCount": 3,
+      "limitText": "지원 1, 방해선 1",
+      "dayAssignments": [
+        {
+          "day": 23,
+          "partyThreat": [
+            36,
+            47,
+            58
+          ]
+        },
+        {
+          "day": 27,
+          "partyThreat": [
+            44,
+            57,
+            70
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-PURIFY-JAM",
+        "D23·D27 + 지원",
+        "3",
+        "지원 1, 방해선 1"
+      ]
+    },
+    {
+      "id": "PR50-CARGO-HUNT",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 24,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D24 + FLANKER",
+      "waveCount": 3,
+      "limitText": "공성 1, 아이템 강탈 금지",
+      "dayAssignments": [
+        {
+          "day": 24,
+          "partyThreat": [
+            38,
+            49,
+            61
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-CARGO-HUNT",
+        "D24 + FLANKER",
+        "3",
+        "공성 1, 아이템 강탈 금지"
+      ]
+    },
+    {
+      "id": "PR50-AUGMENTED-MUTATION",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 25,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D28-E01 + 일반",
+      "waveCount": 3,
+      "limitText": "정예 1, 상충 조합 금지",
+      "dayAssignments": [
+        {
+          "day": 25,
+          "partyThreat": [
+            40,
+            52,
+            64
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-AUGMENTED-MUTATION",
+        "D28-E01 + 일반",
+        "3",
+        "정예 1, 상충 조합 금지"
+      ]
+    },
+    {
+      "id": "PR50-DUAL-OBJECTIVE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 26,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D24·D27",
+      "waveCount": 3,
+      "limitText": "시설/파티 순차 가능",
+      "dayAssignments": [
+        {
+          "day": 26,
+          "partyThreat": [
+            42,
+            55,
+            67
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-DUAL-OBJECTIVE",
+        "D24·D27",
+        "3",
+        "시설/파티 순차 가능"
+      ]
+    },
+    {
+      "id": "PR50-ELITE-MUTATION",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 28,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D28-E01 + D21~27",
+      "waveCount": 4,
+      "limitText": "정예 1, 활성 12",
+      "dayAssignments": [
+        {
+          "day": 28,
+          "partyThreat": [
+            47,
+            61,
+            75
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-ELITE-MUTATION",
+        "D28-E01 + D21~27",
+        "4",
+        "정예 1, 활성 12"
+      ]
+    },
+    {
+      "id": "PR50-BOSS-PRELUDE-30",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 29,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D27·D28-E01",
+      "waveCount": 4,
+      "limitText": "보스 패턴 복제 금지",
+      "dayAssignments": [
+        {
+          "day": 29,
+          "partyThreat": [
+            50,
+            65,
+            80
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-BOSS-PRELUDE-30",
+        "D27·D28-E01",
+        "4",
+        "보스 패턴 복제 금지"
+      ]
+    },
+    {
+      "id": "PR50-HEAVY-CHANNEL",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 31,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D31 + DEFENDER",
+      "waveCount": 3,
+      "limitText": "채널 1개",
+      "dayAssignments": [
+        {
+          "day": 31,
+          "partyThreat": [
+            50,
+            65,
+            80
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-HEAVY-CHANNEL",
+        "D31 + DEFENDER",
+        "3",
+        "채널 1개"
+      ]
+    },
+    {
+      "id": "PR50-INTERRUPT-TAGS",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 32,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D31·D34",
+      "waveCount": 3,
+      "limitText": "중단 불가+강한 CC 동시 금지",
+      "dayAssignments": [
+        {
+          "day": 32,
+          "partyThreat": [
+            53,
+            69,
+            85
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-INTERRUPT-TAGS",
+        "D31·D34",
+        "3",
+        "중단 불가+강한 CC 동시 금지"
+      ]
+    },
+    {
+      "id": "PR50-FACILITY-SIEGE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 33,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D33 + 일반",
+      "waveCount": 4,
+      "limitText": "공성 1, 건축 파괴 금지",
+      "dayAssignments": [
+        {
+          "day": 33,
+          "partyThreat": [
+            56,
+            73,
+            90
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-FACILITY-SIEGE",
+        "D33 + 일반",
+        "4",
+        "공성 1, 건축 파괴 금지"
+      ]
+    },
+    {
+      "id": "PR50-PARRY-LEARN",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 34,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D34 + D31",
+      "waveCount": 4,
+      "limitText": "수단 감쇠 공개",
+      "dayAssignments": [
+        {
+          "day": 34,
+          "partyThreat": [
+            59,
+            77,
+            94
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-PARRY-LEARN",
+        "D34 + D31",
+        "4",
+        "수단 감쇠 공개"
+      ]
+    },
+    {
+      "id": "PR50-AUGMENTED-BREAK",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 35,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D38-E01 + D31~37",
+      "waveCount": 4,
+      "limitText": "정예 1, 지원 1",
+      "dayAssignments": [
+        {
+          "day": 35,
+          "partyThreat": [
+            62,
+            81,
+            99
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-AUGMENTED-BREAK",
+        "D38-E01 + D31~37",
+        "4",
+        "정예 1, 지원 1"
+      ]
+    },
+    {
+      "id": "PR50-RESIDUAL-HAZARD",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 36,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D31·D37",
+      "waveCount": 4,
+      "limitText": "지속 영역 4",
+      "dayAssignments": [
+        {
+          "day": 36,
+          "partyThreat": [
+            65,
+            85,
+            104
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-RESIDUAL-HAZARD",
+        "D31·D37",
+        "4",
+        "지속 영역 4"
+      ]
+    },
+    {
+      "id": "PR50-BREAK-HEALER",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 37,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D37 + D33",
+      "waveCount": 4,
+      "limitText": "봉합자 1",
+      "dayAssignments": [
+        {
+          "day": 37,
+          "partyThreat": [
+            68,
+            88,
+            109
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-BREAK-HEALER",
+        "D37 + D33",
+        "4",
+        "봉합자 1"
+      ]
+    },
+    {
+      "id": "PR50-PHASE-ELITE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 38,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D38-E01 + 일반",
+      "waveCount": 4,
+      "limitText": "페이즈 전환 중 새 웨이브 금지",
+      "dayAssignments": [
+        {
+          "day": 38,
+          "partyThreat": [
+            72,
+            94,
+            115
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-PHASE-ELITE",
+        "D38-E01 + 일반",
+        "4",
+        "페이즈 전환 중 새 웨이브 금지"
+      ]
+    },
+    {
+      "id": "PR50-BOSS-PRELUDE-40",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 39,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D37·D38-E01",
+      "waveCount": 4,
+      "limitText": "정예 1, 전조 3",
+      "dayAssignments": [
+        {
+          "day": 39,
+          "partyThreat": [
+            76,
+            99,
+            122
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-BOSS-PRELUDE-40",
+        "D37·D38-E01",
+        "4",
+        "정예 1, 전조 3"
+      ]
+    },
+    {
+      "id": "PR50-AUGMENT-HERALD",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 41,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D41 + 일반",
+      "waveCount": 3,
+      "limitText": "적 증강 2, 같은 축 금지",
+      "dayAssignments": [
+        {
+          "day": 41,
+          "partyThreat": [
+            64,
+            83,
+            102
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-AUGMENT-HERALD",
+        "D41 + 일반",
+        "3",
+        "적 증강 2, 같은 축 금지"
+      ]
+    },
+    {
+      "id": "PR50-RIFT-POWER",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 42,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D41 + D47",
+      "waveCount": 4,
+      "limitText": "중계 차단 1",
+      "dayAssignments": [
+        {
+          "day": 42,
+          "partyThreat": [
+            68,
+            88,
+            109
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-RIFT-POWER",
+        "D41 + D47",
+        "4",
+        "중계 차단 1"
+      ]
+    },
+    {
+      "id": "PR50-DUAL-AUGMENT",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 43,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D41 + D44",
+      "waveCount": 4,
+      "limitText": "강한 CC 증강 2개 금지",
+      "dayAssignments": [
+        {
+          "day": 43,
+          "partyThreat": [
+            72,
+            94,
+            115
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-DUAL-AUGMENT",
+        "D41 + D44",
+        "4",
+        "강한 CC 증강 2개 금지"
+      ]
+    },
+    {
+      "id": "PR50-SPLIT-FRONT",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 44,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D44 + D41",
+      "waveCount": 4,
+      "limitText": "공성 1, 순차 가능",
+      "dayAssignments": [
+        {
+          "day": 44,
+          "partyThreat": [
+            76,
+            99,
+            122
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-SPLIT-FRONT",
+        "D44 + D41",
+        "4",
+        "공성 1, 순차 가능"
+      ]
+    },
+    {
+      "id": "PR50-FINAL-BUILD",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 45,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D41·D47",
+      "waveCount": 4,
+      "limitText": "새 수직 성장 없음",
+      "dayAssignments": [
+        {
+          "day": 45,
+          "partyThreat": [
+            80,
+            104,
+            128
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-FINAL-BUILD",
+        "D41·D47",
+        "4",
+        "새 수직 성장 없음"
+      ]
+    },
+    {
+      "id": "PR50-ECHO-ELITE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 46,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D46-E01 + 일반",
+      "waveCount": 5,
+      "limitText": "정예 1, 원본 보스보다 약함",
+      "dayAssignments": [
+        {
+          "day": 46,
+          "partyThreat": [
+            84,
+            109,
+            134
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-ECHO-ELITE",
+        "D46-E01 + 일반",
+        "5",
+        "정예 1, 원본 보스보다 약함"
+      ]
+    },
+    {
+      "id": "PR50-MOVING-RELAY",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 47,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D47 + CHASER",
+      "waveCount": 5,
+      "limitText": "이동 봉쇄+정화 봉쇄 금지",
+      "dayAssignments": [
+        {
+          "day": 47,
+          "partyThreat": [
+            88,
+            114,
+            141
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-MOVING-RELAY",
+        "D47 + CHASER",
+        "5",
+        "이동 봉쇄+정화 봉쇄 금지"
+      ]
+    },
+    {
+      "id": "PR50-RECONSTRUCTION-SIEGE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 48,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D44·D47 + D46-E01",
+      "waveCount": 5,
+      "limitText": "정예 1·공성 1·지원 1",
+      "dayAssignments": [
+        {
+          "day": 48,
+          "partyThreat": [
+            92,
+            120,
+            147
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-RECONSTRUCTION-SIEGE",
+        "D44·D47 + D46-E01",
+        "5",
+        "정예 1·공성 1·지원 1"
+      ]
+    },
+    {
+      "id": "PR50-COLLAPSE-GATE",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 49,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D49-E01 + D41~47",
+      "waveCount": 5,
+      "limitText": "정예 1, 3축 중 2개만",
+      "dayAssignments": [
+        {
+          "day": 49,
+          "partyThreat": [
+            96,
+            125,
+            154
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-COLLAPSE-GATE",
+        "D49-E01 + D41~47",
+        "5",
+        "정예 1, 3축 중 2개만"
+      ]
+    },
+    {
+      "id": "PR50-FINAL-WAIT",
+      "sourceDocumentId": "EVENT-DATA-D50-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 50,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "enemyPoolText": "D49-E01 + 후반 일반",
+      "waveCount": 5,
+      "limitText": "Final 활성 즉시 취소·정리",
+      "dayAssignments": [
+        {
+          "day": 50,
+          "partyThreat": [
+            100,
+            130,
+            160
+          ]
+        }
+      ],
+      "raw": [
+        "PR50-FINAL-WAIT",
+        "D49-E01 + 후반 일반",
+        "5",
+        "Final 활성 즉시 취소·정리"
+      ]
+    }
+  ]
+}

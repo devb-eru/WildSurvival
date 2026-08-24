@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "contentRevision",
+    "domain",
+    "records"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "contentRevision": {
+      "const": "ws-content-r2.1"
+    },
+    "domain": {
+      "const": "items"
+    },
+    "records": {
+      "type": "array",
+      "minItems": 62,
+      "maxItems": 62,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "sourceDocumentId",
+          "enabled",
+          "codexIndex",
+          "textKey",
+          "customModelKey",
+          "name",
+          "firstDay",
+          "displayMaterial",
+          "category",
+          "stackLimit",
+          "ownership",
+          "usePolicy",
+          "connectedFacilityId",
+          "effectText",
+          "constraintText",
+          "recipeId",
+          "requiredResearchId",
+          "minimumFacilityLevel",
+          "channelTicks",
+          "perTargetRunLimit",
+          "wipeAllowed",
+          "progressionReservePolicy",
+          "raw"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^WSI-"
+          },
+          "sourceDocumentId": {
+            "const": "ITEM-LIST-001"
+          },
+          "enabled": {
+            "const": true
+          },
+          "codexIndex": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 199
+          },
+          "textKey": {
+            "type": "string",
+            "pattern": "^item\\.wildsurvival\\.[a-z0-9_]+$"
+          },
+          "customModelKey": {
+            "type": "string",
+            "pattern": "^wildsurvival:item/[a-z0-9_]+$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "firstDay": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "displayMaterial": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$"
+          },
+          "category": {
+            "enum": [
+              "CONS",
+              "AMMO",
+              "PORTABLE",
+              "FAC",
+              "CALL",
+              "REVIVAL"
+            ]
+          },
+          "stackLimit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 64
+          },
+          "ownership": {
+            "enum": [
+              "PERSONAL",
+              "PARTY",
+              "PARTY_BOUND"
+            ]
+          },
+          "usePolicy": {
+            "enum": [
+              "QUICK_BINDABLE",
+              "AMMO_LEDGER_DEPOSIT",
+              "PORTABLE_FACILITY_ACTION",
+              "FACILITY_PLACEMENT",
+              "BOSS_CALL_TRANSACTION",
+              "FACILITY_REVIVAL_TRANSACTION"
+            ]
+          },
+          "connectedFacilityId": {
+            "type": "string",
+            "pattern": "^(?:|FAC-[PCSD][0-9]{2})$"
+          },
+          "effectText": {
+            "type": "string",
+            "minLength": 1
+          },
+          "constraintText": {
+            "type": "string"
+          },
+          "recipeId": {
+            "type": "string",
+            "pattern": "^WSRCP-[A-Z0-9-]+$"
+          },
+          "requiredResearchId": {
+            "type": "string"
+          },
+          "minimumFacilityLevel": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "channelTicks": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "perTargetRunLimit": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "wipeAllowed": {
+            "type": "boolean"
+          },
+          "progressionReservePolicy": {
+            "type": "string"
+          },
+          "raw": {
+            "type": "array",
+            "minItems": 8,
+            "maxItems": 9,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

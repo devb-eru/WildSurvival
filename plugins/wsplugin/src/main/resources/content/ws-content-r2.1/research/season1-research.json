@@ -1,0 +1,907 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "research",
+  "records": [
+    {
+      "id": "RS-D01-SAMPLE",
+      "costId": "RCOST-RS-D01-SAMPLE",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 1,
+      "prerequisiteText": "D1, C01 단서",
+      "comparisonInput": "환경/광물 서로 다른 2개",
+      "cost": {
+        "general": 4,
+        "metal": 0,
+        "signal": 0,
+        "specialist": 0
+      },
+      "durationSeconds": 30,
+      "unlockText": "표본 PDC 판독, FAC-P03·P04",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D01-SAMPLE",
+        "D1, C01 단서",
+        "환경/광물 서로 다른 2개",
+        "4/0/0/0, 30초",
+        "표본 PDC 판독, FAC-P03·P04"
+      ]
+    },
+    {
+      "id": "RS-D03-SEPARATION",
+      "costId": "RCOST-RS-D03-SEPARATION",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 3,
+      "prerequisiteText": "D3, C03",
+      "comparisonInput": "오염 전후 1쌍+광물 1",
+      "cost": {
+        "general": 6,
+        "metal": 2,
+        "signal": 0,
+        "specialist": 0
+      },
+      "durationSeconds": 45,
+      "unlockText": "기초 분리·정화 필터",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D03-SEPARATION",
+        "D3, C03",
+        "오염 전후 1쌍+광물 1",
+        "6/2/0/0, 45초",
+        "기초 분리·정화 필터"
+      ]
+    },
+    {
+      "id": "RS-D05-DOCTRINE-I",
+      "costId": "RCOST-RS-D05-DOCTRINE-I",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 5,
+      "prerequisiteText": "D5, 일반 전략 2종 관측",
+      "comparisonInput": "역할 2종+패턴 기록 2",
+      "cost": {
+        "general": 4,
+        "metal": 2,
+        "signal": 2,
+        "specialist": 0
+      },
+      "durationSeconds": 60,
+      "unlockText": "일반 적군 교리 Lv1~2",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D05-DOCTRINE-I",
+        "D5, 일반 전략 2종 관측",
+        "역할 2종+패턴 기록 2",
+        "4/2/2/0, 60초",
+        "일반 적군 교리 Lv1~2"
+      ]
+    },
+    {
+      "id": "RS-D07-FIELD-REPAIR",
+      "costId": "RCOST-RS-D07-FIELD-REPAIR",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 7,
+      "prerequisiteText": "D7, 장비 손상·수리",
+      "comparisonInput": "성공/실패 수리 기록",
+      "cost": {
+        "general": 8,
+        "metal": 4,
+        "signal": 0,
+        "specialist": 0
+      },
+      "durationSeconds": 50,
+      "unlockText": "야전 수리 키트 효율, BROKEN 판독",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D07-FIELD-REPAIR",
+        "D7, 장비 손상·수리",
+        "성공/실패 수리 기록",
+        "8/4/0/0, 50초",
+        "야전 수리 키트 효율, BROKEN 판독"
+      ]
+    },
+    {
+      "id": "RS-D09-RESONANCE",
+      "costId": "RCOST-RS-D09-RESONANCE",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 9,
+      "prerequisiteText": "D9, C08",
+      "comparisonInput": "공진 표본 2출처",
+      "cost": {
+        "general": 4,
+        "metal": 2,
+        "signal": 6,
+        "specialist": 0
+      },
+      "durationSeconds": 75,
+      "unlockText": "Day 10 신호 오차 범위, FAC-P06",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D09-RESONANCE",
+        "D9, C08",
+        "공진 표본 2출처",
+        "4/2/6/0, 75초",
+        "Day 10 신호 오차 범위, FAC-P06"
+      ]
+    },
+    {
+      "id": "RS-D11-NEURAL",
+      "costId": "RCOST-RS-D11-NEURAL",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 11,
+      "prerequisiteText": "D11, C10",
+      "comparisonInput": "생체 2역할+침묵 관측",
+      "cost": {
+        "general": 6,
+        "metal": 4,
+        "signal": 4,
+        "specialist": 2
+      },
+      "durationSeconds": 80,
+      "unlockText": "신경성 상태 도감·해독제",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D11-NEURAL",
+        "D11, C10",
+        "생체 2역할+침묵 관측",
+        "6/4/4/2, 80초",
+        "신경성 상태 도감·해독제"
+      ]
+    },
+    {
+      "id": "RS-D13-TOXIN",
+      "costId": "RCOST-RS-D13-TOXIN",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 13,
+      "prerequisiteText": "D13, 해독 실험",
+      "comparisonInput": "BEFORE_AFTER 2쌍",
+      "cost": {
+        "general": 8,
+        "metal": 2,
+        "signal": 2,
+        "specialist": 4
+      },
+      "durationSeconds": 90,
+      "unlockText": "독·출혈 정화 우선순위",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D13-TOXIN",
+        "D13, 해독 실험",
+        "BEFORE_AFTER 2쌍",
+        "8/2/2/4, 90초",
+        "독·출혈 정화 우선순위"
+      ]
+    },
+    {
+      "id": "RS-D15-DOCTRINE-II",
+      "costId": "RCOST-RS-D15-DOCTRINE-II",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 15,
+      "prerequisiteText": "D15, 교리 I",
+      "comparisonInput": "전략 4종+정예 기록",
+      "cost": {
+        "general": 6,
+        "metal": 4,
+        "signal": 8,
+        "specialist": 4
+      },
+      "durationSeconds": 100,
+      "unlockText": "일반 교리 Lv3~5, 보스 교리 Lv1",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D15-DOCTRINE-II",
+        "D15, 교리 I",
+        "전략 4종+정예 기록",
+        "6/4/8/4, 100초",
+        "일반 교리 Lv3~5, 보스 교리 Lv1"
+      ]
+    },
+    {
+      "id": "RS-D18-JAMMING",
+      "costId": "RCOST-RS-D18-JAMMING",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 18,
+      "prerequisiteText": "D18, C12",
+      "comparisonInput": "구조·공진 2축",
+      "cost": {
+        "general": 8,
+        "metal": 6,
+        "signal": 8,
+        "specialist": 6
+      },
+      "durationSeconds": 110,
+      "unlockText": "시설 방해 경고·차폐 모듈",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D18-JAMMING",
+        "D18, C12",
+        "구조·공진 2축",
+        "8/6/8/6, 110초",
+        "시설 방해 경고·차폐 모듈"
+      ]
+    },
+    {
+      "id": "RS-D20-AMALGAM",
+      "costId": "RCOST-RS-D20-AMALGAM",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 20,
+      "prerequisiteText": "D20, BOSS-002 결과",
+      "comparisonInput": "보스 표본+구조 성공/실패",
+      "cost": {
+        "general": 6,
+        "metal": 8,
+        "signal": 10,
+        "specialist": 6
+      },
+      "durationSeconds": 120,
+      "unlockText": "신경 접합 대응 도감, 부품 B 판독",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D20-AMALGAM",
+        "D20, BOSS-002 결과",
+        "보스 표본+구조 성공/실패",
+        "6/8/10/6, 120초",
+        "신경 접합 대응 도감, 부품 B 판독"
+      ]
+    },
+    {
+      "id": "RS-D21-MOBILE-PURIFY",
+      "costId": "RCOST-RS-D21-MOBILE-PURIFY",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 21,
+      "prerequisiteText": "D21, C14",
+      "comparisonInput": "정화 전후 2쌍+환경 2종",
+      "cost": {
+        "general": 8,
+        "metal": 6,
+        "signal": 8,
+        "specialist": 10
+      },
+      "durationSeconds": 100,
+      "unlockText": "정화 촉매, FAC-P05 효율",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D21-MOBILE-PURIFY",
+        "D21, C14",
+        "정화 전후 2쌍+환경 2종",
+        "8/6/8/10, 100초",
+        "정화 촉매, FAC-P05 효율"
+      ]
+    },
+    {
+      "id": "RS-D23-MUTATION-MAP",
+      "costId": "RCOST-RS-D23-MUTATION-MAP",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 23,
+      "prerequisiteText": "D23, C16",
+      "comparisonInput": "변이 3범주·2출처",
+      "cost": {
+        "general": 6,
+        "metal": 8,
+        "signal": 10,
+        "specialist": 12
+      },
+      "durationSeconds": 120,
+      "unlockText": "변이 충돌표, 정제 변이 파편",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D23-MUTATION-MAP",
+        "D23, C16",
+        "변이 3범주·2출처",
+        "6/8/10/12, 120초",
+        "변이 충돌표, 정제 변이 파편"
+      ]
+    },
+    {
+      "id": "RS-D25-AUGMENT-RESONANCE",
+      "costId": "RCOST-RS-D25-AUGMENT-RESONANCE",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 25,
+      "prerequisiteText": "D25, Lv25 잠금",
+      "comparisonInput": "개인 증강 관측 3태그",
+      "cost": {
+        "general": 8,
+        "metal": 8,
+        "signal": 12,
+        "specialist": 12
+      },
+      "durationSeconds": 120,
+      "unlockText": "태그 공명 개조·충돌 경고",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D25-AUGMENT-RESONANCE",
+        "D25, Lv25 잠금",
+        "개인 증강 관측 3태그",
+        "8/8/12/12, 120초",
+        "태그 공명 개조·충돌 경고"
+      ]
+    },
+    {
+      "id": "RS-D27-RIFT-STABILITY",
+      "costId": "RCOST-RS-D27-RIFT-STABILITY",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 27,
+      "prerequisiteText": "D27, C19",
+      "comparisonInput": "균열 2문맥+정화 1쌍",
+      "cost": {
+        "general": 10,
+        "metal": 10,
+        "signal": 14,
+        "specialist": 16
+      },
+      "durationSeconds": 140,
+      "unlockText": "안정화 코어·Day 30 호출 준비",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D27-RIFT-STABILITY",
+        "D27, C19",
+        "균열 2문맥+정화 1쌍",
+        "10/10/14/16, 140초",
+        "안정화 코어·Day 30 호출 준비"
+      ]
+    },
+    {
+      "id": "RS-D29-CORE-SIGNAL",
+      "costId": "RCOST-RS-D29-CORE-SIGNAL",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 29,
+      "prerequisiteText": "D29, C20",
+      "comparisonInput": "공진 3방향+변이 기록",
+      "cost": {
+        "general": 8,
+        "metal": 10,
+        "signal": 18,
+        "specialist": 18
+      },
+      "durationSeconds": 150,
+      "unlockText": "BOSS-003 호출 오차·부품 C 판독",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D29-CORE-SIGNAL",
+        "D29, C20",
+        "공진 3방향+변이 기록",
+        "8/10/18/18, 150초",
+        "BOSS-003 호출 오차·부품 C 판독"
+      ]
+    },
+    {
+      "id": "RS-D31-BREAK-TELEMETRY",
+      "costId": "RCOST-RS-D31-BREAK-TELEMETRY",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 31,
+      "prerequisiteText": "D31, C21",
+      "comparisonInput": "서로 다른 브레이크 수단 3",
+      "cost": {
+        "general": 10,
+        "metal": 14,
+        "signal": 14,
+        "specialist": 10
+      },
+      "durationSeconds": 120,
+      "unlockText": "상세 브레이크 UI·경화 골재",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D31-BREAK-TELEMETRY",
+        "D31, C21",
+        "서로 다른 브레이크 수단 3",
+        "10/14/14/10, 120초",
+        "상세 브레이크 UI·경화 골재"
+      ]
+    },
+    {
+      "id": "RS-D33-INTERRUPT",
+      "costId": "RCOST-RS-D33-INTERRUPT",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 33,
+      "prerequisiteText": "D33, C22",
+      "comparisonInput": "중단 성공/실패+채널 2종",
+      "cost": {
+        "general": 10,
+        "metal": 12,
+        "signal": 18,
+        "specialist": 14
+      },
+      "durationSeconds": 140,
+      "unlockText": "중단 태그·공진 코일",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D33-INTERRUPT",
+        "D33, C22",
+        "중단 성공/실패+채널 2종",
+        "10/12/18/14, 140초",
+        "중단 태그·공진 코일"
+      ]
+    },
+    {
+      "id": "RS-D36-PHASE-ARMOR",
+      "costId": "RCOST-RS-D36-PHASE-ARMOR",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 36,
+      "prerequisiteText": "D36, C24",
+      "comparisonInput": "페이즈 전후+상태 변환 2",
+      "cost": {
+        "general": 10,
+        "metal": 16,
+        "signal": 18,
+        "specialist": 16
+      },
+      "durationSeconds": 150,
+      "unlockText": "위상 장갑 대응·심연 브레이크 대가",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D36-PHASE-ARMOR",
+        "D36, C24",
+        "페이즈 전후+상태 변환 2",
+        "10/16/18/16, 150초",
+        "위상 장갑 대응·심연 브레이크 대가"
+      ]
+    },
+    {
+      "id": "RS-D39-RESONANT-BREAKER",
+      "costId": "RCOST-RS-D39-RESONANT-BREAKER",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 39,
+      "prerequisiteText": "D39, C26",
+      "comparisonInput": "패턴 4종+공진 3출처",
+      "cost": {
+        "general": 12,
+        "metal": 18,
+        "signal": 22,
+        "specialist": 20
+      },
+      "durationSeconds": 180,
+      "unlockText": "중단 코어·BOSS-004 호출",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D39-RESONANT-BREAKER",
+        "D39, C26",
+        "패턴 4종+공진 3출처",
+        "12/18/22/20, 180초",
+        "중단 코어·BOSS-004 호출"
+      ]
+    },
+    {
+      "id": "RS-D41-REBUILD-A",
+      "costId": "RCOST-RS-D41-REBUILD-A",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 41,
+      "prerequisiteText": "D41, C27",
+      "comparisonInput": "부품 A+구조 기록 3",
+      "cost": {
+        "general": 8,
+        "metal": 12,
+        "signal": 12,
+        "specialist": 10
+      },
+      "durationSeconds": 160,
+      "unlockText": "안정 프레임·FAC-R01",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D41-REBUILD-A",
+        "D41, C27",
+        "부품 A+구조 기록 3",
+        "8/12/12/10, 160초",
+        "안정 프레임·FAC-R01"
+      ]
+    },
+    {
+      "id": "RS-D42-REBUILD-B",
+      "costId": "RCOST-RS-D42-REBUILD-B",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 42,
+      "prerequisiteText": "D42, C28-B",
+      "comparisonInput": "부품 B+동력 기록 3",
+      "cost": {
+        "general": 8,
+        "metal": 12,
+        "signal": 14,
+        "specialist": 12
+      },
+      "durationSeconds": 170,
+      "unlockText": "동력 행렬·FAC-R02",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D42-REBUILD-B",
+        "D42, C28-B",
+        "부품 B+동력 기록 3",
+        "8/12/14/12, 170초",
+        "동력 행렬·FAC-R02"
+      ]
+    },
+    {
+      "id": "RS-D43-REBUILD-C",
+      "costId": "RCOST-RS-D43-REBUILD-C",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 43,
+      "prerequisiteText": "D43, C28-C",
+      "comparisonInput": "부품 C+관측 기록 5",
+      "cost": {
+        "general": 8,
+        "metal": 12,
+        "signal": 16,
+        "specialist": 12
+      },
+      "durationSeconds": 180,
+      "unlockText": "교정 렌즈·FAC-R03",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D43-REBUILD-C",
+        "D43, C28-C",
+        "부품 C+관측 기록 5",
+        "8/12/16/12, 180초",
+        "교정 렌즈·FAC-R03"
+      ]
+    },
+    {
+      "id": "RS-D44-REBUILD-D",
+      "costId": "RCOST-RS-D44-REBUILD-D",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 44,
+      "prerequisiteText": "D44, C28-D",
+      "comparisonInput": "부품 D+정화 3범주",
+      "cost": {
+        "general": 8,
+        "metal": 12,
+        "signal": 14,
+        "specialist": 14
+      },
+      "durationSeconds": 180,
+      "unlockText": "정화 행렬·FAC-R04",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D44-REBUILD-D",
+        "D44, C28-D",
+        "부품 D+정화 3범주",
+        "8/12/14/14, 180초",
+        "정화 행렬·FAC-R04"
+      ]
+    },
+    {
+      "id": "RS-D47-SYNTHESIS",
+      "costId": "RCOST-RS-D47-SYNTHESIS",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 47,
+      "prerequisiteText": "D47, A~D 연구",
+      "comparisonInput": "네 하위 결과+대체 경로 1",
+      "cost": {
+        "general": 9,
+        "metal": 18,
+        "signal": 20,
+        "specialist": 16
+      },
+      "durationSeconds": 210,
+      "unlockText": "C28 완료·R01~R04 결합 검사",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D47-SYNTHESIS",
+        "D47, A~D 연구",
+        "네 하위 결과+대체 경로 1",
+        "9/18/20/16, 210초",
+        "C28 완료·R01~R04 결합 검사"
+      ]
+    },
+    {
+      "id": "RS-D49-CALIBRATION",
+      "costId": "RCOST-RS-D49-CALIBRATION",
+      "sourceDocumentId": "RESEARCH-001",
+      "enabled": true,
+      "minimumDay": 49,
+      "prerequisiteText": "D49, C29",
+      "comparisonInput": "R03 방향 정답 3+R04 서로 다른 방문 환경 2+R05 말뚝 교정 3",
+      "cost": {
+        "general": 9,
+        "metal": 20,
+        "signal": 24,
+        "specialist": 18
+      },
+      "durationSeconds": 240,
+      "unlockText": "최종 신호 키 제작·교정 상세 UI",
+      "stateMachine": [
+        "HIDDEN",
+        "OBSERVABLE",
+        "HYPOTHESIZED",
+        "READY",
+        "QUEUED",
+        "PROCESSING",
+        "PAUSED",
+        "ANALYZED",
+        "UNLOCKED",
+        "MASTERED"
+      ],
+      "raw": [
+        "RS-D49-CALIBRATION",
+        "D49, C29",
+        "R03 방향 정답 3+R04 서로 다른 방문 환경 2+R05 말뚝 교정 3",
+        "9/20/24/18, 240초",
+        "최종 신호 키 제작·교정 상세 UI"
+      ]
+    }
+  ]
+}

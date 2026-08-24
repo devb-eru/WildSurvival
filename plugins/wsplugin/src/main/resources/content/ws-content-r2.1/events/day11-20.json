@@ -1,0 +1,493 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "events",
+  "records": [
+    {
+      "id": "EV20-11-TRIAGE",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 11,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "telegraphSpaceText": "20초 구조 신호, 범용 지상 24m",
+      "objectiveText": "표본 2종 채취→가상 생체 신호 8초 안정화",
+      "rewardText": "C08 증거, 의약 5·독성 2",
+      "failureAlternativeText": "안정화 실패 시 표본 1개와 실패 기록, 다음 Day S01 가중 +50%",
+      "pressureProfileId": "PR20-WEAKENED-HUNT",
+      "partyThreat": [
+        16,
+        21,
+        26
+      ],
+      "requiredConnectionText": "C08, 의약·독성 표본",
+      "raw": [
+        "EV20-11-TRIAGE",
+        "20초 구조 신호, 범용 지상 24m",
+        "표본 2종 채취→가상 생체 신호 8초 안정화",
+        "C08 증거, 의약 5·독성 2",
+        "안정화 실패 시 표본 1개와 실패 기록, 다음 Day S01 가중 +50%"
+      ]
+    },
+    {
+      "id": "EV20-12-TOXIC-FIRE",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 12,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "telegraphSpaceText": "안개/불꽃 두 경계, 반경 28m",
+      "objectiveText": "독성 원점·열성 원점 중 순서 선택→각 6초 봉합",
+      "rewardText": "독성·열성 각 3, 대응 기록",
+      "failureAlternativeText": "한 축 실패해도 다른 축 보상 유지; 미완 축 D13 재후보",
+      "pressureProfileId": "PR20-DUAL-STATUS",
+      "partyThreat": [
+        18,
+        23,
+        29
+      ],
+      "requiredConnectionText": "해독·냉각 비교",
+      "raw": [
+        "EV20-12-TOXIC-FIRE",
+        "안개/불꽃 두 경계, 반경 28m",
+        "독성 원점·열성 원점 중 순서 선택→각 6초 봉합",
+        "독성·열성 각 3, 대응 기록",
+        "한 축 실패해도 다른 축 보상 유지; 미완 축 D13 재후보"
+      ]
+    },
+    {
+      "id": "EV20-13-REACTION-LAB",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 13,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "telegraphSpaceText": "세 표본 아이콘·관측 장치",
+      "objectiveText": "서로 다른 상태 표본 3개 비교→반응 적 1웨이브",
+      "rewardText": "C09, 분류판 재료 가치 1",
+      "failureAlternativeText": "처치 없이 90초 생존·관측으로 대체 가능",
+      "pressureProfileId": "PR20-REACTION",
+      "partyThreat": [
+        20,
+        26,
+        32
+      ],
+      "requiredConnectionText": "C09, 상태 분류판 증거",
+      "raw": [
+        "EV20-13-REACTION-LAB",
+        "세 표본 아이콘·관측 장치",
+        "서로 다른 상태 표본 3개 비교→반응 적 1웨이브",
+        "C09, 분류판 재료 가치 1",
+        "처치 없이 90초 생존·관측으로 대체 가능"
+      ]
+    },
+    {
+      "id": "EV20-14-RESCUE-BIND",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 14,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "telegraphSpaceText": "구조 빔+결박선, 30m",
+      "objectiveText": "결박자 중단→가상 구조 대상 10초 이동·보호",
+      "rewardText": "C10, 구조 고정대 가치 1",
+      "failureAlternativeText": "1인 잔존은 훈련 단말/단일 운반 채널로 변환",
+      "pressureProfileId": "PR20-RESCUE",
+      "partyThreat": [
+        21,
+        27,
+        34
+      ],
+      "requiredConnectionText": "C10, 구조 대응 기록",
+      "raw": [
+        "EV20-14-RESCUE-BIND",
+        "구조 빔+결박선, 30m",
+        "결박자 중단→가상 구조 대상 10초 이동·보호",
+        "C10, 구조 고정대 가치 1",
+        "1인 잔존은 훈련 단말/단일 운반 채널로 변환"
+      ]
+    },
+    {
+      "id": "EV20-15-LOCKED-TIER",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 15,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "telegraphSpaceText": "잠긴 등급 아이콘, 25초",
+      "objectiveText": "증강 신호 전령 2체의 서로 다른 태그 기록",
+      "rewardText": "Lv15 등급 원장 읽기 증거, 신호 6",
+      "failureAlternativeText": "등급 미잠금이면 사건을 READY_LOCKED로 두고 활동 EXP만 정산",
+      "pressureProfileId": "PR20-AUGMENT-SIGNAL",
+      "partyThreat": [
+        23,
+        30,
+        37
+      ],
+      "requiredConnectionText": "Lv15 등급 잠금 관측",
+      "raw": [
+        "EV20-15-LOCKED-TIER",
+        "잠긴 등급 아이콘, 25초",
+        "증강 신호 전령 2체의 서로 다른 태그 기록",
+        "Lv15 등급 원장 읽기 증거, 신호 6",
+        "등급 미잠금이면 사건을 READY_LOCKED로 두고 활동 EXP만 정산"
+      ]
+    },
+    {
+      "id": "EV20-16-BREATHING-FOG",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 16,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "telegraphSpaceText": "이동 구름 경로 3점",
+      "objectiveText": "구름 밖 표본→구름 안 표본→안전 지점 귀환",
+      "rewardText": "생체 조직 2, 신경 3",
+      "failureAlternativeText": "구름 체류 강요 없음; 우회 관측은 70% 보상",
+      "pressureProfileId": "PR20-MOVING-CLOUD",
+      "partyThreat": [
+        24,
+        31,
+        38
+      ],
+      "requiredConnectionText": "생체 조직·구름 경로",
+      "raw": [
+        "EV20-16-BREATHING-FOG",
+        "이동 구름 경로 3점",
+        "구름 밖 표본→구름 안 표본→안전 지점 귀환",
+        "생체 조직 2, 신경 3",
+        "구름 체류 강요 없음; 우회 관측은 70% 보상"
+      ]
+    },
+    {
+      "id": "EV20-17-SILENT-HANDS",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 17,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "telegraphSpaceText": "침묵/무장해제 아이콘, 1.4초 전조",
+      "objectiveText": "스킬 봉쇄 웨이브에서 기본 공격·회피·구조 3범주 중 2개 성공",
+      "rewardText": "비무기 대응 기록, 신경 5",
+      "failureAlternativeText": "실제 슬롯 아이템 제거 없음; 실패 시 소모품 제작 힌트",
+      "pressureProfileId": "PR20-SILENCE-DISARM",
+      "partyThreat": [
+        25,
+        33,
+        40
+      ],
+      "requiredConnectionText": "비무기 대응·신경 표본",
+      "raw": [
+        "EV20-17-SILENT-HANDS",
+        "침묵/무장해제 아이콘, 1.4초 전조",
+        "스킬 봉쇄 웨이브에서 기본 공격·회피·구조 3범주 중 2개 성공",
+        "비무기 대응 기록, 신경 5",
+        "실제 슬롯 아이템 제거 없음; 실패 시 소모품 제작 힌트"
+      ]
+    },
+    {
+      "id": "EV20-18-STITCHED-ELITE",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 18,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "telegraphSpaceText": "정예 변이 2개 공개, 30초",
+      "objectiveText": "일반 웨이브→정예 1체, 상태 체인 보호 1회 관측",
+      "rewardText": "C12, 생체 6, EPIC 파편 8%",
+      "failureAlternativeText": "정예 이탈 시 HP·변이 저장 후 재소환 1회",
+      "pressureProfileId": "PR20-ELITE-STATUS",
+      "partyThreat": [
+        28,
+        36,
+        45
+      ],
+      "requiredConnectionText": "C12, 정예 분석·EPIC 파편",
+      "raw": [
+        "EV20-18-STITCHED-ELITE",
+        "정예 변이 2개 공개, 30초",
+        "일반 웨이브→정예 1체, 상태 체인 보호 1회 관측",
+        "C12, 생체 6, EPIC 파편 8%",
+        "정예 이탈 시 HP·변이 저장 후 재소환 1회"
+      ]
+    },
+    {
+      "id": "EV20-19-NEURAL-ESCORT",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "MAIN_EVENT",
+      "firstDay": 19,
+      "executionOpcode": "RUN_EVENT_OBJECTIVE",
+      "telegraphSpaceText": "세 방향 보스 신호, 35초",
+      "objectiveText": "신호 렌즈 운반→정예 호위 해제→호출 지점 검증",
+      "rewardText": "C13, 생체 8·신호 7",
+      "failureAlternativeText": "렌즈 강탈·소실 없음; 전장 실패 시 위치만 재탐색",
+      "pressureProfileId": "PR20-BOSS-PRELUDE",
+      "partyThreat": [
+        30,
+        39,
+        48
+      ],
+      "requiredConnectionText": "C13, 호출 재료·보스 신호",
+      "raw": [
+        "EV20-19-NEURAL-ESCORT",
+        "세 방향 보스 신호, 35초",
+        "신호 렌즈 운반→정예 호위 해제→호출 지점 검증",
+        "C13, 생체 8·신호 7",
+        "렌즈 강탈·소실 없음; 전장 실패 시 위치만 재탐색"
+      ]
+    },
+    {
+      "id": "PR20-WEAKENED-HUNT",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 11,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "wavePlans": [
+        "D11-01×4 + D11-02×2 = 8",
+        "D11-01×4 + D11-02×2 = 8",
+        "없음"
+      ],
+      "waveBudgetAuthority": "16",
+      "partyThreat": [
+        16,
+        21,
+        26
+      ],
+      "activeCap": 8,
+      "raw": [
+        "PR20-WEAKENED-HUNT",
+        "D11-01×4 + D11-02×2 = 8",
+        "D11-01×4 + D11-02×2 = 8",
+        "없음",
+        "16",
+        "8"
+      ]
+    },
+    {
+      "id": "PR20-DUAL-STATUS",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 12,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "wavePlans": [
+        "D11-01×2 + D11-02×2 = 6",
+        "D12-01×1 + D12-02×1 = 8",
+        "D11-01×2 + D11-02×1 = 4"
+      ],
+      "waveBudgetAuthority": "18",
+      "partyThreat": [
+        18,
+        23,
+        29
+      ],
+      "activeCap": 7,
+      "raw": [
+        "PR20-DUAL-STATUS",
+        "D11-01×2 + D11-02×2 = 6",
+        "D12-01×1 + D12-02×1 = 8",
+        "D11-01×2 + D11-02×1 = 4",
+        "18",
+        "7"
+      ]
+    },
+    {
+      "id": "PR20-REACTION",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 13,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "wavePlans": [
+        "D13-01×4 + D13-02×1 = 12",
+        "D12-02×1 + D11-01×4 = 8",
+        "없음"
+      ],
+      "waveBudgetAuthority": "20",
+      "partyThreat": [
+        20,
+        26,
+        32
+      ],
+      "activeCap": 7,
+      "raw": [
+        "PR20-REACTION",
+        "D13-01×4 + D13-02×1 = 12",
+        "D12-02×1 + D11-01×4 = 8",
+        "없음",
+        "20",
+        "7"
+      ]
+    },
+    {
+      "id": "PR20-RESCUE",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 14,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "wavePlans": [
+        "D14-02×2 + D13-01×2 = 12",
+        "D14-01×1 + D11-01×5 = 9",
+        "없음"
+      ],
+      "waveBudgetAuthority": "21",
+      "partyThreat": [
+        21,
+        27,
+        34
+      ],
+      "activeCap": 7,
+      "raw": [
+        "PR20-RESCUE",
+        "D14-02×2 + D13-01×2 = 12",
+        "D14-01×1 + D11-01×5 = 9",
+        "없음",
+        "21",
+        "7"
+      ]
+    },
+    {
+      "id": "PR20-AUGMENT-SIGNAL",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 15,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "wavePlans": [
+        "D15-01×2 + D15-02×1 = 12",
+        "D13-01×3 + D11-02×1 = 8",
+        "D15-02×1 + D11-01×3 = 7"
+      ],
+      "waveBudgetAuthority": "27*",
+      "partyThreat": [
+        23,
+        30,
+        37
+      ],
+      "activeCap": 7,
+      "raw": [
+        "PR20-AUGMENT-SIGNAL",
+        "D15-01×2 + D15-02×1 = 12",
+        "D13-01×3 + D11-02×1 = 8",
+        "D15-02×1 + D11-01×3 = 7",
+        "27*",
+        "7"
+      ]
+    },
+    {
+      "id": "PR20-MOVING-CLOUD",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 16,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "wavePlans": [
+        "D16-02×4 + D11-02×2 = 12",
+        "D16-01×1 + D16-02×3 = 12",
+        "없음"
+      ],
+      "waveBudgetAuthority": "24",
+      "partyThreat": [
+        24,
+        31,
+        38
+      ],
+      "activeCap": 7,
+      "raw": [
+        "PR20-MOVING-CLOUD",
+        "D16-02×4 + D11-02×2 = 12",
+        "D16-01×1 + D16-02×3 = 12",
+        "없음",
+        "24",
+        "7"
+      ]
+    },
+    {
+      "id": "PR20-SILENCE-DISARM",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 17,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "wavePlans": [
+        "D17-01×1 + D13-01×2 = 8",
+        "D17-02×1 + D11-01×4 = 8",
+        "D15-01×1 + D15-02×1 + D11-01×1 = 9*"
+      ],
+      "waveBudgetAuthority": "25",
+      "partyThreat": [
+        25,
+        33,
+        40
+      ],
+      "activeCap": 6,
+      "raw": [
+        "PR20-SILENCE-DISARM",
+        "D17-01×1 + D13-01×2 = 8",
+        "D17-02×1 + D11-01×4 = 8",
+        "D15-01×1 + D15-02×1 + D11-01×1 = 9*",
+        "25",
+        "6"
+      ]
+    },
+    {
+      "id": "PR20-ELITE-STATUS",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 18,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "wavePlans": [
+        "D16-02×4 + D13-02×1 = 12",
+        "D18-E01 또는 E02×1 = 10",
+        "D17-01×1 + D17-02×1 = 8"
+      ],
+      "waveBudgetAuthority": "30*",
+      "partyThreat": [
+        28,
+        36,
+        45
+      ],
+      "activeCap": 6,
+      "raw": [
+        "PR20-ELITE-STATUS",
+        "D16-02×4 + D13-02×1 = 12",
+        "D18-E01 또는 E02×1 = 10",
+        "D17-01×1 + D17-02×1 = 8",
+        "30*",
+        "6"
+      ]
+    },
+    {
+      "id": "PR20-BOSS-PRELUDE",
+      "sourceDocumentId": "EVENT-DATA-D20-001",
+      "enabled": true,
+      "eventKind": "PRESSURE_PROFILE",
+      "firstDay": 19,
+      "executionOpcode": "RUN_PRESSURE_WAVES",
+      "wavePlans": [
+        "D17-01×1 + D17-02×1 + D15-02×1 = 12",
+        "D19-E01×1 = 9",
+        "D16-02×3 + D14-02×1 = 10"
+      ],
+      "waveBudgetAuthority": "31*",
+      "partyThreat": [
+        30,
+        39,
+        48
+      ],
+      "activeCap": 6,
+      "raw": [
+        "PR20-BOSS-PRELUDE",
+        "D17-01×1 + D17-02×1 + D15-02×1 = 12",
+        "D19-E01×1 = 9",
+        "D16-02×3 + D14-02×1 = 10",
+        "31*",
+        "6"
+      ]
+    }
+  ]
+}

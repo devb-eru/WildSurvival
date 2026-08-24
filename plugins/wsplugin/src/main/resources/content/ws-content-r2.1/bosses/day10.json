@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "bosses",
+  "records": [
+    {
+      "id": "BOSS-D10",
+      "sourceDocumentId": "BOSS-D10-001",
+      "enabled": true,
+      "name": "공명 추적체",
+      "kind": "BOSS",
+      "bukkitType": "RAVAGER",
+      "displayFallback": "RAVAGER+Display",
+      "firstDay": 10,
+      "dayProfile": "BOSS_DAY",
+      "role": "BOSS",
+      "budgetCost": 0,
+      "baseHp": 105000,
+      "defence": 70,
+      "attackDamage": 180,
+      "penetration": 0,
+      "breakMax": 10000,
+      "augmentSlots": 0,
+      "elite": true,
+      "actionBundleId": "ACTSET-BOSS-D10",
+      "entitySetId": "ENTSET-BOSS-D10",
+      "telegraphTicks": 26,
+      "cooldownTicks": 90,
+      "attackRange": 5.0,
+      "statusId": "",
+      "spawnPolicy": "BOSS_CALL_TRANSACTION",
+      "cleanupPolicy": "BOSS_END",
+      "rewardOwner": "CONTRIBUTORS",
+      "lootTableId": "LOOT-BOSS-D10",
+      "activityExp": 1500,
+      "flags": [
+        "BOSS",
+        "NO_DYNAMIC_AUGMENT"
+      ],
+      "raw": [
+        "BOSS-D10",
+        "공명 추적체",
+        "RAVAGER+Display",
+        "ACTSET-BOSS-D10",
+        "ENTSET-BOSS-D10",
+        "LOOT-BOSS-D10"
+      ]
+    }
+  ]
+}

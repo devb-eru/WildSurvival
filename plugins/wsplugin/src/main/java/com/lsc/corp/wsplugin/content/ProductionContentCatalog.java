@@ -56,7 +56,9 @@ public record ProductionContentCatalog(
     public record ItemEntry(String id, String name, String category, int firstDay, String displayMaterial,
                             int stackLimit, String effectText, String recipeId, String textKey,
                             String customModelKey, String ownership, String usePolicy,
-                            String connectedFacilityId, String constraintText) {
+                            String connectedFacilityId, String constraintText,
+                            String requiredResearchId, int minimumFacilityLevel, int channelTicks,
+                            int perTargetRunLimit, boolean wipeAllowed, String progressionReservePolicy) {
         public boolean quickConsumable() {
             return "CONS".equals(category);
         }
@@ -100,7 +102,14 @@ public record ProductionContentCatalog(
                                     Map<String, Integer> cost) { }
 
     public record RecipeEntry(String id, String outputId, int outputAmount, String recipeType, String inputAuthority,
-                              String layout, List<IngredientEntry> ingredients, List<String> raw) {
+                              String layout, List<IngredientEntry> ingredients, List<String> raw,
+                              int minimumDay, String requiredResearchId, String requiredFacilityId,
+                              int requiredFacilityLevel, int processTicks, String progressionReservePolicy) {
+        public RecipeEntry(String id, String outputId, int outputAmount, String recipeType, String inputAuthority,
+                           String layout, List<IngredientEntry> ingredients, List<String> raw) {
+            this(id, outputId, outputAmount, recipeType, inputAuthority, layout, ingredients, raw,
+                    1, "", "", 0, 0, "");
+        }
     }
 
     public record IngredientEntry(int slot, String kind, String key, int amount, boolean consume) {
@@ -109,7 +118,10 @@ public record ProductionContentCatalog(
     public record SkillEntry(String id, String kind, String name, String weaponClass, double apCost,
                              int cooldownTicks, double damageCoefficient, double breakDamage, double range,
                              double arcDegrees, int maxTargets, String effect, List<String> tags,
-                             int unlockLevel, String consumableId, String description) {
+                             int unlockLevel, String consumableId, String description,
+                             List<String> operationIds, String executionProfile, String targetSpec,
+                             String costSpec, String parameterPayload, String failurePolicy,
+                             List<String> childEntityIds) {
         public boolean weaponActive() {
             return "WEAPON_ACTIVE".equals(kind);
         }
@@ -121,7 +133,9 @@ public record ProductionContentCatalog(
 
     public record AugmentEntry(String id, String name, String tier, String scope, List<String> tags,
                                String effectOpcode, String effectText, String constraintText,
-                               String weightingText, List<String> exclusiveWith, boolean evolution) {
+                               String weightingText, List<String> exclusiveWith, boolean evolution,
+                               List<String> triggerIds, String stateScope, String parameterPayload,
+                               String limitFallback, List<String> derivedEventFlags) {
         public boolean personal() {
             return "PERSONAL".equals(scope);
         }
@@ -162,14 +176,19 @@ public record ProductionContentCatalog(
 
     public record SupportEntityEntry(String id, String kind, String bukkitType, String displayFallback,
                                      String cleanupPolicy, String lootTableId, String ownerPolicy,
-                                     boolean persistent) { }
+                                     boolean persistent, List<String> flags) { }
 
     public record ActionBundleEntry(String id, String ownerId, String kind,
                                     List<ActionEntry> actions, List<String> stateMachine) { }
 
     public record ActionEntry(String id, String name, int telegraphTicks, int startupTicks,
                               int activeTicks, int recoveryTicks, int cooldownTicks, double range,
-                              double damage, double penetration, double breakDamage, String statusId) { }
+                              double damage, double penetration, double breakDamage, String statusId,
+                              String profileId, String cooldownMode, String cooldownTrigger,
+                              String targetPolicy, String damageSpec, String penetrationSpec,
+                              String breakDamageSpec, String statusStacksSpec, String statusDurationTicksSpec,
+                              String effectOpcode, String effectParameters, List<String> childEntityIds,
+                              String childEntitySource, List<String> tags, List<String> responseTags) { }
 
     public record LootEntry(String id, String sourceId, String profile, String distribution,
                             String executionOpcode, List<String> guaranteedPool, int guaranteedMin,

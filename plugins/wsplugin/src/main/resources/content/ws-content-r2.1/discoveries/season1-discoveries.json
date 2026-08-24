@@ -1,0 +1,1213 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "discoveries",
+  "records": [
+    {
+      "id": "C01",
+      "canonicalId": "DISC-C01",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "생존 재료의 공통 구조",
+      "recommendedDayMin": 1,
+      "recommendedDayMax": 1,
+      "prerequisiteIds": [],
+      "primaryPath": "목재·돌·식량 세 범주를 획득하고 서로 다른 기본 도구 2개 사용",
+      "alternativePath": "자연 상자·폐허에서 기본 도구를 회수하고 모닥불 또는 화로 사용",
+      "unlockText": "휴대 제작 메뉴, 기본 생존 조합 범주",
+      "clueText": "서로 다른 재료를 얻을 때 질감·내구 차이 안내",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C02",
+      "canonicalId": "DISC-C02",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "현장 가공",
+      "recommendedDayMin": 1,
+      "recommendedDayMax": 2,
+      "prerequisiteIds": [
+        "C01"
+      ],
+      "primaryPath": "화로로 원석 제련, 모닥불로 식량 가공, 작업대로 부품 제작",
+      "alternativePath": "폐허 금속품 3개 분해 후 현장 가공 도구 사용",
+      "unlockText": "휴대 분해·기초 수리·기초 합금",
+      "clueText": "제련 또는 분해 시 `형태는 달라도 쓸 수 있는 성분이 남는다`",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C03",
+      "canonicalId": "DISC-C03",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "장비 프레임",
+      "recommendedDayMin": 2,
+      "recommendedDayMax": 3,
+      "prerequisiteIds": [
+        "C02"
+      ],
+      "primaryPath": "검·도끼·활·곡괭이 중 서로 다른 무기군 2종으로 유효 공격",
+      "alternativePath": "철·가죽·실 범주의 재료를 모아 장비 GUI에서 프레임 시제품 검사",
+      "unlockText": "커스텀 장비 GUI, 일반 등급 제작, 장비 분해",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C04",
+      "canonicalId": "DISC-C04",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "이상 잔류물",
+      "recommendedDayMin": 3,
+      "recommendedDayMax": 4,
+      "prerequisiteIds": [
+        "C01"
+      ],
+      "primaryPath": "오염 적 또는 이상 현상에서 서로 다른 표본 2종 획득",
+      "alternativePath": "오염 지역에서 30초 생존하고 영향받은 식생·돌 표본 채취",
+      "unlockText": "표본 보관, 미확인 물질 분석 탭",
+      "clueText": "오염 소리·입자·변색된 바닐라 블록 조합",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C05",
+      "canonicalId": "DISC-C05",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "공명 반응",
+      "recommendedDayMin": 4,
+      "recommendedDayMax": 6,
+      "prerequisiteIds": [
+        "C02",
+        "C04"
+      ],
+      "primaryPath": "구리·레드스톤·오염 표본을 분석 도구에 함께 투입",
+      "alternativePath": "자수정 계열 재료와 오염 적 결정핵으로 반응 실험 3회",
+      "unlockText": "휴대 공명 탐지기, 신호 강도 UI",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C06",
+      "canonicalId": "DISC-C06",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "신호 삼각 측정",
+      "recommendedDayMin": 6,
+      "recommendedDayMax": 8,
+      "prerequisiteIds": [
+        "C05"
+      ],
+      "primaryPath": "서로 48블록 이상 떨어진 위치에서 공명 강도 3회 측정",
+      "alternativePath": "관측 시설 하나를 건설하고 휴대 탐지기 측정 1회 결합",
+      "unlockText": "첫 보스 신호 조립식, 동적 전장 후보 검사",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C07",
+      "canonicalId": "DISC-C07",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "생체 공명체 호출",
+      "recommendedDayMin": 9,
+      "recommendedDayMax": 10,
+      "prerequisiteIds": [
+        "C03",
+        "C06"
+      ],
+      "primaryPath": "신호 장치, 안정된 공간, 파티 준비 확인 후 호출",
+      "alternativePath": "관측 시설이 파괴됐으면 휴대 신호기 2개를 순차 사용",
+      "unlockText": "Day 10 보스 전장, 처치 후 재건 부품 A와 첫 고유 장비 투표",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C08",
+      "canonicalId": "DISC-C08",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "신체 반응 기록",
+      "recommendedDayMin": 11,
+      "recommendedDayMax": 12,
+      "prerequisiteIds": [
+        "C07"
+      ],
+      "primaryPath": "서로 다른 해로운 상태 3종을 경험하고 생존",
+      "alternativePath": "상태 표본 2종과 일반 의약 재료를 연구 도구로 분석",
+      "unlockText": "상태 도감, 지속시간·정화 범주 표시",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C09",
+      "canonicalId": "DISC-C09",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "중화 원리",
+      "recommendedDayMin": 12,
+      "recommendedDayMax": 14,
+      "prerequisiteIds": [
+        "C08"
+      ],
+      "primaryPath": "독·화상·출혈 중 두 종류를 서로 다른 방법으로 해제",
+      "alternativePath": "우유·꿀·약초·정화 표본 중 세 범주를 조합 실험",
+      "unlockText": "해독제, 화상 억제제, 지혈 도구의 범주 제작식",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C10",
+      "canonicalId": "DISC-C10",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "빈사 생체 신호",
+      "recommendedDayMin": 13,
+      "recommendedDayMax": 15,
+      "prerequisiteIds": [
+        "C08"
+      ],
+      "primaryPath": "파티원이 빈사 상태에서 도움 요청 후 정상 구조 성공",
+      "alternativePath": "훈련 단말의 모의 구조를 두 명이 완료",
+      "unlockText": "구조 보조 도구, 자동 구조 시설 연구",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C11",
+      "canonicalId": "DISC-C11",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "상태 관측 배열",
+      "recommendedDayMin": 15,
+      "recommendedDayMax": 17,
+      "prerequisiteIds": [
+        "C09"
+      ],
+      "primaryPath": "연구 단말에서 세 상태 표본의 강도·지속시간 비교",
+      "alternativePath": "전투 중 상태 해제·구조·저항 성공 기록을 합계 5회 확보",
+      "unlockText": "관측 시설 2단계, 적 상태 예고, 치료 시설",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C12",
+      "canonicalId": "DISC-C12",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "연쇄 제어 한계",
+      "recommendedDayMin": 17,
+      "recommendedDayMax": 19,
+      "prerequisiteIds": [
+        "C11"
+      ],
+      "primaryPath": "강한 CC 체인이 3초에 도달한 기록과 면역 발생 관찰",
+      "alternativePath": "훈련 단말에서 3초 체인 모의 실험 완료",
+      "unlockText": "TENACITY 분석, 제어 해제 후 0.5초 면역 설명",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C13",
+      "canonicalId": "DISC-C13",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "변형 생체 호출",
+      "recommendedDayMin": 19,
+      "recommendedDayMax": 20,
+      "prerequisiteIds": [
+        "C09",
+        "C10",
+        "C11"
+      ],
+      "primaryPath": "치료·상태 대응 물품 세 범주를 신호 장치에 등록",
+      "alternativePath": "구조 성공·정화 성공·상태 저항 기록으로 대응 검증",
+      "unlockText": "Day 20 보스 전장, 재건 부품 B, 두 번째 고유 장비 투표",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C14",
+      "canonicalId": "DISC-C14",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "변이 조직 분류",
+      "recommendedDayMin": 21,
+      "recommendedDayMax": 22,
+      "prerequisiteIds": [
+        "C13"
+      ],
+      "primaryPath": "조직·골편·결정 계열 변이 표본 3범주 분석",
+      "alternativePath": "서로 다른 오염 사건 3종을 관찰하고 생존",
+      "unlockText": "오염 변이 도감, 표본 정제",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C15",
+      "canonicalId": "DISC-C15",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "자연 정화 현상",
+      "recommendedDayMin": 22,
+      "recommendedDayMax": 24,
+      "prerequisiteIds": [
+        "C04",
+        "C14"
+      ],
+      "primaryPath": "자연 정화 노드에서 오염 감소 전후 측정",
+      "alternativePath": "물·자수정·금속 촉매 조합 중 유효 정화 반응 발견",
+      "unlockText": "정화 촉매와 개인 정화 원리",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C16",
+      "canonicalId": "DISC-C16",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "휴대 정화",
+      "recommendedDayMin": 23,
+      "recommendedDayMax": 25,
+      "prerequisiteIds": [
+        "C15"
+      ],
+      "primaryPath": "정화 촉매를 사용해 개인 오염 단계 1회 하락",
+      "alternativePath": "작은 임시 정화장을 만들고 30초 유지",
+      "unlockText": "휴대 정화기, 응급 정화 소모품",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C17",
+      "canonicalId": "DISC-C17",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "정화장 연결",
+      "recommendedDayMin": 24,
+      "recommendedDayMax": 27,
+      "prerequisiteIds": [
+        "C16",
+        "C02"
+      ],
+      "primaryPath": "정화기와 다른 시설을 같은 네트워크에 연결",
+      "alternativePath": "휴대 정화기 3회의 출력 기록과 관측 시설 분석 결합",
+      "unlockText": "정착형 정화기, 중계기, 시설망 오염 UI",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C18",
+      "canonicalId": "DISC-C18",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "변이 규칙 지도",
+      "recommendedDayMin": 26,
+      "recommendedDayMax": 28,
+      "prerequisiteIds": [
+        "C14"
+      ],
+      "primaryPath": "오염 단계가 다른 지역에서 같은 적 계열의 변이 차이 관찰",
+      "alternativePath": "변이 적 증강·상태 패턴 5개를 도감에 기록",
+      "unlockText": "변이 예측, 위험 자원 탐지 보정",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C19",
+      "canonicalId": "DISC-C19",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "균열 안정화",
+      "recommendedDayMin": 27,
+      "recommendedDayMax": 29,
+      "prerequisiteIds": [
+        "C15",
+        "C18"
+      ],
+      "primaryPath": "동적 균열의 세 안정화 지점을 순서와 무관하게 처리",
+      "alternativePath": "균열 가루를 정화 매질로 가공하고 추적 압박 중 사용",
+      "unlockText": "안정화 코어, 증강 교체 시설 연구",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C20",
+      "canonicalId": "DISC-C20",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "오염 핵 호출",
+      "recommendedDayMin": 29,
+      "recommendedDayMax": 30,
+      "prerequisiteIds": [
+        "C16",
+        "C18",
+        "C19"
+      ],
+      "primaryPath": "정화·변이·균열 대응 기록을 신호 장치에 등록",
+      "alternativePath": "정착 정화기 없이 휴대 정화 장치 3개와 안정화 코어 사용",
+      "unlockText": "Day 30 보스 전장, 재건 부품 C, 세 번째 고유 장비 투표",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C21",
+      "canonicalId": "DISC-C21",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "구조적 약점",
+      "recommendedDayMin": 31,
+      "recommendedDayMax": 32,
+      "prerequisiteIds": [
+        "C20"
+      ],
+      "primaryPath": "엘리트의 브레이크 게이지를 서로 다른 공격 방식 2개로 감소",
+      "alternativePath": "패링·강한 CC 변환·둔기/곡괭이 중 두 범주의 브레이크 기록",
+      "unlockText": "브레이크 수치 상세 UI, 약점 표식",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C22",
+      "canonicalId": "DISC-C22",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "공진 충격 도구",
+      "recommendedDayMin": 32,
+      "recommendedDayMax": 34,
+      "prerequisiteIds": [
+        "C21"
+      ],
+      "primaryPath": "경화 골재·합금·공명 부품으로 충격 도구 제작",
+      "alternativePath": "패턴 잔재를 분해해 브레이크 보조 모듈 제작",
+      "unlockText": "브레이크 보조 장비와 시설 수리 보강재",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C23",
+      "canonicalId": "DISC-C23",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "패턴 기록",
+      "recommendedDayMin": 34,
+      "recommendedDayMax": 36,
+      "prerequisiteIds": [
+        "C21"
+      ],
+      "primaryPath": "같은 엘리트 패턴을 회피·방어·패링 중 두 방식으로 대응",
+      "alternativePath": "관측 시설로 패턴 전조 3종 기록",
+      "unlockText": "패턴 도감, 대응 가능 태그 표시",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C24",
+      "canonicalId": "DISC-C24",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "중단과 잔류 효과",
+      "recommendedDayMin": 35,
+      "recommendedDayMax": 37,
+      "prerequisiteIds": [
+        "C23"
+      ],
+      "primaryPath": "중단 가능한 패턴 2종을 브레이크·패링으로 각각 중단",
+      "alternativePath": "훈련 단말의 중단 모의 실험 완료",
+      "unlockText": "중단 불가 태그, 잔류 장판 경고, 파티 중단 핑",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C25",
+      "canonicalId": "DISC-C25",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "고밀도 안정화",
+      "recommendedDayMin": 37,
+      "recommendedDayMax": 39,
+      "prerequisiteIds": [
+        "C19",
+        "C22"
+      ],
+      "primaryPath": "안정화 코어에 고밀도 합금과 패턴 잔재 결합",
+      "alternativePath": "보스 잔재 분해와 균열 사건 보상으로 대체 재료 확보",
+      "unlockText": "재건 프레임 전단계, 고급 증강 안정화",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C26",
+      "canonicalId": "DISC-C26",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "파괴자 호출",
+      "recommendedDayMin": 39,
+      "recommendedDayMax": 40,
+      "prerequisiteIds": [
+        "C22",
+        "C24",
+        "C25"
+      ],
+      "primaryPath": "브레이크·패턴 중단·안정화 기록을 신호 장치에 등록",
+      "alternativePath": "브레이크 장비 없이 패링·상태 변환·협동 공격 기록으로 검증",
+      "unlockText": "Day 40 보스 전장, 재건 부품 D, 네 번째 고유 장비 투표",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C27",
+      "canonicalId": "DISC-C27",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "네 부품의 공명",
+      "recommendedDayMin": 41,
+      "recommendedDayMax": 42,
+      "prerequisiteIds": [],
+      "primaryPath": "네 부품을 연구 단말 또는 현장 분석 배열에 함께 등록",
+      "alternativePath": "시설이 없으면 휴대 분석기를 네 위치에 순차 배치",
+      "unlockText": "재건 프레임·동력 핵·신호 렌즈·정화 매질 가설",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C28",
+      "canonicalId": "DISC-C28",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "재건 하위 계통",
+      "recommendedDayMin": 42,
+      "recommendedDayMax": 46,
+      "prerequisiteIds": [
+        "C27"
+      ],
+      "primaryPath": "아래 네 하위 노드 중 모두 완료",
+      "alternativePath": "",
+      "unlockText": "최종 재건 장치 조립",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C29",
+      "canonicalId": "DISC-C29",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "재건 장치 교정",
+      "recommendedDayMin": 47,
+      "recommendedDayMax": 49,
+      "prerequisiteIds": [
+        "C28-A",
+        "C28-B",
+        "C28-C",
+        "C28-D"
+      ],
+      "primaryPath": "프레임·동력·렌즈·매질을 조립하고 세 교정 시험 완료",
+      "alternativePath": "R03의 15초 주기 방향/잔차 단서와 R05의 유효 배치 후보 표시로 정답·지형 조건을 단계적으로 명확화",
+      "unlockText": "`day49CalibrationComplete`, 최종 신호 준비",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C30",
+      "canonicalId": "DISC-C30",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE",
+      "name": "첫 재건 신호",
+      "recommendedDayMin": 50,
+      "recommendedDayMax": 50,
+      "prerequisiteIds": [
+        "C29"
+      ],
+      "primaryPath": "`FINAL-001`의 동적 장치 전개 → 세계 붕괴 핵 제압 → 180초 유효 정화 → 생존자 최종 확인",
+      "alternativePath": "",
+      "unlockText": "없음. C30은 시작 선행이 아니라 최종 완료 트랜잭션의 결과",
+      "clueText": "",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C28-A",
+      "canonicalId": "DISC-C28-A",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE_SUB",
+      "name": "안정화 프레임",
+      "recommendedDayMin": 42,
+      "recommendedDayMax": 46,
+      "prerequisiteIds": [
+        "C27"
+      ],
+      "primaryPath": "고밀도 합금, 경화 골재, 재건 부품 A 가공",
+      "alternativePath": "시설 잔해 회수 기록과 보스 잔재 분해로 합금 일부 대체",
+      "unlockText": "손상·수리 사이클 1회 견딤",
+      "clueText": "재건 하위 계통 검증",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C28-B",
+      "canonicalId": "DISC-C28-B",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE_SUB",
+      "name": "동력 핵",
+      "recommendedDayMin": 42,
+      "recommendedDayMax": 46,
+      "prerequisiteIds": [
+        "C27"
+      ],
+      "primaryPath": "공명 결정, 레드스톤 계통, 재건 부품 B 가공",
+      "alternativePath": "균열 에너지 3회 포집 후 안정화 코어 결합",
+      "unlockText": "과부하 없이 60초 출력 유지",
+      "clueText": "재건 하위 계통 검증",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C28-C",
+      "canonicalId": "DISC-C28-C",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE_SUB",
+      "name": "신호 렌즈",
+      "recommendedDayMin": 42,
+      "recommendedDayMax": 46,
+      "prerequisiteIds": [
+        "C27"
+      ],
+      "primaryPath": "자수정·정밀 부품·재건 부품 C 가공",
+      "alternativePath": "관측 기록 5종과 보스 패턴 잔재로 보정",
+      "unlockText": "동·서·남·북 중 회차에 잠긴 무작위 3방향과 방향별 정수 보정값을 GUI에서 모두 정확히 일치",
+      "clueText": "재건 하위 계통 검증",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "C28-D",
+      "canonicalId": "DISC-C28-D",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "CORE_SUB",
+      "name": "정화 매질",
+      "recommendedDayMin": 42,
+      "recommendedDayMax": 46,
+      "prerequisiteIds": [
+        "C27"
+      ],
+      "primaryPath": "자연 정화·변이 조직·균열 표본 세 범주 합성",
+      "alternativePath": "정착 정화기의 누적 운전 기록과 희귀 촉매 소비",
+      "unlockText": "등록 플레이어가 방문한 환경 원장에서 서로 다른 환경 ID 두 곳을 선택해 각 10초 반응 유지",
+      "clueText": "재건 하위 계통 검증",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O01",
+      "canonicalId": "DISC-O01",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "보존식과 식량 효율",
+      "recommendedDayMin": 1,
+      "recommendedDayMax": 5,
+      "prerequisiteIds": [],
+      "primaryPath": "세 식량 획득·조리·재배",
+      "alternativePath": "",
+      "unlockText": "보존식과 식량 효율",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O02",
+      "canonicalId": "DISC-O02",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "특수 탄약 기반",
+      "recommendedDayMin": 2,
+      "recommendedDayMax": 8,
+      "prerequisiteIds": [],
+      "primaryPath": "활·석궁 탄약 제작과 회수 실험",
+      "alternativePath": "",
+      "unlockText": "특수 탄약 기반",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O03",
+      "canonicalId": "DISC-O03",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "권투 훈련 모듈",
+      "recommendedDayMin": 3,
+      "recommendedDayMax": 10,
+      "prerequisiteIds": [],
+      "primaryPath": "권투로 회피 후 반격 3회",
+      "alternativePath": "",
+      "unlockText": "권투 훈련 모듈",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O04",
+      "canonicalId": "DISC-O04",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "곡괭이 전환 보조 옵션",
+      "recommendedDayMin": 3,
+      "recommendedDayMax": 10,
+      "prerequisiteIds": [],
+      "primaryPath": "곡괭이 전투와 채굴 문맥 각각 수행",
+      "alternativePath": "",
+      "unlockText": "곡괭이 전환 보조 옵션",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O05",
+      "canonicalId": "DISC-O05",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "삼지창 회수 보정",
+      "recommendedDayMin": 5,
+      "recommendedDayMax": 12,
+      "prerequisiteIds": [],
+      "primaryPath": "삼지창 근접·커스텀 투척·회수 성공",
+      "alternativePath": "",
+      "unlockText": "삼지창 회수 보정",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O06",
+      "canonicalId": "DISC-O06",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "공용 물류 시설",
+      "recommendedDayMin": 6,
+      "recommendedDayMax": 15,
+      "prerequisiteIds": [],
+      "primaryPath": "공용 보관과 제작 대기열 사용",
+      "alternativePath": "",
+      "unlockText": "공용 물류 시설",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O07",
+      "canonicalId": "DISC-O07",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "제한 빠른 이동",
+      "recommendedDayMin": 8,
+      "recommendedDayMax": 18,
+      "prerequisiteIds": [],
+      "primaryPath": "두 시설망 또는 자연 앵커 발견",
+      "alternativePath": "",
+      "unlockText": "제한 빠른 이동",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O08",
+      "canonicalId": "DISC-O08",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "재련 옵션 잠금",
+      "recommendedDayMin": 10,
+      "recommendedDayMax": 20,
+      "prerequisiteIds": [],
+      "primaryPath": "장비 옵션 조합 3종 비교",
+      "alternativePath": "",
+      "unlockText": "재련 옵션 잠금",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O09",
+      "canonicalId": "DISC-O09",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "치료 시설 개조",
+      "recommendedDayMin": 11,
+      "recommendedDayMax": 25,
+      "prerequisiteIds": [],
+      "primaryPath": "상태별 해제 자원 4종 분석",
+      "alternativePath": "",
+      "unlockText": "치료 시설 개조",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O10",
+      "canonicalId": "DISC-O10",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "교리 분석 단계 상승",
+      "recommendedDayMin": 15,
+      "recommendedDayMax": 30,
+      "prerequisiteIds": [],
+      "primaryPath": "세 적군 전략을 관측",
+      "alternativePath": "",
+      "unlockText": "교리 분석 단계 상승",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O11",
+      "canonicalId": "DISC-O11",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "유목 정화 개조",
+      "recommendedDayMin": 20,
+      "recommendedDayMax": 35,
+      "prerequisiteIds": [],
+      "primaryPath": "정화기 없이 개인 오염 관리",
+      "alternativePath": "",
+      "unlockText": "유목 정화 개조",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O12",
+      "canonicalId": "DISC-O12",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "증강 공명 시설",
+      "recommendedDayMin": 21,
+      "recommendedDayMax": 35,
+      "prerequisiteIds": [],
+      "primaryPath": "같은 등급 증강 태그 3개 조합",
+      "alternativePath": "",
+      "unlockText": "증강 공명 시설",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O13",
+      "canonicalId": "DISC-O13",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "중계·원격 경고 개조",
+      "recommendedDayMin": 25,
+      "recommendedDayMax": 40,
+      "prerequisiteIds": [],
+      "primaryPath": "두 시설망을 동시에 유지",
+      "alternativePath": "",
+      "unlockText": "중계·원격 경고 개조",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O14",
+      "canonicalId": "DISC-O14",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "범용 브레이크 모듈",
+      "recommendedDayMin": 31,
+      "recommendedDayMax": 45,
+      "prerequisiteIds": [],
+      "primaryPath": "특정 무기 없이 브레이크 성공",
+      "alternativePath": "",
+      "unlockText": "범용 브레이크 모듈",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    },
+    {
+      "id": "O15",
+      "canonicalId": "DISC-O15",
+      "sourceDocumentId": "DISC-LIST-001",
+      "enabled": true,
+      "kind": "OPTIONAL",
+      "name": "재건 협동 보정",
+      "recommendedDayMin": 41,
+      "recommendedDayMax": 49,
+      "prerequisiteIds": [],
+      "primaryPath": "모든 파티원이 서로 다른 기여 범주 달성",
+      "alternativePath": "",
+      "unlockText": "재건 협동 보정",
+      "clueText": "선택 발견",
+      "stateMachine": [
+        "HIDDEN",
+        "CLUE",
+        "HYPOTHESIS",
+        "EXPERIMENT",
+        "DISCOVERED",
+        "MASTERED"
+      ]
+    }
+  ]
+}

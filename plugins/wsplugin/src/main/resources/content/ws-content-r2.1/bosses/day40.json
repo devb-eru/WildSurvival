@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "bosses",
+  "records": [
+    {
+      "id": "BOSS-D40",
+      "sourceDocumentId": "BOSS-D40-001",
+      "enabled": true,
+      "name": "공진 파괴자",
+      "kind": "BOSS",
+      "bukkitType": "RAVAGER",
+      "displayFallback": "RAVAGER+Display",
+      "firstDay": 40,
+      "dayProfile": "BOSS_DAY",
+      "role": "BOSS",
+      "budgetCost": 0,
+      "baseHp": 650000,
+      "defence": 190,
+      "attackDamage": 340,
+      "penetration": 0,
+      "breakMax": 30000,
+      "augmentSlots": 0,
+      "elite": true,
+      "actionBundleId": "ACTSET-BOSS-D40",
+      "entitySetId": "ENTSET-BOSS-D40",
+      "telegraphTicks": 32,
+      "cooldownTicks": 120,
+      "attackRange": 9.0,
+      "statusId": "",
+      "spawnPolicy": "BOSS_CALL_TRANSACTION",
+      "cleanupPolicy": "BOSS_END",
+      "rewardOwner": "CONTRIBUTORS",
+      "lootTableId": "LOOT-BOSS-D40",
+      "activityExp": 3000,
+      "flags": [
+        "BOSS",
+        "NO_DYNAMIC_AUGMENT"
+      ],
+      "raw": [
+        "BOSS-D40",
+        "공진 파괴자",
+        "RAVAGER+Display",
+        "ACTSET-BOSS-D40",
+        "ENTSET-BOSS-D40",
+        "LOOT-BOSS-D40"
+      ]
+    }
+  ]
+}

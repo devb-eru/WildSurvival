@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "domain": "fixture-cardinality",
+  "records": [
+    {
+      "id": "materials",
+      "expected": 59
+    },
+    {
+      "id": "items",
+      "expected": 62
+    },
+    {
+      "id": "tools",
+      "expected": 214
+    },
+    {
+      "id": "recipes",
+      "expected": 316
+    },
+    {
+      "id": "codex",
+      "expected": 335
+    },
+    {
+      "id": "skills",
+      "expected": 64
+    },
+    {
+      "id": "personalAugments",
+      "expected": 50
+    },
+    {
+      "id": "partyAugments",
+      "expected": 16
+    },
+    {
+      "id": "enemyActions",
+      "expected": 69
+    },
+    {
+      "id": "enemies",
+      "expected": 53
+    },
+    {
+      "id": "bosses",
+      "expected": 4
+    },
+    {
+      "id": "support",
+      "expected": 35
+    },
+    {
+      "id": "entityTemplates",
+      "expected": 92
+    },
+    {
+      "id": "facilities",
+      "expected": 46
+    },
+    {
+      "id": "loot",
+      "expected": 62
+    },
+    {
+      "id": "research",
+      "expected": 25
+    },
+    {
+      "id": "discoveries",
+      "expected": 49
+    },
+    {
+      "id": "storyScenes",
+      "expected": 73
+    },
+    {
+      "id": "storyLogs",
+      "expected": 9
+    },
+    {
+      "id": "eventsD10",
+      "expected": 34
+    },
+    {
+      "id": "eventsD20",
+      "expected": 18
+    },
+    {
+      "id": "eventsD50",
+      "expected": 55
+    },
+    {
+      "id": "final",
+      "expected": 32
+    },
+    {
+      "id": "budget",
+      "expected": 19
+    },
+    {
+      "id": "drawLocks",
+      "expected": 14
+    },
+    {
+      "id": "softlocks",
+      "expected": 7
+    }
+  ]
+}

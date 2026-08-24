@@ -1,0 +1,420 @@
+{
+  "schemaVersion": 2,
+  "contentRevision": "ws-content-r2.1",
+  "activationPolicy": "NEW_RUN_ONLY",
+  "storyRevision": "ws-story-s1-r1",
+  "budgetPolicyRevision": "budget-live-r2",
+  "drawRevision": "draw-s1-r2",
+  "rulesRevision": "rules-s1-r2",
+  "resourcePackContract": "ws-rp-s1-r1",
+  "files": [
+    {
+      "path": "schemas/manifest.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9aaed832f3b3e2be58f9ee423bf77cb657bb14f9a1c3f23f089ebb02380b9984"
+    },
+    {
+      "path": "schemas/common.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9e8df6765276862b022f15601a518dc5aa1a08da0ca56ccd2da740d9742acf08"
+    },
+    {
+      "path": "schemas/day.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "79936fa0ded1d665523c7138ffc917f509537c0a953ae64c349fe07060b0bb71"
+    },
+    {
+      "path": "schemas/event.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "d43fb565da1476f128790b05aeefe47b9d11599ce2f9a054449cfb95b6f1d6be"
+    },
+    {
+      "path": "schemas/enemy.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9e8df6765276862b022f15601a518dc5aa1a08da0ca56ccd2da740d9742acf08"
+    },
+    {
+      "path": "schemas/resource.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9e8df6765276862b022f15601a518dc5aa1a08da0ca56ccd2da740d9742acf08"
+    },
+    {
+      "path": "schemas/item.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "00f327e24d96227a16a1bec5ff2b8117e8dc5527bce42f22a38eab43be26b8f8"
+    },
+    {
+      "path": "schemas/recipe.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "400499048acb17128210d081fc273c587f087842d60de0baa0e97c07ba5add34"
+    },
+    {
+      "path": "schemas/equipment.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "69bec1c59622086c8734e7a0eab46db8c918d0494c8ba506daa83324b77e32b6"
+    },
+    {
+      "path": "schemas/facility.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9e8df6765276862b022f15601a518dc5aa1a08da0ca56ccd2da740d9742acf08"
+    },
+    {
+      "path": "schemas/research.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9561dc5036904e780a8b1285b21cddb6ec044d22b6d48b7ba829913c0e40c41a"
+    },
+    {
+      "path": "schemas/status.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "54eb416f0870fe4981969ae1c06d5dba155b326bbff617c0f8f0781790878aa8"
+    },
+    {
+      "path": "schemas/discovery.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "700dfb0cee3d6ec4ddd30a218d40b8c0279225e9e59affb92ba03708f5811ea9"
+    },
+    {
+      "path": "schemas/augment.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "1d8db0ce8f1d2ea9e22da1b5ab045274fae34a35960c1ceb9217eebb0c67ab74"
+    },
+    {
+      "path": "schemas/skill.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "4b954e2ac5ea45d8aad8136ec04f3a3553ed81ca336094133e609151faa7d856"
+    },
+    {
+      "path": "schemas/action.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "b36842f54b5a07642bdeb22336fc5af93b61b7dc15e0b8879babcf1b73204e12"
+    },
+    {
+      "path": "schemas/entity.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "822d910d7e2886545a853e0b1c2a78d9da09bbf0956c346931f68a7719c5363f"
+    },
+    {
+      "path": "schemas/loot.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9e8df6765276862b022f15601a518dc5aa1a08da0ca56ccd2da740d9742acf08"
+    },
+    {
+      "path": "schemas/codex.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9e8df6765276862b022f15601a518dc5aa1a08da0ca56ccd2da740d9742acf08"
+    },
+    {
+      "path": "schemas/migration.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9e8df6765276862b022f15601a518dc5aa1a08da0ca56ccd2da740d9742acf08"
+    },
+    {
+      "path": "schemas/boss.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9e8df6765276862b022f15601a518dc5aa1a08da0ca56ccd2da740d9742acf08"
+    },
+    {
+      "path": "schemas/final.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "85807751bd36eaa05d504e0f5892aafee161732b316c3d7a600df3120c1aab5b"
+    },
+    {
+      "path": "schemas/story.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "7a7bb327537376ce6ac27638b7220924fb18a73a644a41531a779fe8be70444d"
+    },
+    {
+      "path": "schemas/budget.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9e8df6765276862b022f15601a518dc5aa1a08da0ca56ccd2da740d9742acf08"
+    },
+    {
+      "path": "schemas/ops.schema.json",
+      "domain": "schema",
+      "schema": "common.schema.json",
+      "sha256": "9e8df6765276862b022f15601a518dc5aa1a08da0ca56ccd2da740d9742acf08"
+    },
+    {
+      "path": "days/season1-days-01-50.json",
+      "domain": "days",
+      "schema": "day.schema.json",
+      "sha256": "c3aad47a4e9fdb6ef6d002740a6a595761be453071df6cf26b7c0a8ced66e681"
+    },
+    {
+      "path": "days/endless-days-51-plus.json",
+      "domain": "days-endless",
+      "schema": "common.schema.json",
+      "sha256": "71e93bb9d8ff56103576200bfd3e8af02c23b872f99f9fc600aded215592bb51"
+    },
+    {
+      "path": "events/day01-10.json",
+      "domain": "events",
+      "schema": "event.schema.json",
+      "sha256": "41b882813b0082daae67902c07a44bc453ae9977de4ea71e4538857ce16fd5d5"
+    },
+    {
+      "path": "events/day11-20.json",
+      "domain": "events",
+      "schema": "event.schema.json",
+      "sha256": "a5373fa785f2093b0a0c256c2475208226e7e34d14c0de81c35e1e2eecc4f038"
+    },
+    {
+      "path": "events/day21-50.json",
+      "domain": "events",
+      "schema": "event.schema.json",
+      "sha256": "36e3a3458057ccefe86b6fe77b85d01ed638d2478213af4468a5e962ff07b4c4"
+    },
+    {
+      "path": "enemies/day01-10.json",
+      "domain": "enemies",
+      "schema": "enemy.schema.json",
+      "sha256": "6b4e5651680614aa942d90689896807e5ab159c8d1bd34860bd4c55cc507a91d"
+    },
+    {
+      "path": "enemies/day11-20.json",
+      "domain": "enemies",
+      "schema": "enemy.schema.json",
+      "sha256": "15ec4918d7ef170fd727d56f987cb42af8dd310fc545129a975001470e84c67f"
+    },
+    {
+      "path": "enemies/day21-50.json",
+      "domain": "enemies",
+      "schema": "enemy.schema.json",
+      "sha256": "53e0dac2ea96bfe9f955bb42384ebf60bd9f9570267efc2e878ba35b01d7f725"
+    },
+    {
+      "path": "resources/day01-10.json",
+      "domain": "resources",
+      "schema": "resource.schema.json",
+      "sha256": "9586685efd5ebfc039d75c4ea65f45a3860d6b2e0b1d3ae3ee6cbbb6ad6e7281"
+    },
+    {
+      "path": "resources/day11-20.json",
+      "domain": "resources",
+      "schema": "resource.schema.json",
+      "sha256": "43d1b9bd1992567bc97d74f99d5bd0c91aa491d735d8e67e0ef390b453e936ad"
+    },
+    {
+      "path": "resources/day21-50.json",
+      "domain": "resources",
+      "schema": "resource.schema.json",
+      "sha256": "84abae8f7519f7e71332fa945d793c591a390b528853f809ddcf680ca12e4dad"
+    },
+    {
+      "path": "items/materials.json",
+      "domain": "materials",
+      "schema": "resource.schema.json",
+      "sha256": "cba10c50c50a8294fd4c534f18ff62b289ce69619d7854f73c9521968ad9c6e3"
+    },
+    {
+      "path": "items/non-equipment-items.json",
+      "domain": "items",
+      "schema": "item.schema.json",
+      "sha256": "347d3688d014978a2fe9d3da8f8cd3df3a4f5967ac10a01b4a579dc1a92a2694"
+    },
+    {
+      "path": "items/codex-index.json",
+      "domain": "codex",
+      "schema": "codex.schema.json",
+      "sha256": "b565dad91878ca4e4997862d8b7ef8613222bac81c73dfc3653f8a5b93bfb000"
+    },
+    {
+      "path": "recipes/season1-recipes.json",
+      "domain": "recipes",
+      "schema": "recipe.schema.json",
+      "sha256": "03492c93effee7ac55373492435429975dbf73fbb564a14d8f1b2e5f395a0fe8"
+    },
+    {
+      "path": "equipment/day01-10.json",
+      "domain": "equipment",
+      "schema": "equipment.schema.json",
+      "sha256": "571af3c25b337d29719cf4a32dd0bd10f9fa6adaf400d0c8dc677a252d287937"
+    },
+    {
+      "path": "equipment/day11-20.json",
+      "domain": "equipment",
+      "schema": "equipment.schema.json",
+      "sha256": "d6b360402efdf89ead16bb8661cd83c4230a281b93d9b5cbcd8c530829cfa593"
+    },
+    {
+      "path": "equipment/day21-50.json",
+      "domain": "equipment",
+      "schema": "equipment.schema.json",
+      "sha256": "367b36452f6f727eae90e32b6bd3042e51a2b7109ec3bb95a794baf589089587"
+    },
+    {
+      "path": "facilities/season1-facilities.json",
+      "domain": "facilities",
+      "schema": "facility.schema.json",
+      "sha256": "aa24fe26773a5cc5e5c95731a37d630f9922fca119d3115cb5ce8383c490566a"
+    },
+    {
+      "path": "statuses/season1-statuses.json",
+      "domain": "statuses",
+      "schema": "status.schema.json",
+      "sha256": "ef4d447aeee5598216b2a188663f8bec6c213f337456e3b9d841917cf3e04320"
+    },
+    {
+      "path": "research/season1-research.json",
+      "domain": "research",
+      "schema": "research.schema.json",
+      "sha256": "cfed75bc16b0165baadfc85900b7e6f50d4e96da186abaaf588d83dadb724cf8"
+    },
+    {
+      "path": "discoveries/season1-discoveries.json",
+      "domain": "discoveries",
+      "schema": "discovery.schema.json",
+      "sha256": "230871dead3d291d512b4697e887b40f1b3978549678a06d1992d603c1fa7804"
+    },
+    {
+      "path": "augments/personal-augments.json",
+      "domain": "personal-augments",
+      "schema": "augment.schema.json",
+      "sha256": "0406d1fd24a32867de81d8b301d1f276983cd66bc900340e639552e2e99ba2c2"
+    },
+    {
+      "path": "augments/party-augments.json",
+      "domain": "party-augments",
+      "schema": "augment.schema.json",
+      "sha256": "4947b40c8a0ecb59714f7f2b4f3ca9dab22bf1be7ef57f2a2f112de1520a54c8"
+    },
+    {
+      "path": "skills/player-skills.json",
+      "domain": "player-skills",
+      "schema": "skill.schema.json",
+      "sha256": "ca2dd6a912207548d913c19143e519d22c646523c5bc2de30fc554537cf5c867"
+    },
+    {
+      "path": "skills/entity-actions.json",
+      "domain": "entity-actions",
+      "schema": "action.schema.json",
+      "sha256": "49611e066e9a280b183864a37bc71b58702ae07dc7b9f5890f1cdbc1fd0592ae"
+    },
+    {
+      "path": "entities/support-entities.json",
+      "domain": "support-entities",
+      "schema": "entity.schema.json",
+      "sha256": "653acf074940c92037080dee4d5a5cc938628074a3359a42bb8564ac65f5e611"
+    },
+    {
+      "path": "loot/season1-loot.json",
+      "domain": "loot",
+      "schema": "loot.schema.json",
+      "sha256": "efa4a1b68bf6f6530bd34fd147b0d8e314785b1d4eca24acdf7e9c7a807ce899"
+    },
+    {
+      "path": "bosses/day10.json",
+      "domain": "bosses",
+      "schema": "boss.schema.json",
+      "sha256": "10a55f3ddf15f77a1c45da3750600df7d010b62a9be7f12a3cdcc149c20c7706"
+    },
+    {
+      "path": "bosses/day20.json",
+      "domain": "bosses",
+      "schema": "boss.schema.json",
+      "sha256": "d28e8cce0111be48660f8f117a0a02eb577637268f7b36feee2b791389328d41"
+    },
+    {
+      "path": "bosses/day30.json",
+      "domain": "bosses",
+      "schema": "boss.schema.json",
+      "sha256": "2f7908384359d5cc2f0f9ec493f26ead22b44512a51bac2a3aeede5cdd753316"
+    },
+    {
+      "path": "bosses/day40.json",
+      "domain": "bosses",
+      "schema": "boss.schema.json",
+      "sha256": "efdd24154b6a09899888173459cb63f9d38772f905aa50b58f87522da0367c72"
+    },
+    {
+      "path": "final/day50-reconstruction-signal.json",
+      "domain": "final",
+      "schema": "final.schema.json",
+      "sha256": "c0cc02b731026fd8f50dea5b22949d15411e42b2efe62cbbe563e74fa7f9424b"
+    },
+    {
+      "path": "story/season1-scenes.json",
+      "domain": "story-scenes",
+      "schema": "story.schema.json",
+      "sha256": "80c383b53e40de465191bf58aa2ea719eb6cd20414214a67681acbd8987d86d2"
+    },
+    {
+      "path": "story/season1-logs.json",
+      "domain": "story-logs",
+      "schema": "story.schema.json",
+      "sha256": "44b91685b67d4afef651f6f0e1889297c63876b3be90bbd922d6d1dad978f8f4"
+    },
+    {
+      "path": "budget/live-profiles.json",
+      "domain": "budget",
+      "schema": "budget.schema.json",
+      "sha256": "f7c5e9db6c6978fd0f334d840f5dff6cc95b68f483fcb7d04660d26da2073b70"
+    },
+    {
+      "path": "migrations/id-aliases.json",
+      "domain": "migrations",
+      "schema": "migration.schema.json",
+      "sha256": "55650ff1607f443b6528d1d11b75cb1cceea5a2abf978568d35ef41c9e412607"
+    },
+    {
+      "path": "fixtures/cardinality.json",
+      "domain": "fixture-cardinality",
+      "schema": "common.schema.json",
+      "sha256": "46eea77e4200c0872c049e5cad9a3261f05a8164c7b198174a62f2b8661d45e8"
+    },
+    {
+      "path": "fixtures/reference-graph.json",
+      "domain": "fixture-reference-graph",
+      "schema": "common.schema.json",
+      "sha256": "8127f9c072dcee2f1f39dbdf3013a74feab21903cca512693a123c7379a34835"
+    },
+    {
+      "path": "fixtures/draw-locks.json",
+      "domain": "fixture-draw-locks",
+      "schema": "common.schema.json",
+      "sha256": "ab77e771c2edc684e1492945921311c61fde945e5fbcbe60e9eff07db4b32a50"
+    },
+    {
+      "path": "fixtures/softlock-scenarios.json",
+      "domain": "fixture-softlocks",
+      "schema": "common.schema.json",
+      "sha256": "2740fecf98f2a8b9d047bc30d1ef78b082e1b4146c459459c373404ca9ed319f"
+    },
+    {
+      "path": "ops/admin-commands.json",
+      "domain": "ops-admin",
+      "schema": "ops.schema.json",
+      "sha256": "daaabd814b695264173c9857113d8808b8e9d55e6282cd02a84c24f773b6419b"
+    },
+    {
+      "path": "ops/telemetry-contract.json",
+      "domain": "ops-telemetry",
+      "schema": "ops.schema.json",
+      "sha256": "1a7c8bda47514ad0a9ece27845eca83d9e3044e1aba05d1a2000b710b3678d3e"
+    }
+  ]
+}
