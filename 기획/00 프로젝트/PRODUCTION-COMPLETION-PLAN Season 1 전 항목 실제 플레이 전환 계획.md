@@ -150,6 +150,8 @@ L0 수량 일치는 콘텐츠 존재 증거다. `BLOCKED_DATA`, `STRUCTURED_ONLY
 - 저장·재접속·등급 최초 잠금·동시 최초 달성 결정론
 - 몬스터 등급 연동과 부적합 후보 제거
 
+`AUGMENT-EFFECT-LIST-001`은 66개 각각의 고유 `effectOpcode`, 완전한 `triggerIds`, ICD 상태 `stateScope`를 잠근다. 첫 태그를 opcode로 쓰는 현재 r2 투영은 `STRUCTURED_ONLY`이며 66개 고유 opcode로 바뀌기 전에는 의미 실행으로 인정하지 않는다.
+
 개인 선택은 Lv3·6·10과 이후 5레벨 단위 총 10회다. Lv3/6/10은 SILVER/GOLD/PRISM 고정이고 이후 최초 달성자의 50/30/20 결과로 해당 마일스톤의 등급을 잠근다. 파티 선택은 Day10/20/30/40 총 4회다.
 
 ### 3.7 엔티티 목록 — `ENTITY-LIST-001`

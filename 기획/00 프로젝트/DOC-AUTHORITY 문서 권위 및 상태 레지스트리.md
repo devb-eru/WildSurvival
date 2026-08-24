@@ -73,6 +73,7 @@
 | `STAT-001~002` | `BASELINE_LOCKED` | 전투 스탯·계산 | G0 |
 | `AUG-001` | `BASELINE_LOCKED` | 개인·파티 증강 드로우 | G0 |
 | `AUG-LIST-001~002` | `DATA_LOCKED` | 증강 후보 풀 | G0 |
+| `AUGMENT-EFFECT-LIST-001` | `DATA_LOCKED` | 증강 66개 고유 opcode·trigger·stateScope 실행 투영 | DEV-500 |
 | `SKILL-001~002` | `BASELINE_LOCKED` | 스킬 실행·범위·백엔드 | G0 |
 | `SKILL-LIST-001` | `DATA_LOCKED` | 스킬 ID 목록 | G0 |
 | `DEATH-001~003` | `BASELINE_LOCKED` | 빈사·구조·사망·부활 | G0 |

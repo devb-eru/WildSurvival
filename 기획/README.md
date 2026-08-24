@@ -60,6 +60,7 @@ WildSurvival의 기획 문서를 책임 영역별로 분류한 색인이다. 문
 - [AUG 증강 리스트 기획서](<02 플레이어 성장/AUG 증강 리스트 기획서.md>)
 - [AUGMENT-PERSONAL-LIST Season 1 개인 증강 목록 기획서](<02 플레이어 성장/AUGMENT-PERSONAL-LIST Season 1 개인 증강 목록 기획서.md>)
 - [AUGMENT-PARTY-LIST Season 1 파티 증강 목록 기획서](<02 플레이어 성장/AUGMENT-PARTY-LIST Season 1 파티 증강 목록 기획서.md>)
+- [AUGMENT-EFFECT-LIST Season 1 증강 실행 효과 목록 기획서](<02 플레이어 성장/AUGMENT-EFFECT-LIST Season 1 증강 실행 효과 목록 기획서.md>)
 - [SKILL 스킬 시스템 상세 기획서](<02 플레이어 성장/SKILL 스킬 시스템 상세 기획서.md>)
 - [SKILL-LIST 스킬 목록 기획서](<02 플레이어 성장/SKILL-LIST 스킬 목록 기획서.md>)
 - [DEATH 사망 시스템 상세 기획서](<02 플레이어 성장/DEATH 사망 시스템 상세 기획서.md>)
