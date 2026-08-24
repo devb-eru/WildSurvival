@@ -420,7 +420,7 @@ DEV-000 계약 보정
 | Day 1~50 런타임 | `HEADLESS_VERIFIED` | 1~4인 50일 원장, 일반일 46개 적 예산·편성, 보스일 4개, Day49 Final 거부·Day50 허용 자동 테스트 |
 | 주요 보스 | `RUNTIME_REVIEW` | Day10/20/30/40 각 12개, 총 48개 패턴 ID·3페이즈 풀·보상·재접속 상태 |
 | 발견·Story·Final | `RUNTIME_REVIEW` | 발견 49개 상태·증거, Story 73장면 큐·재생 기록, Final 3단계·6단계 완료 트랜잭션 |
-| 연구 | `BLOCKED_DATA` | 25개 노드 GUI와 권위 10단계 상태·기존 저장 마이그레이션. 미정 입력은 `HYPOTHESIZED`에서 무소비 정지 |
+| 연구 | `DATA_READY_RUNTIME_MISSING` | 25개 노드 GUI와 권위 10단계 상태·기존 저장 마이그레이션. `PRODUCTION-DATA-CLOSURE-001`의 비용·증거를 명시 필드로 이관하기 전에는 `HYPOTHESIZED`에서 무소비 정지 |
 | 상태 권위 | `RUNTIME_REVIEW` | 21개 등록, 17개 실행 기준선, 확장 `FREEZE/BLIND/EXHAUSTION` 3종은 `TEMPLATE_LOCKED`, `CORRUPTION`은 별도 scripted 원장 |
 | 증강 | `PARTIAL_RUNTIME` | 66개 드로우·잠금·표시, 정확 회피·권투 반격·저체력·구조·장비 태그·분산 전투 등 반응 효과 실행 |
 | 시설 | `PARTIAL_RUNTIME` | 설치·망·원장·함정, 휴대/정착 정화·중계·환경 차폐 오염 보호, 충격 함정 브레이크 |
@@ -443,7 +443,7 @@ DEV-000 계약 보정
 3. 연구 두 입력표를 받으면 표본 제출→자원 예약→QUEUED→PROCESSING↔PAUSED→ANALYZED→UNLOCKED를 원자 작업 큐로 구현한다.
 4. 상태 공통 런타임의 자동 fixture를 확장하고 `FEAR`·`TAUNT`·`AIRBORNE`, DOT 보스 DPS 상한, 오염 scripted 연결을 ID별로 검증한다.
 5. 남은 증강 opcode를 상태·브레이크·경제·시설 사건 훅에 연결하고 66개 ID별 실행 행렬을 0개 누락으로 만든다.
-6. 시설 placeholder opcode 중 재련·증강 관리·유품 복구·저장·전력·방벽·도발을 실제 작업 상태로 교체한다.
+6. 시설의 `STRUCTURED_ONLY` opcode 중 재련·증강 관리·유품 복구·저장·전력·방벽·도발을 폐쇄된 비용·대상 계약의 실제 작업 상태로 교체한다.
 7. 일반 적 53개 행동과 보스·Final 패턴을 ID별 공간·상태·중단 효과로 확장하고 범용 방사 피해를 제거한다.
 8. 1~4인 Day 1→50 실제 E2E, 재접속·서버 중단·보스 이탈·최종 완료 복구를 통과한 뒤 `G-700`을 판정한다.
 

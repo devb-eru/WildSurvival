@@ -56,6 +56,7 @@
 | `PRODUCTION-COMPLETION-PLAN-001` | `ACTIVE_CONTROL` | 전 고정 ID의 실제 플레이 전환 순서·개별 완료 판정 | DEV-300~800 |
 | `CONTENT-CATALOG-INDEX-001` | `DATA_LOCKED` | 생산 콘텐츠 ID 합계·소유 문서·구현 파일 통합 색인 | DEV-300~800 |
 | `PRODUCTION-DATA-CLOSURE-001` | `ACTIVE_CONTROL` | 목록의 미확정 실행 수치·비용·연구 증거 폐쇄와 사용자 결정 분리 | DEV-300~800 |
+| `AUTHOR-DECISION-REGISTER-001` | `ACTIVE_CONTROL` | 부활 정책·Story 본문 작성 방식의 사용자 확정 게이트 | DEV-300·700~800 |
 | `CONTENT-MASTER-001` | `BASELINE_LOCKED` | Day 1~50+ 상위 진행 | G0 |
 | `GAME-001~003` | `BASELINE_LOCKED` | 타이머·저장·인원 스케일 | G0 |
 | `DAY-001` | `BASELINE_LOCKED` | Day 전환·스킵·완료 | G0 |
