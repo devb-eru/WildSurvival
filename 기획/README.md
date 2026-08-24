@@ -19,7 +19,7 @@ WildSurvival의 기획 문서를 책임 영역별로 분류한 색인이다. 문
 | `01 회차와 진행` | 회차 상태, Day, 난이도, 예산, 전체 진행과 최종 목표 | 8 |
 | `02 플레이어 성장` | 활동, 레벨, 스탯, 증강, 스킬, 사망 | 11 |
 | `03 전투` | 독자 전투 규칙, 브레이크, 상태이상, 무기 실행 | 6 |
-| `04 장비와 경제` | 장비, 제작, 경제, 보상과 획득 목록 | 12 |
+| `04 장비와 경제` | 장비, 제작, 경제, 보상과 획득 목록 | 18 |
 | `05 세계와 생존` | 기지, 시설, 자원, 오염, 발견 | 11 |
 | `06 사건과 적` | 동적 사건, 공세, 일반 적과 적 데이터 | 8 |
 | `07 보스` | Day 10·20·30·40 협동 보스 | 5 |
@@ -83,8 +83,14 @@ WildSurvival의 기획 문서를 책임 영역별로 분류한 색인이다. 문
 - [ECONOMY 장비·제작 경제 기준 기획서](<04 장비와 경제/ECONOMY 장비·제작 경제 기준 기획서.md>)
 - [REWARD 통합 보상 시스템 상세 기획서](<04 장비와 경제/REWARD 통합 보상 시스템 상세 기획서.md>)
 - [ITEM-LIST Season 1 아이템 목록 기획서](<04 장비와 경제/ITEM-LIST Season 1 아이템 목록 기획서.md>)
+- [CONSUMABLE-RUNTIME-STATUS Season 1 소모품 구현 상태 원장](<04 장비와 경제/CONSUMABLE-RUNTIME-STATUS Season 1 소모품 구현 상태 원장.md>)
+- [ITEM-RUNTIME-STATUS Season 1 비소모 아이템 구현 상태 원장](<04 장비와 경제/ITEM-RUNTIME-STATUS Season 1 비소모 아이템 구현 상태 원장.md>)
 - [MATERIAL-LIST Season 1 재료 목록 기획서](<04 장비와 경제/MATERIAL-LIST Season 1 재료 목록 기획서.md>)
 - [TOOL-LIST Season 1 도구·방어구 목록 기획서](<04 장비와 경제/TOOL-LIST Season 1 도구·방어구 목록 기획서.md>)
+- [WEAPON-EQUIPMENT-LIST Season 1 무기·보조무기 목록 기획서](<04 장비와 경제/WEAPON-EQUIPMENT-LIST Season 1 무기·보조무기 목록 기획서.md>)
+- [ARMOR-ACCESSORY-LIST Season 1 방어구·장신구 목록 기획서](<04 장비와 경제/ARMOR-ACCESSORY-LIST Season 1 방어구·장신구 목록 기획서.md>)
+- [UTILITY-TOOL-LIST Season 1 상위 채집 도구 목록 기획서](<04 장비와 경제/UTILITY-TOOL-LIST Season 1 상위 채집 도구 목록 기획서.md>)
+- [HIGH-TIER-MATERIAL-LIST Season 1 상위 재료 목록 기획서](<04 장비와 경제/HIGH-TIER-MATERIAL-LIST Season 1 상위 재료 목록 기획서.md>)
 - [RECIPE-LIST Season 1 조합법 목록 기획서](<04 장비와 경제/RECIPE-LIST Season 1 조합법 목록 기획서.md>)
 - [LOOT-LIST Season 1 획득·드롭 목록 기획서](<04 장비와 경제/LOOT-LIST Season 1 획득·드롭 목록 기획서.md>)
 

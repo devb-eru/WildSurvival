@@ -135,6 +135,10 @@ slot == 0
 | `ITEM-LIST-001` | Season 1 아이템 목록 | 인벤토리 표시 가능한 전체 아이템·도감 위치 |
 | `MATERIAL-LIST-001` | Season 1 재료 목록 | 원재료·표본·가공품·상위·고유 재료 |
 | `TOOL-LIST-001` | Season 1 도구·방어구 목록 | 채집 도구·무기·방어구·보조·장신구·부적 |
+| `WEAPON-EQUIPMENT-LIST-001` | Season 1 무기·보조무기 목록 | 주무기108·보조무기11의 정확한 ID 투영 |
+| `ARMOR-ACCESSORY-LIST-001` | Season 1 방어구·장신구 목록 | 방어구45·장신구24·부적10의 정확한 ID 투영 |
+| `UTILITY-TOOL-LIST-001` | Season 1 상위 채집 도구 목록 | T3~T6 곡괭이·도끼·삽·괭이16 |
+| `HIGH-TIER-MATERIAL-LIST-001` | Season 1 상위 재료 목록 | T3~T6 재료23의 정확한 ID 투영 |
 | `RECIPE-LIST-001` | Season 1 조합법 목록 | 3×3·가공·장비·시설·호출·재건 전 레시피 |
 | `SKILL-LIST-001` | 기존 문서 갱신 | 기본 공격 10종·액티브 54종·적/시설 실행 연결 |
 | `AUG-LIST-001~002` | 기존 문서 갱신 | 개인 50·파티 16과 실행 트리거·상한 |
@@ -156,7 +160,7 @@ slot == 0
 
 다음 조건을 모두 만족해 상태를 `IMPLEMENTATION_READY`로 변경했다. 이는 코드·번들 완성을 뜻하지 않으며 생산 구현 착수만 허용한다.
 
-1. 별도 목록 10종의 상태가 `DATA_LOCKED`다.
+1. 기본 별도 목록 10종과 장비·상위 재료 분리 투영 4종의 상태가 `DATA_LOCKED`다.
 2. 와일드카드·표시명 참조·중복 ID·고아 ID가 0이다.
 3. 모든 craftable item에 최소 하나의 recipe, 모든 non-craftable item에 최소 하나의 loot/reward source가 있다.
 4. 모든 스킬·증강·장비 효과가 해석 가능한 trigger/effect/cap ID를 가진다.

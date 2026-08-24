@@ -25,9 +25,9 @@
 
 | 범주 | 소유 문서 | 고정 수 | 개별 완료 단위 | 현재 판정 |
 |---|---|---:|---|---|
-| 재료·진행 증명 | `MATERIAL-LIST-001` | 59 | 획득·개인/공용 귀속·소비·복구 | `PARTIAL_RUNTIME` |
+| 재료·진행 증명 | `MATERIAL-LIST-001`; T3~T6 투영 `HIGH-TIER-MATERIAL-LIST-001` | 59 | 전체59·상위23의 획득·개인/공용 귀속·소비·복구 | `PARTIAL_RUNTIME` |
 | 비장비 아이템 | `ITEM-LIST-001` | 61 | 보유·사용·거부·환불·도감 | `PARTIAL_RUNTIME` |
-| 장비·상위 도구 | `TOOL-LIST-001` | 214 | 제작·인스턴스·장착·고유 효과·파손·수리 | `PARTIAL_RUNTIME` |
+| 장비·상위 도구 | `TOOL-LIST-001`; 분리 투영 `WEAPON/ARMOR/UTILITY-*-LIST-001` | 214 | 주/보조119·방어구/장신구79·유틸리티16의 제작·인스턴스·장착·고유 효과·파손·수리 | `PARTIAL_RUNTIME` |
 | 레시피 | `RECIPE-LIST-001` | 315 | 3×3 일치·수량·태그·증명·원자 출력 | `RUNTIME_REVIEW` |
 | 플레이어 스킬 | `SKILL-LIST-001` | 64 | 입력·비용·쿨다운·표적·효과·복구 | `PARTIAL_RUNTIME` |
 | 개인 증강 | `AUG-LIST-001` | 50 | 드로우·선택·효과·상충·저장 | `PARTIAL_RUNTIME` |

@@ -37,7 +37,7 @@ ID를 문서 제목, 표시명 또는 와일드카드로 대신하지 않는다.
 | 재료·진행 증명 | 59 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 원재료36+가공15+보스3+증명5 |
 | 비장비 아이템 | 61 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 소모품18+휴대7+시설32+호출4 |
 | 레시피 | 315 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; CRAFT21+PROCESS30+장비198+시설39+도구16+호출4+가상7 |
-| 장비·상위 도구 | 214 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 장비198+유틸리티 도구16 |
+| 장비·상위 도구 | 214 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 주/보조119+방어구/장신구79+유틸리티16 |
 | 플레이어 스킬 | 64 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 기본 공격10+액티브·상황54 |
 | 개인 증강 | 50 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; Silver18+Gold18+Prism14 |
 | 파티 증강 | 16 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; Day10/20/30/40 총4회 |
@@ -70,6 +70,17 @@ ID를 문서 제목, 표시명 또는 와일드카드로 대신하지 않는다.
 - T3~T6 실제 채집을 위한 상위 유틸리티 도구 16개가 필요하다.
 
 최종 생산 인벤토리 템플릿은 장비 198개와 상위 도구 16개, 합계 `214개`다.
+
+### 3.1 장비·재료 분리 투영
+
+| 투영 목록 | 필터 | 수량 | ID 소유권 |
+|---|---|---:|---|
+| `WEAPON-EQUIPMENT-LIST-001` | `MAIN_WEAPON`, `OFF_WEAPON` | 108+11=`119` | `TOOL-LIST-001` 유지 |
+| `ARMOR-ACCESSORY-LIST-001` | 방어구 4슬롯, `ACCESSORY`, `CHARM` | 45+24+10=`79` | `TOOL-LIST-001` 유지 |
+| `UTILITY-TOOL-LIST-001` | `equipmentType=UTILITY`, `INVENTORY` | `16` | `TOOL-LIST-001` 유지 |
+| `HIGH-TIER-MATERIAL-LIST-001` | material tier T3~T6 | `23` | `MATERIAL-LIST-001` 유지 |
+
+장비 세 투영은 서로 교집합이 없고 `119+79+16=214`다. 투영 문서는 사용자가 범주별로 검토하기 위한 고정 목록이며 새 ID를 소유하거나 원 소유 문서의 필드를 덮어쓰지 않는다.
 
 ## 4. 플레이어 스킬 기준선
 
