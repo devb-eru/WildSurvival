@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wildsurvival.local/schema/ws-content-r2.1-registry.schema.json",
+  "title": "WildSurvival ws-content-r2.1 implementation contract registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifactType", "registryRevision", "planningInputRevision", "targetContentRevision",
+    "migrationSourceRevision", "activationPolicy", "contractStatus", "storyContentPolicy",
+    "lockedRevisions", "preservedRevisions", "authorityDocuments", "targetCounts",
+    "workPackages", "validationGates"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "artifactType": { "const": "IMPLEMENTATION_CONTRACT" },
+    "registryRevision": { "const": "ws-content-r2.1-contract-r1" },
+    "planningInputRevision": { "const": "s1-plan-20260824-r1" },
+    "targetContentRevision": { "const": "ws-content-r2.1" },
+    "migrationSourceRevision": { "const": "ws-content-r2" },
+    "activationPolicy": { "const": "NEW_RUN_ONLY" },
+    "contractStatus": { "enum": ["CONTRACT_READY", "BUNDLE_BUILT", "L0_VALIDATED", "L1_TESTED", "L2_SIMULATED", "L3_LOAD_TESTED", "RELEASE_CANDIDATE", "LIVE_LOCKED"] },
+    "storyContentPolicy": { "const": "CHAPTER_REVIEW_DEFERRED_UNTIL_P8" },
+    "lockedRevisions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion", "storyRevision", "budgetPolicyRevision", "drawRevision",
+        "rulesRevision", "resourcePackContract"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 2 },
+        "storyRevision": { "const": "ws-story-s1-r1" },
+        "budgetPolicyRevision": { "const": "budget-live-r2" },
+        "drawRevision": { "const": "draw-s1-r2" },
+        "rulesRevision": { "const": "rules-s1-r2" },
+        "resourcePackContract": { "const": "ws-rp-s1-r1" }
+      }
+    },
+    "preservedRevisions": {
+      "type": "array",
+      "allOf": [
+        { "contains": { "const": "ws-content-r1" } },
+        { "contains": { "const": "ws-content-r2" } }
+      ],
+      "uniqueItems": true
+    },
+    "authorityDocuments": {
+      "type": "array",
+      "minItems": 35,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9-]+$" }
+    },
+    "targetCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lockFiles", "manifestFiles", "schemaFiles", "dataFiles", "totalFiles",
+        "seasonDays", "materialRecords", "nonEquipmentItems", "equipmentAndTools",
+        "recipes", "codexRecords", "playerSkills", "personalAugments", "partyAugments",
+        "statusEffects", "enemyActions", "entityTemplates", "enemyTemplates", "supportEntities",
+        "facilities", "researchNodes", "lootTables", "personalAugmentMilestones",
+        "partyAugmentMilestones", "weaponClasses", "seasonBosses", "finalObjectives"
+      ],
+      "properties": {
+        "lockFiles": { "const": 1 },
+        "manifestFiles": { "const": 1 },
+        "schemaFiles": { "const": 25 },
+        "dataFiles": { "const": 43 },
+        "totalFiles": { "const": 70 },
+        "seasonDays": { "const": 50 },
+        "materialRecords": { "const": 59 },
+        "nonEquipmentItems": { "const": 62 },
+        "equipmentAndTools": { "const": 214 },
+        "recipes": { "const": 316 },
+        "codexRecords": { "const": 335 },
+        "playerSkills": { "const": 64 },
+        "personalAugments": { "const": 50 },
+        "partyAugments": { "const": 16 },
+        "statusEffects": { "const": 21 },
+        "enemyActions": { "const": 69 },
+        "entityTemplates": { "const": 92 },
+        "enemyTemplates": { "const": 53 },
+        "supportEntities": { "const": 35 },
+        "facilities": { "const": 46 },
+        "researchNodes": { "const": 25 },
+        "lootTables": { "const": 62 },
+        "personalAugmentMilestones": { "const": 10 },
+        "partyAugmentMilestones": { "const": 4 },
+        "weaponClasses": { "const": 10 },
+        "seasonBosses": { "const": 4 },
+        "finalObjectives": { "const": 1 }
+      }
+    },
+    "workPackages": {
+      "type": "array",
+      "minItems": 17,
+      "maxItems": 17,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^IMP-[0-9]{3}$" }
+    },
+    "validationGates": {
+      "type": "array",
+      "minItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "CONTRACT_READY", "BUNDLE_BUILT", "L0_VALIDATED", "L1_TESTED",
+          "L2_SIMULATED", "L3_LOAD_TESTED", "RELEASE_CANDIDATE", "LIVE_LOCKED"
+        ]
+      }
+    }
+  }
+}

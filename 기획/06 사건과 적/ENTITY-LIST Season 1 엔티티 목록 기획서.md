@@ -8,8 +8,8 @@
 | 상태 | `DATA_LOCKED` |
 | 적용 범위 | 일반·정예·보스·Final 적, 소환체, 전투 오브젝트, 투사체, 자원 노드, 피해 표시 |
 | 상위 기준 | `ENEMY-001`, `ENEMY-DATA-D20-001`, `ENEMY-DATA-D50-001`, `BOSS-001~004`, `FINAL-DATA-001` |
-| 데이터 리비전 | `entity-s1-r1` |
-| 최종 수정일 | 2026-08-23 |
+| 데이터 리비전 | `entity-s1-r2` |
+| 최종 수정일 | 2026-08-24 |
 
 ## 1. 공통 필드와 생명주기
 
@@ -98,7 +98,7 @@
 
 `ACTSET-BOSS-D10/D20/D30/D40`의 구성원은 각 BOSS 문서 표의 명시적 패턴 ID다. `ENTSET-BOSS-D10/D20/D30/D40`은 §4의 같은 Day 접두 엔티티 ID를 배열로 저장하며 접두 검색으로 런타임 구성하지 않는다. D20 set에는 `EN-D20-A01~A04` 네 ID도 명시 배열로 포함한다.
 
-## 4. 보조·표현 엔티티 34종
+## 4. 보조·표현 엔티티 35종
 
 | ID | 종류 | Bukkit·표현 폴백 | 제거 조건 | loot |
 |---|---|---|---|---|
@@ -109,6 +109,7 @@
 | `ENT-PROJ-PLAYER-RESCUE-FLARE` | PROJECTILE | FIREWORK | 착탄/40틱 | `LOOT-NONE` |
 | `ENT-DEPLOY-EMERGENCY-COVER` | DEPLOYABLE | BLOCK_DISPLAY | HP0/12초/전투 종료 | `LOOT-NONE` |
 | `ENT-UI-DAMAGE-NUMBER` | UI_TRANSIENT | TEXT_DISPLAY | 12~18틱 | `LOOT-NONE` |
+| `ENT-D18-SILENT-FOLLOWER` | SUMMON | SILVERFISH+Display | 소유 행동·정예 사망/전투 종료 | `LOOT-NONE` |
 | `ENT-NODE-BASIC` | RESOURCE_NODE | INTERACTION+BLOCK_DISPLAY | 채집/Day despawn | `LOOT-NODE-BASIC` |
 | `ENT-NODE-INDUSTRIAL` | RESOURCE_NODE | INTERACTION+BLOCK_DISPLAY | 채집/Day despawn | `LOOT-NODE-INDUSTRIAL` |
 | `ENT-NODE-MEDICAL` | RESOURCE_NODE | INTERACTION+ITEM_DISPLAY | 채집/Day despawn | `LOOT-NODE-MEDICAL` |
@@ -184,14 +185,16 @@ min(45%, 8% + 잠긴 개인 마일스톤 수×2%p + 지역 오염 단계×4%p)
 | 투사체·UI·배치물 | 7 |
 | 자원 노드 | 6 |
 | 보스·Final 오브젝트/소환체 | 21 |
-| 전체 entity template | 91 |
+| D18 침묵 추종체 | 1 |
+| 전체 entity template | 92 |
 
 필수 검증:
 
-- entity ID 91개 고유, Bukkit type·표현 폴백·부모·cleanup·loot 참조 누락 0
+- entity ID 92개 고유, Bukkit type·표현 폴백·부모·cleanup·loot 참조 누락 0
 - 적 53개 action bundle·loot table 참조 고아 0
 - 부모 종료·서버 재시작·청크 언로드 뒤 고아 Display/Interaction/투사체 0
 - 소환체·핵·훈련·Final 보조의 EXP·드롭·표본·증강·기여 0
+- `ENT-D18-SILENT-FOLLOWER`는 `ED20-SILENT-FOLLOWER`만 생성하며 `NO_REWARD, NO_SAMPLE, NO_AUGMENT_TRIGGER, NO_CONTRIBUTION, NO_COLLISION, CHORUS_VISUALIZER`를 고정한다.
 - 적 증강 등급 잠금 일치와 adapter 없는 효과 선택 0
 - 피해 숫자가 victim 근처 실제 최종 피해와 일치하고 게임 피해 계산에 영향 0
 - 리소스 팩 거부·REDUCED UI에서도 전조·안전 구역·대상 판별 가능

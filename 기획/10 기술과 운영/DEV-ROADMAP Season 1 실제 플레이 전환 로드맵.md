@@ -10,9 +10,11 @@
 | 선행 | `DEV-ROADMAP-001`, `PRODUCTION-COMPLETION-PLAN-001`, `IMPLEMENTATION-HANDOFF-001` |
 | 통합 브랜치 | `S1_dev` |
 | 재개 기준일 | 2026-08-24 |
-| 실행 상태 | `RESUMED_BY_USER` — 이전 중단 목표를 실제 플레이 완성까지 계속 수행 |
+| 실행 상태 | `P0_PASSED_P0_5_ACTIVE` — 기획 입력 잠금 완료, 실행 데이터 투영 착수 |
 | 재개 기준 커밋 | `8eaa421` |
 | 활성 목표 | `GOAL-S1-PRODUCTION-PLAYABLE-001` |
+| P0 기획 입력 잠금 | `s1-plan-20260824-r1` |
+| P0.5 목표 번들 | `ws-content-r2.1` — 기존 `ws-content-r2` 회차는 불변 |
 
 ## 1. 재개 기준선
 
@@ -32,12 +34,12 @@
 
 | 감사 대상 | 문서 권위 | 현재 투영 상태 | 중단 판정 |
 |---|---|---|---|
-| 스킬 64개 | `SKILL-EFFECT-LIST-001`에 ID별 `operationIds` 존재 | 생성기·schema·Java catalog가 배열을 읽지 않고 단일 `effect`로 축약 | `PLANNED_NOT_PROJECTED` |
-| 증강 66개 | `AUGMENT-EFFECT-LIST-001`에 고유 opcode·trigger·stateScope 존재 | 생성기가 일부 예외 외에는 첫 태그를 opcode로 사용하며 trigger/stateScope를 내보내지 않음 | `PLANNED_NOT_PROJECTED` |
-| 일반 적 행동 69개 | `ENEMY-ACTION-LIST-001`에 owner·action ID·공통 profile 존재 | 생성기가 적마다 `*-PRIMARY` 행동 하나만 생성하며 행동별 필수 필드 행은 아직 폐쇄되지 않음 | `PLANNING_AND_PROJECTION_OPEN` |
+| 스킬 64개 | `skill-effect-s1-r2`에 대상·비용·수치·상태·child·실패 정책 64행 잠금 | 생성기·schema·Java catalog가 배열을 읽지 않고 단일 `effect`로 축약 | `DATA_LOCKED_NOT_PROJECTED` |
+| 증강 66개 | `augment-effect-s1-r2`에 opcode·trigger·stateScope·수치·ICD·상한/폴백 66행 잠금 | 생성기가 일부 예외 외에는 첫 태그를 opcode로 사용하며 trigger/stateScope를 내보내지 않음 | `DATA_LOCKED_NOT_PROJECTED` |
+| 일반 적 행동 69개 | `enemy-action-s1-r2`에 필수 실행 필드 69행과 owner 53·child 참조 잠금 | 생성기가 적마다 `*-PRIMARY` 행동 하나만 생성하고 지원 엔티티는 34개 | `DATA_LOCKED_NOT_PROJECTED` |
 | 사용자 저작 결정 | `AUTHOR-DECISION-REGISTER-001` | `REVIVAL_ITEM`, `CHAPTER_REVIEW` 방식 확정; Story 실제 작성은 플레이 가능 판정 뒤로 연기 | `POLICY_LOCKED_CONTENT_DEFERRED` |
 
-이 재감사는 읽기 전용으로 끝냈다. `8eaa421`까지는 생성기·schema·catalog·runtime·test에 후속 투영을 만들지 않았으며, 사용자 소유 Gradle cache/report 변경도 손대거나 stage하지 않았다.
+재개 뒤 P0에서는 `REVIVAL_ITEM`, 64/66/69 명시 실행 행, D18 전용 추종체까지 기획 원장만 보정했다. 생성기·schema·catalog·runtime·test 투영은 P0 전체 그래프와 인계 게이트가 닫힐 때까지 시작하지 않으며, 사용자 소유 Gradle cache/report 변경은 손대거나 stage하지 않는다.
 
 다음 항목은 완료로 오해하지 않는다.
 
@@ -45,7 +47,7 @@
 - R03~R05 실제 GUI·상태 머신·월드 상호작용
 - 64 스킬·66 증강·69 일반 적 행동의 전체 의미 런타임
 - 61 아이템·59 재료·214 장비·315 레시피의 실클라이언트 전수 통과
-- Day 1~50, 시설 46개, 연구 25개, 엔티티 91개, loot 62개의 정상·거부·재접속·재시작 E2E
+- Day 1~50, 시설 46개, 연구 25개, 엔티티 92개, loot 62개의 정상·거부·재접속·재시작 E2E
 - Day 50 Final과 Story 원문 표현
 
 ## 2. 현재 활성 목표
@@ -65,7 +67,7 @@
 2. 스킬 64개마다 operation 배열뿐 아니라 operation별 대상·수치·상태·자식 엔티티·실패·소비 파라미터를 명시한다.
 3. 증강 66개마다 opcode·trigger·stateScope와 함께 수치·ICD·상한·중첩·파생 이벤트 차단 파라미터를 명시한다.
 4. 일반 적 행동 69개마다 전조·startup/active/recovery·쿨다운·사거리·대상·피해·관통·브레이크·상태·opcode·자식 엔티티·태그·대응 태그를 한 행으로 폐쇄한다.
-5. 재료 59·비장비 아이템 62·장비 214·레시피 316·스킬 64·증강 66·상태 21·일반 적 행동 69·엔티티 91·loot 62·시설 46·연구 25·Day/사건의 ID와 획득→소비→Final 그래프를 재검사한다. Story는 ID·트리거·개발 폴백 연결만 검사하고 본문은 작성하지 않는다.
+5. 재료 59·비장비 아이템 62·장비 214·레시피 316·스킬 64·증강 66·상태 21·일반 적 행동 69·엔티티 92·loot 62·시설 46·연구 25·Day/사건의 ID와 획득→소비→Final 그래프를 재검사한다. Story는 ID·트리거·개발 폴백 연결만 검사하고 본문은 작성하지 않는다.
 6. `DATA-REVISION-002`, 구현 인계 계약, schema 필드 계약, L0~L5 증거 행렬을 갱신하고 코드 착수용 입력 리비전을 동결한다.
 
 완료 조건은 자연어·ID 접두사·첫 태그 추론 0, Story 본문을 제외한 필수 실행 필드 공백 0, 고아 참조·의도하지 않은 순환·75% 수급 소프트락 0, 두 사용자 ADR 잠금, 실제 클라이언트 E2E 조합과 신규 회차 리비전 승인이다.
@@ -73,6 +75,16 @@
 P0은 기획 완결만 수행한다. P0의 증거가 모두 닫히면 P0.5 실행 데이터 투영으로 진행하고, 이후 P1~P7을 순차 구현한다. Story 본문은 사용자 지시에 따라 P1~P7의 전체 플레이 가능 판정 뒤 P8에서만 작성한다.
 
 완료 증거는 `REVIVAL_ITEM`이 반영된 목록, 64/66/69 실행 파라미터 원장, 전수 그래프 감사, `DATA-REVISION-002`, `IMPLEMENTATION-HANDOFF-001`이 같은 후보 리비전을 가리키는 승인 기록이다. Story는 `CHAPTER_REVIEW + DEFERRED_UNTIL_PLAYABLE` 기록만 요구한다.
+
+### P0 종료 기록 — 2026-08-24
+
+- `PDG-0~6` 전부 통과
+- 기획 입력 `s1-plan-20260824-r1`, 후보 레지스트리 `ws-content-r2.1-contract-r1`
+- 계획 수량 `59/62/214/316/335/64/66/21/69/92/62/46/25`와 Day 50, Story 연결 ID 73+9 잠금
+- 고아 참조·의도하지 않은 순환·75% 필수 수급 소프트락 0
+- Story 본문 변경 0; P8 `CHAPTER_REVIEW` 유지
+
+현재 단계는 P0.5다. 기존 r2를 수정하지 않고 r2.1 생성기·schema·catalog·validator를 먼저 완성한다.
 
 ## 3. 전체 확장 순서
 
@@ -132,7 +144,7 @@ P0은 기획 완결만 수행한다. P0의 증거가 모두 닫히면 P0.5 실�
 | 증강 | 66 | 드로우·등급 잠금·태그·진화·파티·몬스터 투영 |
 | 상태 | 21 | 적용·저항·중첩·정화·보스·0피해·보호막 |
 | 일반 적 행동 | 69 | 전조·판정·방어 등급·브레이크·상태·cleanup |
-| 엔티티 | 91 | 생성·소유·수명·재시작·보상·제거 |
+| 엔티티 | 92 | 생성·소유·수명·재시작·보상·제거 |
 | loot | 62 | 기여·개인/파티 분배·천장·중복 수령 |
 | 시설 | 46 | 설치·비용·작업·동력·피해·이전·파괴·복구 |
 | 연구 | 25 | 증거·비용·대기열·중단·완료·해금 |
@@ -146,8 +158,8 @@ P0은 기획 완결만 수행한다. P0의 증거가 모두 닫히면 P0.5 실�
 - 현재 활성 목표의 모든 작업은 `S1_dev`에서 진행한다.
 - 단계별로 데이터/코드/테스트를 분리 커밋하고, 사용자 소유 Gradle 캐시·보고서는 스테이징하지 않는다.
 - 후보 서버는 기존 서버와 다른 디렉터리·포트·회차 저장소를 사용한다.
-- `ws-content-r2-dev.N`은 신규 테스트 회차에만 적용하고 활성 회차의 리비전을 교체하지 않는다.
-- P9 전에는 `ws-content-r2`를 `LIVE_LOCKED`로 부르지 않는다.
+- `ws-content-r2.1-dev.N`은 신규 테스트 회차에만 적용하고 활성 r1/r2 회차의 리비전을 교체하지 않는다.
+- P9 전에는 `ws-content-r2.1`을 `LIVE_LOCKED`로 부르지 않는다.
 
 ## 7. 진행·종료 규칙
 

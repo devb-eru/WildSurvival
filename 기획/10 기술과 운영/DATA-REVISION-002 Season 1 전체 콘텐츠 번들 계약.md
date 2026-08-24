@@ -6,21 +6,22 @@
 |---|---|
 | 문서 ID | `DATA-REVISION-002` |
 | 상태 | `IMPLEMENTATION_CONTRACT` |
-| 목표 번들 | `ws-content-r2` |
+| 목표 번들 | `ws-content-r2.1` |
 | Story 리비전 | `ws-story-s1-r1` |
 | 예산 정책 | `budget-live-r2` |
 | 활성 정책 | `NEW_RUN_ONLY` |
-| 이전 번들 | `ws-content-r1`, 불변·동시 로드 가능 |
-| 후보 레지스트리 | `기획/10 기술과 운영/contracts/ws-content-r2-registry.json` |
-| 최종 수정일 | 2026-08-23 |
+| 이전 번들 | `ws-content-r1`, `ws-content-r2`; 둘 다 불변·동시 로드 가능 |
+| 후보 레지스트리 | `기획/10 기술과 운영/contracts/ws-content-r2.1-registry.json` |
+| 기획 입력 잠금 | `s1-plan-20260824-r1` |
+| 최종 수정일 | 2026-08-24 |
 
 ## 1. 계약 목적
 
-`ws-content-r2`는 Season 1 Day 1~50, Day 51+ 반복, Final과 실제 Story를 한 번들로 구현하기 위한 전체 데이터 계약이다. 이 문서는 JSON 파일이 이미 구현됐다는 선언이 아니다. 구현자는 본 계약과 권위 문서를 입력으로 실제 번들을 생성하고 L0~L3 검증을 통과해야 한다.
+`ws-content-r2.1`은 현재 `ws-content-r2` 런타임에 P0에서 잠근 부활 코어·64/66/69 명시 실행 데이터·92번째 엔티티를 투영하기 위한 다음 Season 1 번들 계약이다. 이 문서는 r2.1 JSON이 이미 구현됐다는 선언이 아니다. 구현자는 본 계약과 권위 문서를 입력으로 별도 번들을 생성하고 L0~L3 검증을 통과해야 한다.
 
-- `ws-content-r1` 파일·해시·의미를 수정하지 않는다.
+- `ws-content-r1`과 `ws-content-r2` 파일·해시·의미를 수정하지 않는다.
 - r1 활성 회차는 `storyRevision: EMPTY`와 기존 데이터 잠금을 유지한다.
-- r2는 새 회차에서만 선택하며 활성 회차에 소급하지 않는다.
+- r2.1은 승인 뒤 새 회차에서만 선택하며 기존 r1/r2 활성 회차에 소급하지 않는다.
 - 도메인 결과는 Story가 승인하지 않는다. Story는 결과 이벤트를 소비해 표현만 담당한다.
 
 ## 2. 회차 잠금 튜플
@@ -28,13 +29,15 @@
 회차 생성 트랜잭션은 다음 값을 함께 저장한다.
 
 ```yaml
-content-revision: ws-content-r2
+content-revision: ws-content-r2.1
 schema-version: 2
 story-revision: ws-story-s1-r1
 budget-policy-revision: budget-live-r2
 draw-revision: draw-s1-r2
 rules-revision: rules-s1-r2
 activation-policy: NEW_RUN_ONLY
+planning-input-revision: s1-plan-20260824-r1
+migration-source-revision: ws-content-r2
 resource-pack-contract: ws-rp-s1-r1
 ```
 
@@ -43,7 +46,7 @@ resource-pack-contract: ws-rp-s1-r1
 ## 3. 목표 디렉터리
 
 ```text
-content/ws-content-r2/
+content/ws-content-r2.1/
 ├─ content-lock.yaml
 ├─ manifest.json
 ├─ schemas/
@@ -128,9 +131,9 @@ content/ws-content-r2/
 | 제작 | `RECIPE-LIST-001` | 315 조합·해금·시설 조건·3×3 배치 |
 | 시설 | `FACILITY-LIST-001`, `FACILITY-001`, `FACILITY-DATA-D50-001` | 46 상태·비용·큐·네트워크·공용 원장 게이트 |
 | 연구 | `RESEARCH-001` | 표본·노드·대응책·도감 |
-| 플레이어 스킬 | `SKILL-LIST-001`, `SKILL-001` | 64 실행 레코드·입력·AP·탄약·내구도 |
-| 증강 | `AUG-001`, `AUG-LIST-001`, `AUG-LIST-002`, `PARTY-SYNERGY-001` | 개인 50·파티 16·등급 잠금·1~4인 분기 |
-| 엔티티·행동 | `ENTITY-LIST-001`, `ENEMY-DATA-001`, `ENEMY-DATA-D20-001`, `ENEMY-DATA-D50-001` | 적 53·보스 4·지원 34·행동 번들 |
+| 플레이어 스킬 | `SKILL-LIST-001`, `SKILL-EFFECT-LIST-001`, `SKILL-001` | 64 명시 실행 레코드·입력·대상·비용·파라미터·실패 정책 |
+| 증강 | `AUG-001`, `AUG-LIST-001`, `AUG-LIST-002`, `AUGMENT-EFFECT-LIST-001`, `PARTY-SYNERGY-001` | 개인 50·파티 16·고유 opcode/trigger/stateScope·수치·상한·1~4인 분기 |
+| 엔티티·행동 | `ENTITY-LIST-001`, `ENEMY-ACTION-LIST-001`, `ENEMY-DATA-001`, `ENEMY-DATA-D20-001`, `ENEMY-DATA-D50-001` | 적 53·보스 4·지원 35·행동 69 명시 레코드 |
 | 획득·드롭 | `LOOT-LIST-001` | 62 테이블·기여자 분배·중복 차단 |
 | 보스 | `BOSS-DATA-001`, `BOSS-DATA-D20-001`, `BOSS-DATA-D50-001` | Day10·20·30·40 상태기계 |
 | Final | `FINAL-001`, `FINAL-DATA-001` | 활성·3단계·완료 TX |
@@ -149,7 +152,7 @@ content/ws-content-r2/
 {
   "id": "DOMAIN-STABLE-ID",
   "schemaVersion": 2,
-  "contentRevision": "ws-content-r2",
+  "contentRevision": "ws-content-r2.1",
   "enabled": true,
   "availableFromDay": 1,
   "tags": [],
@@ -187,7 +190,7 @@ story ─ domain result event keys only
 
 ```json
 {
-  "contentRevision": "ws-content-r2",
+  "contentRevision": "ws-content-r2.1",
   "schemaVersion": 2,
   "activationPolicy": "NEW_RUN_ONLY",
   "storyRevision": "ws-story-s1-r1",
@@ -225,8 +228,12 @@ story ─ domain result event keys only
 | `RV2-C17` | 제작법 316개가 유일하며 산출물 315개와 의도된 대체 조합 1개가 일치 |
 | `RV2-C18` | 도감 레코드 335개가 고정 ID·고정 위치로 유일하며 모든 대상 아이템을 해석 |
 | `RV2-C24` | `WSI-CONS-REVIVAL_CORE`와 `WSRCP-D31-S01`이 1:1이며 Day33·RS-D33·FAC-S11 Lv4·대상별 회차 1회·전멸 거부를 명시 |
-| `RV2-C19` | 플레이어 스킬 64, 개인 증강 50, 파티 증강 16이 정확히 존재 |
-| `RV2-C20` | 엔티티 91개가 적 53·보스 4·지원 34로 정확히 분해되고 행동 참조가 해석됨 |
+| `RV2-C19` | 플레이어 스킬 64, 개인 증강 50, 파티 증강 16이 정확히 존재하고 각각 `SKILL-EFFECT-LIST-001` 64행·`AUGMENT-EFFECT-LIST-001` 66행과 1:1 |
+| `RV2-C20` | 엔티티 92개가 적 53·보스 4·지원 35로 정확히 분해되고 행동 69행의 owner·child 참조가 모두 해석됨 |
+| `RV2-C25` | 스킬 64행이 `executionProfile,targetSpec,costSpec,parameterPayload,failurePolicy`를 모두 가지며 자식 entity 참조 고아 0 |
+| `RV2-C26` | 증강 66행이 고유 opcode·trigger·stateScope·parameterPayload·limitFallback을 가지며 파생 재트리거 차단 필드 누락 0 |
+| `RV2-C27` | 적 행동 69행이 전조·startup/active/recovery·쿨다운 mode·거리·대상·피해·PEN·브레이크·상태·opcode·child·tags·responseTags를 가지며 `*-PRIMARY` ID 0 |
+| `RV2-C28` | 부활 코어 제작이 `PROGRESSION_RESERVE_DAY40_FINAL`을 적용해 선택 소비 뒤 Day40 호출·Final 최소 재건 ID별 보장 잔액 음수 0 |
 | `RV2-C21` | 시설 46, 획득·드롭 테이블 62가 정확히 존재하고 미해석 참조가 없음 |
 | `RV2-C22` | Craft는 원목 4개 파티 해금, FAC-S16 전 개인 원장·이후 공용 원장이라는 접근 그래프를 위반하지 않음 |
 | `RV2-C23` | slot 0 전투/채굴 중재와 서버 내구도·BROKEN 상태가 이중 소비·바닐라 파괴 없이 결정론적임 |
@@ -285,11 +292,11 @@ r1→r2 활성 회차 마이그레이션은 제공하지 않는다. 운영자가
 | `RELEASE_CANDIDATE` | 폐쇄 플레이 가능 |
 | `LIVE_LOCKED` | 운영 승인, 신규 회차 포인터 교체 가능 |
 
-현재 상태는 `L0_VALIDATED`다. `ws-content-r2` 70개 파일을 생성했고 manifest SHA-256, 카디널리티, 레시피 산출물, 엔티티→loot 및 엔티티·행동→status 참조 검증을 자동 통과했다. 전투·Day·시설 전체 실행 의미가 아직 프로덕션 런타임으로 전환 중이므로 `L1_TESTED` 이상으로 표시하지 않는다.
+현재 `ws-content-r2`는 70개 파일과 기존 수량으로 `L0_VALIDATED`지만, 이 계약의 대상 `ws-content-r2.1`은 P0 기획 입력만 잠긴 `CONTRACT_READY`다. r2.1의 생성기·schema·data·manifest가 62/316/335/64/66/21/69/92 수량과 명시 필드를 산출하고 새 해시로 L0을 통과하기 전에는 `BUNDLE_BUILT` 또는 `L0_VALIDATED`로 올리지 않는다.
 
 ## 13. 완료 기준
 
 - Season 1 전체 도메인의 파일·schema·참조·권위·합계 계약이 정의된다.
-- r1 불변과 r2 신규 회차 전용 활성 정책이 함께 성립한다.
+- r1/r2 불변과 r2.1 신규 회차 전용 활성 정책이 함께 성립한다.
 - Story·예산·드로우·규칙·리소스 팩 리비전이 원자 잠금 튜플에 포함된다.
 - 구현자가 추측 없이 번들을 만들고 기계 검증 상태를 단계적으로 올릴 수 있다.

@@ -412,6 +412,8 @@ OPEN → PLACE/REMOVE → MATCHED → CONFIRM
 | `WSRCP-F13` | `WSR-METAL_PLATE×2, WSR-COPPER_COIL×1` | 1 | C03, FAC-C01 |
 | `WSRCP-F14` | `WSR-METAL_PLATE×3, WSR-HARDWOOD_PART×2` | 4 | C03, FAC-C01 |
 
+`WSRCP-D31-S01`은 선택형 고비용 소모품이므로 `progressionReservePolicy=PROGRESSION_RESERVE_DAY40_FINAL`을 가진다. 서버는 제작 예약 직전에 현재 가용량+아직 수령 가능한 보장 공급-기존 예약을 계산하고, 코어 입력을 뺀 뒤에도 Day40 호출과 Final 최소 재건 입력의 ID별 필요량이 모두 0 이상일 때만 시작한다. 실패는 `BLOCKED_PROGRESSION_RESERVE`와 부족 ID·수량을 반환하며 재료를 예약하지 않는다.
+
 ## 6. 시설 키트 입력
 
 - `WSRCP-FAC-S01~S20`과 `WSRCP-FAC-D01~D04`는 대상 시설의 `FACILITY-DATA-D50-001` Lv1 비용 프로필을 사용한다.
@@ -484,6 +486,7 @@ RC 전문 재료는 곡괭이 CALIBRATED_LENS, 도끼 RESONANCE_COIL×2, 삽 PUR
 - 상위 도구 16개 recipe 정확히 1개
 - WSI craftable 62개는 recipe 또는 의도된 alternate recipe 보유
 - `WSRCP-D31-S01`은 정확 6개 소비 슬롯·3개 EMPTY와 `RS-D33/FAC-S11 Lv4/minimumDay=33`을 모두 요구
+- `WSRCP-D31-S01` 선택 제작 뒤 Day40 호출·Final 최소 재건 ID별 진행 예비 음수 0
 - Craft 해금 전 production transaction 0
 - FAC-S16 전 다른 플레이어·공용 원장 무단 소비 0
 - grid 불일치·취소·서버 종료·출력 가득 참에서 복제·손실 0

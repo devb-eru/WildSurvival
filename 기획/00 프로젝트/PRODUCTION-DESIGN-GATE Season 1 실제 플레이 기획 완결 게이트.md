@@ -5,11 +5,13 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `PRODUCTION-DESIGN-GATE-001` |
-| 상태 | `PLANNING_REOPENED` |
+| 상태 | `P0_PASSED_P0_5_READY` |
 | 목표 | 프로토타입 전용 가정을 제거하고 Season 1 Day 1~50·Final을 실제 플레이 가능한 생산 범위로 잠금 |
 | 구현 환경 | Minecraft Java Edition, 바닐라 + Paper 플러그인, 선택 리소스 팩, 모드 없음 |
 | 상위 기준 | `VISION-001`, `RULES-001`, `DATA-REVISION-002`, `IMPLEMENTATION-HANDOFF-001` |
 | 최종 수정일 | 2026-08-24 |
+| P0 입력 잠금 | `s1-plan-20260824-r1` |
+| P0.5 산출 대상 | `ws-content-r2.1`; 기존 `ws-content-r2` 회차 불변 |
 
 ## 1. 생산 범위
 
@@ -35,10 +37,10 @@ Day 1~10만 동작하거나 관리자 명령으로만 진행 가능한 상태는
 |---|---|---|---|
 | `PDG-0 AUDIT` | PASS | 기존 문서·JSON·코드의 ID, 와일드카드, 텍스트 참조, 충돌을 전수 계수 | `CONTENT-CATALOG-INDEX-001` 감사표 |
 | `PDG-1 ITEMS` | PASS | 아이템·재료·도구·방어구·조합법 목록이 모두 고정 ID와 획득·소비 경로를 가짐 | `ITEM/MATERIAL/TOOL/RECIPE-LIST` |
-| `PDG-2 ACTIONS` | REOPENED | 64 스킬 operation 파라미터와 66 증강 opcode·trigger·stateScope·수치·ICD·상한이 명시 실행 행으로 완결 | `SKILL-EFFECT-LIST-001`, `AUGMENT-EFFECT-LIST-001` |
-| `PDG-3 WORLD` | REOPENED | 일반 적 행동 69개가 필수 실행 필드를 모두 가진 개별 행이며 `*-PRIMARY` 축약이 없음 | `ENEMY-ACTION-LIST-001`, `ENTITY-LIST-001` |
-| `PDG-4 GRAPH` | RECHECK_REQUIRED | 획득→도감→제작→장비→전투→Day→Final 참조 그래프에 고아·의도하지 않은 순환·75% 수급 소프트락 0 | `CONTENT-GRAPH-AUDIT-001` 재감사 |
-| `PDG-5 HANDOFF` | REOPENED | 번들·schema·생성기 입력 계약·IMP 티켓·테스트가 64/66/69 실행 원장을 직접 참조 | `DATA-REVISION-002`, `IMPLEMENTATION-HANDOFF-001`, registry r2 |
+| `PDG-2 ACTIONS` | PASS | 64 스킬 operation 파라미터와 66 증강 opcode·trigger·stateScope·수치·ICD·상한이 명시 실행 행으로 완결 | `skill-effect-s1-r2`, `augment-effect-s1-r2`, ID 1:1·공백 0 |
+| `PDG-3 WORLD` | PASS | 일반 적 행동 69개가 필수 실행 필드를 모두 가진 개별 행이며 `*-PRIMARY` 축약이 없음 | `enemy-action-s1-r2`, owner 53·child 고아 0·entity 목표 92 |
+| `PDG-4 GRAPH` | PASS | 획득→도감→제작→장비→전투→Day→Final 참조 그래프에 고아·의도하지 않은 순환·75% 수급 소프트락 0 | `CONTENT-GRAPH-AUDIT-001` P0 재감사; 참조 고아 0·S1~S5 하한 양수 |
+| `PDG-5 HANDOFF` | PASS | 번들·schema·생성기 입력 계약·IMP 티켓·테스트가 64/66/69 실행 원장을 직접 참조 | `DATA-REVISION-002`, `IMPLEMENTATION-HANDOFF-001`, `ws-content-r2.1-contract-r1` |
 | `PDG-6 AUTHOR` | PASS_POLICY_LOCKED | `REVIVAL_ITEM`과 `CHAPTER_REVIEW`가 사용자 권위로 잠김; Story 본문은 플레이 가능 판정 뒤 최종 단계로 명시 연기 | `AUTHOR-DECISION-REGISTER-001` |
 
 ## 3. 현재 감사 기준선
@@ -48,15 +50,15 @@ Day 1~10만 동작하거나 관리자 명령으로만 진행 가능한 상태는
 | 도메인 | 문서 등록 | 현재 r2 JSON | 남은 구현 경계 |
 |---|---:|---:|---|
 | 재료·증명 | 59 | 59 | 개인/공용 소유·획득·소비 E2E |
-| 비장비 아이템 | 61 | 61 | 전용 사용·실패·복구 전수 실행 |
-| 레시피 | 315 | 315 | ID별 정확 배치·시설·장애 트랜잭션 |
+| 비장비 아이템 | 62 | 61 | 부활 코어 투영 뒤 전용 사용·실패·복구 전수 실행 |
+| 레시피 | 316 | 315 | 부활 코어 1식 투영 뒤 ID별 정확 배치·시설·장애 트랜잭션 |
 | 장비·상위 도구 | 214 | 214 | 고유 효과·내구·BROKEN·획득 전수 실행 |
 | 플레이어 스킬 | 64 | 64 | 공통 opcode 축약 제거·ID별 효과 검증 |
 | 개인 증강 | 50 | 50 | 전체 trigger·cap·배타·진화 실행 |
 | 파티 증강 | 16 | 16 | 전체 시너지·1인·사망·시설 폴백 실행 |
 | 일반·정예·Final 적 | 53 | 53 | action bundle이 현재 주 행동 1개로 축약됨 |
 | 보스 | 4 | 4 | 전체 페이즈·패턴·보상 상태기계 필요 |
-| 보조 엔티티 | 34 | 34 | 생성·부모 소유·복구·정리 필요 |
+| 보조 엔티티 | 35 | 34 | 생성·부모 소유·복구·정리 필요; D18 전용 추종체 투영 대기 |
 | 시설 | 46 | 46 | 시설별 작업 opcode 전수 실행 필요 |
 | loot table | 62 | 62 | 보스·노드·사건·분해·복구 실행 필요 |
 | 사건 | Day 1~50 | 구간별 실행 레코드 | Day별 고유 목표·실패·보상·환경 효과 E2E |
@@ -162,7 +164,7 @@ slot == 0
 
 ## 7. 구현 착수 판정 재개방
 
-아래 조건은 과거 기준선에서 충족됐으나, 2026-08-24 실행 데이터 재감사로 `PDG-2~5`를 다시 열었다. `PDG-6`은 `REVIVAL_ITEM`, `CHAPTER_REVIEW`, Story 최종 단계 연기로 정책 잠금됐지만 현재 상태에서는 생산 기능 코드·생성기·schema 투영을 시작하지 않는다.
+2026-08-24 재감사에서 다시 연 `PDG-2~5`는 `s1-plan-20260824-r1`로 모두 닫혔다. 따라서 P0 기획 게이트는 종료됐고, 생산 기능 런타임보다 먼저 P0.5의 별도 `ws-content-r2.1` 생성기·schema·catalog·validator 투영만 시작할 수 있다. 기존 r1/r2 회차는 변경하지 않으며 Story 본문은 P8 전까지 작성하지 않는다.
 
 1. 기본 별도 목록 10종과 장비·상위 재료 분리 투영 4종의 상태가 `DATA_LOCKED`다.
 2. 와일드카드·표시명 참조·중복 ID·고아 ID가 0이다.

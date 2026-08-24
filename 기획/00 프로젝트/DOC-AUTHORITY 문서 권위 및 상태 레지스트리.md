@@ -57,6 +57,10 @@
 | `CONTENT-CATALOG-INDEX-001` | `DATA_LOCKED` | 생산 콘텐츠 ID 합계·소유 문서·구현 파일 통합 색인 | DEV-300~800 |
 | `PRODUCTION-DATA-CLOSURE-001` | `ACTIVE_CONTROL` | 목록의 미확정 실행 수치·비용·연구 증거 폐쇄와 사용자 결정 분리 | DEV-300~800 |
 | `AUTHOR-DECISION-REGISTER-001` | `USER_LOCKED_WITH_DEFERRED_STORY_CONTENT` | `REVIVAL_ITEM` 정책과 `CHAPTER_REVIEW` 방식; Story 본문은 플레이 가능 판정 뒤 최종 단계 | P0·P8 |
+| `PRODUCTION-DESIGN-GATE-001` | `P0_PASSED_P0_5_READY` | P0 비저작 기획 완결과 P0.5 투영 착수 경계 | 현재 활성 목표 |
+| `CONTENT-GRAPH-AUDIT-001` | `VALIDATED_STATIC` | 335 도감·316 레시피·64/66/69 실행 목록·92 엔티티·75% 수급 참조 그래프 | P0·P0.5 L0/L2 입력 |
+| `DATA-REVISION-002` | `IMPLEMENTATION_CONTRACT` | `s1-plan-20260824-r1`에서 `ws-content-r2.1`을 만들고 r1/r2를 보존하는 번들 계약 | P0.5 |
+| `IMPLEMENTATION-HANDOFF-001` | `IMPLEMENTATION_CONTRACT` | IMP-001~017과 E2E-01~60 인계·승격 증거 | P0.5~P9 |
 | `CONTENT-MASTER-001` | `BASELINE_LOCKED` | Day 1~50+ 상위 진행 | G0 |
 | `GAME-001~003` | `BASELINE_LOCKED` | 타이머·저장·인원 스케일 | G0 |
 | `DAY-001` | `BASELINE_LOCKED` | Day 전환·스킵·완료 | G0 |
@@ -73,10 +77,10 @@
 | `STAT-001~002` | `BASELINE_LOCKED` | 전투 스탯·계산 | G0 |
 | `AUG-001` | `BASELINE_LOCKED` | 개인·파티 증강 드로우 | G0 |
 | `AUG-LIST-001~002` | `DATA_LOCKED` | 증강 후보 풀 | G0 |
-| `AUGMENT-EFFECT-LIST-001` | `DATA_LOCKED` | 증강 66개 고유 opcode·trigger·stateScope 실행 투영 | DEV-500 |
+| `AUGMENT-EFFECT-LIST-001` | `DATA_LOCKED` | 증강 66개 고유 opcode·trigger·stateScope·명시 파라미터·상한/폴백 | DEV-500 |
 | `SKILL-001~002` | `BASELINE_LOCKED` | 스킬 실행·범위·백엔드 | G0 |
 | `SKILL-LIST-001` | `DATA_LOCKED` | 스킬 ID 목록 | G0 |
-| `SKILL-EFFECT-LIST-001` | `DATA_LOCKED` | 스킬 64개 operation 배열과 실행 투영 | DEV-300~500 |
+| `SKILL-EFFECT-LIST-001` | `DATA_LOCKED` | 스킬 64개 operation 배열·대상·비용·명시 파라미터·실패 정책 | DEV-300~500 |
 | `DEATH-001~003` | `BASELINE_LOCKED` | 빈사·구조·사망·부활 | G0 |
 | `CORE-001~002` | `BASELINE_LOCKED` | 서버 권위 피해·일반 공격 | G0 |
 | `COMBAT-001~004` | `BASELINE_LOCKED` | AP·회피·방어·패링 | G0 |
@@ -114,8 +118,8 @@
 | `CORR-001~003` | `BASELINE_LOCKED` | 오염 수치·확산·정화 | G0 |
 | `CORR-LIST-001` | `DATA_LOCKED` | 오염 변이 목록 | G0 |
 | `EVENT-LIST-001` | `DATA_LOCKED` | 사건 유형·후보 정책 | G0 |
-| `ENTITY-LIST-001` | `DATA_LOCKED` | 적·보스·지원 개체 91개 ID·수명·보상 경계 | DEV-600~700 |
-| `ENEMY-ACTION-LIST-001` | `DATA_LOCKED` | 적 53종 행동 bundle 53개·행동 69개 영구 ID와 실행 프로필 | DEV-600~700 |
+| `ENTITY-LIST-001` | `DATA_LOCKED` | 적·보스·지원 개체 92개 ID·수명·보상 경계; 현재 r2 런타임 91 | DEV-600~700 |
+| `ENEMY-ACTION-LIST-001` | `DATA_LOCKED` | 적 53종 bundle·행동 69개 영구 ID와 전조/대상/피해/상태/child/대응 명시 행 | DEV-600~700 |
 | `ENEMY-001` | `BASELINE_LOCKED` | 적 역할·템플릿 | G0 |
 | `BOSS-001~004` | `BASELINE_LOCKED` | Day 10·20·30·40 보스 설계 | G0 |
 | `SYSTEM-AUDIT-001` | `ACTIVE_CONTROL` | Story 선행 시스템 경계 | G0 |
@@ -167,11 +171,11 @@
 | G4 | `DATA-REVISION-002` | Season 1 전체 콘텐츠 번들 계약 | `IMPLEMENTATION_CONTRACT` |
 | G4 | `IMPLEMENTATION-HANDOFF-001` | 모듈·티켓·테스트 픽스처 인계 | `IMPLEMENTATION_CONTRACT` |
 
-G1~G4 문서 작성은 완료됐다. G3의 `VALIDATED_STATIC`은 공식·참조·경계값 검증 상태이며 구현 후 L1~L5 플레이테스트 승인을 뜻하지 않는다. G4의 현재 후보 상태는 `CONTRACT_READY`이고 실제 `ws-content-r2` 번들 빌드는 구현 작업 `IMP-001`이다.
+G1~G4와 재개 P0 기획은 완료됐다. G3·그래프의 `VALIDATED_STATIC`은 공식·참조·경계값 검증 상태이며 구현 후 L1~L5 플레이테스트 승인을 뜻하지 않는다. 기존 `ws-content-r2`는 L0 상태로 보존하고, 새 후보 `ws-content-r2.1-contract-r1`은 `CONTRACT_READY`다. 실제 r2.1 번들 빌드는 P0.5 `IMP-001`이다.
 
 ## 5. 대체·보존 규칙
 
-- `DATA-REVISION-002`는 `DATA-REVISION-001`을 삭제하거나 수정하지 않는다. 신규 회차 기본값만 r2로 바꾸고 활성 r1 회차는 r1을 계속 사용한다.
+- `DATA-REVISION-002`는 `DATA-REVISION-001`이나 기존 r2 파일을 삭제·수정하지 않는다. r2.1 승인 뒤 신규 회차 기본값만 바꾸고 활성 r1/r2 회차는 잠긴 리비전을 계속 사용한다.
 - G2 도메인 문서는 `CONTENT-DATA-D50-001`의 상위 합계를 대체하지 않는다. 개별 ID·수치의 세부 원장 역할을 맡는다.
 - `STORY-DATA-S1-001`이 만들어져도 `EMPTY`는 유효 폴백 리비전으로 남는다.
 - `BALANCE-*`는 플레이테스트 조정 순서를 정하지만 진행 중 회차의 잠긴 값을 소급 변경하지 않는다.

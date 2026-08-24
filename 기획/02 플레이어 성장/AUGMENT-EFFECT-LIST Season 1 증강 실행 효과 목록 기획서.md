@@ -116,3 +116,100 @@
 | 전체 | 66 | 66 | 66 | 66 |
 
 L0는 ID·opcode 중복 0, 빈 trigger/stateScope 0, `effectOpcode == 첫 태그` 0을 검사한다. L1은 ID별 정상 발동·무효 조건·ICD·상한을 검사하고, L2는 같은 root event의 재귀 발동·보상 생성·재접속 ICD 초기화를 0으로 증명한다. 66개 중 하나라도 범용 태그 디스패치나 설명문 출력만 남으면 증강 도메인을 `VERIFIED`로 승격하지 않는다.
+
+## 7. 명시 효과 파라미터 66행
+
+아래 `parameterPayload`와 `limitFallback`은 opcode가 읽는 유일한 수치 입력이다. 시간은 tick, 거리는 block, 비율은 소수다. 상태 저장 키는 §2~5의 `stateScope + sourceAugmentId + run/player/party/target/cast/action instance` 조합이며 설명문에서 숫자를 추출하지 않는다.
+
+### 7.1 SILVER 18행
+
+| ID | parameterPayload | limitFallback |
+|---|---|---|
+| `AUG-S-001` | `dodgeApFlat=-4` | `finalCostMin=COMBAT_DODGE_COST_FLOOR` |
+| `AUG-S-002` | `damageFreeTicks=80; apRegenPerSecond=3` | `combatAllowed=true; resetOnValidDamage=true` |
+| `AUG-S-003` | `bleedDurationMultiplier=0.75; clearHealMaxHp=0.02` | `icdTicks=160; nonBleedClear=false` |
+| `AUG-S-004` | `corruptionGainMultiplier=0.90; purifyConsumableMultiplier=1.10` | `corruptionFloor=0; statusCleanseBonus=0` |
+| `AUG-S-005` | `guardImpactApMultiplier=0.88; failedParryShortGuardExtendTicks=2` | `perActionMax=1` |
+| `AUG-S-006` | `requiredHits=3; hitWindowTicks=80; breakMultiplier=1.12; buffTicks=80` | `targetIcdTicks=120; noBreakTarget=INELIGIBLE` |
+| `AUG-S-007` | `nextBasicHitFlat=12; expiryTicks=80` | `stacksMax=1; comboWeaponsWeighted=true` |
+| `AUG-S-008` | `normalAmmoConserveChance=0.15` | `perCastRollMax=1; specialAmmo=false` |
+| `AUG-S-009` | `reloadTimeMultiplier=0.90; reloadMovePenaltyMultiplier=0.90` | `reloadFloor=WEAPON_PROFILE_FLOOR; crossbowWeighted=true` |
+| `AUG-S-010` | `areaEndApMaxRatio=0.04` | `perAreaMax=1; icdTicks=120; staffWeighted=true` |
+| `AUG-S-011` | `nextDamageTakenMultiplier=0.90; expiryTicks=120` | `stacksMax=1; shieldSourceRequired=true` |
+| `AUG-S-012` | `nextAttackDamageMultiplier=1.08; expiryTicks=40` | `perPrecisionDodgeMax=1` |
+| `AUG-S-013` | `dotTargetHitFlat=8; dotTargetBreakMultiplier=1.05` | `requiresAnyDot=true` |
+| `AUG-S-014` | `rescueTimeMultiplier=0.90; rescuerAp=5; targetAp=5` | `perRescueMax=1` |
+| `AUG-S-015` | `emergencyRepairCommonCostMultiplier=0.92; interruptThresholdMultiplier=1.10` | `repairOnly=true` |
+| `AUG-S-016` | `targetBreakTakenMultiplier=1.06; durationTicks=100` | `perTargetPatternMax=1; eliteOrBossOnly=true` |
+| `AUG-S-017` | `hardCcDurationMultiplier=0.90; forcedMoveStrengthMultiplier=0.92` | `statusResistanceHardCap=true` |
+| `AUG-S-018` | `portableCommonMaterialConserveChance=0.08` | `perWorkRollMax=1; combatReward=false` |
+
+### 7.2 GOLD 18행
+
+| ID | parameterPayload | limitFallback |
+|---|---|---|
+| `AUG-G-001` | `nextAttackDamageMultiplier=1.18; nextAttackBreakMultiplier=1.15; expiryTicks=80` | `perPrecisionDodgeMax=1; exclusive=AUG-G-002` |
+| `AUG-G-002` | `refundRatio=0.30; consecutiveDecayMultiplier=0.50; chainWindowTicks=120` | `chainMax=3; exclusive=AUG-G-001` |
+| `AUG-G-003` | `parryBreakMultiplier=1.20; nextSkillApFlat=-8; expiryTicks=100` | `perParryMax=1; defenceEquipmentWeighted=true` |
+| `AUG-G-004` | `targetDamageTakenMultiplier=1.08; bossMultiplier=1.05; durationTicks=120` | `targetIcdTicks=240` |
+| `AUG-G-005` | `distinctWeakStatuses=2; consumedDurationTicks=20; extraDamageCoeff=0.35` | `targetIcdTicks=80; hardCcConsumable=false` |
+| `AUG-G-006` | `maxBleedBasicFinisherMultiplier=1.22` | `perBasicExecutionMax=1; maxBleedRequired=true` |
+| `AUG-G-007` | `apPerPoisonHpTick=1` | `apPerSecondMax=4; noRewardTarget=true` |
+| `AUG-G-008` | `triggerBurnStacks=3; spreadRadius=3; spreadStacks=1` | `icdTicks=100; summonAndTrainingExcluded=true` |
+| `AUG-G-009` | `specialAmmoStatusHitFlat=12; projectileDamageMultiplier=0.95` | `ammoWeaponRequired=true` |
+| `AUG-G-010` | `postPenetrationFalloffRelief=0.20` | `perProjectileMax=1; projectileWeaponWeighted=true` |
+| `AUG-G-011` | `skillApThreshold=30; uniqueTargetMinimum=2; apRefund=8` | `perCastMax=1; icdTicks=80; staffWeighted=true` |
+| `AUG-G-012` | `singleHitBreakMinimum=20; splashRadius=3; splashBreakRatio=0.25` | `icdTicks=100; heavyWeaponWeighted=true` |
+| `AUG-G-013` | `hpThreshold=0.30; shieldMaxHp=0.12; shieldTicks=100` | `icdTicks=700; stacksMax=1` |
+| `AUG-G-014` | `stageDownAp=20; nextStatusResistanceFlat=15; buffExpiryTicks=300` | `icdTicks=300` |
+| `AUG-G-015` | `partyRadius=5; healMaxHp=0.05` | `perRescueMax=1; selfRescueExcluded=true` |
+| `AUG-G-016` | `matchingAugmentMinimum=2; attackMultiplier=1.07; fallbackDefenceFlat=7; reevaluateTicks=40` | `singleSource=true` |
+| `AUG-G-017` | `telegraphAdvanceTicks=3` | `perPatternLearning=true; bossSafetyMinimum=true` |
+| `AUG-G-018` | `hardCcEndAp=10; nextDodgeApFlat=-5; expiryTicks=160` | `icdTicks=160; immuneCcDoesNotTrigger=true` |
+
+### 7.3 PRISM 14행
+
+| ID | parameterPayload | limitFallback |
+|---|---|---|
+| `AUG-P-001` | `hpThreshold=0.40; damageMultiplier=1.22; breakMultiplier=1.15; healingReceivedMultiplier=0.80` | `exclusive=AUG-P-002` |
+| `AUG-P-002` | `precisionDodgesRequired=2; nextDamageTakenMultiplier=0.30; outgoingDamageMultiplier=0.92; expiryTicks=240` | `stacksMax=1; exclusive=AUG-P-001` |
+| `AUG-P-003` | `bossParryBreakMultiplier=1.35; partyAp=5; partyRadius=32` | `patternIcdTicks=200; sameExecutionMax=1; rewardAndFriendlyExcluded=true` |
+| `AUG-P-004` | `weaknessTagsRevealed=1; durationTicks=160; personalDamageMultiplier=1.16; bossDamageMultiplier=1.10` | `targetMax=1; evolutionFamily=F01` |
+| `AUG-P-005` | `poisonMaxStacksDelta=2; poisonDamageMultiplier=1.25; ownPurifyMultiplier=0.85` | `poisonBuildWeighted=true` |
+| `AUG-P-006` | `bleedHealRatio=0.08; overhealShieldTicks=80; areaHealMultiplier=0.50` | `healPerSecondMaxHp=0.02; globalLifestealCap=true` |
+| `AUG-P-007` | `distinctElementStatuses=2; fusionDamageCoeff=0.65` | `targetIcdTicks=120; extraHardCc=false; evolutionFamily=ELEMENT` |
+| `AUG-P-008` | `ammoConserveChanceDelta=0.45; reloadApMultiplier=1.20; shotApMultiplier=1.20` | `finalConserveChanceCap=0.75; ammoWeaponRequired=true` |
+| `AUG-P-009` | `recallRehitDamageCoeff=0.60; recallApFlat=8` | `perTargetCastMax=1; tridentOnly=true; evolutionFamily=TRIDENT` |
+| `AUG-P-010` | `counterDefenceIgnoreRatio=0.35; counterBreakMultiplier=2.00; nonCounterDamageMultiplier=0.92` | `unarmedOnly=true; evolutionFamily=UNARMED` |
+| `AUG-P-011` | `rearPartyRadius=4; projectileDamageTakenMultiplier=0.75; guardMoveMultiplier=0.80; parryApFlat=5` | `offShieldRequired=true; shortGuardOnly=true` |
+| `AUG-P-012` | `perCorruptionStageAttack=0.04; perStageStatusHit=0.04; maximumBonus=0.16; purifyReceivedMultiplier=0.75` | `stage5AdditionalBonus=0` |
+| `AUG-P-013` | `skillApThreshold=50; otherCooldownReduceTicks=20; skillApFlat=15` | `icdTicks=160; selfCooldownExcluded=true` |
+| `AUG-P-014` | `rescuerAndTargetDamageTakenMultiplier=0.50; completionSelfAp=0` | `icdTicks=900; selfRescueExcluded=true` |
+
+### 7.4 PARTY 16행
+
+| ID | parameterPayload | limitFallback |
+|---|---|---|
+| `PAUG-001` | `nearbyRange=12; membersRequired=2; moveMultiplier=1.06; dodgeApFlat=-3; soloMoveMultiplier=1.03` | `downedAndDeadExcluded=true` |
+| `PAUG-002` | `handoffWindowTicks=60; otherPlayerDamageMultiplier=1.10` | `targetIcdTicks=80; samePlayer=false` |
+| `PAUG-003` | `contributorsRequired=2; contributionWindowTicks=80; breakTakenMultiplier=1.12; bossMultiplier=1.08; durationTicks=100` | `targetIcdTicks=160` |
+| `PAUG-004` | `allSurvivorAp=10; rescuerHealMaxHp=0.08; targetHealMaxHp=0.08` | `perRescueMax=1` |
+| `PAUG-005` | `distinctContributorCategories=2; commonResourceOutputMultiplier=1.10` | `bossUniqueProfessionalReconstructionExcluded=true` |
+| `PAUG-006` | `distinctWeakStatusCategories=3; statusDamageMultiplier=1.15; durationTicks=100` | `targetIcdTicks=200; hardCcExcluded=true` |
+| `PAUG-007` | `trackingMoveDamageTakenMultiplier=0.94; facilitySiegeDamageTakenMultiplier=0.90` | `modeExclusive=true` |
+| `PAUG-008` | `highestCorruptionExtraDelta=-1` | `icdTicks=160; consumableWorksWithoutFacility=true` |
+| `PAUG-009` | `normalAmmoOutputMultiplier=1.20; specialAmmoCostMultiplier=0.90` | `uniqueAndBossAmmoExcluded=true` |
+| `PAUG-010` | `lowApThreshold=0.20; otherSurvivorRegenPerSecond=2` | `lowMemberTargetMax=1; stacksMax=1` |
+| `PAUG-011` | `handoffTicks=80; otherPlayerSamePatternDamageTakenMultiplier=0.88` | `patternIcdTicks=160; originalResponderExcluded=true` |
+| `PAUG-012` | `lastMajorEnemyBreakMaxMultiplier=0.90; remainingCorruptionGainMultiplier=0.80` | `normalAssaultOnly=true` |
+| `PAUG-013` | `firstBossEquipmentCommonCostMultiplier=0.85` | `perTemplateMax=1; specialAndBossMaterialExcluded=true` |
+| `PAUG-014` | `distinctContributionCategories=3; reconstructionSpeedMultiplier=1.12; soloMultiplier=1.04` | `minimumDay=41` |
+| `PAUG-015` | `survivorRatioThreshold=0.50; maxHpMultiplier=1.10; apRegenMultiplier=1.10` | `rewardMultiplier=1.0; reversibleAtSafeRecount=true` |
+| `PAUG-016` | `minimumSeparation=10; outgoingDamageMultiplier=1.06` | `bothInCombat=true; maxMultiplier=1.06; forcedSplitPatternDisabled=true` |
+
+## 8. 파라미터 완료 검증
+
+- ID 66개가 §2~5 및 `AUG-LIST-001~002`와 1:1이고 `parameterPayload/limitFallback` 공백이 0이다.
+- 확률은 `[0,1]`, multiplier는 양수, tick·거리·상한은 음수가 아니며 최종 전역 하드캡을 우회하지 않는다.
+- ICD·스택·패턴 학습·대상별 상태는 `stateScope`에 맞춰 저장하고 재접속·서버 재시작으로 초기화하지 않는다.
+- 모든 파생 피해·회복·자원 변화는 `NO_AUGMENT_RETRIGGER/NO_REWARD/NO_CONTRIBUTION`을 유지한다.
