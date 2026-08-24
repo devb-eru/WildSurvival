@@ -129,6 +129,7 @@ public final class CombatService implements Listener {
     private final Map<UUID, Map<UUID, Double>> enemyContributions = new HashMap<>();
     private final Map<UUID, EnemyActionState> productionActionStates = new HashMap<>();
     private final Map<EnemyHitPermit, Double> permittedEnemyHits = new HashMap<>();
+    private final Map<UUID, QuickUseChannel> quickUseChannels = new HashMap<>();
     private BossDamageHandler bossDamageHandler;
     private ProductionLootHandler productionLootHandler = (transactionId, enemy, contributors) -> { };
     private Consumer<Player> menuOpener = player -> { };
@@ -267,6 +268,7 @@ public final class CombatService implements Listener {
 
     public void tick() {
         long now = Instant.now().toEpochMilli();
+        processQuickUseChannels();
         processProductionEnemyActions();
         processRevives(now);
         processLifeStates(now);
@@ -608,6 +610,7 @@ public final class CombatService implements Listener {
             }
             LivingEntity attacker = combatAttacker(byEntity);
             if (attacker != null) {
+                if (isCombatEntity(attacker)) markCombatAction(player);
                 EnemyHitPermit permit = new EnemyHitPermit(attacker.getUniqueId(), player.getUniqueId());
                 Double permittedDamage = permittedEnemyHits.remove(permit);
                 ProductionContentCatalog.EnemyEntry productionEnemy = production.enemiesById().get(enemyId(attacker));
@@ -926,6 +929,7 @@ public final class CombatService implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        cancelQuickUse(player, "접속 종료로 사용 취소");
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null || !("DOWNED_GRACE".equals(state.lifeState) || "DOWNED".equals(state.lifeState)
                 || "BEING_REVIVED".equals(state.lifeState))) return;
@@ -1024,6 +1028,11 @@ public final class CombatService implements Listener {
     private CombatInputPolicy.LeftDisposition routeLeft(Player player) {
         if (!inCombatStance(player)) return CombatInputPolicy.LeftDisposition.VANILLA;
         long tick = Bukkit.getCurrentTick();
+        if (cancelQuickUse(player, "좌클릭으로 사용 취소")) {
+            lastLeftInputTick.put(player.getUniqueId(), tick);
+            lastLeftDisposition.put(player.getUniqueId(), CombatInputPolicy.LeftDisposition.QUICK_ITEM_CANCELLED);
+            return CombatInputPolicy.LeftDisposition.QUICK_ITEM_CANCELLED;
+        }
         if (lastLeftInputTick.getOrDefault(player.getUniqueId(), Long.MIN_VALUE) == tick) {
             return lastLeftDisposition.getOrDefault(player.getUniqueId(), CombatInputPolicy.LeftDisposition.BASIC_ATTACK);
         }
@@ -1038,6 +1047,7 @@ public final class CombatService implements Listener {
             case BASIC_ATTACK -> executeBasicAttack(player);
             case WEAPON_SKILL -> executeWeaponActive(player, 2);
             case RESTRICTED -> showRestrictedAction(player);
+            case QUICK_ITEM_CANCELLED -> { }
             case VANILLA, VANILLA_MINING -> { }
         }
         if (disposition != CombatInputPolicy.LeftDisposition.VANILLA
@@ -1096,6 +1106,7 @@ public final class CombatService implements Listener {
                 ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
                 return false;
             }
+            markCombatAction(player);
             float velocity = "CROSSBOW".equals(weaponId) ? 3.4f : 2.8f;
             Arrow arrow = player.getWorld().spawnArrow(player.getEyeLocation(), player.getEyeLocation().getDirection(), velocity, 0.0f);
             arrow.setShooter(player);
@@ -1108,6 +1119,7 @@ public final class CombatService implements Listener {
                     ? Sound.ITEM_CROSSBOW_SHOOT : Sound.ENTITY_ARROW_SHOOT, 0.7f, 1.1f);
             return true;
         }
+        markCombatAction(player);
         equipment.consumeMainWeaponDurability(player, 1, "BASIC_ATTACK");
         List<LivingEntity> targets = coneTargets(player, weapon.range(), weapon.arcDegrees(), "UNARMED".equals(weaponId) ? 2 : 3);
         for (LivingEntity target : targets) {
@@ -1140,6 +1152,7 @@ public final class CombatService implements Listener {
                     ? throwTrident(player, apCost)
                     : recallTrident(player, growth.skillApCost(player, skill.id(), Math.min(20.0, skill.apCost())));
             if (success) {
+                markCombatAction(player);
                 startSkillCooldown(player, skill);
                 equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
                 showSkillEffect(player, skill, List.of());
@@ -1156,6 +1169,7 @@ public final class CombatService implements Listener {
                 return false;
             }
             takeMaterial(player, Material.ARROW, 2);
+            markCombatAction(player);
             runs.mutate(run -> {
                 RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
                 state.crossbowLoadedAmmo = Math.min(6, state.crossbowLoadedAmmo + 2);
@@ -1174,6 +1188,7 @@ public final class CombatService implements Listener {
             return false;
         }
         if (usesArrowAmmo(weaponId)) consumeArrowAmmo(player, weaponId);
+        markCombatAction(player);
         startSkillCooldown(player, skill);
         equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
         List<LivingEntity> targets = coneTargets(player, skill.range(), skill.arcDegrees(), skill.maxTargets());
@@ -1232,6 +1247,7 @@ public final class CombatService implements Listener {
             return;
         }
         if (!consumableId.isBlank()) recordConsumableUse(player, consumableId);
+        markCombatAction(player);
         startSkillCooldown(player, skill);
         executeCommonEffect(player, skill, target);
         showSkillEffect(player, skill, target == null ? List.of() : List.of(target));
@@ -1257,6 +1273,11 @@ public final class CombatService implements Listener {
         if ("WSI-CONS-PORTABLE_PURIFIER_CHARGE".equals(bound)
                 && (facilityService == null || !facilityService.hasActivePortablePurifier(player))) {
             ActionBarService.notice(player, Component.text("가동할 FAC-P05 휴대 정화기가 없습니다", NamedTextColor.RED), 40);
+            return;
+        }
+        if (!canApplyQuickItem(player, bound)) return;
+        if ("WSI-CONS-RATION_PACK".equals(bound)) {
+            beginRationUse(player, slot, bound);
             return;
         }
         if (!canUseLimitedConsumable(player, bound) || !equipment.consumeQuickItem(player, bound)) return;
@@ -1311,17 +1332,25 @@ public final class CombatService implements Listener {
                 result = "FAC-P05 가동시간 +60초";
             }
             case "WSI-CONS-ANTIDOTE_INJECTION" -> {
-                player.removePotionEffect(PotionEffectType.POISON); removePlayerStatus(player, "poison", 64); result = "POISON 제거";
+                int removed = statuses.remove(player, "POISON",
+                        ConsumableRuntimePolicy.removableStacks(bound));
+                if (removed == 0) player.removePotionEffect(PotionEffectType.POISON);
+                result = "POISON " + Math.max(1, removed) + "중첩 제거";
             }
             case "WSI-CONS-COOLING_SALVE" -> {
-                player.setFireTicks(0); removePlayerStatus(player, "burn", 64); result = "BURN 제거";
+                int removed = statuses.remove(player, "BURN",
+                        ConsumableRuntimePolicy.removableStacks(bound));
+                if (removed == 0) player.setFireTicks(0);
+                statuses.reduceBurnDuration(player, ConsumableRuntimePolicy.COOLING_BURN_DURATION_MULTIPLIER,
+                        ConsumableRuntimePolicy.COOLING_PROTECTION_MILLIS);
+                result = "BURN " + removed + "중첩 제거 / 5초 지속시간 -25%";
             }
             case "WSI-CONS-TOURNIQUET" -> { removePlayerStatus(player, "bleed", 2); result = "BLEED 2중첩 제거"; }
             case "WSI-CONS-NEURAL_STABILIZER" -> {
-                player.removePotionEffect(PotionEffectType.SLOWNESS); player.removePotionEffect(PotionEffectType.WEAKNESS);
-                statuses.cleanseControl(player, 3);
-                removePlayerStatus(player, "silence", 64); removePlayerStatus(player, "disarm", 64);
-                result = "신경계 약화 1개 제거";
+                String removed = ConsumableRuntimePolicy.neuralCleansePriority().stream()
+                        .filter(id -> statuses.active(player, id)).findFirst().orElseThrow();
+                statuses.remove(player, removed, 1);
+                result = removed + " 1개 제거";
             }
             case "WSI-CONS-REINFORCED_RESCUE_BRACE" -> {
                 runs.mutate(run -> {
@@ -1332,10 +1361,14 @@ public final class CombatService implements Listener {
                 result = "다음 구조 중단 임계 +25%";
             }
             case "WSI-CONS-BIO_SHIELD_AMPOULE" -> {
-                player.setAbsorptionAmount(Math.max(player.getAbsorptionAmount(), maxHealth * 0.08));
+                double shield = maxHealth * ConsumableRuntimePolicy.BIO_SHIELD_MAX_HP_FRACTION;
+                double granted = Math.max(0.0, shield - player.getAbsorptionAmount());
+                player.setAbsorptionAmount(player.getAbsorptionAmount() + granted);
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    if (player.isOnline()) player.setAbsorptionAmount(Math.max(0.0, player.getAbsorptionAmount() - maxHealth * 0.08));
-                }, 120L);
+                    if (player.isOnline() && granted > 0.0) {
+                        player.setAbsorptionAmount(Math.max(0.0, player.getAbsorptionAmount() - granted));
+                    }
+                }, ConsumableRuntimePolicy.BIO_SHIELD_DURATION_TICKS);
                 result = "최대 HP 8% 보호막";
             }
             default -> { ActionBarService.notice(player, Component.text("지원하지 않는 Q 아이템 " + bound, NamedTextColor.RED), 40); return; }
@@ -1356,27 +1389,153 @@ public final class CombatService implements Listener {
                 "WSI-CONS-BIO_SHIELD_AMPOULE").contains(id);
     }
 
+    private void beginRationUse(Player player, int slot, String itemId) {
+        if (quickUseChannels.containsKey(player.getUniqueId())) {
+            ActionBarService.notice(player, Component.text("이미 소모품을 사용 중입니다", NamedTextColor.RED), 30);
+            return;
+        }
+        if (!equipment.consumeQuickItem(player, itemId)) return;
+        boolean inCombat = CombatUseScopePolicy.sharedScope(runs.current().orElseThrow()).isPresent()
+                || runs.playerState(player.getUniqueId()).map(state ->
+                state.personalCombatScopeExpiresAtEpochMs >= runs.clockNowMillis()).orElse(false);
+        long durationTicks = ConsumableRuntimePolicy.rationUseTicks(inCombat);
+        long startedTick = Bukkit.getCurrentTick();
+        quickUseChannels.put(player.getUniqueId(), new QuickUseChannel(itemId, slot, startedTick,
+                startedTick + durationTicks));
+        ActionBarService.critical(player, Component.text("Q" + slot + " 야전 배급팩 섭취 시작 · "
+                + durationTicks / 20 + "초 · 좌클릭 취소", NamedTextColor.YELLOW), 40);
+    }
+
+    private void processQuickUseChannels() {
+        if (quickUseChannels.isEmpty()) return;
+        long tick = Bukkit.getCurrentTick();
+        for (Map.Entry<UUID, QuickUseChannel> entry : new ArrayList<>(quickUseChannels.entrySet())) {
+            Player player = Bukkit.getPlayer(entry.getKey());
+            QuickUseChannel channel = entry.getValue();
+            if (player == null || !player.isOnline()) {
+                quickUseChannels.remove(entry.getKey());
+                continue;
+            }
+            RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+            if (!runs.isRunningMember(player) || state == null || !"ACTIVE".equals(state.lifeState)) {
+                cancelQuickUse(player, "행동 불가로 사용 취소");
+                continue;
+            }
+            if (tick >= channel.completesAtTick) {
+                quickUseChannels.remove(player.getUniqueId());
+                if (!canApplyQuickItem(player, channel.itemId)) {
+                    equipment.grantQuickItem(player, channel.itemId, 1);
+                    continue;
+                }
+                player.setFoodLevel(Math.min(20, player.getFoodLevel() + 8));
+                player.setSaturation(Math.min(20.0f, player.getSaturation() + 6.0f));
+                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EAT, 0.8f, 1.0f);
+                ActionBarService.critical(player, Component.text("Q" + channel.slot
+                        + " 야전 배급팩: 허기 +8 / 포화 +6", NamedTextColor.GREEN), 40);
+                continue;
+            }
+            if ((tick - channel.startedAtTick) % 10L == 0L) {
+                long elapsed = tick - channel.startedAtTick;
+                long total = channel.completesAtTick - channel.startedAtTick;
+                int percent = (int) Math.min(99L, elapsed * 100L / Math.max(1L, total));
+                ActionBarService.critical(player, Component.text("야전 배급팩 섭취 " + percent
+                        + "% · 좌클릭 취소", NamedTextColor.YELLOW), 12);
+            }
+        }
+    }
+
+    private boolean cancelQuickUse(Player player, String reason) {
+        QuickUseChannel cancelled = quickUseChannels.remove(player.getUniqueId());
+        if (cancelled == null) return false;
+        equipment.grantQuickItem(player, cancelled.itemId, 1);
+        ActionBarService.critical(player, Component.text(reason + " · 예약 수량 반환", NamedTextColor.RED), 35);
+        return true;
+    }
+
+    public void shutdown() {
+        for (UUID playerId : new HashSet<>(quickUseChannels.keySet())) {
+            Player player = Bukkit.getPlayer(playerId);
+            if (player != null) cancelQuickUse(player, "서버 종료로 사용 취소");
+        }
+        quickUseChannels.clear();
+    }
+
     private boolean canUseLimitedConsumable(Player player, String id) {
-        int limit = switch (id) {
-            case "WSI-CONS-PURIFY_AMPOULE" -> 2;
-            case "WSI-CONS-AP_STIM", "WSI-CONS-BIO_SHIELD_AMPOULE" -> 1;
-            default -> Integer.MAX_VALUE;
-        };
-        int day = runs.current().map(run -> run.day).orElse(1);
-        int used = runs.playerState(player.getUniqueId()).map(state -> state.quickItemUsesByDay == null ? 0
-                : state.quickItemUsesByDay.getOrDefault(day + ":" + id, 0)).orElse(0);
+        int limit = ConsumableRuntimePolicy.combatLimit(id);
+        if (limit == Integer.MAX_VALUE) return true;
+        String scope = combatUseScope(player, false);
+        int used = runs.playerState(player.getUniqueId()).map(state -> state.quickItemUsesByCombat == null ? 0
+                : state.quickItemUsesByCombat.getOrDefault(scope + ":" + id, 0)).orElse(0);
         if (used < limit) return true;
-        ActionBarService.notice(player, Component.text("오늘 사용 한도에 도달했습니다: " + id, NamedTextColor.RED), 40);
+        ActionBarService.notice(player, Component.text("현재 전투 사용 한도에 도달했습니다: " + id,
+                NamedTextColor.RED), 40);
         return false;
     }
 
     private void recordConsumableUse(Player player, String id) {
         if (!id.startsWith("WSI-CONS-")) return;
-        int day = runs.current().map(run -> run.day).orElse(1);
+        String scope = combatUseScope(player, true);
         runs.mutate(run -> {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-            if (state.quickItemUsesByDay == null) state.quickItemUsesByDay = new HashMap<>();
-            state.quickItemUsesByDay.merge(day + ":" + id, 1, Integer::sum);
+            if (state.quickItemUsesByCombat == null) state.quickItemUsesByCombat = new HashMap<>();
+            state.quickItemUsesByCombat.merge(scope + ":" + id, 1, Integer::sum);
+        });
+    }
+
+    private boolean canApplyQuickItem(Player player, String id) {
+        boolean allowed = switch (id) {
+            case "WSI-CONS-RATION_PACK" -> player.getFoodLevel() < 20;
+            case "WSI-CONS-BANDAGE", "WSI-CONS-TOURNIQUET" -> statuses.active(player, "BLEED");
+            case "WSI-CONS-ANTIDOTE_INJECTION" -> statuses.active(player, "POISON")
+                    || player.hasPotionEffect(PotionEffectType.POISON);
+            case "WSI-CONS-NEURAL_STABILIZER" -> {
+                if (!ConsumableRuntimePolicy.neuralSelfUseAllowed(statuses.hardControlled(player))) {
+                    ActionBarService.notice(player, Component.text("HARD_CC 중에는 자신에게 사용할 수 없습니다",
+                            NamedTextColor.RED), 40);
+                    yield false;
+                }
+                yield ConsumableRuntimePolicy.neuralCleansePriority().stream()
+                        .anyMatch(status -> statuses.active(player, status));
+            }
+            default -> true;
+        };
+        if (!allowed && !"WSI-CONS-NEURAL_STABILIZER".equals(id)) {
+            ActionBarService.notice(player, Component.text("현재 적용할 수 없는 소모품입니다", NamedTextColor.GRAY), 35);
+        } else if (!allowed && !statuses.hardControlled(player)) {
+            ActionBarService.notice(player, Component.text("제거할 ROOT·SILENCE·DISARM이 없습니다",
+                    NamedTextColor.GRAY), 35);
+        }
+        return allowed;
+    }
+
+    private String combatUseScope(Player player, boolean commitPersonalScope) {
+        RunSnapshot run = runs.current().orElseThrow();
+        java.util.Optional<String> shared = CombatUseScopePolicy.sharedScope(run);
+        if (shared.isPresent()) return shared.get();
+        RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+        CombatUseScopePolicy.PersonalScope scope = CombatUseScopePolicy.personalScope(
+                state.personalCombatSequence, state.personalCombatScopeExpiresAtEpochMs, runs.clockNowMillis());
+        if (commitPersonalScope && scope.newlyOpened()) {
+            runs.mutate(snapshot -> {
+                RunSnapshot.PlayerState mutable = snapshot.players.get(player.getUniqueId().toString());
+                mutable.personalCombatSequence = scope.sequence();
+                mutable.personalCombatScopeExpiresAtEpochMs = scope.expiresAtEpochMs();
+            });
+        }
+        return scope.key(run.runId);
+    }
+
+    private void markCombatAction(Player player) {
+        RunSnapshot run = runs.current().orElse(null);
+        if (run == null || CombatUseScopePolicy.sharedScope(run).isPresent()) return;
+        RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+        if (state == null) return;
+        CombatUseScopePolicy.PersonalScope scope = CombatUseScopePolicy.onCombatAction(
+                state.personalCombatSequence, state.personalCombatScopeExpiresAtEpochMs, runs.clockNowMillis());
+        runs.mutate(snapshot -> {
+            RunSnapshot.PlayerState mutable = snapshot.players.get(player.getUniqueId().toString());
+            mutable.personalCombatSequence = scope.sequence();
+            mutable.personalCombatScopeExpiresAtEpochMs = scope.expiresAtEpochMs();
         });
     }
 
@@ -1399,6 +1558,7 @@ public final class CombatService implements Listener {
             apFailure(player, cost);
             return;
         }
+        markCombatAction(player);
         growth.onDodgeStarted(player, cost);
         Vector direction = player.getLocation().getDirection().setY(0).normalize();
         if (player.isSneaking()) {
@@ -2775,6 +2935,8 @@ public final class CombatService implements Listener {
     }
 
     private record EnemyHitPermit(UUID enemyUuid, UUID playerUuid) { }
+
+    private record QuickUseChannel(String itemId, int slot, long startedAtTick, long completesAtTick) { }
 
     public record DamagePreview(double rawDamage, double defenceFactor, double augmentDamageMultiplier,
                                 double testDamageMultiplier, double finalDamage, double rawBreak,

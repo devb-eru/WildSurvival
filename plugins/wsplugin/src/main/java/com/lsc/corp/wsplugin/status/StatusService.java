@@ -118,6 +118,9 @@ public final class StatusService implements Listener {
 
         double baseDuration = durationOverrideSeconds > 0.0
                 ? durationOverrideSeconds : definition.standardDurationSeconds();
+        if ("BURN".equals(definition.id()) && state.burnDurationReductionUntilEpochMs > now) {
+            baseDuration *= Math.max(0.0, Math.min(1.0, state.burnDurationMultiplier));
+        }
         double maximum = definition.standardMaxPreResistSeconds();
         double gradeMultiplier = targetGrade == TargetGrade.ELITE ? 0.50 : 1.0;
         double strength = strengthOverride > 0.0 ? strengthOverride : definition.baseStrength();
@@ -206,6 +209,28 @@ public final class StatusService implements Listener {
                 || active(target, "FEAR") || active(target, "FREEZE");
     }
 
+    public boolean hardControlled(LivingEntity target) {
+        if (target == null) return false;
+        TargetState state = state(target);
+        boolean changed = expire(target, state, runs.clockNowMillis());
+        if (changed) save(target, state);
+        return containsHardControl(state);
+    }
+
+    public void reduceBurnDuration(Player target, double multiplier, long durationMillis) {
+        if (target == null || !Double.isFinite(multiplier) || multiplier <= 0.0 || multiplier > 1.0
+                || durationMillis <= 0L) {
+            throw new IllegalArgumentException("A target, 0..1 multiplier, and positive duration are required");
+        }
+        TargetState state = state(target);
+        long now = runs.clockNowMillis();
+        state.burnDurationMultiplier = state.burnDurationReductionUntilEpochMs > now
+                ? Math.min(state.burnDurationMultiplier, multiplier) : multiplier;
+        state.burnDurationReductionUntilEpochMs = Math.max(state.burnDurationReductionUntilEpochMs,
+                now + durationMillis);
+        save(target, state);
+    }
+
     public boolean blocksMovement(LivingEntity target) {
         return blocksAllActions(target) || active(target, "ROOT");
     }
@@ -264,6 +289,13 @@ public final class StatusService implements Listener {
         if (instances.isEmpty()) {
             state.active.remove(definition.id());
             clearVisual(target, definition);
+        } else {
+            long now = runs.clockNowMillis();
+            long remainingDuration = instances.stream().mapToLong(value -> value.expiresAtEpochMs - now)
+                    .max().orElse(1L);
+            int remainingStacks = instances.stream().mapToInt(value -> value.stacks).sum();
+            clearVisual(target, definition);
+            applyVisual(target, definition, Math.max(1L, remainingDuration), remainingStacks);
         }
         save(target, state);
         if (removed > 0) telemetry("STATUS_REMOVED", definition.id(), target, "ITEM", "\"stacks\":" + removed);
@@ -287,6 +319,7 @@ public final class StatusService implements Listener {
                 clearVisual(target, definition);
             }
         }
+        resetBurnDurationReduction(state);
         resetControlState(state);
         save(target, state);
     }
@@ -302,6 +335,7 @@ public final class StatusService implements Listener {
             if (definition != null) clearVisual(target, definition);
         }
         state.active.clear();
+        resetBurnDurationReduction(state);
         resetControlState(state);
         save(target, state);
     }
@@ -458,6 +492,11 @@ public final class StatusService implements Listener {
 
     private boolean expire(LivingEntity target, TargetState state, long now) {
         boolean changed = false;
+        if (state.burnDurationReductionUntilEpochMs > 0L
+                && state.burnDurationReductionUntilEpochMs <= now) {
+            resetBurnDurationReduction(state);
+            changed = true;
+        }
         boolean hardBefore = containsHardControl(state);
         for (String id : new ArrayList<>(state.active.keySet())) {
             List<InstanceState> instances = state.active.get(id);
@@ -596,6 +635,9 @@ public final class StatusService implements Listener {
         }
         if (loaded == null) loaded = new TargetState();
         if (loaded.active == null) loaded.active = new LinkedHashMap<>();
+        if (!Double.isFinite(loaded.burnDurationMultiplier) || loaded.burnDurationMultiplier <= 0.0) {
+            loaded.burnDurationMultiplier = 1.0;
+        }
         states.put(target.getUniqueId(), loaded);
         if (!loaded.active.isEmpty()) tracked.add(target.getUniqueId());
         return loaded;
@@ -616,11 +658,13 @@ public final class StatusService implements Listener {
     private boolean isStateEmpty(TargetState state, long now) {
         return state.active.isEmpty() && state.allStatusImmunityUntilEpochMs <= now
                 && state.controlImmunityUntilEpochMs <= now && state.actionLockResetAtEpochMs <= now
+                && state.burnDurationReductionUntilEpochMs <= now
                 && state.lastHardControlEndedAtEpochMs <= 0L;
     }
 
     private long latestExpiry(TargetState state) {
-        long latest = Math.max(state.allStatusImmunityUntilEpochMs, state.controlImmunityUntilEpochMs);
+        long latest = Math.max(Math.max(state.allStatusImmunityUntilEpochMs, state.controlImmunityUntilEpochMs),
+                state.burnDurationReductionUntilEpochMs);
         for (List<InstanceState> instances : state.active.values()) {
             for (InstanceState instance : instances) latest = Math.max(latest, instance.expiresAtEpochMs);
         }
@@ -655,6 +699,11 @@ public final class StatusService implements Listener {
 
     private static boolean isHardControl(ProductionContentCatalog.StatusEntry definition) {
         return definition.tags().contains("HARD_CC") || definition.tags().contains("ROOT");
+    }
+
+    private static void resetBurnDurationReduction(TargetState state) {
+        state.burnDurationReductionUntilEpochMs = 0L;
+        state.burnDurationMultiplier = 1.0;
     }
 
     private boolean containsHardControl(TargetState state) {
@@ -712,6 +761,8 @@ public final class StatusService implements Listener {
         long actionLockResetAtEpochMs;
         long allStatusImmunityUntilEpochMs;
         long controlImmunityUntilEpochMs;
+        long burnDurationReductionUntilEpochMs;
+        double burnDurationMultiplier = 1.0;
     }
 
     private static final class InstanceState {

@@ -54,6 +54,7 @@
 | `PLAN-AUDIT-001` | `ACTIVE_CONTROL` | 기획 공백·완료 증거 | G0 |
 | `DOC-AUTHORITY-001` | `ACTIVE_CONTROL` | ID·상태·권위·대체 관계 | G0 |
 | `PRODUCTION-COMPLETION-PLAN-001` | `ACTIVE_CONTROL` | 전 고정 ID의 실제 플레이 전환 순서·개별 완료 판정 | DEV-300~800 |
+| `CONTENT-CATALOG-INDEX-001` | `DATA_LOCKED` | 생산 콘텐츠 ID 합계·소유 문서·구현 파일 통합 색인 | DEV-300~800 |
 | `CONTENT-MASTER-001` | `BASELINE_LOCKED` | Day 1~50+ 상위 진행 | G0 |
 | `GAME-001~003` | `BASELINE_LOCKED` | 타이머·저장·인원 스케일 | G0 |
 | `DAY-001` | `BASELINE_LOCKED` | Day 전환·스킵·완료 | G0 |
@@ -83,6 +84,12 @@
 | `EQUIP-LIST-001` | `DATA_LOCKED` | Day 1~20 장비·후반 방향 | G0 |
 | `ECONOMY-001` | `BASELINE_LOCKED` | 공급·소비·강화·재련 | G0 |
 | `CRAFT-001` | `DATA_LOCKED` | 제작·가공 레시피 | G0 |
+| `ITEM-LIST-001` | `DATA_LOCKED` | 비장비 아이템 61개 ID·도감 위치·기본 효과 | DEV-300~400 |
+| `MATERIAL-LIST-001` | `DATA_LOCKED` | 재료 59개 ID·등급·획득·용도 | DEV-300~400 |
+| `RECIPE-LIST-001` | `DATA_LOCKED` | 제작식 315개 ID·출력·소유 권위 | DEV-300~400 |
+| `TOOL-LIST-001` | `DATA_LOCKED` | 장비·도구 214개 ID·장착 분류 | DEV-300~500 |
+| `LOOT-LIST-001` | `DATA_LOCKED` | 획득·드롭 62개 ID·보상 경계 | DEV-400~700 |
+| `CONSUMABLE-RUNTIME-STATUS-001` | `ACTIVE_CONTROL` | 소모품 13개 DATA·RUNTIME·TEST 개별 상태 | DEV-300~400 |
 | `REWARD-001` | `BASELINE_LOCKED` | 기여·분배·고유 보상 | G0 |
 
 ### 3.3 세계·사건·보스·Story
@@ -97,6 +104,7 @@
 | `CORR-001~003` | `BASELINE_LOCKED` | 오염 수치·확산·정화 | G0 |
 | `CORR-LIST-001` | `DATA_LOCKED` | 오염 변이 목록 | G0 |
 | `EVENT-LIST-001` | `DATA_LOCKED` | 사건 유형·후보 정책 | G0 |
+| `ENTITY-LIST-001` | `DATA_LOCKED` | 적·보스·지원 개체 91개 ID·수명·보상 경계 | DEV-600~700 |
 | `ENEMY-001` | `BASELINE_LOCKED` | 적 역할·템플릿 | G0 |
 | `BOSS-001~004` | `BASELINE_LOCKED` | Day 10·20·30·40 보스 설계 | G0 |
 | `SYSTEM-AUDIT-001` | `ACTIVE_CONTROL` | Story 선행 시스템 경계 | G0 |

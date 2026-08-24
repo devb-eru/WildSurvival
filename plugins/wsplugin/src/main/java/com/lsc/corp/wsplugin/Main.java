@@ -42,6 +42,7 @@ public final class Main extends JavaPlugin {
     private TutorialService tutorial;
     private FinalService finale;
     private StatusService statuses;
+    private CombatService combat;
 
     @Override
     public void onEnable() {
@@ -63,7 +64,7 @@ public final class Main extends JavaPlugin {
                     content.productionCatalog(), telemetry, codex);
             SkillLoadoutService skills = new SkillLoadoutService(runService, content.content(), content.productionCatalog(), equipment);
             statuses = new StatusService(this, runService, content.productionCatalog(), equipment, telemetry);
-            CombatService combat = new CombatService(this, runService, content.content(), content.productionCatalog(),
+            combat = new CombatService(this, runService, content.content(), content.productionCatalog(),
                     equipment, growth, skills, telemetry, statuses);
             GraveService graves = new GraveService(this, runService, content.content(),
                     content.productionCatalog(), codex, equipment, telemetry);
@@ -152,6 +153,9 @@ public final class Main extends JavaPlugin {
         }
         if (finale != null) {
             finale.cleanup();
+        }
+        if (combat != null) {
+            combat.shutdown();
         }
         if (statuses != null) {
             statuses.shutdown();

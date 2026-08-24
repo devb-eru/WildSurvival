@@ -33,6 +33,7 @@ public final class CombatInputPolicy {
         VANILLA_MINING,
         BASIC_ATTACK,
         WEAPON_SKILL,
+        QUICK_ITEM_CANCELLED,
         RESTRICTED;
 
         public boolean cancelsBlockDamage() {
