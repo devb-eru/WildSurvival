@@ -244,6 +244,8 @@ public final class RunSnapshot {
 
     public static final class FacilityInstanceState {
         public String instanceId;
+        /** Stable identity of the portable device item or deployment that owns this runtime instance. */
+        public String portableInstanceId;
         public String facilityType;
         public String revision = "facility-data-d11-d50-r1";
         public int level = 1;

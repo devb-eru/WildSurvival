@@ -144,6 +144,11 @@ class RunRepositoryTest {
         snapshot.discoveryIds.add("C29");
         snapshot.story.playedSceneIds.add("ST5-FINAL-READY");
         snapshot.finalObjective.state = "AVAILABLE";
+        RunSnapshot.FacilityInstanceState purifier = new RunSnapshot.FacilityInstanceState();
+        purifier.instanceId = "portable:proto-test:device-1";
+        purifier.portableInstanceId = "device-1";
+        purifier.facilityType = "FAC-P05";
+        snapshot.facilities.put(purifier.instanceId, purifier);
         repository.save(snapshot);
 
         RunSnapshot restored = repository.load().orElseThrow();
@@ -155,6 +160,7 @@ class RunRepositoryTest {
         assertTrue(restored.discoveryIds.contains("C29"));
         assertTrue(restored.story.playedSceneIds.contains("ST5-FINAL-READY"));
         assertEquals("AVAILABLE", restored.finalObjective.state);
+        assertEquals("device-1", restored.facilities.get("portable:proto-test:device-1").portableInstanceId);
     }
 
     private static RunSnapshot snapshot() {

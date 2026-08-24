@@ -82,6 +82,7 @@ public final class FacilityService implements Listener {
     private final EquipmentService equipment;
     private final TelemetryService telemetry;
     private final NamespacedKey instanceKey;
+    private final NamespacedKey portableInstanceKey;
     private final Map<String, ProductionContentCatalog.FacilityEntry> facilityByItem = new HashMap<>();
     private Consumer<Player> craftOpener = ignored -> { };
     private Consumer<Player> ledgerOpener = ignored -> { };
@@ -104,6 +105,7 @@ public final class FacilityService implements Listener {
         this.equipment = equipment;
         this.telemetry = telemetry;
         this.instanceKey = new NamespacedKey(plugin, "facility_instance_id");
+        this.portableInstanceKey = new NamespacedKey(plugin, "portable_instance_id");
         production.facilitiesById().values().stream().filter(value -> !value.itemId().isBlank())
                 .forEach(value -> facilityByItem.put(value.itemId(), value));
     }
@@ -188,7 +190,8 @@ public final class FacilityService implements Listener {
         ProductionContentCatalog.FacilityEntry facility = itemId == null ? null : facilityByItem.get(itemId);
         if (facility == null) return;
         event.setCancelled(true);
-        if (facility.portableDevice()) executePortable(event.getPlayer(), facility, event.getClickedBlock(), event.getBlockFace());
+        if (facility.portableDevice()) executePortable(event.getPlayer(), facility, event.getItem(),
+                event.getClickedBlock(), event.getBlockFace());
         else placeFromKit(event.getPlayer(), facility, event.getClickedBlock(), event.getBlockFace());
     }
 
@@ -322,7 +325,9 @@ public final class FacilityService implements Listener {
         RunSnapshot.FacilityInstanceState purifier = FacilityStateAccess.instances(run).values().stream()
                 .filter(value -> "FAC-P05".equals(value.facilityType) && player.getUniqueId().toString().equals(value.installedBy)
                         && "ACTIVE".equals(value.state) && !FacilityStateAccess.expired(value, runs.clockNowMillis()))
-                .findFirst().orElse(null);
+                .min(Comparator.comparingDouble((RunSnapshot.FacilityInstanceState value) ->
+                                distanceSquared(player.getLocation(), value))
+                        .thenComparing(value -> value.instanceId)).orElse(null);
         if (purifier == null) throw new IllegalStateException("가동 중인 FAC-P05가 없습니다.");
         runs.mutate(snapshot -> {
             RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(snapshot).get(purifier.instanceId);
@@ -397,8 +402,10 @@ public final class FacilityService implements Listener {
                 + facilityType + "\",\"count\":" + created.size() + "}");
     }
 
-    private void executePortable(Player player, ProductionContentCatalog.FacilityEntry profile,
+    private void executePortable(Player player, ProductionContentCatalog.FacilityEntry profile, ItemStack sourceItem,
                                  Block clicked, org.bukkit.block.BlockFace face) {
+        String portableInstanceId = "FAC-P06".equals(profile.id())
+                ? null : ensurePortableInstanceId(sourceItem);
         switch (profile.effectOpcode()) {
             case "CRAFT_PORTABLE" -> craftOpener.accept(player);
             case "REPAIR_FIELD" -> {
@@ -408,9 +415,9 @@ public final class FacilityService implements Listener {
             }
             case "SAMPLE_EXTRACT" -> player.sendMessage(ChatColor.AQUA + "표본 채취 모드: 적·오염·광물 상호작용 데이터가 도감에 기록됩니다.");
             case "ANALYZE_PORTABLE" -> showAnalysis(player);
-            case "PURIFY_PORTABLE" -> activateTimedPortable(player, profile, 60_000L, 5.0);
+            case "PURIFY_PORTABLE" -> activateTimedPortable(player, profile, portableInstanceId, 60_000L, 5.0);
             case "SIGNAL_STAKE" -> placeSignalStake(player, profile, clicked, face);
-            case "RESCUE_BEACON" -> activateTimedPortable(player, profile, 300_000L, 12.0);
+            case "RESCUE_BEACON" -> activateTimedPortable(player, profile, portableInstanceId, 300_000L, 12.0);
             case "LEDGER_REMOTE" -> ledgerOpener.accept(player);
             default -> player.sendMessage(ChatColor.RED + "지원하지 않는 휴대 시설 기능입니다: " + profile.effectOpcode());
         }
@@ -580,18 +587,34 @@ public final class FacilityService implements Listener {
     private void placeSignalStake(Player player, ProductionContentCatalog.FacilityEntry profile,
                                   Block clicked, org.bukkit.block.BlockFace face) {
         RunSnapshot run = runs.current().orElseThrow();
-        boolean already = FacilityStateAccess.instances(run).values().stream().anyMatch(value -> "FAC-P06".equals(value.facilityType)
-                && player.getUniqueId().toString().equals(value.installedBy));
-        if (already) { player.sendMessage(ChatColor.RED + "기존 신호 말뚝을 회수한 뒤 다시 배치하세요."); return; }
+        if (run.day < profile.firstDay()) {
+            player.sendMessage(ChatColor.RED + "Day " + profile.firstDay() + "부터 설치할 수 있습니다."); return;
+        }
+        if (!safeForFacilityAction(player)) {
+            player.sendMessage(ChatColor.RED + "최근 피격·보스 전투 중에는 신호 말뚝을 설치할 수 없습니다."); return;
+        }
         if (clicked == null || face == null) { player.sendMessage(ChatColor.RED + "말뚝을 설치할 블록 면을 우클릭하세요."); return; }
         Block target = clicked.getRelative(face);
-        if (!target.getType().isAir() || codex.countItem(player, profile.itemId()) < 1) return;
-        String instanceId = "portable:" + run.runId + ":" + UUID.randomUUID();
-        if (!codex.takeItem(player, profile.itemId(), 1)) return;
-        markRepresentation(target, material(profile), instanceId);
-        RunSnapshot.FacilityInstanceState instance = createInstance(player, profile, instanceId, target.getLocation(), 0L);
-        runs.mutate(snapshot -> FacilityStateAccess.instances(snapshot).put(instanceId, instance));
-        player.sendMessage(ChatColor.GREEN + "신호 말뚝 설치 완료. 말뚝을 우클릭하면 회수합니다.");
+        if (!target.getType().isAir() || !target.getRelative(org.bukkit.block.BlockFace.DOWN).getType().isSolid()) {
+            player.sendMessage(ChatColor.RED + "바닥 위 빈 공간에만 신호 말뚝을 설치할 수 있습니다."); return;
+        }
+        if (codex.countItem(player, profile.itemId()) < 1) return;
+        String portableInstanceId = UUID.randomUUID().toString();
+        String instanceId = "portable:" + run.runId + ":" + portableInstanceId;
+        Material original = target.getType();
+        try {
+            if (!codex.takeItem(player, profile.itemId(), 1)) return;
+            markRepresentation(target, material(profile), instanceId);
+            RunSnapshot.FacilityInstanceState instance = createInstance(player, profile, instanceId, target.getLocation(), 0L);
+            instance.portableInstanceId = portableInstanceId;
+            runs.mutate(snapshot -> FacilityStateAccess.instances(snapshot).put(instanceId, instance));
+            player.sendMessage(ChatColor.GREEN + "신호 말뚝 설치 완료 · 활성 말뚝 "
+                    + activePortableCount("FAC-P06") + "개. 말뚝을 우클릭하면 회수합니다.");
+        } catch (RuntimeException exception) {
+            target.setType(original, false);
+            codex.grantItem(player, profile.itemId(), 1);
+            throw exception;
+        }
     }
 
     private void recoverSignalStake(Player player, RunSnapshot.FacilityInstanceState instance) {
@@ -605,15 +628,22 @@ public final class FacilityService implements Listener {
     }
 
     private void activateTimedPortable(Player player, ProductionContentCatalog.FacilityEntry profile,
-                                       long durationMillis, double radius) {
+                                       String portableInstanceId, long durationMillis, double radius) {
+        if (portableInstanceId == null || portableInstanceId.isBlank()) {
+            throw new IllegalStateException("휴대 장치 인스턴스 ID를 만들 수 없습니다.");
+        }
         RunSnapshot run = runs.current().orElseThrow();
-        String owner = player.getUniqueId().toString();
-        RunSnapshot.FacilityInstanceState existing = FacilityStateAccess.instances(run).values().stream()
-                .filter(value -> profile.id().equals(value.facilityType) && owner.equals(value.installedBy)).findFirst().orElse(null);
+        String instanceId = "portable:" + run.runId + ":" + portableInstanceId;
+        RunSnapshot.FacilityInstanceState existing = FacilityStateAccess.instances(run).get(instanceId);
+        if (existing != null && "ACTIVE".equals(existing.state)
+                && !FacilityStateAccess.expired(existing, runs.clockNowMillis())) {
+            player.sendMessage(ChatColor.YELLOW + profile.name() + "은 이미 가동 중입니다. 충전 아이템으로 시간을 연장하세요.");
+            return;
+        }
         Location location = player.getLocation();
-        String instanceId = existing == null ? "portable:" + run.runId + ":" + UUID.randomUUID() : existing.instanceId;
         RunSnapshot.FacilityInstanceState activated = createInstance(player, profile, instanceId, location,
                 runs.clockNowMillis() + durationMillis);
+        activated.portableInstanceId = portableInstanceId;
         runs.mutate(snapshot -> FacilityStateAccess.instances(snapshot).put(instanceId, activated));
         if ("FAC-P05".equals(profile.id())) {
             for (LivingEntity entity : location.getNearbyLivingEntities(radius)) if (entity instanceof Player member
@@ -621,6 +651,33 @@ public final class FacilityService implements Listener {
         }
         player.playSound(location, Sound.BLOCK_BEACON_ACTIVATE, 0.6f, 1.4f);
         player.sendMessage(ChatColor.GREEN + profile.name() + " 활성화 · " + durationMillis / 1000 + "초");
+    }
+
+    private String ensurePortableInstanceId(ItemStack item) {
+        if (item == null || item.getType().isAir()) return null;
+        ItemMeta meta = item.getItemMeta();
+        String existing = meta.getPersistentDataContainer().get(portableInstanceKey, PersistentDataType.STRING);
+        if (existing != null && !existing.isBlank()) return existing;
+        String created = UUID.randomUUID().toString();
+        meta.getPersistentDataContainer().set(portableInstanceKey, PersistentDataType.STRING, created);
+        item.setItemMeta(meta);
+        return created;
+    }
+
+    private long activePortableCount(String facilityType) {
+        RunSnapshot run = runs.current().orElseThrow();
+        return FacilityStateAccess.instances(run).values().stream()
+                .filter(value -> facilityType.equals(value.facilityType) && "ACTIVE".equals(value.state)).count();
+    }
+
+    private static double distanceSquared(Location location, RunSnapshot.FacilityInstanceState instance) {
+        if (location.getWorld() == null || !location.getWorld().getName().equals(instance.world)) {
+            return Double.POSITIVE_INFINITY;
+        }
+        double dx = location.getX() - (instance.x + 0.5);
+        double dy = location.getY() - (instance.y + 0.5);
+        double dz = location.getZ() - (instance.z + 0.5);
+        return dx * dx + dy * dy + dz * dz;
     }
 
     private RunSnapshot.FacilityInstanceState createInstance(Player player,
