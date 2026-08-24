@@ -5,7 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `AUTHOR-DECISION-REGISTER-001` |
-| 상태 | `ACTIVE_CONTROL` |
+| 상태 | `USER_LOCKED_WITH_DEFERRED_STORY_CONTENT` |
 | 역할 | 게임 정체성·서사 저작처럼 구현자가 임의 확정할 수 없는 선택, 완성된 대안, 응답 형식과 안전 기본값을 관리 |
 | 상위 기준 | `VISION-001`, `PRODUCTION-DATA-CLOSURE-001`, `STORY-001`, `DEATH-001` |
 | 최종 수정일 | 2026-08-24 |
@@ -14,10 +14,19 @@
 
 - 수치·비용·증거처럼 기존 시스템 원칙에서 유도할 수 있는 항목은 `PRODUCTION-DATA-CLOSURE-001`이 잠근다.
 - 하드코어의 영구 사망 강도와 최종 한국어 대사처럼 플레이 경험의 정체성을 바꾸는 항목은 사용자 확정 없이 잠그지 않는다.
-- 미확정 동안 신규 부활 ID를 생성하거나 임시 Story 문구를 출시 본문으로 승격하지 않는다.
+- 사용자 확정 전에는 신규 부활 ID를 생성하거나 임시 Story 문구를 출시 본문으로 승격하지 않는다. 현재 `REVIVAL_ITEM`은 정책만 잠겼고 실제 목록 반영은 다음 기획 목표로 위임됐으며, Story 본문은 명시적으로 최종 단계까지 연기됐다.
 - 슬롯 0 파손 같은 긴급 호환 수정과 데이터 감사는 계속할 수 있다. 선택 결과에 영향을 받는 생산 기능 구현은 해당 결정 뒤 시작한다.
 
-## 2. `ADR-001` 완전 사망 뒤 부활 정책
+### 1.1 사용자 확정 기록 — 2026-08-24
+
+| ADR | 사용자 확정 | 적용 상태 |
+|---|---|---|
+| `ADR-001` | `REVIVAL_ITEM` | `USER_LOCKED`; 실제 아이템·레시피·도감 반영은 다음 기획 목표에서 수행 |
+| `ADR-002` | `CHAPTER_REVIEW` | 작성 방식만 `USER_LOCKED`; Story 초안·장별 검토·payload 작성은 전체 플레이 가능 판정 이후 최종 작업으로 연기 |
+
+연기된 Story 작업은 개발 폴백을 출시 원문으로 승인한다는 뜻이 아니다. 플레이 가능 판정 전에는 Story 본문을 작성·보정·검토하지 않으며, 출시 판정 전 최종 단계에서 별도 목표로 진행한다.
+
+## 2. `ADR-001` 완전 사망 뒤 부활 정책 — `USER_LOCKED: REVIVAL_ITEM`
 
 ### 2.1 선택 A — `REVIVAL_ITEM` 권장
 
@@ -53,7 +62,7 @@
 
 이 선택은 카탈로그를 늘리지 않지만 Day41 이전에는 `NO_REVIVAL`과 동일하다.
 
-## 3. `ADR-002` Story 한국어 본문 작성 방식
+## 3. `ADR-002` Story 한국어 본문 작성 방식 — `METHOD_USER_LOCKED: CHAPTER_REVIEW`, `CONTENT_DEFERRED`
 
 ### 3.1 현재 확정·누락
 
@@ -86,15 +95,15 @@
 - 없는 음성·모델·NMS 연출을 전제로 쓰지 않는다. Adventure 컴포넌트, Title/ActionBar, Display, 바닐라 사운드 폴백으로 표현 가능해야 한다.
 - payloadKey 82개 누락·중복 0, 장면 73·로그 9 매핑 1:1, 금지 스포일러·진행 우회 0을 L0에서 검증한다.
 
-## 4. 사용자 응답 형식
+## 4. 사용자 확정과 변경 형식
 
-다음 한 줄이면 두 결정을 잠글 수 있다.
+현재 확정값은 다음과 같다.
 
 ```text
-부활=ITEM|NONE|FACILITY, Story=ASSISTANT_DRAFT|CHAPTER_REVIEW|USER_SUPPLY
+부활=ITEM, Story=CHAPTER_REVIEW, Story 작업시점=전체 플레이 가능 판정 이후 최종 단계
 ```
 
-권장 조합은 `부활=ITEM, Story=CHAPTER_REVIEW`다. 결정 전 안전 기본값은 신규 부활 없음과 Story 개발 폴백이며, 이를 출시 완료로 인정하지 않는다.
+결정을 변경할 때만 `부활=ITEM|NONE|FACILITY, Story=ASSISTANT_DRAFT|CHAPTER_REVIEW|USER_SUPPLY` 형식으로 다시 확정한다. 현재 중단 상태에서는 `REVIVAL_ITEM`의 실제 데이터 추가와 Story 작성 모두 실행하지 않는다.
 
 ## 5. `ADR-003` F 보조무기 입력 — `CLOSED`
 
@@ -109,4 +118,4 @@
 | 취소 | 기본 공격·스킬·회피·슬롯 이탈·방패 해제/파손·GUI/시설 상호작용·빈사·강한 행동 불가 |
 | 충돌 분리 | `Shift+F`는 메뉴, 슬롯 `1~8` 일반 `F`는 바닐라 손 교환 |
 
-이 결정은 `ADR-001~002`의 사용자 응답을 대체하지 않는다. 구현 권위는 `COMBAT-004`, 입력 권위는 `SKILL-001 §25`와 `IMPLEMENTATION-HANDOFF-001`을 따른다.
+이 결정은 `ADR-001~002`의 확정값과 독립적이다. 구현 권위는 `COMBAT-004`, 입력 권위는 `SKILL-001 §25`와 `IMPLEMENTATION-HANDOFF-001`을 따른다.

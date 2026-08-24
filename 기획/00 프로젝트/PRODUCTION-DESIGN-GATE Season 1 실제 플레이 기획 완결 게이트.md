@@ -5,7 +5,7 @@
 | 항목 | 내용 |
 |---|---|
 | 문서 ID | `PRODUCTION-DESIGN-GATE-001` |
-| 상태 | `IMPLEMENTATION_READY` |
+| 상태 | `PLANNING_REOPENED` |
 | 목표 | 프로토타입 전용 가정을 제거하고 Season 1 Day 1~50·Final을 실제 플레이 가능한 생산 범위로 잠금 |
 | 구현 환경 | Minecraft Java Edition, 바닐라 + Paper 플러그인, 선택 리소스 팩, 모드 없음 |
 | 상위 기준 | `VISION-001`, `RULES-001`, `DATA-REVISION-002`, `IMPLEMENTATION-HANDOFF-001` |
@@ -35,10 +35,11 @@ Day 1~10만 동작하거나 관리자 명령으로만 진행 가능한 상태는
 |---|---|---|---|
 | `PDG-0 AUDIT` | PASS | 기존 문서·JSON·코드의 ID, 와일드카드, 텍스트 참조, 충돌을 전수 계수 | `CONTENT-CATALOG-INDEX-001` 감사표 |
 | `PDG-1 ITEMS` | PASS | 아이템·재료·도구·방어구·조합법 목록이 모두 고정 ID와 획득·소비 경로를 가짐 | `ITEM/MATERIAL/TOOL/RECIPE-LIST` |
-| `PDG-2 ACTIONS` | PASS | 스킬·증강의 입력, 비용, 대상, 효과, 상한, 해금, 폴백이 완결 | `SKILL-LIST-001`, `AUG-LIST-001~002` |
-| `PDG-3 WORLD` | PASS | 모든 적·보스·소환체·오브젝트·시설이 실행·표현·정리 계약을 가짐 | `ENTITY-LIST-001`, `FACILITY-LIST-001` |
-| `PDG-4 GRAPH` | PASS | 획득→도감→제작→장비→전투→Day→Final 참조 그래프에 고아·순환·소프트락 0 | `CONTENT-GRAPH-AUDIT-001` |
-| `PDG-5 HANDOFF` | PASS | 번들 파일·schema·목표 합계와 IMP 티켓·테스트가 새 목록을 직접 참조 | `DATA-REVISION-002`, `IMPLEMENTATION-HANDOFF-001`, registry r2 |
+| `PDG-2 ACTIONS` | REOPENED | 64 스킬 operation 파라미터와 66 증강 opcode·trigger·stateScope·수치·ICD·상한이 명시 실행 행으로 완결 | `SKILL-EFFECT-LIST-001`, `AUGMENT-EFFECT-LIST-001` |
+| `PDG-3 WORLD` | REOPENED | 일반 적 행동 69개가 필수 실행 필드를 모두 가진 개별 행이며 `*-PRIMARY` 축약이 없음 | `ENEMY-ACTION-LIST-001`, `ENTITY-LIST-001` |
+| `PDG-4 GRAPH` | RECHECK_REQUIRED | 획득→도감→제작→장비→전투→Day→Final 참조 그래프에 고아·의도하지 않은 순환·75% 수급 소프트락 0 | `CONTENT-GRAPH-AUDIT-001` 재감사 |
+| `PDG-5 HANDOFF` | REOPENED | 번들·schema·생성기 입력 계약·IMP 티켓·테스트가 64/66/69 실행 원장을 직접 참조 | `DATA-REVISION-002`, `IMPLEMENTATION-HANDOFF-001`, registry r2 |
+| `PDG-6 AUTHOR` | PASS_POLICY_LOCKED | `REVIVAL_ITEM`과 `CHAPTER_REVIEW`가 사용자 권위로 잠김; Story 본문은 플레이 가능 판정 뒤 최종 단계로 명시 연기 | `AUTHOR-DECISION-REGISTER-001` |
 
 ## 3. 현재 감사 기준선
 
@@ -61,7 +62,7 @@ Day 1~10만 동작하거나 관리자 명령으로만 진행 가능한 상태는
 | 사건 | Day 1~50 | 구간별 실행 레코드 | Day별 고유 목표·실패·보상·환경 효과 E2E |
 | 연구 | 25 | 25 | 비용 동가치·증거 술어는 `PRODUCTION-DATA-CLOSURE-001`로 잠김; 명시 스키마·실행기 전까지 안전 정지 |
 | Final | 3단계·완료 TX 6단계 | 1개 실행 원장 | 패턴별 고유 공간 효과·실패·재접속 E2E |
-| Story | 장면 73·선택 기록 9 | 장면·로그 레코드 | 미정 한국어 본문 보정, FULL/REDUCED 실제 재생 E2E |
+| Story | 장면 73·선택 기록 9 | 장면·로그 레코드 | 사용자 지시에 따라 플레이 가능 판정 뒤 `CHAPTER_REVIEW`로 최종 작성; 그전에는 개발 폴백만 사용 |
 | 상태 | 21 | 21 | 인스턴스·내성·강한 CC·정화·재접속 런타임 |
 | 생산 번들 | 70파일 계약 | 70파일·L0 통과 | L1~L5 미통과, 일반 회차 승격 금지 |
 
@@ -159,9 +160,9 @@ slot == 0
 | GAP-004 파생 도구 순환 | 설계 해결 | GRAPH-FIX-001~004 |
 | GAP-009·012 | 설계 해결 | r2 66파일 번들 계약·생산 E2E와 프로토타입 상태 분리 |
 
-## 7. 구현 착수 판정
+## 7. 구현 착수 판정 재개방
 
-다음 조건을 모두 만족해 상태를 `IMPLEMENTATION_READY`로 변경했다. 이는 코드·번들 완성을 뜻하지 않으며 생산 구현 착수만 허용한다.
+아래 조건은 과거 기준선에서 충족됐으나, 2026-08-24 실행 데이터 재감사로 `PDG-2~5`를 다시 열었다. `PDG-6`은 `REVIVAL_ITEM`, `CHAPTER_REVIEW`, Story 최종 단계 연기로 정책 잠금됐지만 현재 상태에서는 생산 기능 코드·생성기·schema 투영을 시작하지 않는다.
 
 1. 기본 별도 목록 10종과 장비·상위 재료 분리 투영 4종의 상태가 `DATA_LOCKED`다.
 2. 와일드카드·표시명 참조·중복 ID·고아 ID가 0이다.
@@ -171,4 +172,4 @@ slot == 0
 6. Day 1 무보급 시작부터 Day 50 Final까지 1~4인 소프트락 정적 시뮬레이션이 통과한다.
 7. slot 0 채굴·전투·내구 E2E가 구현 인계 계약에 추가된다.
 
-2026-08-24 재감사에서 설계 게이트는 유지하되 실행 의미 완료를 별도로 판정하도록 분리했다. r2의 스텁·축약·생성기 추론은 기획 목록 누락으로 숨기지 않고 `PRODUCTION-COMPLETION-PLAN-001`의 `STUB/STRUCTURED_ONLY/PARTIAL_RUNTIME` 상태로 추적한다.
+재개 조건은 `NEXT-GOAL-S1-002`에서 `PDG-0~5`를 모두 `PASS`로 되돌리고 `PDG-6`의 정책 잠금을 보존한 채, 사용자 승인 기록과 동일 리비전의 구현 인계 계약을 남기는 것이다. Story payload 작성은 이 착수 조건의 예외로 `P8`까지 연기하되 출시 완료 조건에서는 제외하지 않는다. r2의 스텁·축약·생성기 추론은 기획 목록 누락으로 숨기지 않고 `PRODUCTION-COMPLETION-PLAN-001`의 `STUB/STRUCTURED_ONLY/PARTIAL_RUNTIME` 상태로 추적한다.

@@ -56,7 +56,7 @@
 | `PRODUCTION-COMPLETION-PLAN-001` | `ACTIVE_CONTROL` | 전 고정 ID의 실제 플레이 전환 순서·개별 완료 판정 | DEV-300~800 |
 | `CONTENT-CATALOG-INDEX-001` | `DATA_LOCKED` | 생산 콘텐츠 ID 합계·소유 문서·구현 파일 통합 색인 | DEV-300~800 |
 | `PRODUCTION-DATA-CLOSURE-001` | `ACTIVE_CONTROL` | 목록의 미확정 실행 수치·비용·연구 증거 폐쇄와 사용자 결정 분리 | DEV-300~800 |
-| `AUTHOR-DECISION-REGISTER-001` | `ACTIVE_CONTROL` | 부활 정책·Story 본문 작성 방식의 사용자 확정 게이트 | DEV-300·700~800 |
+| `AUTHOR-DECISION-REGISTER-001` | `USER_LOCKED_WITH_DEFERRED_STORY_CONTENT` | `REVIVAL_ITEM` 정책과 `CHAPTER_REVIEW` 방식; Story 본문은 플레이 가능 판정 뒤 최종 단계 | P0·P8 |
 | `CONTENT-MASTER-001` | `BASELINE_LOCKED` | Day 1~50+ 상위 진행 | G0 |
 | `GAME-001~003` | `BASELINE_LOCKED` | 타이머·저장·인원 스케일 | G0 |
 | `DAY-001` | `BASELINE_LOCKED` | Day 전환·스킵·완료 | G0 |
@@ -137,7 +137,7 @@
 | `OPS-001` | `IMPLEMENTATION_CONTRACT` | 명령·권한·복구 | G0 |
 | `DATA-REVISION-001` | `PARTIAL_R1` | Day 1~20 `ws-content-r1` | 기존 r1만 |
 | `DEV-ROADMAP-001` | `ACTIVE_CONTROL` | 프로토타입 우선 구현 단계·승인 게이트 | DEV-000~800 |
-| `PRODUCTION-DEV-ROADMAP-S1-001` | `ACTIVE_CONTROL` | 프로토타입 이후 P0~P8 실제 플레이 전환 순서·현재 사용자 정지점 | 다음 목표부터 |
+| `PRODUCTION-DEV-ROADMAP-S1-001` | `STOPPED_CONTROL` | 프로토타입 이후 P0~P9 실제 플레이 전환 순서·현재 사용자 정지점 | 다음 목표부터 |
 | `TEST-LAB-001` | `IMPLEMENTED_PROTOTYPE` | 격리 솔로 테스트·튜닝·가상 파티 계약 | `ws-prototype-r1` |
 
 ## 4. 공식 위임·완료 레지스트리
