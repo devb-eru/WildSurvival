@@ -788,6 +788,8 @@ $skills = foreach ($entry in $skillsById.GetEnumerator()) {
     $tagCell = if ($kind -eq 'WEAPON_ACTIVE') {$cells[4]} elseif ($kind -eq 'COMMON_ACTIVE') {$cells[5]} else {''}
     $tags = @($tagCell -replace '`','' -split ',' | ForEach-Object {$_.Trim()} | Where-Object {$_})
     $effect = if ($id -eq 'ws.trident.cast_recall.v1') {'TRIDENT_TOGGLE'}
+        elseif ($id -eq 'ws.common.quick_purify.v1') {'CORRUPTION_REDUCE'}
+        elseif ($id -eq 'ws.common.control_break.v1') {'CONTROL_CLEANSE'}
         elseif ($id -eq 'ws.common.ap_stim.v1') {'AP_STIM'} elseif ($id -eq 'ws.common.rescue_line.v1') {'RESCUE_PULL'}
         elseif ($id -eq 'ws.common.emergency_cover.v1') {'COVER'} elseif ($id -eq 'ws.unarmed.centered_stance.v1') {'STANCE'}
         elseif ($joined -match 'HEALING|회복') {'HEAL'}
@@ -802,7 +804,8 @@ $skills = foreach ($entry in $skillsById.GetEnumerator()) {
     $maxTargets = if ($effectText -match '최대\s*([0-9]+)대상') {[int]$Matches[1]} elseif ($joined -match 'AREA|MULTITARGET|CHAIN') {6} else {1}
     $unlockLevel = if ($joined -match '레벨\s*([0-9]+)') {[int]$Matches[1]} else {1}
     $consumableId = switch -Regex ($id) {
-        'field_bandage' {'WSI-CONS-BANDAGE'} 'quick_purify|control_break' {'WSI-CONS-PURIFY_AMPOULE'}
+        'field_bandage' {'WSI-CONS-BANDAGE'} 'quick_purify' {'WSI-CONS-PURIFY_AMPOULE'}
+        'control_break' {'WSI-CONS-NEURAL_STABILIZER'}
         'ap_stim' {'WSI-CONS-AP_STIM'} 'rescue_line' {'WSI-CONS-RESCUE_BRACE'}
         'emergency_cover' {'WSI-CONS-REPAIR_KIT'} default {''}
     }

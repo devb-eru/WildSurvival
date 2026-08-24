@@ -195,15 +195,15 @@
 | ID | 이름 | AP·쿨다운 | 소모품 | 효과 | 태그 |
 |---|---|---|---|---|---|
 | `ws.common.field_bandage.v1` | 전투 붕대 | 18, 12초 | 붕대 1 | 1.25초 채널, HP 8%+40 회복, BLEED 1중첩 제거 | `COMMON`, `HEALING`, `BLEED` |
-| `ws.common.quick_purify.v1` | 신속 정화 | 22, 15초 | 정화 앰풀 1 | 1초 채널, 개인 오염 8%p 감소, 약한 DEBUFF 1개 제거 | `COMMON`, `CLEANSE`, `CORRUPTION` |
-| `ws.common.ap_stim.v1` | 행동 자극 | 10, 30초 | AP 자극제 1 | 즉시 AP 10, 5초간 초당 AP 3; 피격 시 지속 유지 | `COMMON`, `AP`, `CONSUMABLE` |
+| `ws.common.quick_purify.v1` | 신속 정화 | 22, 15초 | 정화 앰풀 1 | 1초 채널, 개인 오염 -15; STATUS 제거 없음 | `COMMON`, `CORRUPTION`, `CONSUMABLE` |
+| `ws.common.ap_stim.v1` | 행동 자극 | 10, 30초 | AP 자극제 1 | 즉시 AP +30, 최대 AP 초과분 소멸; 탈진 해제 없음 | `COMMON`, `AP`, `CONSUMABLE` |
 | `ws.common.threat_ping.v1` | 위협 지목 | 15, 12초 | 없음 | 24블록 대상 MARK 6초, 파티 브레이크 +4% | `COMMON`, `MARK`, `COOP` |
 | `ws.common.guard_step.v1` | 방어 보법 | 20, 8초 | 없음 | 0.8초 Damage Taken -20%, 무적 아님, 이동 거리 1.5블록 | `COMMON`, `GUARD`, `MOBILITY` |
 | `ws.common.break_call.v1` | 파쇄 지시 | 25, 15초 | 없음 | 대상 4초간 파티 BREAK_DAMAGE +6%, 보스 전체 상한 적용 | `COMMON`, `BREAK`, `COOP` |
 | `ws.common.rescue_line.v1` | 구조 견인선 | 24, 16초 | 구조 고정대 1 | 8블록 내 빈사 파티원을 안전 방향으로 최대 3블록 이동 | `COMMON`, `RESCUE`, `UTILITY` |
 | `ws.common.emergency_cover.v1` | 임시 엄폐 | 30, 20초 | 야전 수리 키트 1 | 12초, 폭 3블록 투사체 엄폐 오브젝트; HP 600 | `COMMON`, `FACILITY`, `DEFENSE` |
 | `ws.common.shared_breath.v1` | 함께 숨쉬기 | 28, 18초 | 없음 | 5블록 파티 AP 8 회복, 사용자 제외; 전투당 대상 1회 | `COMMON`, `AP`, `SUPPORT` |
-| `ws.common.control_break.v1` | 억제 해제 | 35, 25초 | 정화 앰풀 1 | 자신 ROOT·SLOW·SILENCE 중 1개 해제, STUN 중 사용 불가 | `COMMON`, `CONTROL_BREAK`, `CLEANSE` |
+| `ws.common.control_break.v1` | 억제 해제 | 35, 25초 | 신경 안정제 1 | 자신 ROOT→SILENCE→DISARM 우선순위 중 1개 해제; HARD_CC 중 자기 사용 불가 | `COMMON`, `CONTROL_BREAK`, `CLEANSE` |
 
 ### 13.1 공용 쿨다운 그룹
 

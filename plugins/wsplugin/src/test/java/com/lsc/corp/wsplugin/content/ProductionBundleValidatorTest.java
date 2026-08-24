@@ -20,6 +20,12 @@ class ProductionBundleValidatorTest {
         assertEquals(10, result.catalog().skills().stream().filter(ProductionContentCatalog.SkillEntry::commonActive).count());
         assertEquals("TRIDENT_TOGGLE", result.catalog().skillsById().get("ws.trident.cast_recall.v1").effect());
         assertEquals("WSI-CONS-BANDAGE", result.catalog().skillsById().get("ws.common.field_bandage.v1").consumableId());
+        assertEquals("CORRUPTION_REDUCE", result.catalog().skillsById().get("ws.common.quick_purify.v1").effect());
+        assertEquals("WSI-CONS-PURIFY_AMPOULE", result.catalog().skillsById().get("ws.common.quick_purify.v1").consumableId());
+        assertTrue(result.catalog().skillsById().get("ws.common.quick_purify.v1").description().contains("오염 -15"));
+        assertTrue(result.catalog().skillsById().get("ws.common.ap_stim.v1").description().contains("AP +30"));
+        assertEquals("CONTROL_CLEANSE", result.catalog().skillsById().get("ws.common.control_break.v1").effect());
+        assertEquals("WSI-CONS-NEURAL_STABILIZER", result.catalog().skillsById().get("ws.common.control_break.v1").consumableId());
         assertEquals(0.65, result.catalog().skillsById().get("ws.bow.barbed_rain.v1").damageCoefficient());
         assertEquals(50, result.catalog().personalAugments().size());
         assertEquals(16, result.catalog().partyAugments().size());

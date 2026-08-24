@@ -306,7 +306,7 @@
       "path": "skills/player-skills.json",
       "domain": "player-skills",
       "schema": "skill.schema.json",
-      "sha256": "3eaad70b4c3c41ae9528cd54294b24a8882ad642a34e89d837ed249132a2f3eb"
+      "sha256": "7b699a3721b2a98b94d950c7a486654ef1c9e59b1545f4592ec66c64a59438b4"
     },
     {
       "path": "skills/entity-actions.json",

@@ -1629,22 +1629,22 @@
       "range": 4.0,
       "arcDegrees": 70.0,
       "maxTargets": 1,
-      "effect": "CLEANSE",
+      "effect": "CORRUPTION_REDUCE",
       "tags": [
         "COMMON",
-        "CLEANSE",
-        "CORRUPTION"
+        "CORRUPTION",
+        "CONSUMABLE"
       ],
       "unlockLevel": 1,
       "consumableId": "WSI-CONS-PURIFY_AMPOULE",
-      "description": "1초 채널, 개인 오염 8%p 감소, 약한 DEBUFF 1개 제거",
+      "description": "1초 채널, 개인 오염 -15; STATUS 제거 없음",
       "raw": [
         "ws.common.quick_purify.v1",
         "신속 정화",
         "22, 15초",
         "정화 앰풀 1",
-        "1초 채널, 개인 오염 8%p 감소, 약한 DEBUFF 1개 제거",
-        "COMMON`, `CLEANSE`, `CORRUPTION"
+        "1초 채널, 개인 오염 -15; STATUS 제거 없음",
+        "COMMON`, `CORRUPTION`, `CONSUMABLE"
       ]
     },
     {
@@ -1669,13 +1669,13 @@
       ],
       "unlockLevel": 1,
       "consumableId": "WSI-CONS-AP_STIM",
-      "description": "즉시 AP 10, 5초간 초당 AP 3; 피격 시 지속 유지",
+      "description": "즉시 AP +30, 최대 AP 초과분 소멸; 탈진 해제 없음",
       "raw": [
         "ws.common.ap_stim.v1",
         "행동 자극",
         "10, 30초",
         "AP 자극제 1",
-        "즉시 AP 10, 5초간 초당 AP 3; 피격 시 지속 유지",
+        "즉시 AP +30, 최대 AP 초과분 소멸; 탈진 해제 없음",
         "COMMON`, `AP`, `CONSUMABLE"
       ]
     },
@@ -1885,21 +1885,21 @@
       "range": 4.0,
       "arcDegrees": 70.0,
       "maxTargets": 1,
-      "effect": "CLEANSE",
+      "effect": "CONTROL_CLEANSE",
       "tags": [
         "COMMON",
         "CONTROL_BREAK",
         "CLEANSE"
       ],
       "unlockLevel": 1,
-      "consumableId": "WSI-CONS-PURIFY_AMPOULE",
-      "description": "자신 ROOT·SLOW·SILENCE 중 1개 해제, STUN 중 사용 불가",
+      "consumableId": "WSI-CONS-NEURAL_STABILIZER",
+      "description": "자신 ROOT→SILENCE→DISARM 우선순위 중 1개 해제; HARD_CC 중 자기 사용 불가",
       "raw": [
         "ws.common.control_break.v1",
         "억제 해제",
         "35, 25초",
-        "정화 앰풀 1",
-        "자신 ROOT·SLOW·SILENCE 중 1개 해제, STUN 중 사용 불가",
+        "신경 안정제 1",
+        "자신 ROOT→SILENCE→DISARM 우선순위 중 1개 해제; HARD_CC 중 자기 사용 불가",
         "COMMON`, `CONTROL_BREAK`, `CLEANSE"
       ]
     },
