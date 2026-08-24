@@ -350,3 +350,18 @@ Season 1 스냅샷과 실제 플레이 결과를 입력으로 세력·지역·�
 - Season 1 출시 차단 항목과 Season 2 후속 항목이 분리된다.
 - 후속 순서가 의존성과 종료 게이트를 가진다.
 - 로드맵이 이 감사 결과를 현재 계획으로 참조한다.
+
+## 11. 2026-08-24 최종 재감사 판정
+
+| 범위 | 판정 | 다음 행동 |
+|---|---|---|
+| 문서 권위·별도 목록·r2 실행 데이터 | `CLOSED` | 고정 ID·합계·비용·증거 계약을 구현 입력으로 사용 |
+| 입력·제작·도감·메뉴·개인/공용 원장·피해 숫자 | `PLANNED_AND_PARTIAL_RUNTIME` | `PROTOTYPE-REVISION-003` 계약을 유지하고 실제 클라이언트 E2E로 승격 판정 |
+| 완전 사망 뒤 부활 정책 | `AUTHOR_DECISION_REQUIRED` | `AUTHOR-DECISION-REGISTER-001`의 ITEM/NONE/FACILITY 중 하나 확정 |
+| Story 한국어 payload 작성 방식 | `AUTHOR_DECISION_REQUIRED` | `AUTHOR-DECISION-REGISTER-001`의 세 작성 방식 중 하나 확정 |
+| 실제 블록 설치·slot 0 채굴·Shift 숫자·Shift+F | `BLOCKED_E2E` | Paper 서버와 실제 Java 클라이언트에서만 검증하며 `/setblock`·콘솔 대체 금지 |
+| Season 1 전 도메인 의미 런타임 | `RUNTIME_MISSING` | 사용자 결정 뒤 `PRODUCTION-COMPLETION-PLAN-001` P0~P10 순서로 구현 |
+
+기획 감사상 구현자가 추가로 창작해야 할 비저작 데이터는 없다. 다만 위 두 `AUTHOR_DECISION_REQUIRED`는 플레이 경험과 서사 저작권위를 바꾸므로, “전체 기획 뒤 구현” 원칙에 따라 사용자가 선택하기 전에는 광범위한 생산 런타임 구현을 시작하지 않는다. 이미 반영된 긴급 slot 0 파손 수정, 문서·카탈로그 검증, 결정을 침범하지 않는 결함 수정은 허용한다.
+
+`BLOCKED_E2E`는 기획 누락이 아니라 실행 검증 환경의 차단이다. 따라서 기획 게이트를 되돌리지는 않지만, 해당 항목을 실제 플레이 완료·출시 완료로 승격하지 않는다.
