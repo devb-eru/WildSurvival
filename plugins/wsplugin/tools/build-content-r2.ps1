@@ -514,6 +514,17 @@ $materials = foreach ($entry in $materialCodex.GetEnumerator()) {
     $cells = $materialMetadata[$entry.Key]
     $joined = $cells -join ' '
     $firstDay = @($cells | Where-Object { $_ -match '^\d{1,2}$' } | ForEach-Object { [int]$_ } | Where-Object { $_ -le 50 } | Select-Object -First 1)
+    $isBossOrProofExecutionRow = $cells.Count -eq 8 -and $cells[2] -in @('PARTY_RESOURCE', 'BOUND_PROOF') `
+        -and $cells[3] -match '^\d{1,2}$' -and $cells[4] -match '^\d+$' -and $cells[5] -match '^(LOOT-|WSRCP-)'
+    $registrationAmount = 1
+    if ($isBossOrProofExecutionRow) { $registrationAmount = [int]$cells[4] }
+    elseif ($cells.Count -ge 5 -and $cells[4] -match '^개인,.*?([0-9]+)') { $registrationAmount = [int]$Matches[1] }
+    $sourceText = ''
+    if ($isBossOrProofExecutionRow) { $sourceText = $cells[5] }
+    elseif ($cells.Count -ge 5 -and $cells[4] -match '^WSRCP-') { $sourceText = $cells[4] }
+    elseif ($cells.Count -eq 8 -and $cells[4] -match '^개인,') { $sourceText = $cells[6] }
+    elseif ($cells.Count -eq 8) { $sourceText = @($cells[5], $cells[6]) -join ' | ' }
+    elseif ($cells.Count -ge 7) { $sourceText = $cells[5] }
     $displayMaterial = First-Material $cells ''
     if ($displayMaterial -match '^T\d$' -or $displayMaterial -eq 'UNIQUE') { $displayMaterial = Fallback-Material $entry.Key }
     [ordered]@{
@@ -524,9 +535,9 @@ $materials = foreach ($entry in $materialCodex.GetEnumerator()) {
         tier = $(if ($cells.Count -gt 2) {$cells[2].Split(' ')[0]} else {'UNIQUE'})
         acquisitionKind = $(if ($entry.Key.StartsWith('WSP-')) {'PROOF'} elseif ($joined -match 'PARTY_RESOURCE') {'PARTY_REWARD'}
             elseif ($joined -match 'WSRCP-') {'CRAFTED'} elseif ($harvestSources.ContainsKey($entry.Key)) {'HARVEST'} else {'ENCOUNTER'})
-        registrationAmount = $(if ($cells.Count -gt 4 -and $cells[4] -match '([0-9]+)') {[int]$Matches[1]} else {1})
+        registrationAmount = $registrationAmount
         harvestSources = [string[]]$(if ($harvestSources.ContainsKey($entry.Key)) {@($harvestSources[$entry.Key])} else {@()})
-        sourceText = $(if ($cells.Count -gt 5) {$cells[$cells.Count - 2]} else {''}); usageText = $cells[$cells.Count - 1]
+        sourceText = $sourceText; usageText = $cells[$cells.Count - 1]
         raw = @($cells)
     }
 }

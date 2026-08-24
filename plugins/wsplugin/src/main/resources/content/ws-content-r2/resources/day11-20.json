@@ -21,7 +21,7 @@
         "OXEYE_DAISY",
         "AZURE_BLUET"
       ],
-      "sourceText": "식량·약초 사건",
+      "sourceText": "의약 식생 | 식량·약초 사건",
       "usageText": "젤·상태 소모품",
       "raw": [
         "WSR-HERB",
@@ -49,7 +49,7 @@
       "harvestSources": [
         "COBWEB"
       ],
-      "sourceText": "섬유+가죽 압축",
+      "sourceText": "탄성 둥지·적 | 섬유+가죽 압축",
       "usageText": "직조·구조품",
       "raw": [
         "WSR-ELASTIC_FIBER",
@@ -75,7 +75,7 @@
       "acquisitionKind": "ENCOUNTER",
       "registrationAmount": 1,
       "harvestSources": null,
-      "sourceText": "조직 분석",
+      "sourceText": "독성 적·잔류물 | 조직 분석",
       "usageText": "해독·분류판",
       "raw": [
         "WSR-TOXIN_SAMPLE",
@@ -101,7 +101,7 @@
       "acquisitionKind": "ENCOUNTER",
       "registrationAmount": 1,
       "harvestSources": null,
-      "sourceText": "연료+조직 실험",
+      "sourceText": "열성 적·열핵 | 연료+조직 실험",
       "usageText": "냉각·분류판",
       "raw": [
         "WSR-THERMAL_SAMPLE",
@@ -127,7 +127,7 @@
       "acquisitionKind": "ENCOUNTER",
       "registrationAmount": 1,
       "harvestSources": null,
-      "sourceText": "가죽+조직 분석",
+      "sourceText": "열상 적·생체 흔적 | 가죽+조직 분석",
       "usageText": "지혈·분류판",
       "raw": [
         "WSR-HEMATIC_SAMPLE",
@@ -153,7 +153,7 @@
       "acquisitionKind": "ENCOUNTER",
       "registrationAmount": 1,
       "harvestSources": null,
-      "sourceText": "저항·해제 기록",
+      "sourceText": "제어 적·군락 | 저항·해제 기록",
       "usageText": "회로·안정제",
       "raw": [
         "WSR-NEURAL_SAMPLE",
@@ -179,7 +179,7 @@
       "acquisitionKind": "ENCOUNTER",
       "registrationAmount": 1,
       "harvestSources": null,
-      "sourceText": "표본 3종 합성",
+      "sourceText": "정예·고위험 생체 | 표본 3종 합성",
       "usageText": "생체 매질·D20",
       "raw": [
         "WSR-VITAL_TISSUE",
@@ -203,9 +203,9 @@
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "tier": "T3",
       "acquisitionKind": "CRAFTED",
-      "registrationAmount": 20,
+      "registrationAmount": 1,
       "harvestSources": null,
-      "sourceText": "SLIME_BALL",
+      "sourceText": "WSRCP-D20-P01",
       "usageText": "의료·방어구",
       "raw": [
         "WSR-STERILE_GEL",
@@ -228,9 +228,9 @@
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "tier": "T3",
       "acquisitionKind": "CRAFTED",
-      "registrationAmount": 20,
+      "registrationAmount": 1,
       "harvestSources": null,
-      "sourceText": "STRING",
+      "sourceText": "WSRCP-D20-P02",
       "usageText": "D20 장비·구조",
       "raw": [
         "WSR-ELASTIC_WEAVE",
@@ -253,9 +253,9 @@
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "tier": "T3",
       "acquisitionKind": "CRAFTED",
-      "registrationAmount": 20,
+      "registrationAmount": 1,
       "harvestSources": null,
-      "sourceText": "IRON_BLOCK",
+      "sourceText": "WSRCP-D20-P03",
       "usageText": "D20 장비·시설",
       "raw": [
         "WSR-REINFORCED_ALLOY",
@@ -278,9 +278,9 @@
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "tier": "T3",
       "acquisitionKind": "CRAFTED",
-      "registrationAmount": 20,
+      "registrationAmount": 1,
       "harvestSources": null,
-      "sourceText": "REPEATER",
+      "sourceText": "WSRCP-D20-P04",
       "usageText": "D20 장비·연구",
       "raw": [
         "WSR-NEURAL_CIRCUIT",
@@ -303,9 +303,9 @@
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "tier": "T4",
       "acquisitionKind": "CRAFTED",
-      "registrationAmount": 20,
+      "registrationAmount": 1,
       "harvestSources": null,
-      "sourceText": "TURTLE_SCUTE",
+      "sourceText": "WSRCP-D20-P05",
       "usageText": "D20 보스·장비",
       "raw": [
         "WSR-BIO_MEDIUM",
@@ -328,9 +328,9 @@
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "tier": "T3",
       "acquisitionKind": "CRAFTED",
-      "registrationAmount": 20,
+      "registrationAmount": 1,
       "harvestSources": null,
-      "sourceText": "MAP",
+      "sourceText": "WSRCP-D20-P06",
       "usageText": "상태 연구·장비",
       "raw": [
         "WSR-STATUS_PLATE",
@@ -340,6 +340,58 @@
         "WSRCP-D20-P06",
         "MAP",
         "상태 연구·장비"
+      ]
+    },
+    {
+      "id": "WSR-NEURAL_RESIDUE",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 53,
+      "name": "신경 보스 잔류물",
+      "firstDay": 20,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "PERSONAL_THEN_PUBLIC",
+      "tier": "PARTY_RESOURCE",
+      "acquisitionKind": "PARTY_REWARD",
+      "registrationAmount": 1,
+      "harvestSources": null,
+      "sourceText": "LOOT-BOSS-D20",
+      "usageText": "D20 전설 추가 제작",
+      "raw": [
+        "WSR-NEURAL_RESIDUE",
+        "신경 보스 잔류물",
+        "PARTY_RESOURCE",
+        "20",
+        "1",
+        "LOOT-BOSS-D20",
+        "보스 완료 시 1/2/3~4인 8/10/12",
+        "D20 전설 추가 제작"
+      ]
+    },
+    {
+      "id": "WSP-REBUILD-PART-B",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 56,
+      "name": "재건 생체 부품 B",
+      "firstDay": 20,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "RUN_PROOF",
+      "tier": "BOUND_PROOF",
+      "acquisitionKind": "PROOF",
+      "registrationAmount": 1,
+      "harvestSources": null,
+      "sourceText": "LOOT-BOSS-D20",
+      "usageText": "D30+, FAC-R02 증명",
+      "raw": [
+        "WSP-REBUILD-PART-B",
+        "재건 생체 부품 B",
+        "BOUND_PROOF",
+        "20",
+        "1",
+        "LOOT-BOSS-D20",
+        "최초 완료 TX에서 1회 설정",
+        "D30+, FAC-R02 증명"
       ]
     }
   ]

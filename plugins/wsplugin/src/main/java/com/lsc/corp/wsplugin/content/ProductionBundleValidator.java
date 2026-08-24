@@ -894,7 +894,7 @@ public final class ProductionBundleValidator {
         Set<String> acquisitionKinds = Set.of("HARVEST", "CRAFTED", "ENCOUNTER", "PARTY_REWARD", "PROOF");
         for (ProductionContentCatalog.MaterialEntry material : catalog.materialsById().values()) {
             if (!acquisitionKinds.contains(material.acquisitionKind()) || material.registrationAmount() < 1
-                    || material.firstDay() < 1 || material.firstDay() > 50) {
+                    || material.firstDay() < 1 || material.firstDay() > 50 || material.sourceText().isBlank()) {
                 throw new ContentValidationException("Invalid material profile " + material.id());
             }
             if ("HARVEST".equals(material.acquisitionKind()) && material.harvestSources().isEmpty()) {

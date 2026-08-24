@@ -75,6 +75,16 @@ class ProductionBundleValidatorTest {
         assertEquals(6, result.catalog().facilitiesById().values().stream()
                 .filter(ProductionContentCatalog.FacilityEntry::reconstruction).count());
         assertEquals("SHARED_LEDGER", result.catalog().facilitiesById().get("FAC-S16").effectOpcode());
+        assertMaterialExecution(result, "WSR-RESONANT_RESIDUE", 10, 1, "LOOT-BOSS-D10");
+        assertMaterialExecution(result, "WSR-NEURAL_RESIDUE", 20, 1, "LOOT-BOSS-D20");
+        assertMaterialExecution(result, "WSP-BOSS-D10-CORE", 10, 1, "LOOT-BOSS-D10");
+        assertMaterialExecution(result, "WSP-REBUILD-PART-A", 10, 1, "LOOT-BOSS-D10");
+        assertMaterialExecution(result, "WSP-REBUILD-PART-B", 20, 1, "LOOT-BOSS-D20");
+        assertMaterialExecution(result, "WSP-REBUILD-PART-C", 30, 1, "LOOT-BOSS-D30");
+        assertMaterialExecution(result, "WSP-REBUILD-PART-D", 40, 1, "LOOT-BOSS-D40");
+        assertMaterialExecution(result, "WSR-BOSS_SIGNAL_CORE", 1, 1, "WSRCP-G02");
+        assertEquals(1, result.catalog().materialsById().get("WSR-SIGNAL_LENS").registrationAmount());
+        assertEquals(1, result.catalog().materialsById().get("WSR-STERILE_GEL").registrationAmount());
         assertEquals(4200, result.catalog().facilitiesById().get("FAC-S06").baseHp());
         assertEquals(30000, result.catalog().facilitiesById().get("FAC-R06").baseHp());
         assertEquals(49, result.catalog().facilitiesById().get("FAC-R06").firstDay());
@@ -163,5 +173,13 @@ class ProductionBundleValidatorTest {
         assertTrue(result.catalog().daysByNumber().entrySet().stream()
                 .filter(entry -> entry.getKey() < 50)
                 .noneMatch(entry -> entry.getValue().finalAvailable() || entry.getValue().completionAllowed()));
+    }
+
+    private static void assertMaterialExecution(ProductionBundleValidator.ValidationResult result, String id,
+                                                int firstDay, int registrationAmount, String sourceText) {
+        var material = result.catalog().materialsById().get(id);
+        assertEquals(firstDay, material.firstDay(), id);
+        assertEquals(registrationAmount, material.registrationAmount(), id);
+        assertEquals(sourceText, material.sourceText(), id);
     }
 }

@@ -189,7 +189,7 @@
       "ledgerScope": "PERSONAL_THEN_PUBLIC",
       "tier": "T5",
       "acquisitionKind": "ENCOUNTER",
-      "registrationAmount": 5,
+      "registrationAmount": 1,
       "harvestSources": null,
       "sourceText": "전조 기록·D50-P08",
       "usageText": "중단·렌즈",
@@ -376,6 +376,58 @@
         "NETHER_STAR",
         "D49+RS-D49+C29",
         "FAC-R06 활성 증명"
+      ]
+    },
+    {
+      "id": "WSP-REBUILD-PART-C",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 57,
+      "name": "재건 정화 부품 C",
+      "firstDay": 30,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "RUN_PROOF",
+      "tier": "BOUND_PROOF",
+      "acquisitionKind": "PROOF",
+      "registrationAmount": 1,
+      "harvestSources": null,
+      "sourceText": "LOOT-BOSS-D30",
+      "usageText": "D40+, FAC-R03 증명",
+      "raw": [
+        "WSP-REBUILD-PART-C",
+        "재건 정화 부품 C",
+        "BOUND_PROOF",
+        "30",
+        "1",
+        "LOOT-BOSS-D30",
+        "최초 완료 TX에서 1회 설정",
+        "D40+, FAC-R03 증명"
+      ]
+    },
+    {
+      "id": "WSP-REBUILD-PART-D",
+      "sourceDocumentId": "MATERIAL-LIST-001",
+      "enabled": true,
+      "codexIndex": 58,
+      "name": "재건 공명 부품 D",
+      "firstDay": 40,
+      "displayMaterial": "PAPER",
+      "ledgerScope": "RUN_PROOF",
+      "tier": "BOUND_PROOF",
+      "acquisitionKind": "PROOF",
+      "registrationAmount": 1,
+      "harvestSources": null,
+      "sourceText": "LOOT-BOSS-D40",
+      "usageText": "FAC-R04·Final 증명",
+      "raw": [
+        "WSP-REBUILD-PART-D",
+        "재건 공명 부품 D",
+        "BOUND_PROOF",
+        "40",
+        "1",
+        "LOOT-BOSS-D40",
+        "최초 완료 TX에서 1회 설정",
+        "FAC-R04·Final 증명"
       ]
     }
   ]

@@ -8,8 +8,8 @@
 | 상태 | `DATA_LOCKED` |
 | 적용 범위 | Day 1~50 원장 자원, 가공 부품, 보스 재료, 소각하지 않는 진행 증명 |
 | 상위 기준 | `RES-001`, `CRAFT-001`, `RESOURCE-DATA-D20-001`, `RESOURCE-DATA-D50-001`, `FINAL-DATA-001` |
-| 데이터 리비전 | `material-s1-r1` |
-| 최종 수정일 | 2026-08-23 |
+| 데이터 리비전 | `material-s1-r2` |
+| 최종 수정일 | 2026-08-24 |
 
 ## 1. 공통 계약
 
@@ -105,19 +105,20 @@
 
 ## 6. 보스 재료와 진행 증명
 
-| ID | 표시명 | 유형 | 획득 | 소비·검사 |
-|---|---|---|---|---|
-| `WSR-RESONANT_RESIDUE` | 공명 잔류 패턴 | PARTY_RESOURCE | Day 10 보스 6/7/8 | D10 영웅 추가 제작·강화 |
-| `WSR-NEURAL_RESIDUE` | 신경 보스 잔류물 | PARTY_RESOURCE | Day 20 보스 8/10/12 | D20 전설 추가 제작 |
-| `WSR-BOSS_SIGNAL_CORE` | 보스 신호 코어 | PARTY_RESOURCE | `WSRCP-G02` 제작 | `WSRCP-G03` Day 10 호출 |
-| `WSP-BOSS-D10-CORE` | 공명 추적체 핵 증명 | BOUND_PROOF | Day 10 최초 완료 | D20 호출 존재 검사, 소각 금지 |
-| `WSP-REBUILD-PART-A` | 재건 안정화 부품 A | BOUND_PROOF | Day 10 최초 완료 | D20+, FAC-R01 증명 |
-| `WSP-REBUILD-PART-B` | 재건 생체 부품 B | BOUND_PROOF | Day 20 최초 완료 | D30+, FAC-R02 증명 |
-| `WSP-REBUILD-PART-C` | 재건 정화 부품 C | BOUND_PROOF | Day 30 최초 완료 | D40+, FAC-R03 증명 |
-| `WSP-REBUILD-PART-D` | 재건 공명 부품 D | BOUND_PROOF | Day 40 최초 완료 | FAC-R04·Final 증명 |
+| ID | 표시명 | 유형 | 최초 Day | 등록 단위 | 획득 권위 ID | 획득·수량 | 소비·검사 |
+|---|---|---|---:|---:|---|---|---|
+| `WSR-RESONANT_RESIDUE` | 공명 잔류 패턴 | PARTY_RESOURCE | 10 | 1 | `LOOT-BOSS-D10` | 보스 완료 시 1/2/3~4인 6/7/8 | D10 영웅 추가 제작·강화 |
+| `WSR-NEURAL_RESIDUE` | 신경 보스 잔류물 | PARTY_RESOURCE | 20 | 1 | `LOOT-BOSS-D20` | 보스 완료 시 1/2/3~4인 8/10/12 | D20 전설 추가 제작 |
+| `WSR-BOSS_SIGNAL_CORE` | 보스 신호 코어 | PARTY_RESOURCE | 1 | 1 | `WSRCP-G02` | 제작 출력 1 | `WSRCP-G03` Day 10 호출 |
+| `WSP-BOSS-D10-CORE` | 공명 추적체 핵 증명 | BOUND_PROOF | 10 | 1 | `LOOT-BOSS-D10` | 최초 완료 TX에서 1회 설정 | D20 호출 존재 검사, 소각 금지 |
+| `WSP-REBUILD-PART-A` | 재건 안정화 부품 A | BOUND_PROOF | 10 | 1 | `LOOT-BOSS-D10` | 최초 완료 TX에서 1회 설정 | D20+, FAC-R01 증명 |
+| `WSP-REBUILD-PART-B` | 재건 생체 부품 B | BOUND_PROOF | 20 | 1 | `LOOT-BOSS-D20` | 최초 완료 TX에서 1회 설정 | D30+, FAC-R02 증명 |
+| `WSP-REBUILD-PART-C` | 재건 정화 부품 C | BOUND_PROOF | 30 | 1 | `LOOT-BOSS-D30` | 최초 완료 TX에서 1회 설정 | D40+, FAC-R03 증명 |
+| `WSP-REBUILD-PART-D` | 재건 공명 부품 D | BOUND_PROOF | 40 | 1 | `LOOT-BOSS-D40` | 최초 완료 TX에서 1회 설정 | FAC-R04·Final 증명 |
 
 - 증명은 시설에 귀속할 수 있으나 파괴·철거 시 회차 원장으로 복귀한다.
 - 보스 재료의 난이도별 수량은 보스 보상 원장이 권위이며 재지급은 같은 reward transaction ID를 사용한다.
+- 위 표의 `최초 Day`, `등록 단위`, `획득 권위 ID`는 생성기가 자유 서술에서 추론하지 않는 실행 열이다. `BOUND_PROOF`의 등록 단위 1은 수량 소비가 아니라 Boolean 최초 설정을 뜻한다.
 
 ## 7. 등급과 도구 요구
 
