@@ -31,6 +31,25 @@ class ProductionBundleValidatorTest {
         assertEquals(61, result.catalog().nonEquipmentItemsById().size());
         assertEquals(13, result.catalog().nonEquipmentItemsById().values().stream()
                 .filter(ProductionContentCatalog.ItemEntry::quickConsumable).count());
+        var portableCraftKit = result.catalog().nonEquipmentItemsById().get("WSI-PORTABLE-CRAFT_KIT");
+        assertEquals(1, portableCraftKit.stackLimit());
+        assertEquals("WSRCP-F01", portableCraftKit.recipeId());
+        assertEquals("FAC-P01", portableCraftKit.connectedFacilityId());
+        assertEquals("PORTABLE_FACILITY_ACTION", portableCraftKit.usePolicy());
+        var campCraftKit = result.catalog().nonEquipmentItemsById().get("WSI-FAC-C01-KIT");
+        assertEquals(1, campCraftKit.firstDay());
+        assertEquals(4, campCraftKit.stackLimit());
+        assertEquals("WSRCP-F02", campCraftKit.recipeId());
+        assertEquals("FAC-C01", campCraftKit.connectedFacilityId());
+        var settlementCraftKit = result.catalog().nonEquipmentItemsById().get("WSI-FAC-S01-KIT");
+        assertEquals(11, settlementCraftKit.firstDay());
+        assertEquals(2, settlementCraftKit.stackLimit());
+        assertEquals("WSRCP-FAC-S01", settlementCraftKit.recipeId());
+        var bossCall = result.catalog().nonEquipmentItemsById().get("WSI-CALL-D10");
+        assertEquals(1, bossCall.stackLimit());
+        assertEquals("PARTY_BOUND", bossCall.ownership());
+        assertEquals("WSRCP-G03", bossCall.recipeId());
+        assertEquals("item.wildsurvival.wsi_call_d10", bossCall.textKey());
         assertTrue(result.catalog().recipes().stream().allMatch(recipe -> !recipe.ingredients().isEmpty()));
         assertTrue(result.catalog().recipes().stream().noneMatch(recipe -> recipe.layout().contains("AUTHORITY_DEFINED")));
         assertTrue(result.catalog().recipes().stream().flatMap(recipe -> recipe.ingredients().stream())

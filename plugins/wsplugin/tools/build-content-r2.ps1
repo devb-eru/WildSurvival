@@ -533,16 +533,52 @@ $materials = foreach ($entry in $materialCodex.GetEnumerator()) {
 
 $items = foreach ($cells in $itemRows) {
     if ($cells.Count -lt 3 -or $cells[0] -notmatch '^\d{4}$' -or $cells[1] -notmatch '^WSI-') { continue }
-    $numbers = @($cells | Select-Object -Skip 2 | Where-Object { $_ -match '^\d{1,2}$' } | ForEach-Object { [int]$_ })
+    $id = $cells[1]
+    $category = ''
+    $name = ''
+    $firstDay = 0
+    $displayMaterial = ''
+    $stackLimit = 0
+    $ownership = ''
+    $usePolicy = ''
+    $connectedFacilityId = ''
+    $effectText = ''
+    $constraintText = ''
+    $recipeCell = ''
+    if ($id -match '^WSI-(CONS|AMMO)-') {
+        if ($cells.Count -ne 8) { throw "ITEM-LIST consumable/ammo row shape mismatch: $id ($($cells.Count))" }
+        $category = $Matches[1]; $name = $cells[2]; $firstDay = [int]$cells[3]
+        $displayMaterial = $cells[4]; $stackLimit = [int]$cells[5]; $effectText = $cells[6]; $recipeCell = $cells[7]
+        $ownership = 'PERSONAL'; $usePolicy = $(if ($category -eq 'CONS') {'QUICK_BINDABLE'} else {'AMMO_LEDGER_DEPOSIT'})
+    } elseif ($id -match '^WSI-PORTABLE-') {
+        if ($cells.Count -ne 9) { throw "ITEM-LIST portable row shape mismatch: $id ($($cells.Count))" }
+        $category = 'PORTABLE'; $connectedFacilityId = $cells[2]; $name = $cells[3]; $firstDay = [int]$cells[4]
+        $displayMaterial = $cells[5]; $stackLimit = [int]$cells[6]; $constraintText = $cells[7]
+        $effectText = $constraintText; $recipeCell = $cells[8]; $ownership = 'PARTY'; $usePolicy = 'PORTABLE_FACILITY_ACTION'
+    } elseif ($id -match '^WSI-FAC-') {
+        if ($cells.Count -ne 8) { throw "ITEM-LIST facility kit row shape mismatch: $id ($($cells.Count))" }
+        $category = 'FAC'; $connectedFacilityId = $cells[2]; $name = $cells[3]; $displayMaterial = $cells[4]
+        $firstDay = [int]$cells[5]; $stackLimit = [int]$cells[6]; $recipeCell = $cells[7]
+        $effectText = "$connectedFacilityId 설치 성공 시에만 1개 소비"; $ownership = 'PARTY'; $usePolicy = 'FACILITY_PLACEMENT'
+    } elseif ($id -match '^WSI-CALL-') {
+        if ($cells.Count -ne 8) { throw "ITEM-LIST boss call row shape mismatch: $id ($($cells.Count))" }
+        $category = 'CALL'; $name = $cells[2]; $firstDay = [int]$cells[3]; $displayMaterial = $cells[4]
+        $stackLimit = [int]$cells[5]; $ownership = $cells[6]
+        $constraintText = (($cells[7] -replace 'WSRCP-[A-Z0-9-]+','' -replace '`','' -replace '^[,\s]+','').Trim())
+        $effectText = $constraintText; $recipeCell = $cells[7]; $usePolicy = 'BOSS_CALL_TRANSACTION'
+    } else {
+        throw "ITEM-LIST category is not mapped: $id"
+    }
+    if ($recipeCell -notmatch '(WSRCP-[A-Z0-9-]+)') { throw "ITEM-LIST recipe missing: $id" }
+    $recipeId = $Matches[1]
+    $slug = ($id.ToLowerInvariant() -replace '-', '_')
     [ordered]@{
-        id = $cells[1]; sourceDocumentId = 'ITEM-LIST-001'; enabled = $true
-        codexIndex = [int]$cells[0]; name = Korean-Name ($cells | Select-Object -Skip 2) $cells[1]
-        firstDay = $(if ($numbers.Count) { [Math]::Min(50, $numbers[0]) } else { 1 })
-        displayMaterial = First-Material $cells ''
-        category = $(if ($cells[1] -match '^WSI-([A-Z0-9]+)-') {$Matches[1]} else {'ITEM'})
-        stackLimit = $(if ($cells.Count -gt 5 -and $cells[5] -match '^\d+$') {[int]$cells[5]} else {64})
-        effectText = $(if ($cells.Count -gt 6) {$cells[6]} else {''})
-        recipeId = $(if ($cells.Count -gt 7 -and $cells[7] -match '^WSRCP-') {$cells[7]} else {''})
+        id = $id; sourceDocumentId = 'ITEM-LIST-001'; enabled = $true
+        codexIndex = [int]$cells[0]; textKey = "item.wildsurvival.$slug"; customModelKey = "wildsurvival:item/$slug"
+        name = $name; firstDay = $firstDay; displayMaterial = $displayMaterial; category = $category
+        stackLimit = $stackLimit; ownership = $ownership; usePolicy = $usePolicy
+        connectedFacilityId = $connectedFacilityId; effectText = $effectText; constraintText = $constraintText
+        recipeId = $recipeId
         raw = @($cells)
     }
 }
@@ -1474,6 +1510,25 @@ $recipeSchema = [ordered]@{
         }}
     }
 }
+$itemSchema = [ordered]@{
+    '$schema'='https://json-schema.org/draft/2020-12/schema'; type='object'; additionalProperties=$false
+    required=@('schemaVersion','contentRevision','domain','records')
+    properties=[ordered]@{
+        schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; domain=[ordered]@{const='items'}
+        records=[ordered]@{type='array';minItems=61;maxItems=61;items=[ordered]@{
+            type='object';additionalProperties=$false
+            required=@('id','sourceDocumentId','enabled','codexIndex','textKey','customModelKey','name','firstDay','displayMaterial','category','stackLimit','ownership','usePolicy','connectedFacilityId','effectText','constraintText','recipeId','raw')
+            properties=[ordered]@{
+                id=[ordered]@{type='string';pattern='^WSI-'};sourceDocumentId=[ordered]@{const='ITEM-LIST-001'};enabled=[ordered]@{const=$true};codexIndex=[ordered]@{type='integer';minimum=100;maximum=199}
+                textKey=[ordered]@{type='string';pattern='^item\.wildsurvival\.[a-z0-9_]+$'};customModelKey=[ordered]@{type='string';pattern='^wildsurvival:item/[a-z0-9_]+$'};name=[ordered]@{type='string';minLength=1}
+                firstDay=[ordered]@{type='integer';minimum=1;maximum=50};displayMaterial=[ordered]@{type='string';pattern='^[A-Z][A-Z0-9_]*$'};category=[ordered]@{enum=@('CONS','AMMO','PORTABLE','FAC','CALL')};stackLimit=[ordered]@{type='integer';minimum=1;maximum=64}
+                ownership=[ordered]@{enum=@('PERSONAL','PARTY','PARTY_BOUND')};usePolicy=[ordered]@{enum=@('QUICK_BINDABLE','AMMO_LEDGER_DEPOSIT','PORTABLE_FACILITY_ACTION','FACILITY_PLACEMENT','BOSS_CALL_TRANSACTION')}
+                connectedFacilityId=[ordered]@{type='string';pattern='^(?:|FAC-[PCSD][0-9]{2})$'};effectText=[ordered]@{type='string';minLength=1};constraintText=[ordered]@{type='string'};recipeId=[ordered]@{type='string';pattern='^WSRCP-[A-Z0-9-]+$'}
+                raw=[ordered]@{type='array';minItems=8;maxItems=9;items=[ordered]@{type='string'}}
+            }
+        }}
+    }
+}
 $researchSchema = [ordered]@{
     '$schema'='https://json-schema.org/draft/2020-12/schema';type='object';additionalProperties=$false
     required=@('schemaVersion','contentRevision','domain','records')
@@ -1533,7 +1588,7 @@ foreach ($name in $schemaNames) {
         Write-CanonicalArtifact 'schemas/status.schema.json'
         continue
     }
-    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'day') { $daySchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'discovery') { $discoverySchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } else { $genericSchema }
+    $schema = if ($name -eq 'manifest') { $manifestSchema } elseif ($name -eq 'day') { $daySchema } elseif ($name -eq 'item') { $itemSchema } elseif ($name -eq 'recipe') { $recipeSchema } elseif ($name -eq 'research') { $researchSchema } elseif ($name -eq 'discovery') { $discoverySchema } elseif ($name -eq 'story') { $storySchema } elseif ($name -eq 'event') { $eventSchema } elseif ($name -eq 'final') { $finalSchema } else { $genericSchema }
     Write-Json "schemas/$name.schema.json" $schema
 }
 

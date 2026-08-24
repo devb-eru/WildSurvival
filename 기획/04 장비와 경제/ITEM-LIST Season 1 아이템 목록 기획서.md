@@ -8,8 +8,8 @@
 | 상태 | `DATA_LOCKED` |
 | 적용 범위 | Season 1에서 인벤토리·GUI·도감으로 표현되는 비장비 아이템 |
 | 상위 기준 | `MATERIAL-LIST-001`, `CRAFT-001`, `FACILITY-LIST-001`, `CODEX-001` |
-| 데이터 리비전 | `item-s1-r1` |
-| 최종 수정일 | 2026-08-23 |
+| 데이터 리비전 | `item-s1-r2` |
+| 최종 수정일 | 2026-08-24 |
 
 ## 1. 경계와 공통 계약
 
@@ -23,6 +23,23 @@
 - 시설 키트는 설치 성공 트랜잭션에서만 소비한다. 위치 검사·다중 블록 생성·청크 저장 중 하나라도 실패하면 같은 키트를 반환한다.
 
 필수 필드는 `id`, `textKey`, `category`, `firstDay`, `displayMaterial`, `customModelKey`, `stackLimit`, `ownership`, `usePolicy`, `recipeId/sourceId`, `codexIndex`, `enabled`다.
+
+### 1.1 카테고리별 고정 필드
+
+표에 반복하지 않은 필드는 아래 규칙으로 생성한다. 생성기는 열 수나 첫 숫자를 추측하지 않고 각 카테고리의 표 계약을 따라야 한다.
+
+| ID 범위 | category | ownership | usePolicy | 추가 참조 |
+|---|---|---|---|---|
+| `WSI-CONS-*` | CONS | PERSONAL | QUICK_BINDABLE | 없음 |
+| `WSI-AMMO-*` | AMMO | PERSONAL | AMMO_LEDGER_DEPOSIT | 없음 |
+| `WSI-PORTABLE-*` | PORTABLE | PARTY | PORTABLE_FACILITY_ACTION | `connectedFacilityId` 필수 |
+| `WSI-FAC-*` | FAC | PARTY | FACILITY_PLACEMENT | `connectedFacilityId` 필수 |
+| `WSI-CALL-*` | CALL | PARTY_BOUND | BOSS_CALL_TRANSACTION | `constraintText` 필수 |
+
+- `textKey`는 `item.wildsurvival.<소문자 ID, 하이픈은 밑줄>`로 고정한다.
+- `customModelKey`는 `wildsurvival:item/<소문자 ID, 하이픈은 밑줄>`로 고정한다. 리소스팩 모델이 아직 없더라도 키를 바꾸지 않고 대표 Material 폴백을 사용한다.
+- 휴대 장치와 시설 키트는 파티 제작품이지만 설치·사용 트랜잭션을 커밋하기 전에는 실제 보유자의 인벤토리에 존재한다.
+- `firstDay`는 사용 가능 최솟값이며 발견·연구·시설 조건을 우회하지 않는다.
 
 ## 2. 소모품·탄약
 
@@ -65,16 +82,16 @@
 
 ## 4. 야영 시설 키트
 
-| codex | ID | 시설 | 표시명 | 대표 Material | 스택 | 제작식 |
-|---:|---|---|---|---|---:|---|
-| 0130 | `WSI-FAC-C01-KIT` | FAC-C01 | 간이 작업대 키트 | CRAFTING_TABLE | 4 | `WSRCP-F02` |
-| 0131 | `WSI-FAC-C02-KIT` | FAC-C02 | 야전 화로 키트 | FURNACE | 4 | `WSRCP-F03` |
-| 0132 | `WSI-FAC-C03-KIT` | FAC-C03 | 임시 보관함 키트 | BARREL | 4 | `WSRCP-F04` |
-| 0133 | `WSI-FAC-C04-KIT` | FAC-C04 | 침낭 표식 키트 | WHITE_CARPET | 4 | `WSRCP-F12` |
-| 0134 | `WSI-FAC-C05-KIT` | FAC-C05 | 간이 경보종 키트 | BELL | 4 | `WSRCP-F13` |
-| 0135 | `WSI-FAC-C06-KIT` | FAC-C06 | 야전 약제대 키트 | BREWING_STAND | 4 | `WSRCP-F05` |
-| 0136 | `WSI-FAC-C07-KIT` | FAC-C07 | 소형 탄약대 키트 | FLETCHING_TABLE | 4 | `WSRCP-F06` |
-| 0137 | `WSI-FAC-C08-KIT` | FAC-C08 | 임시 바리케이드 키트 | IRON_BARS | 16 | `WSRCP-F14` |
+| codex | ID | 시설 | 표시명 | 대표 Material | 최초 | 스택 | 제작식 |
+|---:|---|---|---|---|---:|---:|---|
+| 0130 | `WSI-FAC-C01-KIT` | FAC-C01 | 간이 작업대 키트 | CRAFTING_TABLE | 1 | 4 | `WSRCP-F02` |
+| 0131 | `WSI-FAC-C02-KIT` | FAC-C02 | 야전 화로 키트 | FURNACE | 1 | 4 | `WSRCP-F03` |
+| 0132 | `WSI-FAC-C03-KIT` | FAC-C03 | 임시 보관함 키트 | BARREL | 1 | 4 | `WSRCP-F04` |
+| 0133 | `WSI-FAC-C04-KIT` | FAC-C04 | 침낭 표식 키트 | WHITE_CARPET | 2 | 4 | `WSRCP-F12` |
+| 0134 | `WSI-FAC-C05-KIT` | FAC-C05 | 간이 경보종 키트 | BELL | 2 | 4 | `WSRCP-F13` |
+| 0135 | `WSI-FAC-C06-KIT` | FAC-C06 | 야전 약제대 키트 | BREWING_STAND | 3 | 4 | `WSRCP-F05` |
+| 0136 | `WSI-FAC-C07-KIT` | FAC-C07 | 소형 탄약대 키트 | FLETCHING_TABLE | 3 | 4 | `WSRCP-F06` |
+| 0137 | `WSI-FAC-C08-KIT` | FAC-C08 | 임시 바리케이드 키트 | IRON_BARS | 3 | 16 | `WSRCP-F14` |
 
 ## 5. 정착 시설 키트
 
@@ -114,12 +131,12 @@
 
 ## 7. 보스 호출품
 
-| codex | ID | 표시명 | 최초 사용 | 대표 Material | 소유 | 제작식·검사 |
-|---:|---|---|---:|---|---|---|
-| 0170 | `WSI-CALL-D10` | 공명 추적체 호출 세트 | 10 | RECOVERY_COMPASS | PARTY_BOUND | `WSRCP-G03`, Day10·C07 |
-| 0171 | `WSI-CALL-D20` | 신경 접합체 호출 세트 | 20 | SCULK_CATALYST | PARTY_BOUND | `WSRCP-D20-CALL`, C13·D10 증명 |
-| 0172 | `WSI-CALL-D30` | 오염 섭식핵 호출 세트 | 30 | HEART_OF_THE_SEA | PARTY_BOUND | `WSRCP-D30-CALL`, C20 |
-| 0173 | `WSI-CALL-D40` | 공진 파괴자 호출 세트 | 40 | HEAVY_CORE | PARTY_BOUND | `WSRCP-D40-CALL`, C26 |
+| codex | ID | 표시명 | 최초 사용 | 대표 Material | 스택 | 소유 | 제작식·검사 |
+|---:|---|---|---:|---|---:|---|---|
+| 0170 | `WSI-CALL-D10` | 공명 추적체 호출 세트 | 10 | RECOVERY_COMPASS | 1 | PARTY_BOUND | `WSRCP-G03`, Day10·C07 |
+| 0171 | `WSI-CALL-D20` | 신경 접합체 호출 세트 | 20 | SCULK_CATALYST | 1 | PARTY_BOUND | `WSRCP-D20-CALL`, C13·D10 증명 |
+| 0172 | `WSI-CALL-D30` | 오염 섭식핵 호출 세트 | 30 | HEART_OF_THE_SEA | 1 | PARTY_BOUND | `WSRCP-D30-CALL`, C20 |
+| 0173 | `WSI-CALL-D40` | 공진 파괴자 호출 세트 | 40 | HEAVY_CORE | 1 | PARTY_BOUND | `WSRCP-D40-CALL`, C26 |
 
 - 호출품은 전장 후보 생성에 성공하고 보스 encounter transaction이 커밋될 때만 소비한다.
 - 서버 종료·청크 실패·부적합 지형·중복 encounter 검출이면 100% 반환한다.

@@ -54,7 +54,9 @@ public record ProductionContentCatalog(
                                 List<String> harvestSources, String sourceText, String usageText) { }
 
     public record ItemEntry(String id, String name, String category, int firstDay, String displayMaterial,
-                            int stackLimit, String effectText, String recipeId) {
+                            int stackLimit, String effectText, String recipeId, String textKey,
+                            String customModelKey, String ownership, String usePolicy,
+                            String connectedFacilityId, String constraintText) {
         public boolean quickConsumable() {
             return "CONS".equals(category);
         }

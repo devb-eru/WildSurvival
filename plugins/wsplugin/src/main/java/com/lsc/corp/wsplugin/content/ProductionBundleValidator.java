@@ -156,7 +156,10 @@ public final class ProductionBundleValidator {
             ProductionContentCatalog.ItemEntry item = new ProductionContentCatalog.ItemEntry(requiredString(record, "id"),
                     requiredString(record, "name"), requiredString(record, "category"), requiredInt(record, "firstDay"),
                     requiredString(record, "displayMaterial"), requiredInt(record, "stackLimit"),
-                    requiredString(record, "effectText"), optionalString(record, "recipeId", ""));
+                    requiredString(record, "effectText"), requiredString(record, "recipeId"),
+                    requiredString(record, "textKey"), requiredString(record, "customModelKey"),
+                    requiredString(record, "ownership"), requiredString(record, "usePolicy"),
+                    optionalString(record, "connectedFacilityId", ""), optionalString(record, "constraintText", ""));
             nonEquipmentItemsById.put(item.id(), item);
         }
         Map<String, ProductionContentCatalog.EquipmentEntry> equipmentById = new LinkedHashMap<>();
@@ -905,13 +908,48 @@ public final class ProductionBundleValidator {
         }
         Set<String> recipeIds = catalog.recipes().stream().map(ProductionContentCatalog.RecipeEntry::id)
                 .collect(java.util.stream.Collectors.toSet());
+        Map<String, Long> expectedCategories = Map.of("CONS", 13L, "AMMO", 5L, "PORTABLE", 7L,
+                "FAC", 32L, "CALL", 4L);
+        Map<String, Long> actualCategories = catalog.nonEquipmentItemsById().values().stream().collect(
+                java.util.stream.Collectors.groupingBy(ProductionContentCatalog.ItemEntry::category,
+                        java.util.stream.Collectors.counting()));
+        if (!actualCategories.equals(expectedCategories)) {
+            throw new ContentValidationException("Item category cardinality mismatch " + actualCategories);
+        }
+        Map<String, String> expectedOwnership = Map.of("CONS", "PERSONAL", "AMMO", "PERSONAL",
+                "PORTABLE", "PARTY", "FAC", "PARTY", "CALL", "PARTY_BOUND");
+        Map<String, String> expectedUsePolicy = Map.of("CONS", "QUICK_BINDABLE", "AMMO", "AMMO_LEDGER_DEPOSIT",
+                "PORTABLE", "PORTABLE_FACILITY_ACTION", "FAC", "FACILITY_PLACEMENT",
+                "CALL", "BOSS_CALL_TRANSACTION");
         for (ProductionContentCatalog.ItemEntry item : catalog.nonEquipmentItemsById().values()) {
             if (item.stackLimit() < 1 || item.stackLimit() > 64 || item.effectText().isBlank()
                     || item.firstDay() < 1 || item.firstDay() > 50) {
                 throw new ContentValidationException("Invalid item profile " + item.id());
             }
-            if (!item.recipeId().isBlank() && !recipeIds.contains(item.recipeId())) {
+            if (!recipeIds.contains(item.recipeId())) {
                 throw new ContentValidationException("Unknown item recipe " + item.id() + " -> " + item.recipeId());
+            }
+            String slug = item.id().toLowerCase(java.util.Locale.ROOT).replace('-', '_');
+            if (!item.textKey().equals("item.wildsurvival." + slug)
+                    || !item.customModelKey().equals("wildsurvival:item/" + slug)
+                    || !expectedOwnership.get(item.category()).equals(item.ownership())
+                    || !expectedUsePolicy.get(item.category()).equals(item.usePolicy())) {
+                throw new ContentValidationException("Item authority mapping mismatch " + item.id());
+            }
+            if ("PORTABLE".equals(item.category())) {
+                if (!item.connectedFacilityId().matches("FAC-P\\d{2}") || item.constraintText().isBlank()) {
+                    throw new ContentValidationException("Portable item contract mismatch " + item.id());
+                }
+            } else if ("FAC".equals(item.category())) {
+                String expectedFacilityId = item.id().replace("WSI-FAC-", "FAC-").replace("-KIT", "");
+                if (!item.connectedFacilityId().equals(expectedFacilityId)) {
+                    throw new ContentValidationException("Facility kit mapping mismatch " + item.id());
+                }
+            } else if (!item.connectedFacilityId().isBlank()) {
+                throw new ContentValidationException("Unexpected facility mapping " + item.id());
+            }
+            if ("CALL".equals(item.category()) && (item.stackLimit() != 1 || item.constraintText().isBlank())) {
+                throw new ContentValidationException("Boss call item contract mismatch " + item.id());
             }
         }
     }

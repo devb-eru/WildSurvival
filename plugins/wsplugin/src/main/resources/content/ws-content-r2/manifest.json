@@ -48,7 +48,7 @@
       "path": "schemas/item.schema.json",
       "domain": "schema",
       "schema": "common.schema.json",
-      "sha256": "11618c7119ac4443a2a8ce6341ce2d7d50b16378c6b1457e2214940024b80e27"
+      "sha256": "821ff773ee28e7ad04a6e7820ae0d0171acfc927b7b3cf45aef15c81ca78d38d"
     },
     {
       "path": "schemas/recipe.schema.json",
@@ -234,7 +234,7 @@
       "path": "items/non-equipment-items.json",
       "domain": "items",
       "schema": "item.schema.json",
-      "sha256": "f1157ff6b13933ebd8ff9da3268b7d6f04cc7a99b7d5409a8ee48306d89bd374"
+      "sha256": "64cdd281741a5f549dcfa32d2900f85f842161febab927189cb3c4e342813d50"
     },
     {
       "path": "items/codex-index.json",
@@ -270,7 +270,7 @@
       "path": "facilities/season1-facilities.json",
       "domain": "facilities",
       "schema": "facility.schema.json",
-      "sha256": "e52bbbefd56aba9bb02c71422c6db34cde2b0636fe6af0641713e318b65449ca"
+      "sha256": "e4f4aaccab831df7317ec6bfc24004fc5c5fefd52892c7ed6b059c612c050a66"
     },
     {
       "path": "statuses/season1-statuses.json",

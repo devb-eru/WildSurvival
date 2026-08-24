@@ -90,6 +90,7 @@
 | `TOOL-LIST-001` | `DATA_LOCKED` | 장비·도구 214개 ID·장착 분류 | DEV-300~500 |
 | `LOOT-LIST-001` | `DATA_LOCKED` | 획득·드롭 62개 ID·보상 경계 | DEV-400~700 |
 | `CONSUMABLE-RUNTIME-STATUS-001` | `ACTIVE_CONTROL` | 소모품 13개 DATA·RUNTIME·TEST 개별 상태 | DEV-300~400 |
+| `ITEM-RUNTIME-STATUS-001` | `ACTIVE_CONTROL` | 탄약·휴대 장치·시설 키트·호출품 48개 개별 상태 | DEV-300~700 |
 | `REWARD-001` | `BASELINE_LOCKED` | 기여·분배·고유 보상 | G0 |
 
 ### 3.3 세계·사건·보스·Story
