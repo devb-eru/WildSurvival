@@ -174,6 +174,7 @@ public final class ProductionBundleValidator {
                         requiredInt(record, "toolTier"), requiredString(record, "baseTemplateId"),
                         requiredString(record, "statInheritancePolicy"), optionalString(record, "setId", ""),
                         stringArray(record, "tags"), numberMap(record, "stats"),
+                        requiredString(record, "effectProfileId"),
                         requiredString(record, "executionOpcode"), requiredString(record, "harvestProfileId"),
                         requiredDouble(record, "resourceYieldMultiplier"),
                         requiredInt(record, "durabilityCostPerSuccess"),
@@ -986,11 +987,17 @@ public final class ProductionBundleValidator {
         if (!utilityTiers.equals(Map.of(3, 4L, 4, 4L, 5, 4L, 6, 4L))) {
             throw new ContentValidationException("Utility tool tier mismatch " + utilityTiers);
         }
+        long effectProfiles = catalog.equipmentById().values().stream()
+                .map(ProductionContentCatalog.EquipmentEntry::effectProfileId).distinct().count();
+        if (effectProfiles != 136) {
+            throw new ContentValidationException("Equipment effect profile cardinality mismatch " + effectProfiles);
+        }
         for (ProductionContentCatalog.EquipmentEntry equipment : catalog.equipmentById().values()) {
             if (!catalog.itemsById().containsKey(equipment.id()) || !rarities.contains(equipment.rarity())
                     || !slots.contains(equipment.equipmentSlot()) || !weaponClasses.contains(equipment.weaponClass())
                     || equipment.itemLevel() < 1 || equipment.itemLevel() > 50 || equipment.firstDay() < 1
-                    || equipment.firstDay() > 50 || equipment.maxDurability() < 1 || equipment.effectText().isBlank()) {
+                    || equipment.firstDay() > 50 || equipment.maxDurability() < 1
+                    || !equipment.effectProfileId().matches("^EQFX-[A-Z0-9-]+$") || equipment.effectText().isBlank()) {
                 throw new ContentValidationException("Invalid equipment profile " + equipment.id());
             }
             if (!statIds.containsAll(equipment.stats().keySet()) || !equipmentTags.containsAll(equipment.tags())

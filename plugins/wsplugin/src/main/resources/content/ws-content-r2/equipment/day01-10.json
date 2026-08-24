@@ -24,6 +24,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RI-PICKAXE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_PICKAXE",
       "resourceYieldMultiplier": 1.0,
@@ -60,6 +61,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RI-AXE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_AXE",
       "resourceYieldMultiplier": 1.0,
@@ -96,6 +98,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RI-SHOVEL",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_SHOVEL",
       "resourceYieldMultiplier": 1.0,
@@ -132,6 +135,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RI-HOE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_HOE",
       "resourceYieldMultiplier": 1.0,
@@ -168,6 +172,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RS-PICKAXE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_PICKAXE",
       "resourceYieldMultiplier": 1.0,
@@ -204,6 +209,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RS-AXE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_AXE",
       "resourceYieldMultiplier": 1.0,
@@ -240,6 +246,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RS-SHOVEL",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_SHOVEL",
       "resourceYieldMultiplier": 1.0,
@@ -276,6 +283,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RS-HOE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_HOE",
       "resourceYieldMultiplier": 1.0,
@@ -312,6 +320,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-HD-PICKAXE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_PICKAXE",
       "resourceYieldMultiplier": 1.0,
@@ -348,6 +357,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-HD-AXE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_AXE",
       "resourceYieldMultiplier": 1.0,
@@ -384,6 +394,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-HD-SHOVEL",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_SHOVEL",
       "resourceYieldMultiplier": 1.0,
@@ -420,6 +431,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-HD-HOE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_HOE",
       "resourceYieldMultiplier": 1.0,
@@ -456,6 +468,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RC-PICKAXE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_PICKAXE",
       "resourceYieldMultiplier": 1.0,
@@ -492,6 +505,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RC-AXE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_AXE",
       "resourceYieldMultiplier": 1.0,
@@ -528,6 +542,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RC-SHOVEL",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_SHOVEL",
       "resourceYieldMultiplier": 1.0,
@@ -564,6 +579,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-UTILITY-RC-HOE",
       "executionOpcode": "VANILLA_HARVEST_WITH_WS_TIER_GATE",
       "harvestProfileId": "HARVEST_HOE",
       "resourceYieldMultiplier": 1.0,
@@ -602,6 +618,7 @@
       "stats": {
         "RES": 2.0
       },
+      "effectProfileId": "EQFX-EQL-AC-C01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -638,6 +655,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-AC-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -674,6 +692,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-AC-R02",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -712,6 +731,7 @@
       "stats": {
         "HIT": 4.0
       },
+      "effectProfileId": "EQFX-EQL-AC-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -748,6 +768,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-AC-U02",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -787,6 +808,7 @@
         "DEF": 5.0,
         "HP": 20.0
       },
+      "effectProfileId": "EQFX-SET-PIONEER",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -826,6 +848,7 @@
         "DEF": 10.0,
         "HP": 40.0
       },
+      "effectProfileId": "EQFX-SET-PIONEER",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -865,6 +888,7 @@
         "DEF": 8.0,
         "HP": 30.0
       },
+      "effectProfileId": "EQFX-SET-PIONEER",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -904,6 +928,7 @@
         "DEF": 4.0,
         "EVA": 2.0
       },
+      "effectProfileId": "EQFX-SET-PIONEER",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -942,6 +967,7 @@
         "AXE"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-AX-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -980,6 +1006,7 @@
         "AXE"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-AX-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1018,6 +1045,7 @@
         "MACE"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-BL-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1056,6 +1084,7 @@
         "MACE"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-BL-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1094,6 +1123,7 @@
         "BOW"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-BO-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1134,6 +1164,7 @@
       "stats": {
         "HIT": 4.0
       },
+      "effectProfileId": "EQFX-EQL-BO-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1172,6 +1203,7 @@
         "CROSSBOW"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-CB-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1210,6 +1242,7 @@
         "CROSSBOW"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-CB-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1248,6 +1281,7 @@
       "stats": {
         "HP": 40.0
       },
+      "effectProfileId": "EQFX-EQL-CH-C01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1284,6 +1318,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-CH-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1320,6 +1355,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-CH-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1358,6 +1394,7 @@
       "stats": {
         "BREAK_DAMAGE": 4.0
       },
+      "effectProfileId": "EQFX-EQL-CH-U02",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1394,6 +1431,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-AC",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1430,6 +1468,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-AR",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1466,6 +1505,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-CH",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1502,6 +1542,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-OH",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1538,6 +1579,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-UA",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1576,6 +1618,7 @@
         "DAGGER"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-DG-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1614,6 +1657,7 @@
         "DAGGER"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-DG-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1650,6 +1694,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-OH-C01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1686,6 +1731,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-OH-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1722,6 +1768,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-OH-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1760,6 +1807,7 @@
         "PICKAXE"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-PK-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1798,6 +1846,7 @@
         "PICKAXE"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-PK-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1836,6 +1885,7 @@
         "STAFF"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-ST-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1874,6 +1924,7 @@
         "STAFF"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-ST-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1912,6 +1963,7 @@
         "SWORD"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-SW-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1952,6 +2004,7 @@
       "stats": {
         "DEF": 6.0
       },
+      "effectProfileId": "EQFX-EQL-SW-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -1990,6 +2043,7 @@
         "TRIDENT"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-TR-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2028,6 +2082,7 @@
         "TRIDENT"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-TR-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2064,6 +2119,7 @@
       "setId": "",
       "tags": [],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-UA-R01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2102,6 +2158,7 @@
       "stats": {
         "DEF": 4.0
       },
+      "effectProfileId": "EQFX-EQL-UA-U01",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2145,6 +2202,7 @@
         "ATK": 8.0,
         "DEF": 2.0
       },
+      "effectProfileId": "EQFX-STATIC-CHASSIS",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2187,6 +2245,7 @@
       "stats": {
         "ATK": 12.0
       },
+      "effectProfileId": "EQFX-STATIC-CHASSIS",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2230,6 +2289,7 @@
         "ATK": 8.0,
         "HIT": 4.0
       },
+      "effectProfileId": "EQFX-STATIC-CHASSIS",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2272,6 +2332,7 @@
       "stats": {
         "ATK": 14.0
       },
+      "effectProfileId": "EQFX-STATIC-CHASSIS",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2315,6 +2376,7 @@
         "ATK": 5.0,
         "EVA": 4.0
       },
+      "effectProfileId": "EQFX-STATIC-CHASSIS",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2358,6 +2420,7 @@
         "ATK": 10.0,
         "BREAK_DAMAGE": 4.0
       },
+      "effectProfileId": "EQFX-STATIC-CHASSIS",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2401,6 +2464,7 @@
         "AP": 4.0,
         "ATK": 8.0
       },
+      "effectProfileId": "EQFX-STATIC-CHASSIS",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2444,6 +2508,7 @@
         "ATK": 10.0,
         "PEN": 6.0
       },
+      "effectProfileId": "EQFX-STATIC-CHASSIS",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2487,6 +2552,7 @@
         "ATK": 9.0,
         "HIT": 4.0
       },
+      "effectProfileId": "EQFX-STATIC-CHASSIS",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2526,6 +2592,7 @@
         "DEF": 5.0,
         "HP": 20.0
       },
+      "effectProfileId": "EQFX-SET-SCOUT",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2565,6 +2632,7 @@
         "DEF": 10.0,
         "HP": 40.0
       },
+      "effectProfileId": "EQFX-SET-SCOUT",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2604,6 +2672,7 @@
         "DEF": 8.0,
         "HP": 30.0
       },
+      "effectProfileId": "EQFX-SET-SCOUT",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2643,6 +2712,7 @@
         "DEF": 4.0,
         "EVA": 2.0
       },
+      "effectProfileId": "EQFX-SET-SCOUT",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2682,6 +2752,7 @@
         "DEF": 9.0,
         "HP": 20.0
       },
+      "effectProfileId": "EQFX-SET-VANGUARD",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2721,6 +2792,7 @@
         "DEF": 18.0,
         "HP": 40.0
       },
+      "effectProfileId": "EQFX-SET-VANGUARD",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2760,6 +2832,7 @@
         "DEF": 14.0,
         "HP": 30.0
       },
+      "effectProfileId": "EQFX-SET-VANGUARD",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2799,6 +2872,7 @@
         "DEF": 8.0,
         "EVA": 2.0
       },
+      "effectProfileId": "EQFX-SET-VANGUARD",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2839,6 +2913,7 @@
         "HP": 20.0,
         "RES": 4.0
       },
+      "effectProfileId": "EQFX-SET-OBSERVER",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2879,6 +2954,7 @@
         "HP": 40.0,
         "RES": 8.0
       },
+      "effectProfileId": "EQFX-SET-OBSERVER",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2919,6 +2995,7 @@
         "HP": 30.0,
         "RES": 6.0
       },
+      "effectProfileId": "EQFX-SET-OBSERVER",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2959,6 +3036,7 @@
         "EVA": 2.0,
         "RES": 4.0
       },
+      "effectProfileId": "EQFX-SET-OBSERVER",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -2997,6 +3075,7 @@
         "SWORD"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-W",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -3035,6 +3114,7 @@
         "AXE"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-W",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -3073,6 +3153,7 @@
         "BOW"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-W",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -3111,6 +3192,7 @@
         "CROSSBOW"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-W",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -3149,6 +3231,7 @@
         "DAGGER"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-W",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -3187,6 +3270,7 @@
         "MACE"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-W",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -3225,6 +3309,7 @@
         "STAFF"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-W",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -3263,6 +3348,7 @@
         "PICKAXE"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-W",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,
@@ -3301,6 +3387,7 @@
         "TRIDENT"
       ],
       "stats": {},
+      "effectProfileId": "EQFX-EQL-D10-W",
       "executionOpcode": "",
       "harvestProfileId": "",
       "resourceYieldMultiplier": 1.0,

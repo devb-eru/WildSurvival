@@ -62,6 +62,8 @@ class ProductionBundleValidatorTest {
                 .filter(ingredient -> "PROOF".equals(ingredient.kind())).allMatch(ingredient -> !ingredient.consume()));
         assertEquals(214, result.catalog().codexEntries().stream().filter(ProductionContentCatalog.CatalogEntry::equipment).count());
         assertEquals(214, result.catalog().equipmentById().size());
+        assertEquals(136, result.catalog().equipmentById().values().stream()
+                .map(ProductionContentCatalog.EquipmentEntry::effectProfileId).distinct().count());
         assertEquals(34, result.catalog().equipmentById().values().stream()
                 .filter(equipment -> equipment.baseTemplateId().isBlank()).count());
         assertEquals(180, result.catalog().equipmentById().values().stream()
@@ -71,6 +73,7 @@ class ProductionBundleValidatorTest {
         assertEquals(3, utilityPickaxe.toolTier());
         assertEquals(720, utilityPickaxe.maxDurability());
         assertEquals("VANILLA_HARVEST_WITH_WS_TIER_GATE", utilityPickaxe.executionOpcode());
+        assertEquals("EQFX-UTILITY-RI-PICKAXE", utilityPickaxe.effectProfileId());
         assertEquals("HARVEST_PICKAXE", utilityPickaxe.harvestProfileId());
         assertEquals(1.0, utilityPickaxe.resourceYieldMultiplier());
         assertEquals(1, utilityPickaxe.durabilityCostPerSuccess());
@@ -92,6 +95,9 @@ class ProductionBundleValidatorTest {
         assertEquals(40.0, pioneerChest.stat("HP"));
         assertEquals(10.0, pioneerChest.stat("DEF"));
         assertEquals("EQL-SW-U01", result.catalog().equipmentById().get("EQL-SW-R01").baseTemplateId());
+        assertEquals("EQFX-EQL-D10-W", result.catalog().equipmentById().get("EQL-D10-W-TR").effectProfileId());
+        assertEquals("EQFX-SET-D50-REBUILD", result.catalog().equipmentById()
+                .get("EQD50-AR-REBUILD-FEET").effectProfileId());
         assertEquals("EQL-W01", result.catalog().equipmentById().get("EQL-SW-U01").baseTemplateId());
         assertEquals("EQL-AR-C02", result.catalog().equipmentById().get("EQD50-B30-AR01").baseTemplateId());
         assertEquals("EQL-AR-C02", result.catalog().equipmentById().get("EQL-D10-AR").baseTemplateId());

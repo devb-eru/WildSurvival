@@ -44,6 +44,7 @@
           "setId",
           "tags",
           "stats",
+          "effectProfileId",
           "executionOpcode",
           "harvestProfileId",
           "resourceYieldMultiplier",
@@ -180,6 +181,10 @@
             "additionalProperties": {
               "type": "number"
             }
+          },
+          "effectProfileId": {
+            "type": "string",
+            "pattern": "^EQFX-[A-Z0-9-]+$"
           },
           "executionOpcode": {
             "enum": [

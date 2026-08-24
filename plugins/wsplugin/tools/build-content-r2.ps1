@@ -668,6 +668,29 @@ function Equipment-Tags([string]$Id, [object[]]$DetailCells) {
     }
     return @($result | Select-Object -Unique)
 }
+function Equipment-EffectProfileId([string]$Id) {
+    if ($Id -match '^EQL-UT-(RI|RS|HD|RC)-(PICKAXE|AXE|SHOVEL|HOE)$') {
+        return "EQFX-UTILITY-$($Matches[1])-$($Matches[2])"
+    }
+    if ($Id -match '^EQL-W0[1-9]$') { return 'EQFX-STATIC-CHASSIS' }
+    if ($Id -match '^EQL-AR-C0[1-4]$') { return 'EQFX-SET-PIONEER' }
+    if ($Id -match '^EQL-AR-U-SCOUT-') { return 'EQFX-SET-SCOUT' }
+    if ($Id -match '^EQL-AR-U-VANGUARD-') { return 'EQFX-SET-VANGUARD' }
+    if ($Id -match '^EQL-AR-R-OBSERVER-') { return 'EQFX-SET-OBSERVER' }
+    if ($Id -match '^EQD20-AR-MED-') { return 'EQFX-SET-D20-MED' }
+    if ($Id -match '^EQD20-AR-CTRL-') { return 'EQFX-SET-D20-CTRL' }
+    if ($Id -match '^EQD20-AR-GUARD-') { return 'EQFX-SET-D20-GUARD' }
+    if ($Id -match '^EQD50-AR-PURIFIER-') { return 'EQFX-SET-D50-PURIFIER' }
+    if ($Id -match '^EQD50-AR-INTERRUPT-') { return 'EQFX-SET-D50-INTERRUPT' }
+    if ($Id -match '^EQD50-AR-REBUILD-') { return 'EQFX-SET-D50-REBUILD' }
+    if ($Id -match '^EQL-D10-W-[A-Z]{2}$') { return 'EQFX-EQL-D10-W' }
+    if ($Id -match '^EQD20-EP-W01-[A-Z]{2}$') { return 'EQFX-EQD20-EP-W01' }
+    if ($Id -match '^EQD20-LG-W01-[A-Z]{2}$') { return 'EQFX-EQD20-LG-W01' }
+    if ($Id -match '^EQD50-B30-W01-[A-Z]{2}$') { return 'EQFX-EQD50-B30-W01' }
+    if ($Id -match '^EQD50-B40-W01-[A-Z]{2}$') { return 'EQFX-EQD50-B40-W01' }
+    if ($Id -match '^(EQL-|EQD20-|EQD50-)') { return "EQFX-$Id" }
+    throw "Equipment effect profile mapping missing: $Id"
+}
 
 $tools = foreach ($cells in $toolRows) {
     if ($cells.Count -lt 6 -or $cells[0] -notmatch '^\d{4}$' -or $cells[1] -notmatch '^(EQL-|EQD(20|50)-)') { continue }
@@ -719,6 +742,7 @@ $tools = foreach ($cells in $toolRows) {
         statInheritancePolicy = $(if ($baseTemplateId) {'INHERIT_ADD'} else {'NONE'})
         setId = Equipment-SetId $id; tags = [string[]]@($compiledTags)
         stats = Equipment-Stats $id
+        effectProfileId = Equipment-EffectProfileId $id
         executionOpcode = $(if ($isUtility) {'VANILLA_HARVEST_WITH_WS_TIER_GATE'} else {''})
         harvestProfileId = $harvestProfileId
         resourceYieldMultiplier = 1.0
@@ -1595,13 +1619,13 @@ $equipmentSchema = [ordered]@{
         schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; domain=[ordered]@{const='equipment'}
         records=[ordered]@{type='array';items=[ordered]@{
             type='object';additionalProperties=$false
-            required=@('id','sourceDocumentId','enabled','codexIndex','name','equipmentType','equipmentSlot','weaponClass','displayMaterial','definition','rarity','itemLevel','firstDay','maxDurability','toolTier','baseTemplateId','statInheritancePolicy','setId','tags','stats','executionOpcode','harvestProfileId','resourceYieldMultiplier','durabilityCostPerSuccess','vanillaActionPassthrough','effectText','raw')
+            required=@('id','sourceDocumentId','enabled','codexIndex','name','equipmentType','equipmentSlot','weaponClass','displayMaterial','definition','rarity','itemLevel','firstDay','maxDurability','toolTier','baseTemplateId','statInheritancePolicy','setId','tags','stats','effectProfileId','executionOpcode','harvestProfileId','resourceYieldMultiplier','durabilityCostPerSuccess','vanillaActionPassthrough','effectText','raw')
             properties=[ordered]@{
                 id=[ordered]@{type='string';pattern='^(?:EQL-|EQD(?:20|50)-)'};sourceDocumentId=[ordered]@{const='TOOL-LIST-001'};enabled=[ordered]@{const=$true};codexIndex=[ordered]@{type='integer';minimum=1000;maximum=1999};name=[ordered]@{type='string';minLength=1}
                 equipmentType=[ordered]@{enum=@('UTILITY','SW','AX','BO','CB','DG','BL','ST','PK','TR','UNARMED_SUPPORT','OFF','ARMOR','ACCESSORY','CHARM')};equipmentSlot=[ordered]@{enum=@('INVENTORY','MAIN_WEAPON','OFF_WEAPON','ARMOR_HEAD','ARMOR_CHEST','ARMOR_LEGS','ARMOR_FEET','ACCESSORY','CHARM')}
                 weaponClass=[ordered]@{enum=@('','SWORD','AXE','BOW','CROSSBOW','DAGGER','MACE','STAFF','PICKAXE','TRIDENT')};displayMaterial=[ordered]@{type='string';pattern='^[A-Z][A-Z0-9_]*$'};definition=[ordered]@{type='string';minLength=1}
                 rarity=[ordered]@{enum=@('COMMON','UNCOMMON','RARE','EPIC','LEGENDARY','ABYSSAL')};itemLevel=[ordered]@{type='integer';minimum=1;maximum=50};firstDay=[ordered]@{type='integer';minimum=1;maximum=50};maxDurability=[ordered]@{type='integer';minimum=1};toolTier=[ordered]@{type='integer';minimum=-1;maximum=6};baseTemplateId=[ordered]@{type='string';pattern='^(?:|EQL-|EQD(?:20|50)-)'};statInheritancePolicy=[ordered]@{enum=@('NONE','INHERIT_ADD')};setId=[ordered]@{type='string'}
-                tags=[ordered]@{type='array';items=[ordered]@{type='string'};uniqueItems=$true};stats=[ordered]@{type='object';additionalProperties=[ordered]@{type='number'}}
+                tags=[ordered]@{type='array';items=[ordered]@{type='string'};uniqueItems=$true};stats=[ordered]@{type='object';additionalProperties=[ordered]@{type='number'}};effectProfileId=[ordered]@{type='string';pattern='^EQFX-[A-Z0-9-]+$'}
                 executionOpcode=[ordered]@{enum=@('','VANILLA_HARVEST_WITH_WS_TIER_GATE')};harvestProfileId=[ordered]@{enum=@('','HARVEST_PICKAXE','HARVEST_AXE','HARVEST_SHOVEL','HARVEST_HOE')};resourceYieldMultiplier=[ordered]@{const=1.0};durabilityCostPerSuccess=[ordered]@{type='integer';minimum=0;maximum=1};vanillaActionPassthrough=[ordered]@{type='boolean'}
                 effectText=[ordered]@{type='string';minLength=1};raw=[ordered]@{type='array';minItems=6;maxItems=6;items=[ordered]@{type='string'}}
             }

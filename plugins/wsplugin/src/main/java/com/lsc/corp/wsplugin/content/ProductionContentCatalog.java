@@ -66,7 +66,8 @@ public record ProductionContentCatalog(
                                  String weaponClass, String displayMaterial, String rarity, int itemLevel,
                                  int firstDay, int maxDurability, int toolTier, String baseTemplateId,
                                  String statInheritancePolicy, String setId,
-                                 List<String> tags, Map<String, Double> stats, String executionOpcode,
+                                 List<String> tags, Map<String, Double> stats, String effectProfileId,
+                                 String executionOpcode,
                                  String harvestProfileId, double resourceYieldMultiplier,
                                  int durabilityCostPerSuccess, boolean vanillaActionPassthrough,
                                  String effectText) {
