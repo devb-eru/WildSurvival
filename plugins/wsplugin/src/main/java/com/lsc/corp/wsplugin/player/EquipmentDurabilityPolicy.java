@@ -1,5 +1,7 @@
 package com.lsc.corp.wsplugin.player;
 
+import java.util.Map;
+
 public final class EquipmentDurabilityPolicy {
     private EquipmentDurabilityPolicy() {
     }
@@ -37,7 +39,34 @@ public final class EquipmentDurabilityPolicy {
         return previous != Condition.BROKEN && current == Condition.BROKEN;
     }
 
+    public static BreakSlot resolveBreakSlot(String mainHandInstanceId, String offHandInstanceId,
+                                             Map<String, String> equippedBySlot, String brokenInstanceId) {
+        if (brokenInstanceId == null || brokenInstanceId.isBlank()) {
+            throw new IllegalArgumentException("Broken equipment instance ID is required");
+        }
+        if (brokenInstanceId.equals(mainHandInstanceId)) return BreakSlot.MAIN_HAND;
+        if (brokenInstanceId.equals(offHandInstanceId)) return BreakSlot.OFF_HAND;
+        Map<String, String> equipped = equippedBySlot == null ? Map.of() : equippedBySlot;
+        if (brokenInstanceId.equals(equipped.get("ARMOR_HEAD"))) return BreakSlot.HEAD;
+        if (brokenInstanceId.equals(equipped.get("ARMOR_CHEST"))) return BreakSlot.CHEST;
+        if (brokenInstanceId.equals(equipped.get("ARMOR_LEGS"))) return BreakSlot.LEGS;
+        if (brokenInstanceId.equals(equipped.get("ARMOR_FEET"))) return BreakSlot.FEET;
+        return BreakSlot.OTHER;
+    }
+
+    public static String breakCommitKey(String instanceId, int breakOrdinal) {
+        if (instanceId == null || instanceId.isBlank()) {
+            throw new IllegalArgumentException("Equipment instance ID is required");
+        }
+        if (breakOrdinal < 1) {
+            throw new IllegalArgumentException("Break ordinal must be positive");
+        }
+        return "equipment-broken:" + instanceId + ":" + breakOrdinal;
+    }
+
     public enum Condition { ACTIVE, BROKEN }
+
+    public enum BreakSlot { MAIN_HAND, OFF_HAND, HEAD, CHEST, LEGS, FEET, OTHER }
 
     public record SpendResult(int current, Condition condition, boolean changed) {
     }

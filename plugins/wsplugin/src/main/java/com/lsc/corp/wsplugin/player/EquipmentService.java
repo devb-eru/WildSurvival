@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.EntityEffect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -37,6 +38,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.Sound;
 
 public final class EquipmentService implements Listener {
     private static final int GUI_MAIN_WEAPON = 4;
@@ -536,6 +538,7 @@ public final class EquipmentService implements Listener {
         copy.currentDurability = source.currentDurability;
         copy.maxDurability = source.maxDurability;
         copy.condition = source.condition;
+        copy.breakCount = source.breakCount;
         return copy;
     }
 
@@ -963,7 +966,13 @@ public final class EquipmentService implements Listener {
         boolean expectedBreak = EquipmentDurabilityPolicy.isBreakTransition(
                 equipmentCondition(before.condition), expectedCurrent == 0
                         ? EquipmentDurabilityPolicy.Condition.BROKEN : EquipmentDurabilityPolicy.Condition.ACTIVE);
-        ItemStack breakSnapshot = expectedBreak ? compatibilityBreakSnapshot(player, instanceId, before) : null;
+        EquipmentDurabilityPolicy.BreakSlot breakSlot = EquipmentDurabilityPolicy.resolveBreakSlot(
+                beforeState.mainWeaponInstanceId, beforeState.offhandInstanceId,
+                equippedInstancesBySlot(beforeState), instanceId);
+        ItemStack breakSnapshot = expectedBreak ? compatibilityBreakSnapshot(player, instanceId, before, breakSlot) : null;
+        if (expectedBreak && breakSnapshot == null) {
+            throw new IllegalStateException("파손 이벤트용 장비 스냅샷을 만들 수 없습니다: " + instanceId);
+        }
         String payload = "{\"instanceId\":\"" + instanceId + "\",\"templateId\":\"" + before.templateId
                 + "\",\"amount\":" + amount + ",\"current\":" + expectedCurrent
                 + ",\"reason\":\"" + reason + "\"}";
@@ -982,9 +991,10 @@ public final class EquipmentService implements Listener {
             instance.condition = result.condition().name();
             changed[0] = result.changed();
             broke[0] = !wasBroken && result.condition() == EquipmentDurabilityPolicy.Condition.BROKEN;
+            if (broke[0]) instance.breakCount++;
         };
         if (expectedBreak) {
-            String key = "equipment-broken:" + instanceId + ":" + UUID.randomUUID();
+            String key = EquipmentDurabilityPolicy.breakCommitKey(instanceId, before.breakCount + 1);
             if (!runs.commitOnce(key, "EQUIPMENT_BROKEN", payload, mutation)) return false;
         } else {
             runs.mutate(mutation);
@@ -993,21 +1003,48 @@ public final class EquipmentService implements Listener {
         if (broke[0]) {
             player.sendMessage(ChatColor.RED + "장비가 파손되었습니다. 장비는 보존되며 수리 전까지 사용할 수 없습니다.");
             Bukkit.getPluginManager().callEvent(new EquipmentBrokenEvent(
-                    player, templateId[0], instanceId, reason));
-            if (breakSnapshot != null) {
-                Bukkit.getPluginManager().callEvent(new PlayerItemBreakEvent(player, breakSnapshot));
-            }
+                    player, templateId[0], instanceId, reason, breakSlot));
+            Bukkit.getPluginManager().callEvent(new PlayerItemBreakEvent(player, breakSnapshot));
+            playBreakFeedback(player, breakSlot);
+            Bukkit.getScheduler().runTask(plugin, () -> syncAuthoritativeEquipment(player));
         }
         return changed[0];
     }
 
     private ItemStack compatibilityBreakSnapshot(Player player, String instanceId,
-                                                  RunSnapshot.EquipmentInstanceState before) {
+                                                  RunSnapshot.EquipmentInstanceState before,
+                                                  EquipmentDurabilityPolicy.BreakSlot slot) {
+        ItemStack authoritative = switch (slot) {
+            case MAIN_HAND -> player.getInventory().getItem(0);
+            case OFF_HAND -> player.getInventory().getItemInOffHand();
+            case HEAD -> player.getInventory().getHelmet();
+            case CHEST -> player.getInventory().getChestplate();
+            case LEGS -> player.getInventory().getLeggings();
+            case FEET -> player.getInventory().getBoots();
+            case OTHER -> null;
+        };
+        if (authoritative != null && instanceId.equals(equipmentInstanceId(authoritative))) {
+            return authoritative.clone();
+        }
         for (ItemStack item : player.getInventory().getContents()) {
             if (item != null && instanceId.equals(equipmentInstanceId(item))) return item.clone();
         }
         ItemStack fallback = weaponItem(before);
         return fallback == null ? null : fallback.clone();
+    }
+
+    private static void playBreakFeedback(Player player, EquipmentDurabilityPolicy.BreakSlot slot) {
+        EntityEffect effect = switch (slot) {
+            case MAIN_HAND -> EntityEffect.BREAK_EQUIPMENT_MAIN_HAND;
+            case OFF_HAND -> EntityEffect.BREAK_EQUIPMENT_OFF_HAND;
+            case HEAD -> EntityEffect.BREAK_EQUIPMENT_HELMET;
+            case CHEST -> EntityEffect.BREAK_EQUIPMENT_CHESTPLATE;
+            case LEGS -> EntityEffect.BREAK_EQUIPMENT_LEGGINGS;
+            case FEET -> EntityEffect.BREAK_EQUIPMENT_BOOTS;
+            case OTHER -> null;
+        };
+        if (effect != null) player.playEffect(effect);
+        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 0.8f, 1.0f);
     }
 
     private static EquipmentDurabilityPolicy.Condition equipmentCondition(String condition) {

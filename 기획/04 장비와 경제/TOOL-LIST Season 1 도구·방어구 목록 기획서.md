@@ -318,6 +318,7 @@ D10·D20 EP/LG·D30·D40의 `W01-<class>`는 이 표의 Material과 무기군을
 - 방어구는 최종 피해가 1 이상인 피격에서 1을 차감하되 초당 부위별 1회 상한을 둔다. 방패는 가드 피해 흡수·패링 시 실행 데이터 비용을 쓴다.
 - `BROKEN`은 아이템 인스턴스를 보존하고 장비 스탯·공격·세트 효과를 비활성화한다. 장착 미러 클릭 시 수리 GUI로 이동한다.
 - `ACTIVE → BROKEN` 전이마다 권위 `EquipmentBrokenEvent`, 감사 `EQUIPMENT_BROKEN`, Bukkit 호환용 합성 `PlayerItemBreakEvent`를 각각 한 번 발행한다. 합성 이벤트는 전이 직전 ItemStack 복사본을 전달하며 실제 삭제 권위가 아니다.
+- slot 0 파손은 `MAIN_HAND` 슬롯 정보와 `equipment-broken:{instanceUuid}:{breakOrdinal}` 멱등 키를 사용한다. 차수는 인스턴스별 파손 성공 횟수+1이며, 복사본 생성 실패 시 파손 전이를 중단하고 성공 시 차수를 증가시킨 뒤 주손 파손 효과·사운드와 다음 틱 권위 미러 복원을 수행한다.
 - 이미 `BROKEN`인 인스턴스에는 파손 이벤트를 재발행하지 않고, slot 1~8 바닐라 도구에는 합성 이벤트를 발행하지 않는다.
 - 수리·강화·재련·분해는 `instanceUuid` 잠금을 공유하여 동시 실행과 복제를 막는다.
 

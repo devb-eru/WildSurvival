@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class EquipmentDurabilityPolicyTest {
@@ -55,5 +56,22 @@ class EquipmentDurabilityPolicyTest {
                 EquipmentDurabilityPolicy.Condition.BROKEN, EquipmentDurabilityPolicy.Condition.BROKEN));
         assertThrows(IllegalArgumentException.class, () -> EquipmentDurabilityPolicy.isBreakTransition(
                 null, EquipmentDurabilityPolicy.Condition.BROKEN));
+    }
+
+    @Test
+    void resolvesSlotZeroAndUsesOneStableBreakCommitKey() {
+        assertEquals(EquipmentDurabilityPolicy.BreakSlot.MAIN_HAND,
+                EquipmentDurabilityPolicy.resolveBreakSlot("main-1", "off-1", Map.of(), "main-1"));
+        assertEquals(EquipmentDurabilityPolicy.BreakSlot.OFF_HAND,
+                EquipmentDurabilityPolicy.resolveBreakSlot("main-1", "off-1", Map.of(), "off-1"));
+        assertEquals(EquipmentDurabilityPolicy.BreakSlot.CHEST,
+                EquipmentDurabilityPolicy.resolveBreakSlot(null, null,
+                        Map.of("ARMOR_CHEST", "chest-1"), "chest-1"));
+        assertEquals("equipment-broken:main-1:1", EquipmentDurabilityPolicy.breakCommitKey("main-1", 1));
+        assertEquals("equipment-broken:main-1:2", EquipmentDurabilityPolicy.breakCommitKey("main-1", 2));
+        assertThrows(IllegalArgumentException.class,
+                () -> EquipmentDurabilityPolicy.resolveBreakSlot(null, null, Map.of(), ""));
+        assertThrows(IllegalArgumentException.class,
+                () -> EquipmentDurabilityPolicy.breakCommitKey("main-1", 0));
     }
 }

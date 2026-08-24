@@ -583,6 +583,7 @@ public final class GraveService implements Listener {
         copy.currentDurability = source.currentDurability;
         copy.maxDurability = source.maxDurability;
         copy.condition = source.condition;
+        copy.breakCount = source.breakCount;
         return copy;
     }
 

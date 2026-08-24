@@ -152,6 +152,7 @@ public final class RunSnapshot {
         public int currentDurability;
         public int maxDurability;
         public String condition = "ACTIVE";
+        public int breakCount;
     }
 
     public static final class DeathRecordState {

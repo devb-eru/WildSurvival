@@ -97,6 +97,8 @@ slot == 0
 - 곡괭이의 허용 채굴은 `PlayerItemDamageEvent`를 입력으로 받아 정확히 한 번만 원장에 반영한다.
 - 원장 내구가 0이 되는 타격은 바닐라 삭제를 차단하고 권위 이벤트 `EquipmentBrokenEvent`와 감사 이벤트 `EQUIPMENT_BROKEN`을 정확히 한 번 발행한다.
 - 다른 Bukkit 플러그인의 slot 0 파손 관찰 호환을 위해 같은 전이에서 합성 `PlayerItemBreakEvent`를 한 번 추가 발행한다. 이 이벤트의 `brokenItem`은 전이 직전 ItemStack 복사본이며, 실제 장착 ItemStack 삭제·드롭·통계 증가의 권위로 사용하지 않는다.
+- slot 0 인스턴스는 `MAIN_HAND`으로 명시 판정하고 `equipment-broken:{instanceId}:{breakOrdinal}` 멱등 키를 사용한다. `breakOrdinal`은 인스턴스별 파손 성공 횟수+1이므로 같은 전이 중복은 막고 수리 뒤 재파손은 허용한다. 파손 직전 복사본을 확보하지 못하면 `BROKEN` 전이를 커밋하지 않고 오류로 안전 정지한다.
+- 두 이벤트 뒤 `BREAK_EQUIPMENT_MAIN_HAND`과 파손 사운드를 전송하고 다음 서버 틱에 slot 0 미러를 복원한다. 시각 효과는 이벤트 대체물이 아니며 이벤트와 같은 단일 전이에서만 발생한다.
 - 합성 `PlayerItemBreakEvent`를 다시 WS 내구 차감 입력으로 해석하지 않는다. 외부 리스너가 장비 슬롯을 수정해도 다음 틱에 서버 원장의 `BROKEN` 미러로 복구한다.
 - `BROKEN` 장비는 장착 미러는 유지하되 공격·옵션을 비활성화하고 수리 GUI로 안내한다.
 - 바닐라 아이템은 기존 `PlayerItemDamageEvent/PlayerItemBreakEvent`를 그대로 사용한다.

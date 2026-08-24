@@ -17,12 +17,15 @@ public final class EquipmentBrokenEvent extends Event {
     private final String templateId;
     private final String instanceId;
     private final String reason;
+    private final EquipmentDurabilityPolicy.BreakSlot slot;
 
-    public EquipmentBrokenEvent(Player player, String templateId, String instanceId, String reason) {
+    public EquipmentBrokenEvent(Player player, String templateId, String instanceId, String reason,
+                                EquipmentDurabilityPolicy.BreakSlot slot) {
         this.player = Objects.requireNonNull(player, "player");
         this.templateId = Objects.requireNonNull(templateId, "templateId");
         this.instanceId = Objects.requireNonNull(instanceId, "instanceId");
         this.reason = Objects.requireNonNull(reason, "reason");
+        this.slot = Objects.requireNonNull(slot, "slot");
     }
 
     public Player getPlayer() {
@@ -39,6 +42,10 @@ public final class EquipmentBrokenEvent extends Event {
 
     public String getReason() {
         return reason;
+    }
+
+    public EquipmentDurabilityPolicy.BreakSlot getSlot() {
+        return slot;
     }
 
     @Override
