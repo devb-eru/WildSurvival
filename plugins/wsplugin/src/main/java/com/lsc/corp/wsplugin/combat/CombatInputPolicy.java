@@ -28,6 +28,19 @@ public final class CombatInputPolicy {
         return sneaking ? LeftDisposition.WEAPON_SKILL : LeftDisposition.BASIC_ATTACK;
     }
 
+    public static SlotChangeDisposition slotChange(int previousSlot, int newSlot, boolean sneaking) {
+        if (!sneaking || previousSlot != 0) {
+            return SlotChangeDisposition.VANILLA;
+        }
+        if (newSlot >= 1 && newSlot <= 4) {
+            return SlotChangeDisposition.COMMON_ACTIVE;
+        }
+        if (newSlot >= 5 && newSlot <= 8) {
+            return SlotChangeDisposition.QUICK_ITEM;
+        }
+        return SlotChangeDisposition.VANILLA;
+    }
+
     public enum LeftDisposition {
         VANILLA,
         VANILLA_MINING,
@@ -38,6 +51,16 @@ public final class CombatInputPolicy {
 
         public boolean cancelsBlockDamage() {
             return this != VANILLA && this != VANILLA_MINING;
+        }
+    }
+
+    public enum SlotChangeDisposition {
+        VANILLA,
+        COMMON_ACTIVE,
+        QUICK_ITEM;
+
+        public boolean returnsToCombatStance() {
+            return this != VANILLA;
         }
     }
 }

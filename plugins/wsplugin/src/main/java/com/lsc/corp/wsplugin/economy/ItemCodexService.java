@@ -357,7 +357,9 @@ public final class ItemCodexService implements Listener {
         Item item = event.getItem();
         String id = itemId(item.getItemStack());
         if (id != null && hasEntry(id)) {
-            discover(player, id, "PICKUP");
+            // The event fires before the inventory mutation. Reconcile on the next tick so a full
+            // inventory or another pickup mutation cannot unlock an item the player never received.
+            Bukkit.getScheduler().runTask(plugin, () -> reconcile(player));
         }
     }
 
@@ -418,12 +420,26 @@ public final class ItemCodexService implements Listener {
         lore.add(ChatColor.DARK_GRAY + "도감 " + String.format(java.util.Locale.ROOT, "%04d", entry.codexIndex) + " · ID: " + entry.id);
         lore.add(ChatColor.WHITE + "분류: " + entry.category);
         lore.addAll(entry.details.stream().map(line -> ChatColor.GRAY + line).toList());
+        List<ProductionContentCatalog.RecipeEntry> recipes = production.recipesByOutput()
+                .getOrDefault(entry.id, List.of());
+        List<ProductionContentCatalog.RecipeEntry> uses = production.recipes().stream()
+                .filter(recipe -> recipe.ingredients().stream().anyMatch(ingredient ->
+                        "ITEM".equals(ingredient.kind()) && entry.id.equals(ingredient.key())))
+                .toList();
+        if (recipes.isEmpty()) lore.add(ChatColor.GRAY + "획득 전용 · 등록 조합법 없음");
+        else {
+            lore.add(ChatColor.YELLOW + "조합법 " + recipes.size() + "개 · "
+                    + recipes.stream().limit(2).map(ProductionContentCatalog.RecipeEntry::id)
+                    .collect(java.util.stream.Collectors.joining(", "))
+                    + (recipes.size() > 2 ? " 외 " + (recipes.size() - 2) + "개" : ""));
+        }
+        if (uses.isEmpty()) lore.add(ChatColor.GRAY + "등록 사용처 없음");
+        else lore.add(ChatColor.AQUA + "사용처 " + uses.size() + "개 · "
+                + uses.stream().limit(2).map(ProductionContentCatalog.RecipeEntry::id)
+                .collect(java.util.stream.Collectors.joining(", "))
+                + (uses.size() > 2 ? " 외 " + (uses.size() - 2) + "개" : ""));
         if (detailed) {
-            List<ProductionContentCatalog.RecipeEntry> recipes = production.recipesByOutput()
-                    .getOrDefault(entry.id, List.of());
-            if (recipes.isEmpty()) {
-                lore.add(ChatColor.GRAY + "획득 전용 · 등록 조합법 없음");
-            } else {
+            if (!recipes.isEmpty()) {
                 lore.add(ChatColor.YELLOW + "등록 조합법 " + recipes.size() + "개:");
                 for (ProductionContentCatalog.RecipeEntry recipe : recipes) {
                     lore.add(ChatColor.WHITE + "- " + recipe.id() + " [" + recipe.layout() + "] → ×" + recipe.outputAmount());

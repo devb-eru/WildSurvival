@@ -629,6 +629,14 @@ public final class EconomyService implements Listener {
     }
 
     private void transferLedger(Player player, String id, ClickType click, int page) {
+        RunSnapshot snapshot = runs.current().orElse(null);
+        boolean prototypeDepot = snapshot != null && snapshot.facility != null && snapshot.facility.active;
+        boolean productionDepot = snapshot != null && FacilityStateAccess.active(snapshot, "FAC-S16");
+        if (snapshot == null || !snapshot.sharedLedgerUnlocked || (!prototypeDepot && !productionDepot)) {
+            player.closeInventory();
+            player.sendMessage(ChatColor.RED + "공용 물류고가 비활성화되어 원장 거래를 중단했습니다.");
+            return;
+        }
         boolean deposit = click.isLeftClick();
         boolean withdraw = click.isRightClick();
         if (!deposit && !withdraw) return;

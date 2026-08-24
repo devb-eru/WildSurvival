@@ -896,18 +896,22 @@ public final class CombatService implements Listener {
             return;
         }
         int slot = event.getNewSlot();
-        if (!player.isSneaking() || event.getPreviousSlot() != 0) {
-            return;
+        CombatInputPolicy.SlotChangeDisposition disposition = CombatInputPolicy.slotChange(
+                event.getPreviousSlot(), slot, player.isSneaking());
+        switch (disposition) {
+            case COMMON_ACTIVE -> {
+                event.setCancelled(true);
+                executeCommonActive(player, slot);
+            }
+            case QUICK_ITEM -> {
+                event.setCancelled(true);
+                executeQuickItem(player, slot - 4);
+            }
+            case VANILLA -> {
+                return;
+            }
         }
-        if (slot >= 1 && slot <= 4) {
-            event.setCancelled(true);
-            executeCommonActive(player, slot);
-            returnToCombatStance(player);
-        } else if (slot >= 5 && slot <= 8) {
-            event.setCancelled(true);
-            executeQuickItem(player, slot - 4);
-            returnToCombatStance(player);
-        }
+        if (disposition.returnsToCombatStance()) returnToCombatStance(player);
     }
 
     @EventHandler
