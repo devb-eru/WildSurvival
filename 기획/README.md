@@ -119,6 +119,7 @@ WildSurvival의 기획 문서를 책임 영역별로 분류한 색인이다. 문
 - [ENEMY-DATA Day 11-20 적 목록 기획서](<06 사건과 적/ENEMY-DATA Day 11-20 적 목록 기획서.md>)
 - [ENEMY-DATA Day 21-50 적 실행 데이터 기획서](<06 사건과 적/ENEMY-DATA Day 21-50 적 실행 데이터 기획서.md>)
 - [ENTITY-LIST Season 1 엔티티 목록 기획서](<06 사건과 적/ENTITY-LIST Season 1 엔티티 목록 기획서.md>)
+- [ENEMY-ACTION-LIST Season 1 적 행동 목록 기획서](<06 사건과 적/ENEMY-ACTION-LIST Season 1 적 행동 목록 기획서.md>)
 
 ## 07 보스
 

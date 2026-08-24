@@ -112,6 +112,7 @@
 | `CORR-LIST-001` | `DATA_LOCKED` | 오염 변이 목록 | G0 |
 | `EVENT-LIST-001` | `DATA_LOCKED` | 사건 유형·후보 정책 | G0 |
 | `ENTITY-LIST-001` | `DATA_LOCKED` | 적·보스·지원 개체 91개 ID·수명·보상 경계 | DEV-600~700 |
+| `ENEMY-ACTION-LIST-001` | `DATA_LOCKED` | 적 53종 행동 bundle 53개·행동 69개 영구 ID와 실행 프로필 | DEV-600~700 |
 | `ENEMY-001` | `BASELINE_LOCKED` | 적 역할·템플릿 | G0 |
 | `BOSS-001~004` | `BASELINE_LOCKED` | Day 10·20·30·40 보스 설계 | G0 |
 | `SYSTEM-AUDIT-001` | `ACTIVE_CONTROL` | Story 선행 시스템 경계 | G0 |

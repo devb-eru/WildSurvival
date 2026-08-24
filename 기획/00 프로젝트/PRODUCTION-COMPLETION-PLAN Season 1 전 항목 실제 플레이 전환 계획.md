@@ -165,7 +165,7 @@ L0 수량 일치는 콘텐츠 존재 증거다. `BLOCKED_DATA`, `STRUCTURED_ONLY
 - cleanup, despawn, void, 전멸, 사건 종료, 고아 개체 제거
 - reward owner, loot table, 소환체·오브젝트 무보상과 중복 처치 차단
 
-현재 57개 action set의 행동 1개 축약을 제거하고 권위 문서의 모든 패턴을 고정 action ID로 전개한다. 보스 4기는 각 페이즈·오브젝트·중단·그로기·보상 단계를 별도 상태로 가진다.
+현재 r2의 일반 적 53개 action bundle은 모두 행동 1개로 축약돼 있다. `ENEMY-ACTION-LIST-001`은 이를 일반·정예·소환체 69개 고정 action ID로 잠갔으며, 보스 4기의 기존 48패턴과 합쳐 전체 57 bundle·117 action으로 전개한다. 보스 4기는 각 페이즈·오브젝트·중단·그로기·보상 단계를 별도 상태로 가진다.
 
 ### 3.8 시설 목록 — `FACILITY-LIST-001`
 
