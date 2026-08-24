@@ -629,7 +629,7 @@
       "unlockText": "C18, Lv5",
       "effectOpcode": "REFORGE",
       "effectText": "옵션 잠금·재련, 천장 진행 저장",
-      "maintenanceText": "작업당 신호 1, 위협 12",
+      "maintenanceText": "확정당 `WSR-REDSTONE×1`, 위협 12",
       "portableFallback": "재련 불가, 기존 장비 사용 가능",
       "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
       "raw": [
@@ -901,7 +901,7 @@
       "unlockText": "C11, Lv5",
       "effectOpcode": "MEDICAL",
       "effectText": "부상 회복, 해독, 구조 보조",
-      "maintenanceText": "환자당 생존 1, 위협 10",
+      "maintenanceText": "환자 부상 1단당 `WSR-RATION×1`, 위협 10",
       "portableFallback": "C06 야전 약제대",
       "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
       "raw": [
@@ -935,7 +935,7 @@
       "unlockText": "DEATH 해금, Lv3",
       "effectOpcode": "GRAVE_RECOVERY",
       "effectText": "접근 불가 유품 복구 요청·귀속 확인",
-      "maintenanceText": "요청당 신호 2, 위협 8",
+      "maintenanceText": "요청당 `WSR-REDSTONE×2`, 위협 8",
       "portableFallback": "OPS 복구 요청, 자동 지급 없음",
       "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
       "raw": [
@@ -1105,7 +1105,7 @@
       "unlockText": "C18, Lv5",
       "effectOpcode": "POWER_DISTRIBUTE",
       "effectText": "연결 시설 동력·연료 분배",
-      "maintenanceText": "기본 손실 10→2%, 위협 13",
+      "maintenanceText": "Lv1~5 손실 10/8/6/4/2%, 위협 13",
       "portableFallback": "시설별 직접 연료",
       "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
       "raw": [
@@ -1343,7 +1343,7 @@
       "unlockText": "C19, Lv3",
       "effectOpcode": "TAUNT_BEACON",
       "effectText": "제한 시간 적 목표 우선순위 변경",
-      "maintenanceText": "사용당 신호 2, 위협 8",
+      "maintenanceText": "사용당 `WSR-REDSTONE×2`, 시설별 60초 재사용, 위협 8",
       "portableFallback": "플레이어 유인·도발",
       "stateMachine": "PLANNED→PLACING→ACTIVE↔DEGRADED↔DISABLED",
       "raw": [

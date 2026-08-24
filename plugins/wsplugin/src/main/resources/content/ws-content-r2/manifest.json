@@ -234,7 +234,7 @@
       "path": "items/non-equipment-items.json",
       "domain": "items",
       "schema": "item.schema.json",
-      "sha256": "64cdd281741a5f549dcfa32d2900f85f842161febab927189cb3c4e342813d50"
+      "sha256": "5e6f3849d652ddaf3feace64dea3fc12c88b8ba6b99bf741d2b2cbba8c12f414"
     },
     {
       "path": "items/codex-index.json",
@@ -270,7 +270,7 @@
       "path": "facilities/season1-facilities.json",
       "domain": "facilities",
       "schema": "facility.schema.json",
-      "sha256": "e4f4aaccab831df7317ec6bfc24004fc5c5fefd52892c7ed6b059c612c050a66"
+      "sha256": "4dec9149f88a2b527c5bfcd68b604ff5b1fd62625e9b3aa0a49202416fb1784c"
     },
     {
       "path": "statuses/season1-statuses.json",

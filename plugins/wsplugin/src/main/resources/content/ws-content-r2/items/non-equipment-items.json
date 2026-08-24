@@ -134,7 +134,7 @@
       "ownership": "PERSONAL",
       "usePolicy": "AMMO_LEDGER_DEPOSIT",
       "connectedFacilityId": "",
-      "effectText": "석궁 전용 8발, 첫 적중 PEN 보정",
+      "effectText": "석궁 전용 8발, 첫 유효 적중 1체 PEN +12",
       "constraintText": "",
       "recipeId": "WSRCP-S04",
       "raw": [
@@ -144,7 +144,7 @@
         "5",
         "SPECTRAL_ARROW",
         "32",
-        "석궁 전용 8발, 첫 적중 PEN 보정",
+        "석궁 전용 8발, 첫 유효 적중 1체 PEN +12",
         "WSRCP-S04"
       ]
     },
@@ -163,7 +163,7 @@
       "ownership": "PERSONAL",
       "usePolicy": "QUICK_BINDABLE",
       "connectedFacilityId": "",
-      "effectText": "개인 오염 감소, 전투당 2회",
+      "effectText": "개인 오염 -15, 상태 제거 없음, 전투당 2회",
       "constraintText": "",
       "recipeId": "WSRCP-S05",
       "raw": [
@@ -173,7 +173,7 @@
         "5",
         "HONEY_BOTTLE",
         "8",
-        "개인 오염 감소, 전투당 2회",
+        "개인 오염 -15, 상태 제거 없음, 전투당 2회",
         "WSRCP-S05"
       ]
     },
@@ -192,7 +192,7 @@
       "ownership": "PERSONAL",
       "usePolicy": "QUICK_BINDABLE",
       "connectedFacilityId": "",
-      "effectText": "AP 즉시 회복, 탈진 해제 아님, 전투당 1회",
+      "effectText": "AP +30 즉시 회복, 초과분 소멸·탈진 해제 아님, 전투당 1회",
       "constraintText": "",
       "recipeId": "WSRCP-S06",
       "raw": [
@@ -202,7 +202,7 @@
         "6",
         "SUGAR",
         "8",
-        "AP 즉시 회복, 탈진 해제 아님, 전투당 1회",
+        "AP +30 즉시 회복, 초과분 소멸·탈진 해제 아님, 전투당 1회",
         "WSRCP-S06"
       ]
     },
@@ -221,7 +221,7 @@
       "ownership": "PERSONAL",
       "usePolicy": "QUICK_BINDABLE",
       "connectedFacilityId": "",
-      "effectText": "다음 구조 1회의 중단 임계 보조",
+      "effectText": "다음 구조 1회 중단 피해 임계 +15%, 강화형과 비합산",
       "constraintText": "",
       "recipeId": "WSRCP-S07",
       "raw": [
@@ -231,7 +231,7 @@
         "3",
         "TRIPWIRE_HOOK",
         "8",
-        "다음 구조 1회의 중단 임계 보조",
+        "다음 구조 1회 중단 피해 임계 +15%, 강화형과 비합산",
         "WSRCP-S07"
       ]
     },
@@ -453,7 +453,7 @@
       "ownership": "PERSONAL",
       "usePolicy": "AMMO_LEDGER_DEPOSIT",
       "connectedFacilityId": "",
-      "effectText": "정화 취약 대상용 8발, 자원 생성 없음",
+      "effectText": "활·석궁, 정화 취약 대상 PURIFY_EXPOSED 6초, 자원 생성 없음",
       "constraintText": "",
       "recipeId": "WSRCP-D50-S01",
       "raw": [
@@ -463,7 +463,7 @@
         "23",
         "TIPPED_ARROW",
         "32",
-        "정화 취약 대상용 8발, 자원 생성 없음",
+        "활·석궁, 정화 취약 대상 PURIFY_EXPOSED 6초, 자원 생성 없음",
         "WSRCP-D50-S01"
       ]
     },
@@ -482,7 +482,7 @@
       "ownership": "PERSONAL",
       "usePolicy": "AMMO_LEDGER_DEPOSIT",
       "connectedFacilityId": "",
-      "effectText": "INTERRUPTIBLE 채널 브레이크용 8발",
+      "effectText": "석궁 전용, INTERRUPTIBLE 적중 최종 브레이크 ×1.50",
       "constraintText": "",
       "recipeId": "WSRCP-D50-S02",
       "raw": [
@@ -492,7 +492,7 @@
         "33",
         "FIREWORK_STAR",
         "32",
-        "INTERRUPTIBLE 채널 브레이크용 8발",
+        "석궁 전용, INTERRUPTIBLE 적중 최종 브레이크 ×1.50",
         "WSRCP-D50-S02"
       ]
     },
@@ -511,7 +511,7 @@
       "ownership": "PERSONAL",
       "usePolicy": "AMMO_LEDGER_DEPOSIT",
       "connectedFacilityId": "",
-      "effectText": "시설·아군의 약한 오염 압력 1단 완화, 대상별 20초",
+      "effectText": "석궁 전용 32m 아군·시설 비피해, 약한 오염 압력 1단 완화, 대상별 20초",
       "constraintText": "",
       "recipeId": "WSRCP-D50-S03",
       "raw": [
@@ -521,7 +521,7 @@
         "41",
         "WIND_CHARGE",
         "16",
-        "시설·아군의 약한 오염 압력 1단 완화, 대상별 20초",
+        "석궁 전용 32m 아군·시설 비피해, 약한 오염 압력 1단 완화, 대상별 20초",
         "WSRCP-D50-S03"
       ]
     },

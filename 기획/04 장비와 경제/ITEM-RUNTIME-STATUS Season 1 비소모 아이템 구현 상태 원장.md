@@ -36,10 +36,10 @@
 | ID | DATA | 현재 RUNTIME | 남은 완료 조건 | 판정 |
 |---|---|---|---|---|
 | `WSI-AMMO-ARROW_BUNDLE` | 통과 | slot1~8 우클릭 전량 입금·저장, 활/석궁·순간 장전 우선 소비, HUD 잔량, 바닐라 화살 폴백 | 실제 우클릭·재접속·동시 소비 E2E | `PARTIAL_RUNTIME` |
-| `WSI-AMMO-PIERCING_BOLT_BUNDLE` | 통과 | 실행기 없음 | 석궁 전용 선택, 첫 적중 PEN 수치, 소비·복구 | `BLOCKED_DATA` |
-| `WSI-AMMO-PURIFY_ARROW_BUNDLE` | 통과 | 실행기 없음 | 호환 무기, 정화 취약 판정, 자원 생성 0 검증 | `PARTIAL_RUNTIME` |
-| `WSI-AMMO-RESONANCE_BOLT_BUNDLE` | 통과 | 실행기 없음 | 석궁 전용, INTERRUPTIBLE 추가 브레이크 수치 | `BLOCKED_DATA` |
-| `WSI-AMMO-STABILIZER_DART_BUNDLE` | 통과 | 실행기 없음 | 발사 무기, 아군·시설 표적, 완화 1단·대상별 20초 | `BLOCKED_DATA` |
+| `WSI-AMMO-PIERCING_BOLT_BUNDLE` | 통과; PEN +12 잠금 | 실행기 없음 | 석궁 선택·첫 유효 적중 1체·소비·복구 | `RUNTIME_MISSING` |
+| `WSI-AMMO-PURIFY_ARROW_BUNDLE` | 통과; 활/석궁·표식 6초 잠금 | 실행기 없음 | 정화 취약 판정·다음 정화 1단·자원 생성 0 검증 | `RUNTIME_MISSING` |
+| `WSI-AMMO-RESONANCE_BOLT_BUNDLE` | 통과; INTERRUPTIBLE Break ×1.50 잠금 | 실행기 없음 | 석궁 선택·지연 적중 경계·소비 복구 | `RUNTIME_MISSING` |
+| `WSI-AMMO-STABILIZER_DART_BUNDLE` | 통과; 석궁 32m 잠금 | 실행기 없음 | 아군·시설 선검증, 비피해, 완화 1단·대상별 20초 | `RUNTIME_MISSING` |
 
 탄약 아이템 1개는 1발이다. 제작식 출력 16/8/8/8/4가 원장 충전량이며 아이템 한 개를 다시 16발 또는 8발로 곱하지 않는다. 이 해석은 `RECIPE-LIST-001`의 실제 출력 수량과 소프트락 예산을 우선한다.
 

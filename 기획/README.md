@@ -15,7 +15,7 @@ WildSurvival의 기획 문서를 책임 영역별로 분류한 색인이다. 문
 
 | 폴더 | 책임 | 문서 수 |
 |---|---|---:|
-| `00 프로젝트` | 프로젝트 방향, 공통 바닐라 정책, 작업 로드맵·완성도 감사 | 8 |
+| `00 프로젝트` | 프로젝트 방향, 공통 바닐라 정책, 작업 로드맵·완성도 감사 | 9 |
 | `01 회차와 진행` | 회차 상태, Day, 난이도, 예산, 전체 진행과 최종 목표 | 8 |
 | `02 플레이어 성장` | 활동, 레벨, 스탯, 증강, 스킬, 사망 | 11 |
 | `03 전투` | 독자 전투 규칙, 브레이크, 상태이상, 무기 실행 | 6 |
@@ -37,6 +37,7 @@ WildSurvival의 기획 문서를 책임 영역별로 분류한 색인이다. 문
 - [PRODUCTION-DESIGN-GATE Season 1 실제 플레이 기획 완결 게이트](<00 프로젝트/PRODUCTION-DESIGN-GATE Season 1 실제 플레이 기획 완결 게이트.md>)
 - [CONTENT-CATALOG-INDEX Season 1 등록 콘텐츠 통합 색인](<00 프로젝트/CONTENT-CATALOG-INDEX Season 1 등록 콘텐츠 통합 색인.md>)
 - [PRODUCTION-COMPLETION-PLAN Season 1 전 항목 실제 플레이 전환 계획](<00 프로젝트/PRODUCTION-COMPLETION-PLAN Season 1 전 항목 실제 플레이 전환 계획.md>)
+- [PRODUCTION-DATA-CLOSURE Season 1 실행 데이터 폐쇄 원장](<00 프로젝트/PRODUCTION-DATA-CLOSURE Season 1 실행 데이터 폐쇄 원장.md>)
 
 ## 01 회차와 진행
 

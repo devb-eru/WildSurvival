@@ -14,7 +14,7 @@ last_updated: 2026-08-24
 
 `ITEM-LIST-001`의 `CONS` 13개를 다른 아이템 범주와 분리해 추적한다. 이 문서는 구현 완료를 선언하는 문서가 아니다. 각 행의 데이터, 서버 효과, 자동 시험, 실제 클라이언트 시험이 모두 `VERIFIED`일 때만 해당 ID를 완료로 승격한다.
 
-권위 순서는 `ITEM-LIST-001 → CRAFT-001/RESOURCE-DATA-D20-001 → STATUS-001/SKILL-001 → 이 원장`이다. 상위 문서에 정확한 수치가 없으면 기존 코드값을 권위로 승격하지 않고 `BLOCKED`로 둔다.
+권위 순서는 `ITEM-LIST-001 → CRAFT-001/RESOURCE-DATA-D20-001 → STATUS-001/SKILL-001 → PRODUCTION-DATA-CLOSURE-001 → 이 원장`이다. 상위 문서에 정확한 수치가 없으면 기존 코드값을 권위로 승격하지 않고 `BLOCKED`로 둔다.
 
 허용 상태는 `NOT_STARTED`, `IN_PROGRESS`, `VERIFIED`, `BLOCKED`다.
 
@@ -34,9 +34,9 @@ last_updated: 2026-08-24
 | `WSI-CONS-RATION_PACK` | 야전 배급팩 | 비전투 160틱, 전투 240틱 예약 채널; 완료 시 허기 8·포화 6 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 예약·좌클릭/종료 반환 구현. 실제 키 입력·TPS 열화·중복 입력 검증 필요 |
 | `WSI-CONS-BANDAGE` | 붕대 | BLEED 1중첩 제거, 직접 회복 없음 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 무효 대상 무소비 구현. 실제 상태 아이콘·잔여 중첩 검증 필요 |
 | `WSI-CONS-REPAIR_KIT` | 야전 수리 키트 | 가장 손상된 장착 장비를 최대 내구 40%까지 복구 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 장비 선택 동률·BROKEN·동시 GUI E2E 필요 |
-| `WSI-CONS-PURIFY_AMPOULE` | 정화 앰풀 | 개인 오염 감소, 전투당 2회 | `BLOCKED` | `BLOCKED` | `NOT_STARTED` | `BLOCKED` | 개인 오염 수치와 1회 감소량이 없음. 현재 약한 상태 정화는 대체 완료로 인정하지 않음 |
-| `WSI-CONS-AP_STIM` | 응급 AP 자극제 | 즉시 AP 회복, 탈진 해제 없음, 전투당 1회 | `BLOCKED` | `BLOCKED` | `IN_PROGRESS` | `BLOCKED` | Q 직접 회복량 결정 필요. 현재 30은 임시 코드값 |
-| `WSI-CONS-RESCUE_BRACE` | 구조 고정대 | 다음 구조 1회의 중단 피해 임계 보조 | `BLOCKED` | `BLOCKED` | `NOT_STARTED` | `BLOCKED` | 기본 임계 보너스 결정 필요. 강화형과 별도 예약 큐 필요 |
+| `WSI-CONS-PURIFY_AMPOULE` | 정화 앰풀 | 개인 오염 -15, STATUS 제거 없음, 전투당 2회 | `VERIFIED` | `NOT_STARTED` | `NOT_STARTED` | `BLOCKED` | 개인 오염 0~100 영속 필드와 단계 이벤트 구현 필요 |
+| `WSI-CONS-AP_STIM` | 응급 AP 자극제 | AP +30, 초과분 소멸, 탈진 해제 없음, 전투당 1회 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 임시 코드값을 권위 수치로 일치시킴. 무효·마지막 1개 경합 시험 필요 |
+| `WSI-CONS-RESCUE_BRACE` | 구조 고정대 | 다음 구조 첫 유효 틱부터 중단 피해 임계 +15% | `VERIFIED` | `NOT_STARTED` | `NOT_STARTED` | `BLOCKED` | 강화형과 비합산 최고값 예약·소비·취소 구현 필요 |
 | `WSI-CONS-PORTABLE_PURIFIER_CHARGE` | 휴대 정화기 충전 | 활성 FAC-P05 가동시간 60초 연장 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 동일 시설 다중 사용·철거/파괴 경합 E2E 필요 |
 | `WSI-CONS-ANTIDOTE_INJECTION` | 해독 주사 | POISON 최대 2중첩, 관리 밖 약한 독이면 효과 1개 제거 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 과다 정화를 제거함. 잔여 스택 포션 강도·지속시간 실제 판독 필요 |
 | `WSI-CONS-COOLING_SALVE` | 냉각 연고 | BURN 최대 2중첩 제거, 이후 5초간 새 BURN 지속시간 ×0.75 | `VERIFIED` | `IN_PROGRESS` | `IN_PROGRESS` | `BLOCKED` | 상태 PDC 저장·만료 구현. 재시작 경계와 연속 사용 E2E 필요 |
@@ -47,13 +47,12 @@ last_updated: 2026-08-24
 
 ## 4. 다음 구현 순서
 
-1. 사용자가 AP 자극제 회복량과 기본 구조 고정대 보너스를 확정한다.
-2. 개인 오염 게이지·정화 감소량을 `CORR-001`과 동일 필드로 고정한다.
-3. 구조 고정대를 사용 순서가 보존되는 임계 보너스 큐로 바꾸고 구조 시작 때 정확히 1개를 소비한다.
-4. 신경 안정제의 아군 대상 선택과 생체 보호막의 원천별 흡수 원장을 구현한다.
-5. Test Lab에 13개 ID별 성공·무효 대상·마지막 1개 경합·저장 복구 fixture를 추가한다.
-6. `E2E-52` 실제 클라이언트 시험을 통과한 행만 `VERIFIED`로 승격한다.
+1. 개인 오염 0~100 영속 필드와 정화 앰풀 -15를 구현한다.
+2. 구조 고정대를 최고값 1개 예약으로 바꾸고 첫 유효 구조 진행 틱에 정확히 1개를 소비한다.
+3. 신경 안정제의 아군 대상 선택과 생체 보호막의 원천별 흡수 원장을 구현한다.
+4. Test Lab에 13개 ID별 성공·무효 대상·마지막 1개 경합·저장 복구 fixture를 추가한다.
+5. `E2E-52` 실제 클라이언트 시험을 통과한 행만 `VERIFIED`로 승격한다.
 
 ## 5. 현재 결론
 
-소모품 13개는 목록·제작·기본 진입점이 존재하지만 전체 완료 상태가 아니다. 과다 상태 제거와 Day 단위 사용 한도는 교정됐고 배급팩 예약 채널이 추가됐다. 정확 수치가 없는 3개 계약과 실제 클라이언트 시험이 남아 있으므로 묶음 상태는 `IN_PROGRESS`다.
+소모품 13개는 목록·제작·기본 진입점이 존재하지만 전체 완료 상태가 아니다. 과다 상태 제거와 Day 단위 사용 한도는 교정됐고 배급팩 예약 채널이 추가됐다. 이전의 수치 공백 3개는 `PRODUCTION-DATA-CLOSURE-001`로 닫혔으며 개인 오염·구조 예약 런타임과 실제 클라이언트 시험이 남아 있으므로 묶음 상태는 `IN_PROGRESS`다.

@@ -49,10 +49,10 @@
 | 0101 | `WSI-CONS-BANDAGE` | 붕대 | 1 | PAPER | 16 | BLEED 1중첩 제거, 직접 치료 없음 | `WSRCP-S01` |
 | 0102 | `WSI-CONS-REPAIR_KIT` | 야전 수리 키트 | 2 | ANVIL | 8 | 일반 수리, BROKEN 장비 최대 내구 40%까지 복구 | `WSRCP-S02` |
 | 0103 | `WSI-AMMO-ARROW_BUNDLE` | 일반 화살 묶음 | 3 | ARROW | 64 | 활·석궁 공용 16발 단위 탄약 원장 충전 | `WSRCP-S03` |
-| 0104 | `WSI-AMMO-PIERCING_BOLT_BUNDLE` | 관통 볼트 묶음 | 5 | SPECTRAL_ARROW | 32 | 석궁 전용 8발, 첫 적중 PEN 보정 | `WSRCP-S04` |
-| 0105 | `WSI-CONS-PURIFY_AMPOULE` | 정화 앰풀 | 5 | HONEY_BOTTLE | 8 | 개인 오염 감소, 전투당 2회 | `WSRCP-S05` |
-| 0106 | `WSI-CONS-AP_STIM` | 응급 AP 자극제 | 6 | SUGAR | 8 | AP 즉시 회복, 탈진 해제 아님, 전투당 1회 | `WSRCP-S06` |
-| 0107 | `WSI-CONS-RESCUE_BRACE` | 구조 고정대 | 3 | TRIPWIRE_HOOK | 8 | 다음 구조 1회의 중단 임계 보조 | `WSRCP-S07` |
+| 0104 | `WSI-AMMO-PIERCING_BOLT_BUNDLE` | 관통 볼트 묶음 | 5 | SPECTRAL_ARROW | 32 | 석궁 전용 8발, 첫 유효 적중 1체 PEN +12 | `WSRCP-S04` |
+| 0105 | `WSI-CONS-PURIFY_AMPOULE` | 정화 앰풀 | 5 | HONEY_BOTTLE | 8 | 개인 오염 -15, 상태 제거 없음, 전투당 2회 | `WSRCP-S05` |
+| 0106 | `WSI-CONS-AP_STIM` | 응급 AP 자극제 | 6 | SUGAR | 8 | AP +30 즉시 회복, 초과분 소멸·탈진 해제 아님, 전투당 1회 | `WSRCP-S06` |
+| 0107 | `WSI-CONS-RESCUE_BRACE` | 구조 고정대 | 3 | TRIPWIRE_HOOK | 8 | 다음 구조 1회 중단 피해 임계 +15%, 강화형과 비합산 | `WSRCP-S07` |
 | 0108 | `WSI-CONS-PORTABLE_PURIFIER_CHARGE` | 휴대 정화기 충전 | 5 | GLOWSTONE_DUST | 16 | FAC-P05 60초 가동 | `WSRCP-S08` |
 | 0109 | `WSI-CONS-ANTIDOTE_INJECTION` | 해독 주사 | 11 | POTION | 8 | POISON 2중첩 또는 약한 독 1개 제거 | `WSRCP-D20-S01` |
 | 0110 | `WSI-CONS-COOLING_SALVE` | 냉각 연고 | 12 | SNOWBALL | 8 | BURN 2중첩 제거, 5초 화상 지속시간 -25% | `WSRCP-D20-S02` |
@@ -60,9 +60,9 @@
 | 0112 | `WSI-CONS-NEURAL_STABILIZER` | 신경 안정제 | 14 | FERMENTED_SPIDER_EYE | 4 | ROOT·SILENCE·DISARM 중 1개 제거, HARD_CC 중 자기 사용 불가 | `WSRCP-D20-S04` |
 | 0113 | `WSI-CONS-REINFORCED_RESCUE_BRACE` | 강화 구조 고정대 | 14 | CHAIN | 8 | 다음 구조 1회 중단 피해 임계 +25% | `WSRCP-D20-S05` |
 | 0114 | `WSI-CONS-BIO_SHIELD_AMPOULE` | 생체 보호막 앰풀 | 16 | TURTLE_SCUTE | 4 | 최대 HP 8% 보호막 6초, 전투당 1회 | `WSRCP-D20-S06` |
-| 0115 | `WSI-AMMO-PURIFY_ARROW_BUNDLE` | 정화 화살 묶음 | 23 | TIPPED_ARROW | 32 | 정화 취약 대상용 8발, 자원 생성 없음 | `WSRCP-D50-S01` |
-| 0116 | `WSI-AMMO-RESONANCE_BOLT_BUNDLE` | 공진 볼트 묶음 | 33 | FIREWORK_STAR | 32 | INTERRUPTIBLE 채널 브레이크용 8발 | `WSRCP-D50-S02` |
-| 0117 | `WSI-AMMO-STABILIZER_DART_BUNDLE` | 안정화 다트 묶음 | 41 | WIND_CHARGE | 16 | 시설·아군의 약한 오염 압력 1단 완화, 대상별 20초 | `WSRCP-D50-S03` |
+| 0115 | `WSI-AMMO-PURIFY_ARROW_BUNDLE` | 정화 화살 묶음 | 23 | TIPPED_ARROW | 32 | 활·석궁, 정화 취약 대상 PURIFY_EXPOSED 6초, 자원 생성 없음 | `WSRCP-D50-S01` |
+| 0116 | `WSI-AMMO-RESONANCE_BOLT_BUNDLE` | 공진 볼트 묶음 | 33 | FIREWORK_STAR | 32 | 석궁 전용, INTERRUPTIBLE 적중 최종 브레이크 ×1.50 | `WSRCP-D50-S02` |
+| 0117 | `WSI-AMMO-STABILIZER_DART_BUNDLE` | 안정화 다트 묶음 | 41 | WIND_CHARGE | 16 | 석궁 전용 32m 아군·시설 비피해, 약한 오염 압력 1단 완화, 대상별 20초 | `WSRCP-D50-S03` |
 
 소모품 사용은 `request→validate→reserve→apply→commit` 순서다. 대상·거리·상태·전투당 상한 검사가 실패하면 수량을 차감하지 않는다.
 
