@@ -51,7 +51,7 @@
 | `WSI-PORTABLE-SAMPLE_EXTRACTOR` / P03 | 통과 | 안내 문구만 출력 | 채널·피격/이동 취소·표본 결과·증거 저장 | `PARTIAL_RUNTIME` |
 | `WSI-PORTABLE-ANALYZER` / P04 | 통과 | 시설 수·위협 요약 | 단일 작업 큐·150% 시간·증거 비교·소급 판정 | `PARTIAL_RUNTIME` |
 | `WSI-PORTABLE-PURIFIER` / P05 | 통과 | 아이템별 `portableInstanceId`, 다중 60초 인스턴스·반경 5·최근접 장치 충전 연장 | 지속 오염 압력 완화·재시작 E2E | `PARTIAL_RUNTIME` |
-| `WSI-PORTABLE-SIGNAL_STAKE` / P06 | 통과 | 배치별 `portableInstanceId`, 동일 플레이어 다중 블록 설치·회수 | 3개 거리·무게중심·측정·전장 Manifest 연결 | `PARTIAL_RUNTIME` |
+| `WSI-PORTABLE-SIGNAL_STAKE` / P06 | 통과 | 배치별 `portableInstanceId`, 동일 플레이어 다중 설치·회수, Day별 3개 조합·거리·무게중심 결정 | 지면·경로·액체·보호구역 스캔과 `ArenaManifest` 저장 | `PARTIAL_RUNTIME` |
 | `WSI-PORTABLE-RESCUE_BEACON` / P07 | 통과 | 300초 반경 12·구조속도 1.15배 | 전투당 1회·도움 표식·재시작·실클라 입력 | `PARTIAL_RUNTIME` |
 | `WSI-PORTABLE-LEDGER` / P08 | 통과 | FAC-S16 ACTIVE일 때 원장 GUI 연결 | 안전 상태 소량 예약 상한·원격 권한·실클라 E2E | `PARTIAL_RUNTIME` |
 
@@ -111,7 +111,7 @@
 
 1. 일반 탄약 원장 입금·활/석궁 소비·저장은 구현됐으며 실제 클라이언트 우클릭·재접속 E2E로 닫는다.
 2. 휴대 장치 `portableInstanceId`, P05 다중 장치, P06 동일 플레이어 다중 말뚝은 구현됐으며 재시작·실제 설치 E2E로 닫는다.
-3. P06 말뚝 3개를 공통 입력으로 하는 `ArenaCandidate/ArenaManifest` 검사기를 만든다.
+3. P06 말뚝 3개의 결정적 `ArenaCandidate` 선택은 구현됐으며, Bukkit 지형 스캔과 통과한 `ArenaManifest` 저장을 연결한다.
 4. 호출품의 `callInstanceId/runId/recipeTransactionId`와 `validate→manifest→reserve→spawn→commit`, 실패 시 반환을 구현한다.
 5. 특수 탄약 4종은 정확한 PEN·추가 브레이크·발사 무기 계약을 확정한 뒤 효과를 연결한다.
 6. 실제 클라이언트로 설치·회수·우클릭·인벤토리 부족·재시작 E2E를 통과시킨다.

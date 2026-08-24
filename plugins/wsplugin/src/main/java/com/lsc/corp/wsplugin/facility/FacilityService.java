@@ -1,5 +1,6 @@
 package com.lsc.corp.wsplugin.facility;
 
+import com.lsc.corp.wsplugin.boss.ArenaManifestPolicy;
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
 import com.lsc.corp.wsplugin.combat.CombatService;
 import com.lsc.corp.wsplugin.economy.ItemCodexService;
@@ -610,6 +611,7 @@ public final class FacilityService implements Listener {
             runs.mutate(snapshot -> FacilityStateAccess.instances(snapshot).put(instanceId, instance));
             player.sendMessage(ChatColor.GREEN + "신호 말뚝 설치 완료 · 활성 말뚝 "
                     + activePortableCount("FAC-P06") + "개. 말뚝을 우클릭하면 회수합니다.");
+            previewArenaTriangle(player);
         } catch (RuntimeException exception) {
             target.setType(original, false);
             codex.grantItem(player, profile.itemId(), 1);
@@ -668,6 +670,31 @@ public final class FacilityService implements Listener {
         RunSnapshot run = runs.current().orElseThrow();
         return FacilityStateAccess.instances(run).values().stream()
                 .filter(value -> facilityType.equals(value.facilityType) && "ACTIVE".equals(value.state)).count();
+    }
+
+    private void previewArenaTriangle(Player player) {
+        RunSnapshot run = runs.current().orElseThrow();
+        String callItemId = switch (run.day) {
+            case 10 -> "WSI-CALL-D10";
+            case 20 -> "WSI-CALL-D20";
+            case 30 -> "WSI-CALL-D30";
+            case 40 -> "WSI-CALL-D40";
+            default -> null;
+        };
+        if (callItemId == null || activePortableCount("FAC-P06") < 3) return;
+        List<ArenaManifestPolicy.Stake> stakes = FacilityStateAccess.instances(run).values().stream()
+                .filter(value -> "FAC-P06".equals(value.facilityType))
+                .map(value -> new ArenaManifestPolicy.Stake(value.instanceId, value.world,
+                        value.x + 0.5, value.y, value.z + 0.5, value.state)).toList();
+        ArenaManifestPolicy.Selection selection = ArenaManifestPolicy.select(callItemId, stakes);
+        if (selection.accepted()) {
+            ArenaManifestPolicy.Candidate candidate = selection.candidate();
+            player.sendMessage(ChatColor.AQUA + "전장 삼각 측정 통과 · 중심 "
+                    + Math.round(candidate.x()) + ", " + Math.round(candidate.y()) + ", "
+                    + Math.round(candidate.z()) + " · 지형 스캔 전 상태");
+        } else {
+            player.sendMessage(ChatColor.YELLOW + "말뚝 3개 이상이 있으나 현재 Day의 거리 계약을 만족하는 조합이 없습니다.");
+        }
     }
 
     private static double distanceSquared(Location location, RunSnapshot.FacilityInstanceState instance) {
