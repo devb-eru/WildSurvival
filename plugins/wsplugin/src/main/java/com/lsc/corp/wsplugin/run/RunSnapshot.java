@@ -75,6 +75,7 @@ public final class RunSnapshot {
         public Map<Integer, String> quickBindings = new LinkedHashMap<>();
         public Map<String, Integer> quickItemUsesByDay = new LinkedHashMap<>();
         public Map<String, Integer> quickItemUsesByCombat = new LinkedHashMap<>();
+        public Map<String, Integer> ammoLedger = new LinkedHashMap<>();
         public long personalCombatSequence;
         public long personalCombatScopeExpiresAtEpochMs;
         public int rescueBraceCharges;

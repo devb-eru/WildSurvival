@@ -143,6 +143,7 @@ public final class RunRepository {
         for (RunSnapshot.PlayerState player : snapshot.players.values()) {
             if (player.pendingRemainsDeliveries == null) player.pendingRemainsDeliveries = new LinkedHashMap<>();
             if (player.reviveContributions == null) player.reviveContributions = new LinkedHashMap<>();
+            if (player.ammoLedger == null) player.ammoLedger = new LinkedHashMap<>();
         }
         for (RunSnapshot.ResearchNodeState research : snapshot.researchNodes.values()) {
             if (research.reservedCost == null) research.reservedCost = new LinkedHashMap<>();

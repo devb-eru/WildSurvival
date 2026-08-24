@@ -136,6 +136,7 @@ public final class CombatService implements Listener {
     private ItemRewardHandler itemRewardHandler = (player, resourceId, amount) -> { };
     private DamageNumberService damageNumbers;
     private FacilityService facilityService;
+    private AmmoService ammoService;
     private DeathHandler deathHandler = (player, reason) -> false;
     private boolean scannedPersistedEntities;
     private int hudTick;
@@ -177,6 +178,10 @@ public final class CombatService implements Listener {
 
     public void setFacilityService(FacilityService facilityService) {
         this.facilityService = facilityService;
+    }
+
+    public void setAmmoService(AmmoService ammoService) {
+        this.ammoService = java.util.Objects.requireNonNull(ammoService);
     }
 
     public void setDeathHandler(DeathHandler deathHandler) {
@@ -1160,7 +1165,8 @@ public final class CombatService implements Listener {
             return success;
         }
         if ("RELOAD".equals(skill.effect())) {
-            if (!hasMaterial(player, Material.ARROW, 2)) {
+            boolean ledgerAmmo = ammoService != null && ammoService.generalArrowBalance(player) >= 2;
+            if (!ledgerAmmo && !hasMaterial(player, Material.ARROW, 2)) {
                 ActionBarService.notice(player, Component.text("순간 장전에는 화살 2개가 필요합니다", NamedTextColor.RED), 30);
                 return false;
             }
@@ -1168,7 +1174,8 @@ public final class CombatService implements Listener {
                 apFailure(player, apCost);
                 return false;
             }
-            takeMaterial(player, Material.ARROW, 2);
+            if (ledgerAmmo) ammoService.consumeGeneralArrows(player, 2);
+            else takeMaterial(player, Material.ARROW, 2);
             markCombatAction(player);
             runs.mutate(run -> {
                 RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
@@ -2317,8 +2324,12 @@ public final class CombatService implements Listener {
             }
             NamedTextColor color = state.ap <= 20.0 ? NamedTextColor.RED : NamedTextColor.AQUA;
             String status = statuses.summary(player);
+            String weaponId = equipment.resolveWeaponId(player);
+            String ammoText = usesArrowAmmo(weaponId)
+                    ? " | 화살원장 " + AmmoLedgerPolicy.balance(state.ammoLedger, AmmoLedgerPolicy.GENERAL_ARROW)
+                    + ("CROSSBOW".equals(weaponId) ? " (탄창 " + state.crossbowLoadedAmmo + ")" : "") : "";
             ActionBarService.renderHud(player, Component.text("Day " + snapshot.day + " | AP " + Math.round(state.ap) + "/" + state.maxAp
-                    + " | Lv." + state.level + " | " + equipment.resolveWeaponId(player)
+                    + " | Lv." + state.level + " | " + weaponId + ammoText
                     + (status.isBlank() ? "" : " | " + status), color));
         }
     }
@@ -2872,6 +2883,7 @@ public final class CombatService implements Listener {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
             if (state != null && state.crossbowLoadedAmmo > 0) return true;
         }
+        if (ammoService != null && ammoService.generalArrowBalance(player) > 0) return true;
         return hasMaterial(player, Material.ARROW);
     }
 
@@ -2884,6 +2896,7 @@ public final class CombatService implements Listener {
                 return true;
             }
         }
+        if (ammoService != null && ammoService.consumeGeneralArrows(player, 1)) return true;
         return takeOneMaterial(player, Material.ARROW);
     }
 

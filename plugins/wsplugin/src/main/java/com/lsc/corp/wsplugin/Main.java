@@ -1,6 +1,7 @@
 package com.lsc.corp.wsplugin;
 
 import com.lsc.corp.wsplugin.boss.PrototypeBossService;
+import com.lsc.corp.wsplugin.combat.AmmoService;
 import com.lsc.corp.wsplugin.combat.CombatService;
 import com.lsc.corp.wsplugin.combat.DamageNumberService;
 import com.lsc.corp.wsplugin.content.ContentBundleService;
@@ -75,6 +76,7 @@ public final class Main extends JavaPlugin {
             PlayerStatService stats = new PlayerStatService(this, runService, growth, equipment);
             equipment.setStatRefresher(stats::apply);
             FacilityService facility = new FacilityService(this, runService, content.productionCatalog(), codex, equipment, telemetry);
+            AmmoService ammo = new AmmoService(runService, content.productionCatalog(), codex, telemetry);
             ResearchService research = new ResearchService(runService, content.productionCatalog());
             facility.setOpeners(economy::openCraft, economy::openLedger, codex::open, stats::open,
                     research::open, growth::openAugments);
@@ -86,6 +88,7 @@ public final class Main extends JavaPlugin {
             combat.setProductionLootHandler(loot::rewardEnemy);
             combat.setDamageNumbers(damageNumbers);
             combat.setFacilityService(facility);
+            combat.setAmmoService(ammo);
             facility.setCombatService(combat);
             PrototypeBossService boss = new PrototypeBossService(this, runService, content.productionCatalog(),
                     combat, growth, loot, telemetry);
@@ -109,7 +112,7 @@ public final class Main extends JavaPlugin {
             TestLabCommand testLabCommand = new TestLabCommand(testLab, testLabGui, scenarios, virtualParty, combat, runService);
 
             runService.attach(loop, equipment, growth);
-            registerListeners(equipment, skills, statuses, combat, graves, economy, facility, codex, stats, menu, discoveries, story, finale,
+            registerListeners(equipment, skills, statuses, combat, graves, economy, facility, ammo, codex, stats, menu, discoveries, story, finale,
                     research, tutorial, damageNumbers, growth, boss, loop, testLab, virtualParty, testLabGui);
 
             PrototypeCommand command = new PrototypeCommand(content, runService, equipment, economy, growth, boss, telemetry, testLabCommand, menu);

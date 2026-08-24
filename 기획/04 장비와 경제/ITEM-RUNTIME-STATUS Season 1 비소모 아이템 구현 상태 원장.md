@@ -35,7 +35,7 @@
 
 | ID | DATA | 현재 RUNTIME | 남은 완료 조건 | 판정 |
 |---|---|---|---|---|
-| `WSI-AMMO-ARROW_BUNDLE` | 통과 | 제작·도감만 가능, 전투는 바닐라 ARROW 소비 | 우클릭 원장 입금, 활·석궁 선택·소비·HUD·저장 | `RUNTIME_MISSING` |
+| `WSI-AMMO-ARROW_BUNDLE` | 통과 | slot1~8 우클릭 전량 입금·저장, 활/석궁·순간 장전 우선 소비, HUD 잔량, 바닐라 화살 폴백 | 실제 우클릭·재접속·동시 소비 E2E | `PARTIAL_RUNTIME` |
 | `WSI-AMMO-PIERCING_BOLT_BUNDLE` | 통과 | 실행기 없음 | 석궁 전용 선택, 첫 적중 PEN 수치, 소비·복구 | `BLOCKED_DATA` |
 | `WSI-AMMO-PURIFY_ARROW_BUNDLE` | 통과 | 실행기 없음 | 호환 무기, 정화 취약 판정, 자원 생성 0 검증 | `PARTIAL_RUNTIME` |
 | `WSI-AMMO-RESONANCE_BOLT_BUNDLE` | 통과 | 실행기 없음 | 석궁 전용, INTERRUPTIBLE 추가 브레이크 수치 | `BLOCKED_DATA` |
@@ -109,7 +109,7 @@
 
 ## 7. 다음 구현 순서
 
-1. 일반 탄약 원장 입금·선택·활/석궁 소비와 저장을 먼저 닫는다.
+1. 일반 탄약 원장 입금·활/석궁 소비·저장은 구현됐으며 실제 클라이언트 우클릭·재접속 E2E로 닫는다.
 2. 휴대 장치에 `portableInstanceId`를 부여해 P05 다중 장치와 P06 다중 말뚝을 소유자 한 명도 사용할 수 있게 한다.
 3. P06 말뚝 3개를 공통 입력으로 하는 `ArenaCandidate/ArenaManifest` 검사기를 만든다.
 4. 호출품의 `callInstanceId/runId/recipeTransactionId`와 `validate→manifest→reserve→spawn→commit`, 실패 시 반환을 구현한다.
