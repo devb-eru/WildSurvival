@@ -732,6 +732,9 @@ public final class ProductionBundleValidator {
                 if ("ITEM".equals(ingredient.kind()) && !knownOutputs.contains(ingredient.key())) {
                     throw new ContentValidationException("Unknown recipe input " + recipe.id() + " -> " + ingredient.key());
                 }
+                if ("ITEM".equals(ingredient.kind()) && ingredient.key().equals(output)) {
+                    throw new ContentValidationException("Recipe cannot consume its own output " + recipe.id());
+                }
                 if ("TAG".equals(ingredient.kind()) && !RecipeTagCatalog.supports(ingredient.key())) {
                     throw new ContentValidationException("Unknown recipe tag " + recipe.id() + " -> " + ingredient.key());
                 }
@@ -1022,6 +1025,22 @@ public final class ProductionBundleValidator {
                         || (!equipment.weaponClass().isBlank() && !base.weaponClass().equals(equipment.weaponClass()))) {
                     throw new ContentValidationException("Invalid equipment base template " + equipment.id()
                             + " -> " + equipment.baseTemplateId());
+                }
+            }
+            if (!equipment.utility()) {
+                List<ProductionContentCatalog.RecipeEntry> outputRecipes = catalog.recipesByOutput()
+                        .getOrDefault(equipment.id(), List.of());
+                if (outputRecipes.size() != 1) {
+                    throw new ContentValidationException("Equipment must have exactly one recipe " + equipment.id());
+                }
+                List<String> equipmentInputs = outputRecipes.getFirst().ingredients().stream()
+                        .filter(ingredient -> "ITEM".equals(ingredient.kind())
+                                && catalog.equipmentById().containsKey(ingredient.key()))
+                        .map(ProductionContentCatalog.IngredientEntry::key).toList();
+                if (equipment.baseTemplateId().isBlank() ? !equipmentInputs.isEmpty()
+                        : !equipmentInputs.equals(List.of(equipment.baseTemplateId()))) {
+                    throw new ContentValidationException("Equipment recipe lineage mismatch " + equipment.id()
+                            + " expected=" + equipment.baseTemplateId() + " actual=" + equipmentInputs);
                 }
             }
         }

@@ -705,8 +705,8 @@
       "firstDay": 3,
       "maxDurability": 450,
       "toolTier": -1,
-      "baseTemplateId": "EQL-AC-C01",
-      "statInheritancePolicy": "INHERIT_ADD",
+      "baseTemplateId": "",
+      "statInheritancePolicy": "NONE",
       "setId": "",
       "tags": [],
       "stats": {

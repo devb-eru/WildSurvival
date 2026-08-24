@@ -246,13 +246,13 @@
       "path": "recipes/season1-recipes.json",
       "domain": "recipes",
       "schema": "recipe.schema.json",
-      "sha256": "902546e7e6ffb834a61e923115655c6130cb83aac60e79e24350ef24d21ba72a"
+      "sha256": "acdc7f3b4a7f462e78ca2013fa899cc4b3894d057b043c22d9491b90f477a418"
     },
     {
       "path": "equipment/day01-10.json",
       "domain": "equipment",
       "schema": "equipment.schema.json",
-      "sha256": "ed66775615c3dcd69ed02525c3d87385ba64489f7bb998f26cb7d083e9a872ee"
+      "sha256": "c864e0aefd1d4be1753ba3799c34e7f47c147ffd433b3560c2f0bf42ded782be"
     },
     {
       "path": "equipment/day11-20.json",

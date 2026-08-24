@@ -1142,7 +1142,7 @@
         {
           "slot": 0,
           "kind": "ITEM",
-          "key": "WSR-HARD_AGGREGATE",
+          "key": "WSR-SINTERED_AGGREGATE",
           "amount": 4,
           "consume": true
         },
@@ -5945,21 +5945,14 @@
       "layout": "EQUIPMENT_FRAME",
       "ingredients": [
         {
-          "slot": 4,
+          "slot": 0,
           "kind": "ITEM",
-          "key": "EQL-CH-C01",
+          "key": "WSI-CONS-RESCUE_BRACE",
           "amount": 1,
           "consume": true
         },
         {
           "slot": 1,
-          "kind": "ITEM",
-          "key": "WSR-METAL_PLATE",
-          "amount": 2,
-          "consume": true
-        },
-        {
-          "slot": 3,
           "kind": "ITEM",
           "key": "WSR-REINFORCED_CLOTH",
           "amount": 1,
@@ -6156,7 +6149,7 @@
         {
           "slot": 4,
           "kind": "ITEM",
-          "key": "EQL-AC-C01",
+          "key": "EQL-AR-C02",
           "amount": 1,
           "consume": true
         },
@@ -6894,23 +6887,16 @@
       "layout": "EQUIPMENT_FRAME",
       "ingredients": [
         {
-          "slot": 4,
+          "slot": 0,
           "kind": "ITEM",
-          "key": "EQL-UA-U01",
-          "amount": 1,
+          "key": "WSR-REINFORCED_CLOTH",
+          "amount": 2,
           "consume": true
         },
         {
           "slot": 1,
           "kind": "ITEM",
           "key": "WSR-METAL_PLATE",
-          "amount": 2,
-          "consume": true
-        },
-        {
-          "slot": 3,
-          "kind": "ITEM",
-          "key": "WSR-REINFORCED_CLOTH",
           "amount": 1,
           "consume": true
         }
@@ -9841,7 +9827,7 @@
         {
           "slot": 4,
           "kind": "ITEM",
-          "key": "EQL-CH-R01",
+          "key": "EQL-AR-C02",
           "amount": 1,
           "consume": true
         },
@@ -10025,7 +10011,7 @@
         {
           "slot": 4,
           "kind": "ITEM",
-          "key": "EQL-CH-R01",
+          "key": "EQL-AR-C02",
           "amount": 1,
           "consume": true
         },
@@ -10163,7 +10149,7 @@
         {
           "slot": 4,
           "kind": "ITEM",
-          "key": "EQL-UA-R01",
+          "key": "EQL-AR-C01",
           "amount": 1,
           "consume": true
         },
@@ -10209,7 +10195,7 @@
         {
           "slot": 4,
           "kind": "ITEM",
-          "key": "EQL-UA-R01",
+          "key": "EQL-AR-C02",
           "amount": 1,
           "consume": true
         },
@@ -10255,7 +10241,7 @@
         {
           "slot": 4,
           "kind": "ITEM",
-          "key": "EQL-UA-R01",
+          "key": "EQL-AR-C03",
           "amount": 1,
           "consume": true
         },
@@ -10301,7 +10287,7 @@
         {
           "slot": 4,
           "kind": "ITEM",
-          "key": "EQL-UA-R01",
+          "key": "EQL-AR-C04",
           "amount": 1,
           "consume": true
         },

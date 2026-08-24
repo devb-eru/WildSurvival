@@ -62,9 +62,9 @@ class ProductionBundleValidatorTest {
                 .filter(ingredient -> "PROOF".equals(ingredient.kind())).allMatch(ingredient -> !ingredient.consume()));
         assertEquals(214, result.catalog().codexEntries().stream().filter(ProductionContentCatalog.CatalogEntry::equipment).count());
         assertEquals(214, result.catalog().equipmentById().size());
-        assertEquals(33, result.catalog().equipmentById().values().stream()
+        assertEquals(34, result.catalog().equipmentById().values().stream()
                 .filter(equipment -> equipment.baseTemplateId().isBlank()).count());
-        assertEquals(181, result.catalog().equipmentById().values().stream()
+        assertEquals(180, result.catalog().equipmentById().values().stream()
                 .filter(equipment -> !equipment.baseTemplateId().isBlank()).count());
         assertEquals(108, result.catalog().codexEntries().stream().filter(entry -> "MAIN_WEAPON".equals(entry.equipmentSlot())).count());
         var utilityPickaxe = result.catalog().equipmentById().get("EQL-UT-RI-PICKAXE");
@@ -94,6 +94,12 @@ class ProductionBundleValidatorTest {
         assertEquals("EQL-SW-U01", result.catalog().equipmentById().get("EQL-SW-R01").baseTemplateId());
         assertEquals("EQL-W01", result.catalog().equipmentById().get("EQL-SW-U01").baseTemplateId());
         assertEquals("EQL-AR-C02", result.catalog().equipmentById().get("EQD50-B30-AR01").baseTemplateId());
+        assertEquals("EQL-AR-C02", result.catalog().equipmentById().get("EQL-D10-AR").baseTemplateId());
+        assertEquals("EQL-AR-C02", result.catalog().equipmentById().get("EQD20-AR-MED-CHEST").baseTemplateId());
+        assertEquals(List.of("EQL-AR-C02"), result.catalog().recipesByOutput().get("EQL-D10-AR").getFirst()
+                .ingredients().stream().filter(ingredient -> "ITEM".equals(ingredient.kind())
+                        && result.catalog().equipmentById().containsKey(ingredient.key()))
+                .map(ProductionContentCatalog.IngredientEntry::key).toList());
         assertEquals("ABYSSAL", result.catalog().equipmentById().get("EQD50-AX-A41").rarity());
         assertEquals(46, result.catalog().facilitiesById().size());
         assertEquals(8, result.catalog().facilitiesById().values().stream()

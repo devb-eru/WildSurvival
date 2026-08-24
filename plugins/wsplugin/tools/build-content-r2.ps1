@@ -386,7 +386,7 @@ function Equipment-BaseTemplateId([string]$Id, [string]$Type, [string]$Slot) {
     $isRoot = $Type -eq 'UTILITY'
     $isRoot = $isRoot -or $Id -match '^EQL-W0[1-9]$'
     $isRoot = $isRoot -or $Id -match '^EQL-AR-C0[1-4]$'
-    $isRoot = $isRoot -or $Id -in @('EQL-AC-C01','EQL-CH-C01','EQL-OH-C01','EQL-UA-U01')
+    $isRoot = $isRoot -or $Id -in @('EQL-AC-C01','EQL-AC-U01','EQL-CH-C01','EQL-OH-C01','EQL-UA-U01')
     if ($isRoot) {
         return ''
     }
@@ -410,7 +410,7 @@ $recipeExact = @{
     'WSRCP-D50-P01'='VANILLA:WATER_BUCKET*1;VANILLA:WATER_BUCKET*1;WSR-AMETHYST*1;TAG:METAL*2;TAG:CORRUPTION_SAMPLE*1';
     'WSRCP-D50-P02'='WSR-MUTATION_SHARD*3;WSR-REDSTONE*2;WSR-COAL*1'; 'WSRCP-D50-P03'='TAG:DISTINCT_MUTATION_SAMPLE*1;TAG:DISTINCT_MUTATION_SAMPLE*1;TAG:DISTINCT_MUTATION_SAMPLE*1;WSR-PURIFY_CATALYST*1';
     'WSRCP-D50-P04'='WSR-RIFT_POWDER*4;WSR-PURIFY_CATALYST*2;WSR-MAGIC_CRYSTAL*2;TAG:METAL*2';
-    'WSRCP-D50-P05'='WSR-PURIFY_CATALYST*3;WSR-RIFT_POWDER*2;WSR-BIO_MEDIUM*1'; 'WSRCP-D50-P06'='WSR-HARD_AGGREGATE*4;WSR-STONE*4;WSR-COAL*2';
+    'WSRCP-D50-P05'='WSR-PURIFY_CATALYST*3;WSR-RIFT_POWDER*2;WSR-BIO_MEDIUM*1'; 'WSRCP-D50-P06'='WSR-SINTERED_AGGREGATE*4;WSR-STONE*4;WSR-COAL*2';
     'WSRCP-D50-P07'='WSR-REDSTONE*3;WSR-COPPER*3;WSR-MAGIC_CRYSTAL*2'; 'WSRCP-D50-P08'='PROOF:VALID_OBSERVATION*3;WSR-RESONANT_RESIDUE*1';
     'WSRCP-D50-P09'='WSR-REINFORCED_ALLOY*3;WSR-HARD_AGGREGATE*3;WSR-COAL*3'; 'WSRCP-D50-P10'='WSR-RESONANCE_COIL*2;WSR-PATTERN_RESIDUE*3;PROOF:INTERRUPT_METHOD*3';
     'WSRCP-D50-P11'='WSR-RESONANCE_COIL*3;WSR-MAGIC_CRYSTAL*3;PROOF:WSP-REBUILD-PART-B*1';
@@ -460,6 +460,8 @@ $recipeExact = @{
     'WSRCP-W05'='WSR-METAL_PLATE*2;WSR-REINFORCED_CLOTH*1'; 'WSRCP-W06'='WSR-METAL_PLATE*3;WSR-HARDWOOD_PART*1;WSR-SINTERED_AGGREGATE*1';
     'WSRCP-W07'='WSR-HARDWOOD_PART*2;WSR-COAL*2;WSR-REDSTONE*1'; 'WSRCP-W08'='WSR-METAL_PLATE*3;WSR-HARDWOOD_PART*1';
     'WSRCP-W09'='WSR-METAL_PLATE*3;WSR-COPPER_COIL*1;WSR-REINFORCED_CLOTH*1';
+    'WSRCP-EQ-EQL-CH-C01'='WSI-CONS-RESCUE_BRACE*1;WSR-REINFORCED_CLOTH*1';
+    'WSRCP-EQ-EQL-UA-U01'='WSR-REINFORCED_CLOTH*2;WSR-METAL_PLATE*1';
     'WSRCP-E01'='WSR-METAL_PLATE*1;WSR-REINFORCED_CLOTH*1'; 'WSRCP-E02'='WSR-METAL_PLATE*3;WSR-REINFORCED_CLOTH*2';
     'WSRCP-E03'='WSR-METAL_PLATE*2;WSR-REINFORCED_CLOTH*2'; 'WSRCP-E04'='WSR-METAL_PLATE*1;WSR-REINFORCED_CLOTH*1';
     'WSRCP-E05'='WSR-METAL_PLATE*2;WSR-HARDWOOD_PART*2'; 'WSRCP-E06'='WSR-REINFORCED_CLOTH*2;WSR-HARDWOOD_PART*1';
@@ -726,6 +728,8 @@ $tools = foreach ($cells in $toolRows) {
         raw = @($cells)
     }
 }
+$toolById = [ordered]@{}
+foreach ($tool in $tools) { $toolById[$tool.id] = $tool }
 
 $recipesById = Find-IdRows $recipeRows '^WSRCP-[A-Z0-9_-]+$'
 $recipes = foreach ($entry in $recipesById.GetEnumerator()) {
@@ -774,7 +778,8 @@ $recipes = foreach ($entry in $recipesById.GetEnumerator()) {
         }
     } elseif ($recipeType -eq 'EQUIPMENT_FORGE') {
         $layout = 'EQUIPMENT_FRAME'
-        $base = Previous-EquipmentId $outputId
+        $base = $(if ($toolById.Contains($outputId)) {$toolById[$outputId].baseTemplateId} else {Previous-EquipmentId $outputId})
+        if ([string]::IsNullOrWhiteSpace($base)) { throw "Equipment forge base or exact recipe missing: $outputId" }
         $spec = if ($outputId -match '-E21$') { "$base*1;WSR-REINFORCED_ALLOY*14;WSR-NEURAL_CIRCUIT*8;WSR-PURIFY_CATALYST*8" }
             elseif ($outputId -match '-L31$') { "$base*1;WSR-HIGH_DENSITY_ALLOY*24;WSR-RESONANCE_COIL*16;WSR-PATTERN_RESIDUE*14" }
             elseif ($outputId -match '-A41$') { "$base*1;WSR-HIGH_DENSITY_ALLOY*38;WSR-RESONANCE_COIL*28;WSR-INTERRUPT_CORE*28" }
