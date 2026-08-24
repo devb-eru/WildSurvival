@@ -21,7 +21,7 @@
 
 | ADR | 사용자 확정 | 적용 상태 |
 |---|---|---|
-| `ADR-001` | `REVIVAL_ITEM` | `USER_LOCKED`; 실제 아이템·레시피·도감 반영은 다음 기획 목표에서 수행 |
+| `ADR-001` | `REVIVAL_ITEM` | `USER_LOCKED_AND_PLANNED`; ITEM/RECIPE/DEATH 권위에 반영 |
 | `ADR-002` | `CHAPTER_REVIEW` | 작성 방식만 `USER_LOCKED`; Story 초안·장별 검토·payload 작성은 전체 플레이 가능 판정 이후 최종 작업으로 연기 |
 
 연기된 Story 작업은 개발 폴백을 출시 원문으로 승인한다는 뜻이 아니다. 플레이 가능 판정 전에는 Story 본문을 작성·보정·검토하지 않으며, 출시 판정 전 최종 단계에서 별도 목표로 진행한다.
@@ -34,7 +34,7 @@
 |---|---|
 | 신규 ID | `WSI-CONS-REVIVAL_CORE` |
 | codexIndex | `0118` 예약 |
-| 최초 Day | 31 |
+| 최초 Day | 33 (`Day 31+` 범위 안에서 `RS-D33-INTERRUPT`와 실제 사용 가능일 일치) |
 | 소유 | `PARTY_BOUND`, 스택 1 |
 | 제작 | `FAC-S11 Lv4+`, `RS-D33-INTERRUPT` 완료 |
 | 레시피 입력 | `WSR-INTERRUPT_CORE×1`, `WSR-BIO_MEDIUM×2`, `WSR-PURIFY_CATALYST×2`, `WSR-NEURAL_CIRCUIT×1` |
@@ -103,7 +103,7 @@
 부활=ITEM, Story=CHAPTER_REVIEW, Story 작업시점=전체 플레이 가능 판정 이후 최종 단계
 ```
 
-결정을 변경할 때만 `부활=ITEM|NONE|FACILITY, Story=ASSISTANT_DRAFT|CHAPTER_REVIEW|USER_SUPPLY` 형식으로 다시 확정한다. 현재 중단 상태에서는 `REVIVAL_ITEM`의 실제 데이터 추가와 Story 작성 모두 실행하지 않는다.
+결정을 변경할 때만 `부활=ITEM|NONE|FACILITY, Story=ASSISTANT_DRAFT|CHAPTER_REVIEW|USER_SUPPLY` 형식으로 다시 확정한다. Story 작성은 P8 전까지 실행하지 않는다. `REVIVAL_ITEM`의 기획 데이터는 P0에서 잠갔으며 런타임 투영은 P0.5 이후에 수행한다.
 
 ## 5. `ADR-003` F 보조무기 입력 — `CLOSED`
 

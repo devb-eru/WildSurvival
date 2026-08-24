@@ -88,9 +88,9 @@
 | `EQUIP-LIST-001` | `DATA_LOCKED` | Day 1~20 장비·후반 방향 | G0 |
 | `ECONOMY-001` | `BASELINE_LOCKED` | 공급·소비·강화·재련 | G0 |
 | `CRAFT-001` | `DATA_LOCKED` | 제작·가공 레시피 | G0 |
-| `ITEM-LIST-001` | `DATA_LOCKED` | 비장비 아이템 61개 ID·도감 위치·기본 효과 | DEV-300~400 |
+| `ITEM-LIST-001` | `DATA_LOCKED` | 비장비 아이템 62개 ID·도감 위치·기본 효과; 재생 신호 코어 포함 | DEV-300~400 |
 | `MATERIAL-LIST-001` | `DATA_LOCKED` | 재료 59개 ID·등급·획득·용도 | DEV-300~400 |
-| `RECIPE-LIST-001` | `DATA_LOCKED` | 제작식 315개 ID·출력·소유 권위 | DEV-300~400 |
+| `RECIPE-LIST-001` | `DATA_LOCKED` | 제작식 316개 ID·출력·소유 권위 | DEV-300~400 |
 | `TOOL-LIST-001` | `DATA_LOCKED` | 장비·도구 214개 ID·장착 분류 | DEV-300~500 |
 | `WEAPON-EQUIPMENT-LIST-001` | `DATA_LOCKED` | TOOL 214개 중 주무기108·보조무기11 분리 투영 | DEV-300~500 |
 | `ARMOR-ACCESSORY-LIST-001` | `DATA_LOCKED` | TOOL 214개 중 방어구45·장신구24·부적10 분리 투영 | DEV-300~500 |

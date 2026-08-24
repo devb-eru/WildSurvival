@@ -40,6 +40,7 @@
 - `customModelKey`는 `wildsurvival:item/<소문자 ID, 하이픈은 밑줄>`로 고정한다. 리소스팩 모델이 아직 없더라도 키를 바꾸지 않고 대표 Material 폴백을 사용한다.
 - 휴대 장치와 시설 키트는 파티 제작품이지만 설치·사용 트랜잭션을 커밋하기 전에는 실제 보유자의 인벤토리에 존재한다.
 - `firstDay`는 사용 가능 최솟값이며 발견·연구·시설 조건을 우회하지 않는다.
+- `WSI-CONS-REVIVAL_CORE`는 접두사 공통값의 명시 예외다. `category=REVIVAL`, `ownership=PARTY_BOUND`, `usePolicy=FACILITY_REVIVAL_TRANSACTION`, `connectedFacilityId=FAC-S11`이며 Q1~Q4에 바인딩하거나 손에서 직접 사용할 수 없다.
 
 ## 2. 소모품·탄약
 
@@ -63,8 +64,26 @@
 | 0115 | `WSI-AMMO-PURIFY_ARROW_BUNDLE` | 정화 화살 묶음 | 23 | TIPPED_ARROW | 32 | 활·석궁, 정화 취약 대상 PURIFY_EXPOSED 6초, 자원 생성 없음 | `WSRCP-D50-S01` |
 | 0116 | `WSI-AMMO-RESONANCE_BOLT_BUNDLE` | 공진 볼트 묶음 | 33 | FIREWORK_STAR | 32 | 석궁 전용, INTERRUPTIBLE 적중 최종 브레이크 ×1.50 | `WSRCP-D50-S02` |
 | 0117 | `WSI-AMMO-STABILIZER_DART_BUNDLE` | 안정화 다트 묶음 | 41 | WIND_CHARGE | 16 | 석궁 전용 32m 아군·시설 비피해, 약한 오염 압력 1단 완화, 대상별 20초 | `WSRCP-D50-S03` |
+| 0118 | `WSI-CONS-REVIVAL_CORE` | 재생 신호 코어 | 33 | ECHO_SHARD | 1 | FAC-S11 Lv4 안전 의식 전용, 대상당 회차 1회·전멸 후 사용 불가 | `WSRCP-D31-S01` |
 
 소모품 사용은 `request→validate→reserve→apply→commit` 순서다. 대상·거리·상태·전투당 상한 검사가 실패하면 수량을 차감하지 않는다.
+
+### 2.1 재생 신호 코어 실행 계약
+
+| 필드 | 고정값 |
+|---|---|
+| `category/ownership/usePolicy` | `REVIVAL/PARTY_BOUND/FACILITY_REVIVAL_TRANSACTION` |
+| 시설·해금 | `FAC-S11 Lv4+`, `RS-D33-INTERRUPT`, `minimumDay=33` |
+| 대상 | 같은 회차의 `DEAD` 등록 플레이어 1명과 유효 `remainsId` |
+| 안전 조건 | 활성 encounter·보스·Final 없음, 시설 `ACTIVE`, 시전자 `ALIVE`, 전 등록 플레이어 전멸 아님 |
+| 채널 | 10초, 단일 시전자, 시작점 0.75블록 이내, 공격·스킬·회피·피격·CC·GUI 종료·시설 비활성·접속 종료 시 중단 |
+| 예약·소비 | 시작 시 코어·대상·유품·플레이어별 회차 사용권을 예약, 10초 완료 검증 뒤에만 소비·부활을 같은 TX로 commit; 실패·중단은 예약 전부 반환 |
+| 복귀 | FAC-S11 안전 출력 지점, HP 25%, AP 0, 부상 3, 개인 오염 보존, 일반 사망 전 상태 미복원 |
+| 보호 | 5초간 피해 80% 감소·HARD_CC/DOT 면역, 공격·스킬·회피·패링 금지 |
+| 유품 | 자동 회수하지 않음; `remainsId`와 내용은 유지하고 원소유자의 회수 권한만 복원 |
+| 멱등키 | `revival:{runId}:{targetUuid}:{resurrectionOrdinal}`; 같은 대상 두 번째 성공과 동시 의식 거부 |
+
+회차가 `FAILED/COMPLETED`로 커밋됐거나 마지막 생존자가 사망하면 예약 중인 의식보다 회차 종료가 우선한다. 관리 명령·아이템 드롭·상자 이동은 사용권을 만들지 않는다.
 
 ## 3. 휴대 장치
 
@@ -178,18 +197,19 @@ FAC-S16 ACTIVE
 
 | 범주 | 수량 |
 |---|---:|
-| 소모품·탄약 | 18 |
+| 소모품·탄약·부활 코어 | 19 |
 | 휴대 장치(수리 키트 공유 제외) | 7 |
 | 야영 시설 키트 | 8 |
 | 정착 시설 키트 | 20 |
 | 방어 시설 키트 | 4 |
 | 보스 호출품 | 4 |
-| 합계 | 61 |
+| 합계 | 62 |
 
 완료 검증:
 
-- 61개 ID·codexIndex·대표 Material 중복 및 누락 0
-- 제작품 61개 모두 유효 recipe 또는 명시적 reward source 보유
+- 62개 ID·codexIndex·대표 Material 중복 및 누락 0
+- 제작품 62개 모두 유효 recipe 또는 명시적 reward source 보유
+- 재생 신호 코어의 퀵 바인딩·손 직접 사용·전멸 뒤 사용·대상 두 번째 부활 경로 0
 - FAC-R01~R06을 휴대 아이템으로 복제하는 경로 0
 - FAC-S16 전 개인 자원만으로 시작·Craft 해금·기초 장비 제작 가능
 - 미발견 칸 위치 변화 0, `BLACK_DYE/???` 외 정보 누출 0

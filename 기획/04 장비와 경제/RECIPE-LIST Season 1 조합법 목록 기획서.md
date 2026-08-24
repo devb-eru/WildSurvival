@@ -8,12 +8,12 @@
 | 상태 | `DATA_LOCKED` |
 | 적용 범위 | Craft 해금, 3×3 조합, 가공, 장비, 시설, 호출, 재건의 전체 생산 레시피 |
 | 상위 기준 | `CRAFT-001`, `ITEM-LIST-001`, `MATERIAL-LIST-001`, `TOOL-LIST-001`, `FACILITY-LIST-001` |
-| 데이터 리비전 | `recipe-s1-r1` |
-| 최종 수정일 | 2026-08-23 |
+| 데이터 리비전 | `recipe-s1-r2` |
+| 최종 수정일 | 2026-08-24 |
 
 ## 1. 전체 레지스트리
 
-기존 85개 ID는 출력 텍스트를 고정 ID로 바꾸고, 신규 230개를 추가한다.
+기존 85개 ID는 출력 텍스트를 고정 ID로 바꾸고, 신규 231개를 추가한다.
 
 ### 1.1 기존 85개
 
@@ -114,6 +114,7 @@
 | `WSRCP-D50-S01` | `WSI-AMMO-PURIFY_ARROW_BUNDLE` | CRAFT | RECIPE-LIST-001 |
 | `WSRCP-D50-S02` | `WSI-AMMO-RESONANCE_BOLT_BUNDLE` | CRAFT | RECIPE-LIST-001 |
 | `WSRCP-D50-S03` | `WSI-AMMO-STABILIZER_DART_BUNDLE` | CRAFT | RECIPE-LIST-001 |
+| `WSRCP-D31-S01` | `WSI-CONS-REVIVAL_CORE` | CRAFT | RECIPE-LIST-001 |
 | `WSRCP-F08` | `WSI-PORTABLE-SAMPLE_EXTRACTOR` | FACILITY_KIT | RECIPE-LIST-001 |
 | `WSRCP-F09` | `WSI-PORTABLE-PURIFIER` | FACILITY_KIT | RECIPE-LIST-001 |
 | `WSRCP-F10` | `WSI-PORTABLE-RESCUE_BEACON` | FACILITY_KIT | RECIPE-LIST-001 |
@@ -402,6 +403,7 @@ OPEN → PLACE/REMOVE → MATCHED → CONFIRM
 | `WSRCP-D50-S01` | `WSI-AMMO-ARROW_BUNDLE×1, WSR-PURIFY_CATALYST×1, WSR-REFINED_MUTATION×1` | 8 | Day23, FAC-S05 |
 | `WSRCP-D50-S02` | `WSI-AMMO-PIERCING_BOLT_BUNDLE×1, WSR-RESONANCE_COIL×1, WSR-PATTERN_RESIDUE×1` | 8 | Day33, FAC-S05 |
 | `WSRCP-D50-S03` | `WSI-AMMO-ARROW_BUNDLE×1, WSR-POWER_MATRIX×1, WSR-STERILE_GEL×2` | 4 | Day41, FAC-S05 Lv4 |
+| `WSRCP-D31-S01` | `slot0 WSR-PURIFY_CATALYST×1; slot2 WSR-PURIFY_CATALYST×1; slot3 WSR-BIO_MEDIUM×1; slot4 WSR-INTERRUPT_CORE×1; slot5 WSR-BIO_MEDIUM×1; slot7 WSR-NEURAL_CIRCUIT×1; 나머지 EMPTY` | 1 | Day33, `RS-D33-INTERRUPT`, FAC-S11 Lv4, 60초 |
 | `WSRCP-F08` | `WSR-PRECISION_PART×1, WSR-REINFORCED_CLOTH×1, WSR-IRON×1` | 1 | C04, FAC-P01/C01 |
 | `WSRCP-F09` | `WSR-CRUDE_PURIFY_CATALYST×2, WSR-MAGIC_CRYSTAL×1, WSR-COPPER_COIL×2, WSR-METAL_PLATE×2` | 1 | C05, FAC-C01 |
 | `WSRCP-F10` | `WSR-METAL_PLATE×2, WSR-REDSTONE×2, WSR-SIGNAL_LENS×1` | 1 | C06, FAC-C01 |
@@ -476,11 +478,12 @@ RC 전문 재료는 곡괭이 CALIBRATED_LENS, 도끼 RESONANCE_COIL×2, 삽 PUR
 
 ## 11. 정적 검증
 
-- recipeId 315개 고유, outputId 고아 0
+- recipeId 316개 고유, outputId 고아 0
 - 기존 텍스트 output 0, 금지된 무자격 재료 별칭 0
 - 장비 198개 중 16개 기존 recipe + 182개 신규 recipe 정확히 1개
 - 상위 도구 16개 recipe 정확히 1개
-- WSI craftable 61개는 recipe 또는 의도된 alternate recipe 보유
+- WSI craftable 62개는 recipe 또는 의도된 alternate recipe 보유
+- `WSRCP-D31-S01`은 정확 6개 소비 슬롯·3개 EMPTY와 `RS-D33/FAC-S11 Lv4/minimumDay=33`을 모두 요구
 - Craft 해금 전 production transaction 0
 - FAC-S16 전 다른 플레이어·공용 원장 무단 소비 0
 - grid 불일치·취소·서버 종료·출력 가득 참에서 복제·손실 0
@@ -491,6 +494,6 @@ RC 전문 재료는 곡괭이 CALIBRATED_LENS, 도끼 RESONANCE_COIL×2, 삽 PUR
 | 범주 | 수량 |
 |---|---:|
 | 기존 정규화 | 85 |
-| 신규 비장비·시설·상위 도구 | 48 |
+| 신규 비장비·시설·상위 도구 | 49 |
 | 신규 장비 | 182 |
-| 전체 | 315 |
+| 전체 | 316 |

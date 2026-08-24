@@ -35,8 +35,8 @@ ID를 문서 제목, 표시명 또는 와일드카드로 대신하지 않는다.
 | 목록 | 고유 ID | 설계 상태 | r2 의미 실행 상태 |
 |---|---:|---|---|
 | 재료·진행 증명 | 59 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 원재료36+가공15+보스3+증명5 |
-| 비장비 아이템 | 61 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 소모품18+휴대7+시설32+호출4 |
-| 레시피 | 315 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; CRAFT21+PROCESS30+장비198+시설39+도구16+호출4+가상7 |
+| 비장비 아이템 | 62 | `DATA_LOCKED` | `PLANNED_62/RUNTIME_61`; 소모품·탄약·부활19+휴대7+시설32+호출4 |
+| 레시피 | 316 | `DATA_LOCKED` | `PLANNED_316/RUNTIME_315`; CRAFT22+PROCESS30+장비198+시설39+도구16+호출4+가상7 |
 | 장비·상위 도구 | 214 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 주/보조119+방어구/장신구79+유틸리티16 |
 | 플레이어 스킬 | 64 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 기본 공격10+액티브·상황54 |
 | 개인 증강 | 50 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; Silver18+Gold18+Prism14 |
@@ -48,7 +48,7 @@ ID를 문서 제목, 표시명 또는 와일드카드로 대신하지 않는다.
 | 시설 | 46 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 시설별 작업 opcode 필요 |
 | loot table | 62 | `DATA_LOCKED` | `PARTIAL_RUNTIME`; 일반 적 개인 보상함 외 실행 필요 |
 
-전체 도감 레코드는 334개이며 codexIndex 중복은 0이다. 레시피 output 고아, 시설 recipe 누락, 장비·비장비 recipe 누락도 0이다. 증거는 `CONTENT-GRAPH-AUDIT-001`이다.
+기획 도감 레코드는 335개이며 codexIndex 중복은 0이다. 현재 r2 334개와의 차이는 `WSI-CONS-REVIVAL_CORE` 한 건이다. 레시피 output 고아, 시설 recipe 누락, 장비·비장비 recipe 누락도 0이며 P0.5 투영 뒤 같은 수치로 재검증한다. 증거는 `CONTENT-GRAPH-AUDIT-001`이다.
 
 ## 3. 장비 ID 전개 결정
 

@@ -357,12 +357,12 @@ Season 1 스냅샷과 실제 플레이 결과를 입력으로 세력·지역·�
 |---|---|---|
 | 문서 권위·별도 목록·r2 실행 데이터 | `CLOSED` | 고정 ID·합계·비용·증거 계약을 구현 입력으로 사용 |
 | 입력·제작·도감·메뉴·개인/공용 원장·피해 숫자 | `PLANNED_AND_PARTIAL_RUNTIME` | `PROTOTYPE-REVISION-003` 계약을 유지하고 실제 클라이언트 E2E로 승격 판정 |
-| 완전 사망 뒤 부활 정책 | `USER_LOCKED` | `REVIVAL_ITEM`; 실제 목록·비용·조합법 반영은 `NEXT-GOAL-S1-002`에서 수행 |
+| 완전 사망 뒤 부활 정책 | `USER_LOCKED_AND_PLANNED` | `WSI-CONS-REVIVAL_CORE`, `WSRCP-D31-S01`, codex 0118; 런타임은 P0.5 이후 |
 | Story 한국어 payload 작성 방식 | `METHOD_USER_LOCKED_CONTENT_DEFERRED` | `CHAPTER_REVIEW`; 전체 플레이 가능 판정 뒤 최종 단계에서만 작성 |
 | 실제 블록 설치·slot 0 채굴·Shift 숫자·Shift+F | `BLOCKED_E2E` | Paper 서버와 실제 Java 클라이언트에서만 검증하며 `/setblock`·콘솔 대체 금지 |
 | Season 1 전 도메인 의미 런타임 | `RUNTIME_MISSING` | 사용자 결정 뒤 `PRODUCTION-COMPLETION-PLAN-001` P0~P10 순서로 구현 |
 
-기획 감사상 구현자가 추가로 창작해야 할 비저작 데이터는 없다. 두 사용자 정책은 확정됐지만 `REVIVAL_ITEM`의 목록 반영과 64/66/69 실행 파라미터 폐쇄가 남아 있으므로 `NEXT-GOAL-S1-002` 완료 전에는 광범위한 생산 런타임 구현을 시작하지 않는다. Story 본문은 사용자 지시에 따라 이 선행 기획 범위에서 제외하고 전체 플레이 가능 판정 뒤 최종 단계로 연기한다.
+기획 감사상 구현자가 추가로 창작해야 할 비저작 데이터는 없다. `REVIVAL_ITEM` 목록 반영은 완료됐지만 64/66/69 실행 파라미터와 전수 그래프 재감사가 남아 있으므로 P0 완료 전에는 광범위한 생산 런타임 구현을 시작하지 않는다. Story 본문은 사용자 지시에 따라 이 선행 기획 범위에서 제외하고 전체 플레이 가능 판정 뒤 최종 단계로 연기한다.
 
 `BLOCKED_E2E`는 기획 누락이 아니라 실행 검증 환경의 차단이다. 따라서 기획 게이트를 되돌리지는 않지만, 해당 항목을 실제 플레이 완료·출시 완료로 승격하지 않는다.
 
