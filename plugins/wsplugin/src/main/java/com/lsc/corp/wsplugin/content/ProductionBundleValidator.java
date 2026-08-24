@@ -171,7 +171,8 @@ public final class ProductionBundleValidator {
                         optionalString(record, "weaponClass", ""), requiredString(record, "displayMaterial"),
                         requiredString(record, "rarity"), requiredInt(record, "itemLevel"),
                         requiredInt(record, "firstDay"), requiredInt(record, "maxDurability"),
-                        requiredInt(record, "toolTier"), optionalString(record, "setId", ""),
+                        requiredInt(record, "toolTier"), requiredString(record, "baseTemplateId"),
+                        requiredString(record, "statInheritancePolicy"), optionalString(record, "setId", ""),
                         stringArray(record, "tags"), numberMap(record, "stats"),
                         requiredString(record, "executionOpcode"), requiredString(record, "harvestProfileId"),
                         requiredDouble(record, "resourceYieldMultiplier"),
@@ -1010,6 +1011,28 @@ public final class ProductionBundleValidator {
                     || equipment.durabilityCostPerSuccess() != 0
                     || equipment.vanillaActionPassthrough())) {
                 throw new ContentValidationException("Unexpected utility execution fields " + equipment.id());
+            }
+            if (equipment.baseTemplateId().isBlank() != "NONE".equals(equipment.statInheritancePolicy())) {
+                throw new ContentValidationException("Equipment inheritance policy mismatch " + equipment.id());
+            }
+            if (!equipment.baseTemplateId().isBlank()) {
+                ProductionContentCatalog.EquipmentEntry base = catalog.equipmentById().get(equipment.baseTemplateId());
+                if (base == null || base.id().equals(equipment.id())
+                        || !base.equipmentSlot().equals(equipment.equipmentSlot())
+                        || (!equipment.weaponClass().isBlank() && !base.weaponClass().equals(equipment.weaponClass()))) {
+                    throw new ContentValidationException("Invalid equipment base template " + equipment.id()
+                            + " -> " + equipment.baseTemplateId());
+                }
+            }
+        }
+        for (ProductionContentCatalog.EquipmentEntry equipment : catalog.equipmentById().values()) {
+            Set<String> lineage = new HashSet<>();
+            ProductionContentCatalog.EquipmentEntry cursor = equipment;
+            while (!cursor.baseTemplateId().isBlank()) {
+                if (!lineage.add(cursor.id())) {
+                    throw new ContentValidationException("Cyclic equipment inheritance " + equipment.id());
+                }
+                cursor = catalog.equipmentById().get(cursor.baseTemplateId());
             }
         }
     }

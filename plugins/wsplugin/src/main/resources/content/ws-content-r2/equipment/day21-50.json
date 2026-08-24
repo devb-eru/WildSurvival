@@ -19,6 +19,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AC-C01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -53,6 +55,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-AX-L31",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "AXE"
@@ -89,6 +93,8 @@
       "firstDay": 21,
       "maxDurability": 800,
       "toolTier": -1,
+      "baseTemplateId": "EQD20-AX-R01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "AXE",
@@ -127,6 +133,8 @@
       "firstDay": 31,
       "maxDurability": 1100,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-AX-E21",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "AXE"
@@ -163,6 +171,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AC-C01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -197,6 +207,8 @@
       "firstDay": 30,
       "maxDurability": 1875,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C02",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -231,6 +243,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-OH-C01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -265,6 +279,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-UA-U01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -299,6 +315,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AC-C01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -333,6 +351,8 @@
       "firstDay": 40,
       "maxDurability": 1875,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C02",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -367,6 +387,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-OH-C01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -401,6 +423,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-UA-U01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -435,6 +459,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-BL-L31",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "MACE"
@@ -471,6 +497,8 @@
       "firstDay": 21,
       "maxDurability": 800,
       "toolTier": -1,
+      "baseTemplateId": "EQD20-BL-R01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "MACE",
@@ -509,6 +537,8 @@
       "firstDay": 31,
       "maxDurability": 1100,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-BL-E21",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "MACE"
@@ -545,6 +575,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-BO-L31",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "BOW"
@@ -581,6 +613,8 @@
       "firstDay": 21,
       "maxDurability": 800,
       "toolTier": -1,
+      "baseTemplateId": "EQD20-BO-R01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "BOW",
@@ -619,6 +653,8 @@
       "firstDay": 31,
       "maxDurability": 1100,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-BO-E21",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "BOW"
@@ -655,6 +691,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-CB-L31",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "CROSSBOW"
@@ -691,6 +729,8 @@
       "firstDay": 21,
       "maxDurability": 800,
       "toolTier": -1,
+      "baseTemplateId": "EQD20-CB-R01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "CROSSBOW",
@@ -729,6 +769,8 @@
       "firstDay": 31,
       "maxDurability": 1100,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-CB-E21",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "CROSSBOW"
@@ -765,6 +807,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-CH-C01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -799,6 +843,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-DG-L31",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "DAGGER",
@@ -836,6 +882,8 @@
       "firstDay": 21,
       "maxDurability": 800,
       "toolTier": -1,
+      "baseTemplateId": "EQD20-DG-R01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "DAGGER",
@@ -874,6 +922,8 @@
       "firstDay": 31,
       "maxDurability": 1100,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-DG-E21",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "DAGGER"
@@ -910,6 +960,8 @@
       "firstDay": 35,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-OH-C01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -944,6 +996,8 @@
       "firstDay": 25,
       "maxDurability": 1100,
       "toolTier": -1,
+      "baseTemplateId": "EQL-OH-C01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -978,6 +1032,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": 6,
+      "baseTemplateId": "EQD50-PK-L31",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "PICKAXE"
@@ -1014,6 +1070,8 @@
       "firstDay": 21,
       "maxDurability": 800,
       "toolTier": 4,
+      "baseTemplateId": "EQD20-PK-R01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "PICKAXE",
@@ -1052,6 +1110,8 @@
       "firstDay": 31,
       "maxDurability": 1100,
       "toolTier": 5,
+      "baseTemplateId": "EQD50-PK-E21",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "PICKAXE"
@@ -1088,6 +1148,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-ST-L31",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "STAFF"
@@ -1124,6 +1186,8 @@
       "firstDay": 21,
       "maxDurability": 800,
       "toolTier": -1,
+      "baseTemplateId": "EQD20-ST-R01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "STAFF",
@@ -1162,6 +1226,8 @@
       "firstDay": 31,
       "maxDurability": 1100,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-ST-E21",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "STAFF"
@@ -1198,6 +1264,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-SW-L31",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "SWORD"
@@ -1234,6 +1302,8 @@
       "firstDay": 21,
       "maxDurability": 800,
       "toolTier": -1,
+      "baseTemplateId": "EQD20-SW-R01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "SWORD",
@@ -1272,6 +1342,8 @@
       "firstDay": 31,
       "maxDurability": 1100,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-SW-E21",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "SWORD"
@@ -1308,6 +1380,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-TR-L31",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "TRIDENT"
@@ -1344,6 +1418,8 @@
       "firstDay": 21,
       "maxDurability": 800,
       "toolTier": -1,
+      "baseTemplateId": "EQD20-TR-R01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "TRIDENT",
@@ -1382,6 +1458,8 @@
       "firstDay": 31,
       "maxDurability": 1100,
       "toolTier": -1,
+      "baseTemplateId": "EQD50-TR-E21",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "TRIDENT"
@@ -1418,6 +1496,8 @@
       "firstDay": 41,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-UA-U01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -1452,6 +1532,8 @@
       "firstDay": 21,
       "maxDurability": 800,
       "toolTier": -1,
+      "baseTemplateId": "EQL-UA-U01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "UNARMED",
@@ -1489,6 +1571,8 @@
       "firstDay": 31,
       "maxDurability": 1100,
       "toolTier": -1,
+      "baseTemplateId": "EQL-UA-U01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [],
       "stats": {},
@@ -1523,6 +1607,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "SWORD"
@@ -1559,6 +1645,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W02",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "AXE"
@@ -1595,6 +1683,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W03",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "BOW"
@@ -1631,6 +1721,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W04",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "CROSSBOW"
@@ -1667,6 +1759,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W05",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "DAGGER"
@@ -1703,6 +1797,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W06",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "MACE"
@@ -1739,6 +1835,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W07",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "STAFF"
@@ -1775,6 +1873,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": 4,
+      "baseTemplateId": "EQL-W08",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "PICKAXE"
@@ -1811,6 +1911,8 @@
       "firstDay": 30,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W09",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "TRIDENT"
@@ -1847,6 +1949,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "SWORD"
@@ -1883,6 +1987,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W02",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "AXE"
@@ -1919,6 +2025,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W03",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "BOW"
@@ -1955,6 +2063,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W04",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "CROSSBOW"
@@ -1991,6 +2101,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W05",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "DAGGER"
@@ -2027,6 +2139,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W06",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "MACE"
@@ -2063,6 +2177,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W07",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "STAFF"
@@ -2099,6 +2215,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": 5,
+      "baseTemplateId": "EQL-W08",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "PICKAXE"
@@ -2135,6 +2253,8 @@
       "firstDay": 40,
       "maxDurability": 1500,
       "toolTier": -1,
+      "baseTemplateId": "EQL-W09",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "",
       "tags": [
         "TRIDENT"
@@ -2171,6 +2291,8 @@
       "firstDay": 21,
       "maxDurability": 1000,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-PURIFIER",
       "tags": [],
       "stats": {},
@@ -2205,6 +2327,8 @@
       "firstDay": 21,
       "maxDurability": 1000,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C02",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-PURIFIER",
       "tags": [],
       "stats": {},
@@ -2239,6 +2363,8 @@
       "firstDay": 21,
       "maxDurability": 1000,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C03",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-PURIFIER",
       "tags": [],
       "stats": {},
@@ -2273,6 +2399,8 @@
       "firstDay": 21,
       "maxDurability": 1000,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C04",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-PURIFIER",
       "tags": [],
       "stats": {},
@@ -2307,6 +2435,8 @@
       "firstDay": 31,
       "maxDurability": 1375,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-INTERRUPT",
       "tags": [],
       "stats": {},
@@ -2341,6 +2471,8 @@
       "firstDay": 31,
       "maxDurability": 1375,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C02",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-INTERRUPT",
       "tags": [],
       "stats": {},
@@ -2375,6 +2507,8 @@
       "firstDay": 31,
       "maxDurability": 1375,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C03",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-INTERRUPT",
       "tags": [],
       "stats": {},
@@ -2409,6 +2543,8 @@
       "firstDay": 31,
       "maxDurability": 1375,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C04",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-INTERRUPT",
       "tags": [],
       "stats": {},
@@ -2443,6 +2579,8 @@
       "firstDay": 41,
       "maxDurability": 1875,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C01",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-REBUILD",
       "tags": [],
       "stats": {},
@@ -2477,6 +2615,8 @@
       "firstDay": 41,
       "maxDurability": 1875,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C02",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-REBUILD",
       "tags": [],
       "stats": {},
@@ -2511,6 +2651,8 @@
       "firstDay": 41,
       "maxDurability": 1875,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C03",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-REBUILD",
       "tags": [],
       "stats": {},
@@ -2545,6 +2687,8 @@
       "firstDay": 41,
       "maxDurability": 1875,
       "toolTier": -1,
+      "baseTemplateId": "EQL-AR-C04",
+      "statInheritancePolicy": "INHERIT_ADD",
       "setId": "EQD50-SET-REBUILD",
       "tags": [],
       "stats": {},

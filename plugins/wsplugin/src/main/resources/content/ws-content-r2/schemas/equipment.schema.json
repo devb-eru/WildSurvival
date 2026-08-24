@@ -39,6 +39,8 @@
           "firstDay",
           "maxDurability",
           "toolTier",
+          "baseTemplateId",
+          "statInheritancePolicy",
           "setId",
           "tags",
           "stats",
@@ -152,6 +154,16 @@
             "type": "integer",
             "minimum": -1,
             "maximum": 6
+          },
+          "baseTemplateId": {
+            "type": "string",
+            "pattern": "^(?:|EQL-|EQD(?:20|50)-)"
+          },
+          "statInheritancePolicy": {
+            "enum": [
+              "NONE",
+              "INHERIT_ADD"
+            ]
           },
           "setId": {
             "type": "string"

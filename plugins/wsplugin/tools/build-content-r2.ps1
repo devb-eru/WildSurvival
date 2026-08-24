@@ -382,6 +382,21 @@ function Previous-EquipmentId([string]$OutputId) {
     if ($OutputId -match 'UA') { return 'EQL-UA-U01' }
     return 'EQL-AC-C01'
 }
+function Equipment-BaseTemplateId([string]$Id, [string]$Type, [string]$Slot) {
+    $isRoot = $Type -eq 'UTILITY'
+    $isRoot = $isRoot -or $Id -match '^EQL-W0[1-9]$'
+    $isRoot = $isRoot -or $Id -match '^EQL-AR-C0[1-4]$'
+    $isRoot = $isRoot -or $Id -in @('EQL-AC-C01','EQL-CH-C01','EQL-OH-C01','EQL-UA-U01')
+    if ($isRoot) {
+        return ''
+    }
+    $code = Equipment-ClassCode $Id
+    if ($code) { return Previous-EquipmentId $Id }
+    if ($Type -eq 'ARMOR') {
+        return @{ARMOR_HEAD='EQL-AR-C01';ARMOR_CHEST='EQL-AR-C02';ARMOR_LEGS='EQL-AR-C03';ARMOR_FEET='EQL-AR-C04'}[$Slot]
+    }
+    return Previous-EquipmentId $Id
+}
 
 $recipeExact = @{
     'WSRCP-P01'='WSR-WOOD*3;WSR-FIBER*1'; 'WSRCP-P02'='WSR-STONE*4;WSR-COAL*1';
@@ -689,6 +704,7 @@ $tools = foreach ($cells in $toolRows) {
         if (-not $harvestProfileId) { throw "Utility harvest profile missing: $id" }
         $utilityEffectText = "T1~T$toolTier WS 노드 채집; $harvestProfileId 바닐라 행동; WS 노드 수율 x1.00; 성공당 서버 내구 1"
     }
+    $baseTemplateId = Equipment-BaseTemplateId $id $cells[2] $equipmentSlot
     [ordered]@{
         id = $id; sourceDocumentId = 'TOOL-LIST-001'; enabled = $true
         codexIndex = [int]$cells[0]; name = Equipment-DisplayName $id $detailKey $detailCells
@@ -697,6 +713,8 @@ $tools = foreach ($cells in $toolRows) {
         displayMaterial = First-Material $cells $equipmentSlot; definition = $cells[5]
         rarity = $rarity; itemLevel = Equipment-ItemLevel $id; firstDay = Equipment-FirstDay $id
         maxDurability = Equipment-Durability $id $cells[2] $rarity; toolTier = $toolTier
+        baseTemplateId = $baseTemplateId
+        statInheritancePolicy = $(if ($baseTemplateId) {'INHERIT_ADD'} else {'NONE'})
         setId = Equipment-SetId $id; tags = [string[]]@($compiledTags)
         stats = Equipment-Stats $id
         executionOpcode = $(if ($isUtility) {'VANILLA_HARVEST_WITH_WS_TIER_GATE'} else {''})
@@ -1572,12 +1590,12 @@ $equipmentSchema = [ordered]@{
         schemaVersion=[ordered]@{const=2}; contentRevision=[ordered]@{const='ws-content-r2'}; domain=[ordered]@{const='equipment'}
         records=[ordered]@{type='array';items=[ordered]@{
             type='object';additionalProperties=$false
-            required=@('id','sourceDocumentId','enabled','codexIndex','name','equipmentType','equipmentSlot','weaponClass','displayMaterial','definition','rarity','itemLevel','firstDay','maxDurability','toolTier','setId','tags','stats','executionOpcode','harvestProfileId','resourceYieldMultiplier','durabilityCostPerSuccess','vanillaActionPassthrough','effectText','raw')
+            required=@('id','sourceDocumentId','enabled','codexIndex','name','equipmentType','equipmentSlot','weaponClass','displayMaterial','definition','rarity','itemLevel','firstDay','maxDurability','toolTier','baseTemplateId','statInheritancePolicy','setId','tags','stats','executionOpcode','harvestProfileId','resourceYieldMultiplier','durabilityCostPerSuccess','vanillaActionPassthrough','effectText','raw')
             properties=[ordered]@{
                 id=[ordered]@{type='string';pattern='^(?:EQL-|EQD(?:20|50)-)'};sourceDocumentId=[ordered]@{const='TOOL-LIST-001'};enabled=[ordered]@{const=$true};codexIndex=[ordered]@{type='integer';minimum=1000;maximum=1999};name=[ordered]@{type='string';minLength=1}
                 equipmentType=[ordered]@{enum=@('UTILITY','SW','AX','BO','CB','DG','BL','ST','PK','TR','UNARMED_SUPPORT','OFF','ARMOR','ACCESSORY','CHARM')};equipmentSlot=[ordered]@{enum=@('INVENTORY','MAIN_WEAPON','OFF_WEAPON','ARMOR_HEAD','ARMOR_CHEST','ARMOR_LEGS','ARMOR_FEET','ACCESSORY','CHARM')}
                 weaponClass=[ordered]@{enum=@('','SWORD','AXE','BOW','CROSSBOW','DAGGER','MACE','STAFF','PICKAXE','TRIDENT')};displayMaterial=[ordered]@{type='string';pattern='^[A-Z][A-Z0-9_]*$'};definition=[ordered]@{type='string';minLength=1}
-                rarity=[ordered]@{enum=@('COMMON','UNCOMMON','RARE','EPIC','LEGENDARY','ABYSSAL')};itemLevel=[ordered]@{type='integer';minimum=1;maximum=50};firstDay=[ordered]@{type='integer';minimum=1;maximum=50};maxDurability=[ordered]@{type='integer';minimum=1};toolTier=[ordered]@{type='integer';minimum=-1;maximum=6};setId=[ordered]@{type='string'}
+                rarity=[ordered]@{enum=@('COMMON','UNCOMMON','RARE','EPIC','LEGENDARY','ABYSSAL')};itemLevel=[ordered]@{type='integer';minimum=1;maximum=50};firstDay=[ordered]@{type='integer';minimum=1;maximum=50};maxDurability=[ordered]@{type='integer';minimum=1};toolTier=[ordered]@{type='integer';minimum=-1;maximum=6};baseTemplateId=[ordered]@{type='string';pattern='^(?:|EQL-|EQD(?:20|50)-)'};statInheritancePolicy=[ordered]@{enum=@('NONE','INHERIT_ADD')};setId=[ordered]@{type='string'}
                 tags=[ordered]@{type='array';items=[ordered]@{type='string'};uniqueItems=$true};stats=[ordered]@{type='object';additionalProperties=[ordered]@{type='number'}}
                 executionOpcode=[ordered]@{enum=@('','VANILLA_HARVEST_WITH_WS_TIER_GATE')};harvestProfileId=[ordered]@{enum=@('','HARVEST_PICKAXE','HARVEST_AXE','HARVEST_SHOVEL','HARVEST_HOE')};resourceYieldMultiplier=[ordered]@{const=1.0};durabilityCostPerSuccess=[ordered]@{type='integer';minimum=0;maximum=1};vanillaActionPassthrough=[ordered]@{type='boolean'}
                 effectText=[ordered]@{type='string';minLength=1};raw=[ordered]@{type='array';minItems=6;maxItems=6;items=[ordered]@{type='string'}}

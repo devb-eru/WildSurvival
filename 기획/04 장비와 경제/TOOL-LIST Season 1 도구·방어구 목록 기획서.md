@@ -40,6 +40,31 @@ BACKSTAB, CORRUPTION, NO_RETRIGGER
 - `RARE`, `AP5`, `AB41`, `LG25`, `SPD3`, `UNBREAKABLE6`처럼 다른 열의 값을 합친 문자열은 거부한다.
 - 새 태그는 이 목록과 증강 태그 권위를 함께 개정한 뒤에만 생산 데이터에 들어갈 수 있다.
 
+### 1.2 템플릿 스탯 계승
+
+업그레이드·특화 템플릿은 기반 장비의 정적 스탯을 잃지 않도록 아래 두 필드를 가진다.
+
+| 필드 | 값 | 의미 |
+|---|---|---|
+| `baseTemplateId` | 빈 값 또는 등록 장비 ID | 정적 스탯을 상속할 바로 이전 템플릿 |
+| `statInheritancePolicy` | `NONE` / `INHERIT_ADD` | 부모 없음 / 부모의 최종 정적 스탯에 현재 `stats`를 더함 |
+
+```text
+resolvedTemplateStats(template)
+= resolvedTemplateStats(baseTemplateId)  // INHERIT_ADD일 때
++ template.stats
+
+instanceBaseStats
+= resolvedTemplateStats(templateId)
+× enhancementMultiplier(enhancementLevel)
+```
+
+- 루트 섀시, 개척자 기본 방어구, 기본 방패·장신구·부적·권투 보조, 16개 유틸리티 도구는 `NONE`이다.
+- 특화·보스·후반 템플릿은 제작에 사용한 바로 이전 계열을 `baseTemplateId`로 가진다. 신규 보상으로 직접 생성돼도 같은 계승 그래프를 사용한다.
+- `INHERIT_ADD`는 `stats`만 계승한다. 부모의 고유 효과·희귀도·태그·세트·수율·대가를 중첩 계승하지 않으며 현재 템플릿 효과로 교체한다.
+- 강화 배율은 부모마다 반복 적용하지 않고 합산된 `resolvedTemplateStats`에 인스턴스당 한 번 적용한다. 재련 옵션은 그 뒤 별도 합산한다.
+- 자기 참조, 순환, 미등록 부모, 슬롯 또는 무기군이 다른 부모를 거부한다. `UNARMED_SUPPORT`는 `ACCESSORY` 슬롯 계열 안에서만 계승한다.
+
 ## 2. 전투·채집 입력 경계
 
 ```text

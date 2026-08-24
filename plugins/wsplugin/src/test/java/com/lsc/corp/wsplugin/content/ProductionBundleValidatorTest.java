@@ -62,6 +62,10 @@ class ProductionBundleValidatorTest {
                 .filter(ingredient -> "PROOF".equals(ingredient.kind())).allMatch(ingredient -> !ingredient.consume()));
         assertEquals(214, result.catalog().codexEntries().stream().filter(ProductionContentCatalog.CatalogEntry::equipment).count());
         assertEquals(214, result.catalog().equipmentById().size());
+        assertEquals(33, result.catalog().equipmentById().values().stream()
+                .filter(equipment -> equipment.baseTemplateId().isBlank()).count());
+        assertEquals(181, result.catalog().equipmentById().values().stream()
+                .filter(equipment -> !equipment.baseTemplateId().isBlank()).count());
         assertEquals(108, result.catalog().codexEntries().stream().filter(entry -> "MAIN_WEAPON".equals(entry.equipmentSlot())).count());
         var utilityPickaxe = result.catalog().equipmentById().get("EQL-UT-RI-PICKAXE");
         assertEquals(3, utilityPickaxe.toolTier());
@@ -78,6 +82,8 @@ class ProductionBundleValidatorTest {
         assertTrue(result.catalog().equipmentById().values().stream().flatMap(equipment -> equipment.tags().stream())
                 .noneMatch(tag -> tag.matches("^(?:RARE|AP\\d+|AB\\d+|LG\\d+|SPD\\d+|UNBREAKABLE\\d+)$")));
         var pioneerSword = result.catalog().equipmentById().get("EQL-W01");
+        assertEquals("NONE", pioneerSword.statInheritancePolicy());
+        assertEquals("", pioneerSword.baseTemplateId());
         assertEquals("SWORD", pioneerSword.weaponClass());
         assertEquals("IRON_SWORD", pioneerSword.displayMaterial());
         assertEquals(8.0, pioneerSword.stat("ATK"));
@@ -85,6 +91,9 @@ class ProductionBundleValidatorTest {
         assertEquals(400, pioneerChest.maxDurability());
         assertEquals(40.0, pioneerChest.stat("HP"));
         assertEquals(10.0, pioneerChest.stat("DEF"));
+        assertEquals("EQL-SW-U01", result.catalog().equipmentById().get("EQL-SW-R01").baseTemplateId());
+        assertEquals("EQL-W01", result.catalog().equipmentById().get("EQL-SW-U01").baseTemplateId());
+        assertEquals("EQL-AR-C02", result.catalog().equipmentById().get("EQD50-B30-AR01").baseTemplateId());
         assertEquals("ABYSSAL", result.catalog().equipmentById().get("EQD50-AX-A41").rarity());
         assertEquals(46, result.catalog().facilitiesById().size());
         assertEquals(8, result.catalog().facilitiesById().values().stream()

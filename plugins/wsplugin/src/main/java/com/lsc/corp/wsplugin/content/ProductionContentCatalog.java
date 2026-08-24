@@ -64,7 +64,8 @@ public record ProductionContentCatalog(
 
     public record EquipmentEntry(String id, String name, String equipmentType, String equipmentSlot,
                                  String weaponClass, String displayMaterial, String rarity, int itemLevel,
-                                 int firstDay, int maxDurability, int toolTier, String setId,
+                                 int firstDay, int maxDurability, int toolTier, String baseTemplateId,
+                                 String statInheritancePolicy, String setId,
                                  List<String> tags, Map<String, Double> stats, String executionOpcode,
                                  String harvestProfileId, double resourceYieldMultiplier,
                                  int durabilityCostPerSuccess, boolean vanillaActionPassthrough,
