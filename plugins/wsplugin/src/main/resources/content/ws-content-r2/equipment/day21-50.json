@@ -20,9 +20,7 @@
       "maxDurability": 1500,
       "toolTier": -1,
       "setId": "",
-      "tags": [
-        "AB41"
-      ],
+      "tags": [],
       "stats": {},
       "executionOpcode": "",
       "harvestProfileId": "",
@@ -131,8 +129,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "AXE",
-        "AP8"
+        "AXE"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -371,9 +368,7 @@
       "maxDurability": 1500,
       "toolTier": -1,
       "setId": "",
-      "tags": [
-        "AP2"
-      ],
+      "tags": [],
       "stats": {},
       "executionOpcode": "",
       "harvestProfileId": "",
@@ -407,9 +402,7 @@
       "maxDurability": 1500,
       "toolTier": -1,
       "setId": "",
-      "tags": [
-        "AP1"
-      ],
+      "tags": [],
       "stats": {},
       "executionOpcode": "",
       "harvestProfileId": "",
@@ -773,9 +766,7 @@
       "maxDurability": 1500,
       "toolTier": -1,
       "setId": "",
-      "tags": [
-        "AB41"
-      ],
+      "tags": [],
       "stats": {},
       "executionOpcode": "",
       "harvestProfileId": "",
@@ -920,9 +911,7 @@
       "maxDurability": 1500,
       "toolTier": -1,
       "setId": "",
-      "tags": [
-        "AB35"
-      ],
+      "tags": [],
       "stats": {},
       "executionOpcode": "",
       "harvestProfileId": "",
@@ -956,9 +945,7 @@
       "maxDurability": 1100,
       "toolTier": -1,
       "setId": "",
-      "tags": [
-        "LG25"
-      ],
+      "tags": [],
       "stats": {},
       "executionOpcode": "",
       "harvestProfileId": "",
@@ -1397,8 +1384,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "TRIDENT",
-        "AP6"
+        "TRIDENT"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1539,8 +1525,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "SWORD",
-        "AP5"
+        "SWORD"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1576,8 +1561,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "AXE",
-        "AP5"
+        "AXE"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1613,8 +1597,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "BOW",
-        "AP5"
+        "BOW"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1650,8 +1633,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "CROSSBOW",
-        "AP5"
+        "CROSSBOW"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1687,8 +1669,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "DAGGER",
-        "AP5"
+        "DAGGER"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1724,8 +1705,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "MACE",
-        "AP5"
+        "MACE"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1761,8 +1741,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "STAFF",
-        "AP5"
+        "STAFF"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1798,8 +1777,7 @@
       "toolTier": 4,
       "setId": "",
       "tags": [
-        "PICKAXE",
-        "AP5"
+        "PICKAXE"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1835,8 +1813,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "TRIDENT",
-        "AP5"
+        "TRIDENT"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1872,8 +1849,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "SWORD",
-        "UNBREAKABLE6"
+        "SWORD"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1909,8 +1885,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "AXE",
-        "UNBREAKABLE6"
+        "AXE"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1946,8 +1921,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "BOW",
-        "UNBREAKABLE6"
+        "BOW"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1983,8 +1957,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "CROSSBOW",
-        "UNBREAKABLE6"
+        "CROSSBOW"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -2020,8 +1993,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "DAGGER",
-        "UNBREAKABLE6"
+        "DAGGER"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -2057,8 +2029,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "MACE",
-        "UNBREAKABLE6"
+        "MACE"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -2094,8 +2065,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "STAFF",
-        "UNBREAKABLE6"
+        "STAFF"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -2131,8 +2101,7 @@
       "toolTier": 5,
       "setId": "",
       "tags": [
-        "PICKAXE",
-        "UNBREAKABLE6"
+        "PICKAXE"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -2168,8 +2137,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "TRIDENT",
-        "UNBREAKABLE6"
+        "TRIDENT"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -2204,9 +2172,7 @@
       "maxDurability": 1000,
       "toolTier": -1,
       "setId": "EQD50-SET-PURIFIER",
-      "tags": [
-        "SPD3"
-      ],
+      "tags": [],
       "stats": {},
       "executionOpcode": "",
       "harvestProfileId": "",
@@ -2240,9 +2206,7 @@
       "maxDurability": 1000,
       "toolTier": -1,
       "setId": "EQD50-SET-PURIFIER",
-      "tags": [
-        "SPD3"
-      ],
+      "tags": [],
       "stats": {},
       "executionOpcode": "",
       "harvestProfileId": "",
@@ -2276,9 +2240,7 @@
       "maxDurability": 1000,
       "toolTier": -1,
       "setId": "EQD50-SET-PURIFIER",
-      "tags": [
-        "SPD3"
-      ],
+      "tags": [],
       "stats": {},
       "executionOpcode": "",
       "harvestProfileId": "",
@@ -2312,9 +2274,7 @@
       "maxDurability": 1000,
       "toolTier": -1,
       "setId": "EQD50-SET-PURIFIER",
-      "tags": [
-        "SPD3"
-      ],
+      "tags": [],
       "stats": {},
       "executionOpcode": "",
       "harvestProfileId": "",

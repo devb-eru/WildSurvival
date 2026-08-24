@@ -634,12 +634,19 @@ function Equipment-DisplayName([string]$Id, [string]$DetailKey, [object[]]$Detai
 }
 function Equipment-Tags([string]$Id, [object[]]$DetailCells) {
     $result = [Collections.Generic.List[string]]::new()
+    $allowed = @(
+        'SWORD','AXE','BOW','CROSSBOW','DAGGER','MACE','STAFF','PICKAXE','TRIDENT','UNARMED',
+        'COMBO','GUARD','HEAVY','EXECUTE','RANGED','AIM','MAGAZINE','BREACH','AGILE','BLEED',
+        'IMPACT','BREAK','MAGIC','AREA','PENETRATE','THROW','RECALL','REACTION','CONTROL',
+        'COOLING','SUPPRESS','STATUS_EXTEND','COUNTER','MUTATION','STATUS','INTERRUPT',
+        'BACKSTAB','CORRUPTION','NO_RETRIGGER'
+    )
     $code = Equipment-ClassCode $Id
     if ($code) { $result.Add((Equipment-WeaponClass $code)) }
     if ($DetailCells -and $DetailCells.Count) {
         $clean = ($DetailCells[$DetailCells.Count - 1] -replace '[^A-Z0-9_,]','')
         foreach ($tag in $clean.Split(',', [StringSplitOptions]::RemoveEmptyEntries)) {
-            if ($tag.Length -ge 3 -and $tag -notmatch '^(WSRCP|EQUIP|DATA)') { $result.Add($tag) }
+            if ($allowed -contains $tag) { $result.Add($tag) }
         }
     }
     return @($result | Select-Object -Unique)

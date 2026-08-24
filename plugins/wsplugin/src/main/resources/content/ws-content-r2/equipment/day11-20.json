@@ -380,9 +380,7 @@
       "maxDurability": 1000,
       "toolTier": -1,
       "setId": "",
-      "tags": [
-        "RARE"
-      ],
+      "tags": [],
       "stats": {},
       "executionOpcode": "",
       "harvestProfileId": "",
@@ -912,8 +910,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "SWORD",
-        "RARE"
+        "SWORD"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -949,8 +946,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "AXE",
-        "RARE"
+        "AXE"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -986,8 +982,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "BOW",
-        "RARE"
+        "BOW"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1023,8 +1018,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "CROSSBOW",
-        "RARE"
+        "CROSSBOW"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1060,8 +1054,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "DAGGER",
-        "RARE"
+        "DAGGER"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1097,8 +1090,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "MACE",
-        "RARE"
+        "MACE"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1134,8 +1126,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "STAFF",
-        "RARE"
+        "STAFF"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1171,8 +1162,7 @@
       "toolTier": 3,
       "setId": "",
       "tags": [
-        "PICKAXE",
-        "RARE"
+        "PICKAXE"
       ],
       "stats": {},
       "executionOpcode": "",
@@ -1208,8 +1198,7 @@
       "toolTier": -1,
       "setId": "",
       "tags": [
-        "TRIDENT",
-        "RARE"
+        "TRIDENT"
       ],
       "stats": {},
       "executionOpcode": "",

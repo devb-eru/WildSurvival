@@ -75,6 +75,8 @@ class ProductionBundleValidatorTest {
                 .filter(ProductionContentCatalog.EquipmentEntry::utility)
                 .noneMatch(equipment -> equipment.effectText().contains("본 문서")
                         || equipment.effectText().contains("§")));
+        assertTrue(result.catalog().equipmentById().values().stream().flatMap(equipment -> equipment.tags().stream())
+                .noneMatch(tag -> tag.matches("^(?:RARE|AP\\d+|AB\\d+|LG\\d+|SPD\\d+|UNBREAKABLE\\d+)$")));
         var pioneerSword = result.catalog().equipmentById().get("EQL-W01");
         assertEquals("SWORD", pioneerSword.weaponClass());
         assertEquals("IRON_SWORD", pioneerSword.displayMaterial());

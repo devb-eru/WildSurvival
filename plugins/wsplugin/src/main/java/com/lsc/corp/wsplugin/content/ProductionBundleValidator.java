@@ -969,6 +969,11 @@ public final class ProductionBundleValidator {
                 "MACE", "STAFF", "PICKAXE", "TRIDENT");
         Set<String> statIds = Set.of("ATK", "DEF", "HP", "AP", "HIT", "EVA", "PEN", "RES",
                 "TENACITY", "STAGGER_RES", "SPD", "BREAK_DAMAGE");
+        Set<String> equipmentTags = Set.of("SWORD", "AXE", "BOW", "CROSSBOW", "DAGGER", "MACE", "STAFF",
+                "PICKAXE", "TRIDENT", "UNARMED", "COMBO", "GUARD", "HEAVY", "EXECUTE", "RANGED", "AIM",
+                "MAGAZINE", "BREACH", "AGILE", "BLEED", "IMPACT", "BREAK", "MAGIC", "AREA", "PENETRATE",
+                "THROW", "RECALL", "REACTION", "CONTROL", "COOLING", "SUPPRESS", "STATUS_EXTEND", "COUNTER",
+                "MUTATION", "STATUS", "INTERRUPT", "BACKSTAB", "CORRUPTION", "NO_RETRIGGER");
         Set<String> harvestProfiles = Set.of("HARVEST_PICKAXE", "HARVEST_AXE", "HARVEST_SHOVEL", "HARVEST_HOE");
         Map<Integer, Long> utilityTiers = catalog.equipmentById().values().stream()
                 .filter(ProductionContentCatalog.EquipmentEntry::utility)
@@ -984,10 +989,10 @@ public final class ProductionBundleValidator {
                     || equipment.firstDay() > 50 || equipment.maxDurability() < 1 || equipment.effectText().isBlank()) {
                 throw new ContentValidationException("Invalid equipment profile " + equipment.id());
             }
-            if (!statIds.containsAll(equipment.stats().keySet())
+            if (!statIds.containsAll(equipment.stats().keySet()) || !equipmentTags.containsAll(equipment.tags())
                     || equipment.stats().values().stream().anyMatch(value -> !Double.isFinite(value)
                     || value < -1000 || value > 10000)) {
-                throw new ContentValidationException("Invalid equipment stats " + equipment.id());
+                throw new ContentValidationException("Invalid equipment stats/tags " + equipment.id());
             }
             if (equipment.utility() && (!"INVENTORY".equals(equipment.equipmentSlot())
                     || equipment.toolTier() < 3 || equipment.toolTier() > 6

@@ -258,13 +258,13 @@
       "path": "equipment/day11-20.json",
       "domain": "equipment",
       "schema": "equipment.schema.json",
-      "sha256": "d125ee33eb1d0feb5ce6e0430aae2065d7320f43b44a9f08f601f316869e6b44"
+      "sha256": "c813c5039a25b830de4921a2c6c6c1b5637d30197d73fffc95edadd28bd25eeb"
     },
     {
       "path": "equipment/day21-50.json",
       "domain": "equipment",
       "schema": "equipment.schema.json",
-      "sha256": "a440003a35e74f2298b55fa46327337586ac10107c0c9135ac6ea97c576cc7c9"
+      "sha256": "f66ab9e7c3119786ff4c6560c39882c6efda840819a6236e7363fcacb2a0d80c"
     },
     {
       "path": "facilities/season1-facilities.json",

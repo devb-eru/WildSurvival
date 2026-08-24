@@ -24,6 +24,22 @@
 
 필수 필드는 `id`, `textKey`, `codexIndex`, `inventoryTemplate`, `equipmentSlot`, `weaponClass/toolTier`, `displayMaterial`, `rarity`, `itemLevel`, `durability`, `stats/effects`, `source/recipe`, `enabled`다.
 
+### 1.1 장비 시너지 태그 허용 목록
+
+`tags`는 장비 효과표의 마지막 열을 임의로 정제하지 않고 아래 값만 허용한다. 희귀도·아이템 레벨·AP 비용·해금 표기와 같은 값은 별도 필드이며 태그가 아니다.
+
+```text
+SWORD, AXE, BOW, CROSSBOW, DAGGER, MACE, STAFF, PICKAXE, TRIDENT, UNARMED,
+COMBO, GUARD, HEAVY, EXECUTE, RANGED, AIM, MAGAZINE, BREACH, AGILE, BLEED,
+IMPACT, BREAK, MAGIC, AREA, PENETRATE, THROW, RECALL, REACTION, CONTROL,
+COOLING, SUPPRESS, STATUS_EXTEND, COUNTER, MUTATION, STATUS, INTERRUPT,
+BACKSTAB, CORRUPTION, NO_RETRIGGER
+```
+
+- 무기군 9종의 실제 장비에는 해당 무기군 태그를 정확히 하나 포함한다.
+- `RARE`, `AP5`, `AB41`, `LG25`, `SPD3`, `UNBREAKABLE6`처럼 다른 열의 값을 합친 문자열은 거부한다.
+- 새 태그는 이 목록과 증강 태그 권위를 함께 개정한 뒤에만 생산 데이터에 들어갈 수 있다.
+
 ## 2. 전투·채집 입력 경계
 
 ```text
