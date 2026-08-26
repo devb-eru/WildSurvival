@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -263,12 +265,17 @@ public final class RunService {
                                      String payload, Consumer<RunSnapshot> mutation) {
         synchronized (serialQueue) {
             requireRunning();
-            if (!ResourceLedger.reserveAndMutate(current, key, costs, mutation)) {
-                return false;
+            DurableRunMutation.Outcome<Boolean> outcome = persistCandidateLocked(candidate -> {
+                if (!ResourceLedger.reserveAndMutate(candidate, key, costs, mutation)) {
+                    return false;
+                }
+                commitEvent(candidate, key, eventType, payload);
+                return true;
+            }, Boolean.TRUE::equals);
+            if (outcome.persisted()) {
+                current = outcome.snapshot();
             }
-            commitEventLocked(key, eventType, payload);
-            saveUnchecked();
-            return true;
+            return outcome.result();
         }
     }
 
@@ -282,14 +289,20 @@ public final class RunService {
             Consumer<RunSnapshot> reservationMutation) {
         synchronized (serialQueue) {
             requireRunning();
-            ResourceLedger.ReserveResult result = ResourceLedger.reserve(current, transactionId, costId, targetId,
-                    scope, ownerUuid, costs, clockNowMillisLocked());
-            if (result == ResourceLedger.ReserveResult.RESERVED) {
-                reservationMutation.accept(current);
-                saveUnchecked();
+            long now = clockNowMillisLocked();
+            DurableRunMutation.Outcome<ResourceLedger.ReserveResult> outcome = persistCandidateLocked(candidate -> {
+                ResourceLedger.ReserveResult result = ResourceLedger.reserve(candidate, transactionId, costId,
+                        targetId, scope, ownerUuid, costs, now);
+                if (result == ResourceLedger.ReserveResult.RESERVED) {
+                    reservationMutation.accept(candidate);
+                }
+                return result;
+            }, result -> result == ResourceLedger.ReserveResult.RESERVED);
+            if (outcome.persisted()) {
+                current = outcome.snapshot();
                 testTransactionPause.checkpoint(transactionId, TestTransactionPauseGate.Phase.RESERVED);
             }
-            return result;
+            return outcome.result();
         }
     }
 
@@ -301,13 +314,19 @@ public final class RunService {
         synchronized (serialQueue) {
             requireRunning();
             if (testTransactionPause.blocks(transactionId)) return false;
-            boolean changed = ResourceLedger.beginProcessing(current, transactionId, clockNowMillisLocked());
-            if (changed) {
-                processingMutation.accept(current);
-                saveUnchecked();
+            long now = clockNowMillisLocked();
+            DurableRunMutation.Outcome<Boolean> outcome = persistCandidateLocked(candidate -> {
+                boolean changed = ResourceLedger.beginProcessing(candidate, transactionId, now);
+                if (changed) {
+                    processingMutation.accept(candidate);
+                }
+                return changed;
+            }, Boolean.TRUE::equals);
+            if (outcome.persisted()) {
+                current = outcome.snapshot();
                 testTransactionPause.checkpoint(transactionId, TestTransactionPauseGate.Phase.PROCESSING);
             }
-            return changed;
+            return outcome.result();
         }
     }
 
@@ -316,20 +335,31 @@ public final class RunService {
         synchronized (serialQueue) {
             requireRunning();
             if (testTransactionPause.blocks(transactionId)) return false;
-            boolean committed = ResourceLedger.commit(current, transactionId, clockNowMillisLocked(), mutation);
-            if (!committed) return false;
-            commitEventLocked(transactionId, eventType, payload);
-            saveUnchecked();
-            return true;
+            long now = clockNowMillisLocked();
+            DurableRunMutation.Outcome<Boolean> outcome = persistCandidateLocked(candidate -> {
+                boolean committed = ResourceLedger.commit(candidate, transactionId, now, mutation);
+                if (committed) {
+                    commitEvent(candidate, transactionId, eventType, payload);
+                }
+                return committed;
+            }, Boolean.TRUE::equals);
+            if (outcome.persisted()) {
+                current = outcome.snapshot();
+            }
+            return outcome.result();
         }
     }
 
     public boolean cancelResourceReservation(String transactionId, String reason) {
         synchronized (serialQueue) {
             requireRunning();
-            boolean cancelled = ResourceLedger.cancelReservation(current, transactionId, reason);
-            if (cancelled) saveUnchecked();
-            return cancelled;
+            DurableRunMutation.Outcome<Boolean> outcome = persistCandidateLocked(
+                    candidate -> ResourceLedger.cancelReservation(candidate, transactionId, reason),
+                    Boolean.TRUE::equals);
+            if (outcome.persisted()) {
+                current = outcome.snapshot();
+            }
+            return outcome.result();
         }
     }
 
@@ -686,15 +716,29 @@ public final class RunService {
     }
 
     private void commitEventLocked(String idempotencyKey, String type, String payload) {
-        current.committedKeys.add(idempotencyKey);
+        commitEvent(current, idempotencyKey, type, payload);
+    }
+
+    private void commitEvent(RunSnapshot snapshot, String idempotencyKey, String type, String payload) {
+        snapshot.committedKeys.add(idempotencyKey);
         RunSnapshot.OutboxEvent event = new RunSnapshot.OutboxEvent();
-        event.eventId = UUID.nameUUIDFromBytes((current.runId + ":" + idempotencyKey).getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
+        event.eventId = UUID.nameUUIDFromBytes((snapshot.runId + ":" + idempotencyKey)
+                .getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString();
         event.type = type;
         event.payload = payload;
         event.createdAtEpochMs = Instant.now().toEpochMilli();
-        current.outbox.add(event);
-        telemetry.event(current.runId, type, payload);
+        snapshot.outbox.add(event);
+        telemetry.event(snapshot.runId, type, payload);
         event.delivered = true;
+    }
+
+    private <T> DurableRunMutation.Outcome<T> persistCandidateLocked(Function<RunSnapshot, T> mutation,
+                                                                      Predicate<T> shouldPersist) {
+        try {
+            return DurableRunMutation.execute(current, mutation, shouldPersist, activeRepositoryLocked()::save);
+        } catch (IOException exception) {
+            throw new IllegalStateException("Cannot persist run", exception);
+        }
     }
 
     private void requireCurrent() {

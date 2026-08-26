@@ -267,6 +267,7 @@ PREPARED → COMMITTED
 - `PREPARED`에서 자원·이전 상태와 기대 리비전을 기록한다.
 - 도메인 검증과 DB 갱신이 성공하면 `COMMITTED`로 확정한다.
 - RCOST/FCOST의 `PREPARED` 내부 상태는 `VALIDATED→RESERVED→PROCESSING`으로 세분한다. `CANCELLED`는 예약 원장에 정확히 환불한 뒤 같은 transaction ID의 새 검증을 허용하되, 시도 번호와 취소 사유 이력을 보존하고 한 시도 안의 중복 차감은 금지한다.
+- RCOST/FCOST의 예약·처리·커밋·취소는 권위 `RunSnapshot`을 직접 변경하지 않는다. 분리 복제본에서 자원 원장과 도메인 콜백을 함께 적용하고 원자 저장 성공 뒤에만 메모리 참조를 교체한다. 콜백 예외 또는 저장 예외에서는 복제본을 폐기하여 부분 차감·부분 해금·부분 업그레이드가 다음 자동 저장으로 유출되지 않게 한다.
 - 서버 재시작 시 `PREPARED` 작업은 실제 월드/PDC 상태와 기대 리비전을 비교해 한 번만 완료하거나 취소한다.
 - 같은 `rewardId` 또는 `transactionId`의 두 번째 요청은 기존 결과를 반환한다.
 
