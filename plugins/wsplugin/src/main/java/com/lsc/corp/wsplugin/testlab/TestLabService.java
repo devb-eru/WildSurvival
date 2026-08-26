@@ -5,6 +5,8 @@ import com.lsc.corp.wsplugin.boss.PrototypeBossService;
 import com.lsc.corp.wsplugin.combat.CombatService;
 import com.lsc.corp.wsplugin.content.PrototypeContent;
 import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
+import com.lsc.corp.wsplugin.economy.ResourceLedger;
+import com.lsc.corp.wsplugin.facility.FacilityService;
 import com.lsc.corp.wsplugin.growth.GrowthService;
 import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
@@ -45,7 +47,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public final class TestLabService implements Listener {
-    private static final Set<Integer> PROTOTYPE_DAYS = Set.of(1, 3, 6, 10);
     private static final Set<String> BUILT_IN_PRESETS = Set.of(
             "DEFAULT", "GLASS-CANNON", "TANK", "NO-COOLDOWN", "SURVIVABILITY", "PARTY-4");
     private final JavaPlugin plugin;
@@ -53,6 +54,7 @@ public final class TestLabService implements Listener {
     private final TestLabRepository repository;
     private final PrototypeContent content;
     private final ProductionContentCatalog production;
+    private final FacilityService facility;
     private final EquipmentService equipment;
     private final GrowthService growth;
     private final CombatService combat;
@@ -64,7 +66,7 @@ public final class TestLabService implements Listener {
 
     public TestLabService(JavaPlugin plugin, RunService runs, TestLabRepository repository,
                           PrototypeContent content, ProductionContentCatalog production,
-                          EquipmentService equipment, GrowthService growth,
+                          FacilityService facility, EquipmentService equipment, GrowthService growth,
                           CombatService combat, PrototypeBossService boss, PrototypeLoopService loop,
                           TelemetryService telemetry) {
         this.plugin = plugin;
@@ -72,6 +74,7 @@ public final class TestLabService implements Listener {
         this.repository = repository;
         this.content = content;
         this.production = production;
+        this.facility = facility;
         this.equipment = equipment;
         this.growth = growth;
         this.combat = combat;
@@ -135,7 +138,7 @@ public final class TestLabService implements Listener {
     }
 
     public TestLabSnapshot undo(Player actor) throws IOException {
-        requireOwner(actor);
+        requireSessionOwner(actor);
         RunSnapshot current = runs.current().orElseThrow();
         TestLabSnapshot snapshot = repository.popLatestSnapshot(current.runId)
                 .orElseThrow(() -> new IllegalStateException("No Test Lab snapshot is available"));
@@ -335,11 +338,107 @@ public final class TestLabService implements Listener {
         afterMutation(actor, "resource.fill", "all=" + amount);
     }
 
+    public int setLedgerResource(Player actor, String rawScope, String rawId, int amount) throws IOException {
+        requireOwner(actor);
+        ResourceLedger.Scope scope = ledgerScope(rawScope);
+        String id = rawId.toUpperCase(Locale.ROOT);
+        if (!production.materialsById().containsKey(id)) {
+            throw new IllegalArgumentException("Unknown production material " + rawId);
+        }
+        TestValuePolicy.integerInRange("ledger resource amount", amount, 0, 1_000_000_000);
+        beforeMutation(actor, "ledger.resource.set");
+        runs.mutate(run -> ledger(run, actor, scope).put(id, amount));
+        afterMutation(actor, "ledger.resource.set", scope + ":" + id + "=" + amount);
+        return amount;
+    }
+
+    public void fillLedgerResources(Player actor, String rawScope, int amount) throws IOException {
+        requireOwner(actor);
+        ResourceLedger.Scope scope = ledgerScope(rawScope);
+        TestValuePolicy.integerInRange("ledger resource amount", amount, 0, 1_000_000_000);
+        beforeMutation(actor, "ledger.resource.fill");
+        runs.mutate(run -> {
+            Map<String, Integer> balance = ledger(run, actor, scope);
+            production.materialsById().keySet().forEach(id -> balance.put(id, amount));
+        });
+        afterMutation(actor, "ledger.resource.fill", scope + ":all=" + amount);
+    }
+
+    public Map<String, Integer> ledgerView(Player actor, String rawScope) {
+        requireOwner(actor);
+        ResourceLedger.Scope scope = ledgerScope(rawScope);
+        return Map.copyOf(ledger(runs.current().orElseThrow(), actor, scope));
+    }
+
+    public void setResearchState(Player actor, String rawId, String rawState) throws IOException {
+        requireOwner(actor);
+        String id = rawId.toUpperCase(Locale.ROOT);
+        if (!production.researchById().containsKey(id)) {
+            throw new IllegalArgumentException("Unknown research " + rawId);
+        }
+        String state = rawState.toUpperCase(Locale.ROOT);
+        if (!Set.of("HIDDEN", "OBSERVABLE", "HYPOTHESIZED", "READY", "QUEUED", "PROCESSING",
+                "PAUSED", "ANALYZED", "UNLOCKED", "MASTERED").contains(state)) {
+            throw new IllegalArgumentException("Unknown research state " + rawState);
+        }
+        beforeMutation(actor, "research.state");
+        runs.mutate(run -> {
+            RunSnapshot.ResearchNodeState value = run.researchNodes.computeIfAbsent(id, ignored -> {
+                RunSnapshot.ResearchNodeState created = new RunSnapshot.ResearchNodeState();
+                created.researchId = id;
+                return created;
+            });
+            value.state = state;
+        });
+        afterMutation(actor, "research.state", id + "=" + state);
+    }
+
+    public String placeFacility(Player actor, String facilityId, int level) throws IOException {
+        requireOwner(actor);
+        beforeMutation(actor, "facility.place");
+        String instanceId = facility.placeForTest(actor, facilityId, level);
+        afterMutation(actor, "facility.place", instanceId);
+        return instanceId;
+    }
+
+    public void armTransactionPause(Player actor, String phase) throws IOException {
+        requireOwner(actor);
+        runs.armTestTransactionPause(phase);
+        audit(actor, "fault.transaction.arm", "none", phase.toUpperCase(Locale.ROOT));
+    }
+
+    public void clearTransactionPause(Player actor) throws IOException {
+        requireOwner(actor);
+        String before = String.valueOf(runs.testTransactionPauseStatus());
+        runs.clearTestTransactionPause();
+        audit(actor, "fault.transaction.clear", before, "clear");
+    }
+
+    public Object transactionPauseStatus(Player actor) {
+        requireOwner(actor);
+        return runs.testTransactionPauseStatus();
+    }
+
+    private static ResourceLedger.Scope ledgerScope(String rawScope) {
+        try {
+            return ResourceLedger.Scope.valueOf(rawScope.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException | NullPointerException exception) {
+            throw new IllegalArgumentException("Ledger scope must be PERSONAL or SHARED");
+        }
+    }
+
+    private static Map<String, Integer> ledger(RunSnapshot run, Player actor, ResourceLedger.Scope scope) {
+        return scope == ResourceLedger.Scope.SHARED
+                ? run.resources : run.players.get(actor.getUniqueId().toString()).personalResources;
+    }
+
     public void setEquipment(Player actor, String rawWeapon, boolean equipNow) throws IOException {
         requireOwner(actor);
         String id = rawWeapon.toUpperCase(Locale.ROOT);
-        if (!"UNARMED".equals(id)) {
-            content.weapon(id);
+        if (!"UNARMED".equals(id)
+                && content.weapons().stream().noneMatch(weapon -> weapon.id().equals(id))
+                && !production.equipmentById().containsKey(id)) {
+            throw new IllegalArgumentException("Unknown equipment " + rawWeapon);
         }
         beforeMutation(actor, "equipment.set");
         if (equipNow) {
@@ -500,6 +599,15 @@ public final class TestLabService implements Listener {
         return combat.inspectCombatEntity(target(actor));
     }
 
+    public CombatService.TestProductionActionView armTargetAttack(Player actor, String mode) throws IOException {
+        requireOwner(actor);
+        beforeMutation(actor, "mob.attack." + mode.toLowerCase(Locale.ROOT));
+        CombatService.TestProductionActionView view = combat.armTestProductionEnemyAction(target(actor), actor, mode);
+        afterMutation(actor, "mob.attack." + mode.toLowerCase(Locale.ROOT),
+                view.enemyId() + ":" + view.actionId());
+        return view;
+    }
+
     public void setTargetNumber(Player actor, String stat, double value) throws IOException {
         requireOwner(actor);
         beforeMutation(actor, "mob.stat." + stat);
@@ -566,20 +674,32 @@ public final class TestLabService implements Listener {
 
     public void setDay(Player actor, int day) throws IOException {
         requireOwner(actor);
-        if (!PROTOTYPE_DAYS.contains(day)) {
-            throw new IllegalArgumentException("Prototype Test Lab days are 1, 3, 6, and 10");
-        }
+        TestValuePolicy.integerInRange("Season 1 day", day, 1, 50);
+        ProductionContentCatalog.DayEntry definition = production.daysByNumber().get(day);
+        if (definition == null) throw new IllegalArgumentException("Missing production day " + day);
         beforeMutation(actor, "world.day");
-        if (day < 10) {
-            loop.cleanupWorldObjects();
-        }
+        loop.cleanupWorldObjects();
+        long now = runs.clockNowMillis();
         runs.mutate(run -> {
             run.day = day;
-            run.checkpointStartedAtEpochMs = runs.clockNowMillis();
-            if (day < 10) {
-                run.boss = null;
-            }
+            run.checkpointStartedAtEpochMs = now;
+            run.boss = null;
+            RunSnapshot.DayState previous = run.seasonDay;
+            RunSnapshot.DayState state = new RunSnapshot.DayState();
+            state.day = day;
+            state.dayId = definition.id();
+            state.state = "PREPARING";
+            state.lockedBudgetProfileId = "STD-BALANCED";
+            state.lockedThreatBudget3 = definition.threatBudget3();
+            state.lockedResourceBudgets.addAll(definition.resourceBudgetTotals());
+            state.eventQueue.addAll(definition.eventIds());
+            state.activeEventId = definition.eventIds().isEmpty() ? null : definition.eventIds().getFirst();
+            state.startedAtEpochMs = now;
+            state.pressureStartedAtEpochMs = now + 30_000L;
+            state.sequence = previous == null ? 1L : previous.sequence + 1L;
+            run.seasonDay = state;
         });
+        loop.restoreWorldObjects();
         afterMutation(actor, "world.day", Integer.toString(day));
     }
 
@@ -752,7 +872,10 @@ public final class TestLabService implements Listener {
     }
 
     public Collection<String> weaponIds() {
-        return content.weapons().stream().map(PrototypeContent.WeaponDefinition::id).toList();
+        return java.util.stream.Stream.concat(
+                        content.weapons().stream().map(PrototypeContent.WeaponDefinition::id),
+                        production.equipmentById().keySet().stream())
+                .distinct().sorted().toList();
     }
 
     public Collection<String> enemyIds() {
@@ -761,6 +884,20 @@ public final class TestLabService implements Listener {
 
     public Collection<String> resourceIds() {
         return content.resources().stream().map(PrototypeContent.ResourceDefinition::id).toList();
+    }
+
+    public Collection<String> materialResourceIds() {
+        return production.materialsById().keySet().stream().sorted().toList();
+    }
+
+    public Collection<String> researchIds() {
+        return production.researchById().keySet().stream().sorted().toList();
+    }
+
+    public Collection<String> facilityIds() {
+        return production.facilitiesById().values().stream()
+                .filter(entry -> !entry.portableDevice() && !entry.reconstruction())
+                .map(ProductionContentCatalog.FacilityEntry::id).sorted().toList();
     }
 
     public Collection<String> personalAugmentIds() {
@@ -780,8 +917,9 @@ public final class TestLabService implements Listener {
     }
 
     public boolean owner(Player player) {
-        return active() && runs.current().map(run -> run.test != null
-                && player.getUniqueId().toString().equals(run.test.ownerUuid)).orElse(false);
+        return runs.isTestRun() && runs.current().map(run -> run.test != null
+                && TestLabSessionPolicy.activeOwner(run.state, run.test.ownerUuid,
+                player.getUniqueId().toString())).orElse(false);
     }
 
     @EventHandler
@@ -1042,8 +1180,8 @@ public final class TestLabService implements Listener {
 
     private boolean sessionOwner(Player player) {
         return runs.isTestRun() && runs.current().map(run -> run.test != null
-                && (!List.of("ENDED", "ABORTED").contains(run.state) || run.test.restorePending)
-                && player.getUniqueId().toString().equals(run.test.ownerUuid)).orElse(false);
+                && TestLabSessionPolicy.recoverableOwner(run.state, run.test.restorePending,
+                run.test.ownerUuid, player.getUniqueId().toString())).orElse(false);
     }
 
     private void requireSessionOwner(Player player) {

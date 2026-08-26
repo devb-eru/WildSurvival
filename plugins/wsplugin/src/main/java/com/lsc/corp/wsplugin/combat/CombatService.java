@@ -128,6 +128,7 @@ public final class CombatService implements Listener {
     private final Map<UUID, CoverField> coverFields = new HashMap<>();
     private final Map<UUID, Map<UUID, Double>> enemyContributions = new HashMap<>();
     private final Map<UUID, EnemyActionState> productionActionStates = new HashMap<>();
+    private final Map<UUID, ArmedTestProductionAction> armedTestProductionActions = new HashMap<>();
     private final Map<EnemyHitPermit, EnemyHitContext> permittedEnemyHits = new HashMap<>();
     private final Map<UUID, QuickUseChannel> quickUseChannels = new HashMap<>();
     private final Map<UUID, ShortGuardPolicy.State> shortGuards = new HashMap<>();
@@ -281,6 +282,10 @@ public final class CombatService implements Listener {
         } finally {
             permittedEnemyHits.remove(permit);
         }
+        telemetry.event(runs.current().orElseThrow().runId, "ENEMY_HIT_RESOLVED",
+                "{\"player\":\"" + target.getUniqueId() + "\",\"enemy\":\""
+                        + attacker.getUniqueId() + "\",\"executionId\":\"" + executionId
+                        + "\",\"outcome\":\"" + context.outcome + "\"}");
         return context.outcome;
     }
 
@@ -337,6 +342,7 @@ public final class CombatService implements Listener {
         activeCombatEntities.clear();
         enemyContributions.clear();
         productionActionStates.clear();
+        armedTestProductionActions.clear();
         permittedEnemyHits.clear();
         shortGuards.clear();
         parryReadyAtTicks.clear();
@@ -440,6 +446,35 @@ public final class CombatService implements Listener {
                 entity -> entity instanceof LivingEntity living && isCombatEntity(living));
         return result != null && result.getHitEntity() instanceof LivingEntity living
                 ? java.util.Optional.of(living) : java.util.Optional.empty();
+    }
+
+    public TestProductionActionView armTestProductionEnemyAction(LivingEntity enemy, Player target,
+                                                                  String rawMode) {
+        ProductionEnemyTestActionPolicy.Plan plan = ProductionEnemyTestActionPolicy.plan(rawMode);
+        ProductionContentCatalog.ActionEntry action = productionAction(enemy);
+        if (!runs.isRunningMember(target) || !target.getWorld().equals(enemy.getWorld())) {
+            throw new IllegalStateException("Target player is not an active member in the enemy world");
+        }
+        if (target.getLocation().distanceSquared(enemy.getLocation()) > action.range() * action.range()
+                || !enemy.hasLineOfSight(target)) {
+            throw new IllegalStateException("Move within " + action.range()
+                    + " blocks of the looked-at enemy with clear line of sight");
+        }
+        if (plan.waitsForGuardInput()) {
+            restoreArmedTestProductionAction(armedTestProductionActions.remove(target.getUniqueId()));
+            boolean restoreAi = enemy.hasAI();
+            enemy.setAI(false);
+            armedTestProductionActions.put(target.getUniqueId(),
+                    new ArmedTestProductionAction(enemy.getUniqueId(), plan, restoreAi));
+        } else {
+            scheduleTestProductionAction(enemy, target, action, plan, enemy.hasAI());
+        }
+        telemetry.event(runs.current().orElseThrow().runId, "TEST_ENEMY_ACTION_ARMED",
+                "{\"enemyId\":\"" + enemyId(enemy) + "\",\"actionId\":\"" + action.id()
+                        + "\",\"target\":\"" + target.getUniqueId() + "\",\"mode\":\""
+                        + plan.mode() + "\",\"waitsForGuardInput\":" + plan.waitsForGuardInput() + "}");
+        return new TestProductionActionView(enemyId(enemy), action.id(), plan.mode().name(),
+                plan.offsetTicks(), plan.waitsForGuardInput());
     }
 
     public boolean isManagedCombatEntity(Entity entity) {
@@ -901,15 +936,21 @@ public final class CombatService implements Listener {
             return;
         }
         int originalSlot = player.getInventory().getHeldItemSlot();
-        if (player.isSneaking()) {
-            event.setCancelled(true);
-            cancelShortGuard(player);
-            menuOpener.accept(player);
-        } else if (inCombatStance(player)) {
-            event.setCancelled(true);
-            startShortGuard(player);
-        } else {
-            return;
+        CombatInputPolicy.SwapHandDisposition disposition =
+                CombatInputPolicy.swapHand(originalSlot, player.isSneaking());
+        event.setCancelled(true);
+        telemetry.event(runs.current().orElseThrow().runId, "F_INPUT_ROUTED",
+                "{\"player\":\"" + player.getUniqueId() + "\",\"heldSlot\":"
+                        + originalSlot + ",\"route\":\"" + disposition + "\"}");
+        switch (disposition) {
+            case PLAYER_MENU -> {
+                cancelShortGuard(player);
+                menuOpener.accept(player);
+            }
+            case SHORT_GUARD -> startShortGuard(player);
+            case FIXED_OFFHAND_REJECTED -> ActionBarService.notice(player,
+                    Component.text("보조무기는 고정 슬롯입니다. F 손 교환을 사용할 수 없습니다.",
+                            NamedTextColor.GRAY), 30);
         }
         Bukkit.getScheduler().runTask(plugin, () -> {
             equipment.syncAuthoritativeEquipment(player);
@@ -969,6 +1010,7 @@ public final class CombatService implements Listener {
         Player player = event.getPlayer();
         cancelQuickUse(player, "접속 종료로 사용 취소");
         cancelShortGuard(player);
+        restoreArmedTestProductionAction(armedTestProductionActions.remove(player.getUniqueId()));
         parryReadyAtTicks.remove(player.getUniqueId());
         cancelAllReviveParticipation(player.getUniqueId(), "접속 종료로 구조 중단");
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
@@ -1286,7 +1328,12 @@ public final class CombatService implements Listener {
             apFailure(player, apCost);
             return;
         }
-        if (!consumableId.isBlank() && !equipment.consumeQuickItem(player, consumableId)) {
+        boolean apStimTransaction = "AP_STIM".equals(skill.effect())
+                && "WSI-CONS-AP_STIM".equals(consumableId);
+        boolean consumed = consumableId.isBlank() || (apStimTransaction
+                ? equipment.consumeQuickItem(player, consumableId, CombatService::applyApStimState)
+                : equipment.consumeQuickItem(player, consumableId));
+        if (!consumed) {
             runs.mutate(run -> {
                 RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
                 state.ap = Math.min(state.maxAp, state.ap + apCost);
@@ -1296,7 +1343,7 @@ public final class CombatService implements Listener {
         if (!consumableId.isBlank()) recordConsumableUse(player, consumableId);
         markCombatAction(player);
         startSkillCooldown(player, skill);
-        executeCommonEffect(player, skill, target);
+        if (!apStimTransaction) executeCommonEffect(player, skill, target);
         showSkillEffect(player, skill, target == null ? List.of() : List.of(target));
         ActionBarService.notice(player, Component.text("C" + slot + " " + skill.name()
                 + " / AP -" + Math.round(apCost), NamedTextColor.LIGHT_PURPLE), 35);
@@ -1328,7 +1375,18 @@ public final class CombatService implements Listener {
             beginRationUse(player, slot, bound);
             return;
         }
-        if (!canUseLimitedConsumable(player, bound) || !equipment.consumeQuickItem(player, bound)) return;
+        if (!canUseLimitedConsumable(player, bound)) return;
+        boolean apStimTransaction = "WSI-CONS-AP_STIM".equals(bound);
+        if (apStimTransaction) {
+            String useScope = combatUseScope(player, true);
+            if (!equipment.consumeQuickItem(player, bound, state -> {
+                applyApStimState(state);
+                if (state.quickItemUsesByCombat == null) state.quickItemUsesByCombat = new HashMap<>();
+                state.quickItemUsesByCombat.merge(useScope + ":" + bound, 1, Integer::sum);
+            })) return;
+        } else if (!equipment.consumeQuickItem(player, bound)) {
+            return;
+        }
         double maxHealth = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
                 : player.getAttribute(Attribute.MAX_HEALTH).getValue();
         String result;
@@ -1365,7 +1423,6 @@ public final class CombatService implements Listener {
                 cleanseWeakEffects(player); result = "개인 오염 감소 / 약한 상태 정화";
             }
             case "WSI-CONS-AP_STIM" -> {
-                startApStim(player);
                 result = "AP +10 / 5초간 초당 +3";
             }
             case "WSI-CONS-RESCUE_BRACE" -> {
@@ -1428,7 +1485,7 @@ public final class CombatService implements Listener {
             }
             default -> { ActionBarService.notice(player, Component.text("지원하지 않는 Q 아이템 " + bound, NamedTextColor.RED), 40); return; }
         }
-        recordConsumableUse(player, bound);
+        if (!apStimTransaction) recordConsumableUse(player, bound);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EAT, 0.8f, 1.0f);
         ProductionContentCatalog.ItemEntry definition = production.nonEquipmentItemsById().get(bound);
         String name = definition == null ? content.item(bound).name() : definition.name();
@@ -1659,8 +1716,9 @@ public final class CombatService implements Listener {
         }
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null) return;
+        double apBefore = state.ap;
         long readyAt = parryReadyAtTicks.getOrDefault(player.getUniqueId(), 0L);
-        ShortGuardPolicy.Start start = ShortGuardPolicy.start(tick, state.ap, false, readyAt,
+        ShortGuardPolicy.Start start = ShortGuardPolicy.start(tick, apBefore, false, readyAt,
                 ++guardInputSequence);
         if (!start.started()) {
             String message = "COOLDOWN".equals(start.result()) ? "패링 준비가 끝나지 않았습니다."
@@ -1677,6 +1735,11 @@ public final class CombatService implements Listener {
                 "PARRY".equals(start.result()) ? 1.45f : 0.8f);
         ActionBarService.notice(player, Component.text("PARRY".equals(start.result())
                 ? "패링 준비 · AP -15" : "AP 부족 · 3틱 뒤 단기 방어", NamedTextColor.YELLOW), 24);
+        telemetry.event(runs.current().orElseThrow().runId, "SHORT_GUARD_STARTED",
+                "{\"player\":\"" + player.getUniqueId() + "\",\"inputSequence\":"
+                        + start.state().inputSequence() + ",\"mode\":\"" + start.result()
+                        + "\",\"apBefore\":" + apBefore + ",\"apAfter\":" + start.apAfter() + "}");
+        triggerArmedTestProductionAction(player);
     }
 
     private void processShortGuards() {
@@ -1765,6 +1828,10 @@ public final class CombatService implements Listener {
             ActionBarService.notice(player, Component.text("단기 방어 · 가드 충격 AP -"
                     + Math.round(impact), NamedTextColor.AQUA), 24);
         }
+        telemetry.event(runs.current().orElseThrow().runId, "SHORT_GUARD_HIT",
+                "{\"player\":\"" + player.getUniqueId() + "\",\"executionId\":\""
+                        + context.executionId + "\",\"impact\":" + impact + ",\"broken\":"
+                        + broken + "}");
         return false;
     }
 
@@ -2640,18 +2707,22 @@ public final class CombatService implements Listener {
             EnemyActionState state = productionActionStates.computeIfAbsent(uuid,
                     ignored -> new EnemyActionState(tick + 20L));
             if (state.targetUuid != null) {
+                long actionTick = ProductionEnemyTestActionPolicy.actionTick(
+                        state.testForced, tick, Bukkit.getCurrentTick());
                 Player target = Bukkit.getPlayer(state.targetUuid);
                 if (!lockedProductionTargetValid(enemy, definition, target, action.range())) {
+                    finishTestProductionAction(enemy, state);
                     state.targetUuid = null;
                     state.executeAtTick = 0L;
                     state.nextReadyTick = tick;
                     continue;
                 }
-                if (tick < state.executeAtTick) {
-                    if (tick % 5L == 0L) telegraphEnemyAction(enemy, target, action);
+                if (actionTick < state.executeAtTick) {
+                    if (actionTick % 5L == 0L) telegraphEnemyAction(enemy, target, action);
                     continue;
                 }
-                executeProductionEnemyAction(enemy, target, action);
+                executeProductionEnemyAction(enemy, target, action, actionTick);
+                finishTestProductionAction(enemy, state);
                 state.targetUuid = null;
                 state.executeAtTick = 0L;
                 state.nextReadyTick = tick + action.cooldownTicks();
@@ -2667,6 +2738,80 @@ public final class CombatService implements Listener {
             telegraphEnemyAction(enemy, target, action);
         }
         productionActionStates.keySet().removeIf(uuid -> !live.contains(uuid));
+    }
+
+    private ProductionContentCatalog.ActionEntry productionAction(LivingEntity enemy) {
+        if (!isCombatEntity(enemy)) {
+            throw new IllegalArgumentException("Target is not a WildSurvival combat entity");
+        }
+        ProductionContentCatalog.EnemyEntry definition = production.enemiesById().get(enemyId(enemy));
+        if (definition == null) {
+            throw new IllegalArgumentException("Target does not use a production enemy action bundle");
+        }
+        ProductionContentCatalog.ActionBundleEntry bundle = production.actionBundlesById()
+                .get(definition.actionBundleId());
+        if (bundle == null || bundle.actions().isEmpty()) {
+            throw new IllegalArgumentException("Target has no executable production enemy action");
+        }
+        return bundle.actions().getFirst();
+    }
+
+    private void triggerArmedTestProductionAction(Player target) {
+        ArmedTestProductionAction armed = armedTestProductionActions.remove(target.getUniqueId());
+        if (armed == null) return;
+        Entity found = findEntity(armed.enemyUuid().toString());
+        if (!(found instanceof LivingEntity enemy) || !enemy.isValid() || enemy.isDead()) {
+            restoreArmedTestProductionAction(armed);
+            ActionBarService.critical(target, Component.text("검증할 적이 사라졌습니다.", NamedTextColor.RED), 30);
+            return;
+        }
+        ProductionContentCatalog.ActionEntry action;
+        try {
+            action = productionAction(enemy);
+        } catch (RuntimeException exception) {
+            restoreArmedTestProductionAction(armed);
+            throw exception;
+        }
+        scheduleTestProductionAction(enemy, target, action, armed.plan(), armed.restoreAi());
+        target.sendMessage(ChatColor.YELLOW + "[Test Lab] " + armed.plan().mode()
+                + " 검증 공격이 실제 패턴 경로에 예약되었습니다 (" + armed.plan().offsetTicks() + "틱).");
+    }
+
+    private void scheduleTestProductionAction(LivingEntity enemy, Player target,
+                                              ProductionContentCatalog.ActionEntry action,
+                                              ProductionEnemyTestActionPolicy.Plan plan,
+                                              boolean restoreAi) {
+        long logicalTick = runs.clockTick();
+        long serverTick = Bukkit.getCurrentTick();
+        EnemyActionState state = productionActionStates.computeIfAbsent(enemy.getUniqueId(),
+                ignored -> new EnemyActionState(logicalTick));
+        boolean restoreAfterTest = state.testForced ? state.restoreAiAfterTest : restoreAi;
+        state.testForced = true;
+        state.restoreAiAfterTest = restoreAfterTest;
+        state.targetUuid = target.getUniqueId();
+        state.executeAtTick = serverTick + plan.offsetTicks();
+        state.nextReadyTick = logicalTick;
+        enemy.setAI(false);
+        telegraphEnemyAction(enemy, target, action);
+        telemetry.event(runs.current().orElseThrow().runId, "TEST_ENEMY_ACTION_SCHEDULED",
+                "{\"enemyId\":\"" + enemyId(enemy) + "\",\"actionId\":\"" + action.id()
+                        + "\",\"target\":\"" + target.getUniqueId() + "\",\"mode\":\""
+                        + plan.mode() + "\",\"executeAtTick\":" + state.executeAtTick + "}");
+    }
+
+    private void finishTestProductionAction(LivingEntity enemy, EnemyActionState state) {
+        if (!state.testForced) return;
+        enemy.setAI(state.restoreAiAfterTest);
+        state.testForced = false;
+        state.restoreAiAfterTest = false;
+    }
+
+    private void restoreArmedTestProductionAction(ArmedTestProductionAction armed) {
+        if (armed == null) return;
+        Entity found = findEntity(armed.enemyUuid().toString());
+        if (found instanceof LivingEntity enemy && enemy.isValid() && !enemy.isDead()) {
+            enemy.setAI(armed.restoreAi());
+        }
     }
 
     private java.util.Optional<Player> nearestProductionTarget(LivingEntity enemy,
@@ -2728,12 +2873,13 @@ public final class CombatService implements Listener {
     }
 
     private void executeProductionEnemyAction(LivingEntity enemy, Player target,
-                                              ProductionContentCatalog.ActionEntry action) {
+                                              ProductionContentCatalog.ActionEntry action,
+                                              long executionTick) {
         if (target == null || !target.isOnline() || !target.getWorld().equals(enemy.getWorld())
                 || target.getLocation().distanceSquared(enemy.getLocation()) > action.range() * action.range()
                 || !enemy.hasLineOfSight(target)) return;
         HitOutcome outcome = damagePlayerFromPattern(enemy, target, action.damage(), action.breakDamage(),
-                action.tags(), action.responseTags(), action.id() + ":" + runs.clockTick());
+                action.tags(), action.responseTags(), action.id() + ":" + executionTick);
         boolean guardedStatusPassed = outcome != HitOutcome.GUARDED
                 || java.util.concurrent.ThreadLocalRandom.current().nextDouble() < 0.50;
         if (outcome != HitOutcome.PARRIED && guardedStatusPassed && !action.statusId().isBlank()
@@ -2965,13 +3111,14 @@ public final class CombatService implements Listener {
     }
 
     private void startApStim(Player player) {
-        runs.mutate(run -> {
-            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-            ApStimPulsePolicy.State started = ApStimPulsePolicy.start(state.ap, state.maxAp);
-            state.ap = started.ap();
-            state.apStimPulsesRemaining = started.pulsesRemaining();
-            state.apStimTicksUntilNextPulse = started.ticksUntilNextPulse();
-        });
+        runs.mutate(run -> applyApStimState(run.players.get(player.getUniqueId().toString())));
+    }
+
+    private static void applyApStimState(RunSnapshot.PlayerState state) {
+        ApStimPulsePolicy.State started = ApStimPulsePolicy.start(state.ap, state.maxAp);
+        state.ap = started.ap();
+        state.apStimPulsesRemaining = started.pulsesRemaining();
+        state.apStimTicksUntilNextPulse = started.ticksUntilNextPulse();
     }
 
     private void processApStimPulses() {
@@ -3198,6 +3345,9 @@ public final class CombatService implements Listener {
                                    double attackDamage, boolean ai, boolean invulnerable, List<String> statuses) {
     }
 
+    public record TestProductionActionView(String enemyId, String actionId, String mode,
+                                           int offsetTicks, boolean waitsForGuardInput) { }
+
     private record CoverField(Location location, long expiresAtEpochMs) { }
 
     private record SpectatorAnchor(Location location, double radius, Player player) {
@@ -3216,11 +3366,16 @@ public final class CombatService implements Listener {
         private long nextReadyTick;
         private UUID targetUuid;
         private long executeAtTick;
+        private boolean testForced;
+        private boolean restoreAiAfterTest;
 
         private EnemyActionState(long nextReadyTick) {
             this.nextReadyTick = nextReadyTick;
         }
     }
+
+    private record ArmedTestProductionAction(UUID enemyUuid, ProductionEnemyTestActionPolicy.Plan plan,
+                                             boolean restoreAi) { }
 
     private record EnemyHitPermit(UUID enemyUuid, UUID playerUuid) { }
 

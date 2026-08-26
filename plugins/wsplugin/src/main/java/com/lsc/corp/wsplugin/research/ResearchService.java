@@ -189,12 +189,17 @@ public final class ResearchService implements Listener {
             player.sendMessage(ChatColor.RED + "연구 비용 예약 실패: " + reserved);
             return;
         }
-        runs.beginResourceTransaction(transactionId, snapshot -> {
+        boolean processingStarted = runs.beginResourceTransaction(transactionId, snapshot -> {
             RunSnapshot.ResearchNodeState state = snapshot.researchNodes.get(entry.id());
             state.state = "PROCESSING";
             state.completesAtEpochMs = 0L;
         });
-        player.sendMessage(ChatColor.GREEN + entry.id() + " 연구 시작 · " + entry.durationSeconds() + "초");
+        if (processingStarted) {
+            player.sendMessage(ChatColor.GREEN + entry.id() + " 연구 시작 · " + entry.durationSeconds() + "초");
+        } else {
+            player.sendMessage(ChatColor.YELLOW + entry.id()
+                    + " 연구 비용이 예약되었습니다. 처리 재개를 기다리는 중입니다.");
+        }
     }
 
     private void processResearch(long deltaMillis, long now) {
@@ -215,14 +220,14 @@ public final class ResearchService implements Listener {
             ProductionContentCatalog.ResearchEntry entry = ordered.stream()
                     .filter(value -> value.id().equals(researchId)).findFirst().orElseThrow();
             String transactionId = "cost:research:" + entry.costId();
-            runs.commitResourceTransaction(transactionId, "RESEARCH_UNLOCKED",
+            boolean committed = runs.commitResourceTransaction(transactionId, "RESEARCH_UNLOCKED",
                     "{\"researchId\":\"" + researchId + "\",\"costId\":\"" + entry.costId() + "\"}", run -> {
                         RunSnapshot.ResearchNodeState state = run.researchNodes.get(researchId);
                         state.state = "UNLOCKED";
                         state.completedAtEpochMs = now;
                         state.unlockCommitted = true;
                     });
-            runs.broadcast(ChatColor.GREEN + "연구 완료: " + researchId);
+            if (committed) runs.broadcast(ChatColor.GREEN + "연구 완료: " + researchId);
         }
     }
 

@@ -57,4 +57,18 @@ class CombatInputPolicyTest {
                 CombatInputPolicy.slotChange(0, 2, false));
         assertFalse(CombatInputPolicy.SlotChangeDisposition.VANILLA.returnsToCombatStance());
     }
+
+    @Test
+    void fixedOffhandNeverUsesVanillaHandSwapDuringARun() {
+        assertEquals(CombatInputPolicy.SwapHandDisposition.SHORT_GUARD,
+                CombatInputPolicy.swapHand(0, false));
+        for (int slot = 1; slot <= 8; slot++) {
+            assertEquals(CombatInputPolicy.SwapHandDisposition.FIXED_OFFHAND_REJECTED,
+                    CombatInputPolicy.swapHand(slot, false));
+        }
+        assertEquals(CombatInputPolicy.SwapHandDisposition.PLAYER_MENU,
+                CombatInputPolicy.swapHand(0, true));
+        assertEquals(CombatInputPolicy.SwapHandDisposition.PLAYER_MENU,
+                CombatInputPolicy.swapHand(8, true));
+    }
 }

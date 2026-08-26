@@ -35,6 +35,7 @@ public final class RunService {
     private final TelemetryService telemetry;
     private final Object serialQueue = new Object();
     private final AtomicBoolean acceptingCommands = new AtomicBoolean(true);
+    private final TestTransactionPauseGate testTransactionPause = new TestTransactionPauseGate();
     private RunSnapshot current;
     private BukkitTask heartbeat;
     private PrototypeLoopService loop;
@@ -286,6 +287,7 @@ public final class RunService {
             if (result == ResourceLedger.ReserveResult.RESERVED) {
                 reservationMutation.accept(current);
                 saveUnchecked();
+                testTransactionPause.checkpoint(transactionId, TestTransactionPauseGate.Phase.RESERVED);
             }
             return result;
         }
@@ -298,10 +300,12 @@ public final class RunService {
     public boolean beginResourceTransaction(String transactionId, Consumer<RunSnapshot> processingMutation) {
         synchronized (serialQueue) {
             requireRunning();
+            if (testTransactionPause.blocks(transactionId)) return false;
             boolean changed = ResourceLedger.beginProcessing(current, transactionId, clockNowMillisLocked());
             if (changed) {
                 processingMutation.accept(current);
                 saveUnchecked();
+                testTransactionPause.checkpoint(transactionId, TestTransactionPauseGate.Phase.PROCESSING);
             }
             return changed;
         }
@@ -311,6 +315,7 @@ public final class RunService {
                                              Consumer<RunSnapshot> mutation) {
         synchronized (serialQueue) {
             requireRunning();
+            if (testTransactionPause.blocks(transactionId)) return false;
             boolean committed = ResourceLedger.commit(current, transactionId, clockNowMillisLocked(), mutation);
             if (!committed) return false;
             commitEventLocked(transactionId, eventType, payload);
@@ -325,6 +330,27 @@ public final class RunService {
             boolean cancelled = ResourceLedger.cancelReservation(current, transactionId, reason);
             if (cancelled) saveUnchecked();
             return cancelled;
+        }
+    }
+
+    public void armTestTransactionPause(String phase) {
+        synchronized (serialQueue) {
+            requireTestRun();
+            testTransactionPause.arm(phase);
+        }
+    }
+
+    public void clearTestTransactionPause() {
+        synchronized (serialQueue) {
+            requireTestRun();
+            testTransactionPause.clear();
+        }
+    }
+
+    public TestTransactionPauseGate.Status testTransactionPauseStatus() {
+        synchronized (serialQueue) {
+            requireTestRun();
+            return testTransactionPause.status();
         }
     }
 

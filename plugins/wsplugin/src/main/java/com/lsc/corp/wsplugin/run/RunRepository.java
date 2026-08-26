@@ -4,16 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public final class RunRepository {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -21,29 +20,37 @@ public final class RunRepository {
     private final Path currentFile;
     private final Set<RunIdentity> allowedIdentities;
     private final String repositoryLabel;
+    private final AtomicFileStore.Replacer fileReplacer;
 
     public RunRepository(Path dataDirectory) {
         this(dataDirectory.resolve("runs"), Set.of(new RunIdentity("PROTOTYPE", "ws-prototype-r1")),
-                "legacy-prototype");
+                "legacy-prototype", AtomicFileStore::replace);
     }
 
-    private RunRepository(Path runsDirectory, Set<RunIdentity> allowedIdentities, String repositoryLabel) {
+    RunRepository(Path dataDirectory, AtomicFileStore.Replacer fileReplacer) {
+        this(dataDirectory.resolve("runs"), Set.of(new RunIdentity("PROTOTYPE", "ws-prototype-r1")),
+                "legacy-prototype", fileReplacer);
+    }
+
+    private RunRepository(Path runsDirectory, Set<RunIdentity> allowedIdentities, String repositoryLabel,
+                          AtomicFileStore.Replacer fileReplacer) {
         this.runsDirectory = runsDirectory;
         currentFile = runsDirectory.resolve("current.json");
         this.allowedIdentities = Set.copyOf(allowedIdentities);
         this.repositoryLabel = repositoryLabel;
+        this.fileReplacer = fileReplacer;
     }
 
     public static RunRepository season1(Path dataDirectory) {
         return new RunRepository(dataDirectory.resolve("season-1").resolve("runs"),
-                Set.of(new RunIdentity("SEASON_1", "ws-content-r2")), "season-1");
+                Set.of(new RunIdentity("SEASON_1", "ws-content-r2")), "season-1", AtomicFileStore::replace);
     }
 
     public static RunRepository testLab(Path dataDirectory) {
         return new RunRepository(dataDirectory.resolve("test-lab").resolve("runs"), Set.of(
                 new RunIdentity("TEST", "ws-prototype-r1"),
                 new RunIdentity("TEST", "ws-content-r2"),
-                new RunIdentity("TEST", "ws-content-r2.1")), "test-lab");
+                new RunIdentity("TEST", "ws-content-r2.1")), "test-lab", AtomicFileStore::replace);
     }
 
     public synchronized Optional<RunSnapshot> load() throws IOException {
@@ -64,13 +71,28 @@ public final class RunRepository {
         }
         validateIdentity(snapshot);
         Files.createDirectories(runsDirectory);
-        snapshot.version++;
-        Path temporary = runsDirectory.resolve("current.json.tmp");
-        Files.writeString(temporary, gson.toJson(snapshot) + System.lineSeparator(), StandardCharsets.UTF_8);
+        long previousVersion = snapshot.version;
+        Path temporary = null;
+        Throwable failure = null;
         try {
-            Files.move(temporary, currentFile, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-        } catch (AtomicMoveNotSupportedException ignored) {
-            Files.move(temporary, currentFile, StandardCopyOption.REPLACE_EXISTING);
+            snapshot.version = previousVersion + 1;
+            temporary = Files.createTempFile(runsDirectory, "current.json.", ".tmp");
+            Files.writeString(temporary, gson.toJson(snapshot) + System.lineSeparator(), StandardCharsets.UTF_8);
+            fileReplacer.replace(temporary, currentFile);
+        } catch (IOException | RuntimeException exception) {
+            snapshot.version = previousVersion;
+            failure = exception;
+            throw exception;
+        } finally {
+            if (temporary != null) {
+                try {
+                    Files.deleteIfExists(temporary);
+                } catch (IOException cleanupFailure) {
+                    if (failure != null) {
+                        failure.addSuppressed(cleanupFailure);
+                    }
+                }
+            }
         }
     }
 
@@ -81,7 +103,20 @@ public final class RunRepository {
         Path archived = runsDirectory.resolve("history").resolve(safeId + "-" + Instant.now().toEpochMilli() + ".json");
         Files.writeString(archived, gson.toJson(snapshot) + System.lineSeparator(), StandardCharsets.UTF_8);
         Files.deleteIfExists(currentFile);
-        Files.deleteIfExists(runsDirectory.resolve("current.json.tmp"));
+        deleteTemporarySnapshots();
+    }
+
+    private void deleteTemporarySnapshots() throws IOException {
+        try (Stream<Path> paths = Files.list(runsDirectory)) {
+            for (Path path : paths.filter(RunRepository::isTemporarySnapshot).toList()) {
+                Files.deleteIfExists(path);
+            }
+        }
+    }
+
+    private static boolean isTemporarySnapshot(Path path) {
+        String name = path.getFileName().toString();
+        return name.equals("current.json.tmp") || name.startsWith("current.json.") && name.endsWith(".tmp");
     }
 
     private void migrate(RunSnapshot snapshot) throws IOException {

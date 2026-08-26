@@ -41,6 +41,16 @@ public final class CombatInputPolicy {
         return SlotChangeDisposition.VANILLA;
     }
 
+    public static SwapHandDisposition swapHand(int heldSlot, boolean sneaking) {
+        if (sneaking) {
+            return SwapHandDisposition.PLAYER_MENU;
+        }
+        if (heldSlot == 0) {
+            return SwapHandDisposition.SHORT_GUARD;
+        }
+        return SwapHandDisposition.FIXED_OFFHAND_REJECTED;
+    }
+
     public enum LeftDisposition {
         VANILLA,
         VANILLA_MINING,
@@ -62,5 +72,11 @@ public final class CombatInputPolicy {
         public boolean returnsToCombatStance() {
             return this != VANILLA;
         }
+    }
+
+    public enum SwapHandDisposition {
+        PLAYER_MENU,
+        SHORT_GUARD,
+        FIXED_OFFHAND_REJECTED
     }
 }

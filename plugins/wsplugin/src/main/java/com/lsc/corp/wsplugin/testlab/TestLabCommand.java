@@ -49,13 +49,18 @@ public final class TestLabCommand {
             case "snapshot" -> snapshot(sender, args);
             case "undo" -> {
                 requirePermission(sender, "wildsurvival.test.mutate");
-                lab.undo(requirePlayer(sender));
+                TestLabSnapshot restored = lab.undo(requirePlayer(sender));
+                sender.sendMessage(ChatColor.GREEN + "Restored Test Lab snapshot " + restored.snapshotId);
             }
             case "reset" -> reset(sender, args);
             case "preset" -> preset(sender, args);
             case "scenario" -> scenario(sender, args);
             case "player" -> player(sender, args);
             case "item" -> item(sender, args);
+            case "ledger" -> ledger(sender, args);
+            case "research" -> research(sender, args);
+            case "facility" -> facility(sender, args);
+            case "fault" -> fault(sender, args);
             case "augment" -> augment(sender, args);
             case "mob" -> mob(sender, args);
             case "world" -> world(sender, args);
@@ -76,7 +81,8 @@ public final class TestLabCommand {
         }
         if (args.length == 2) {
             return filter(args[1], List.of("enter", "exit", "gui", "status", "snapshot", "undo", "reset",
-                    "preset", "scenario", "player", "item", "augment", "mob", "world", "party",
+                    "preset", "scenario", "player", "item", "ledger", "research", "facility", "fault",
+                    "augment", "mob", "world", "party",
                     "damage", "inspect", "export"));
         }
         if (args.length == 3) {
@@ -85,8 +91,12 @@ public final class TestLabCommand {
                 case "scenario" -> filter(args[2], List.of("list", "run"));
                 case "player" -> filter(args[2], List.of("level", "exp", "health", "ap", "life", "stat", "invulnerable", "effect"));
                 case "item" -> filter(args[2], List.of("resource", "equipment", "quick", "vanilla", "test-clear"));
+                case "ledger" -> filter(args[2], List.of("personal", "shared"));
+                case "research" -> filter(args[2], List.of("state"));
+                case "facility" -> filter(args[2], List.of("place"));
+                case "fault" -> filter(args[2], List.of("transaction", "status", "clear"));
                 case "augment" -> filter(args[2], List.of("personal", "party", "redraw"));
-                case "mob" -> filter(args[2], List.of("spawn", "boss", "clear", "remove", "inspect", "set", "flag", "status", "phase", "pattern"));
+                case "mob" -> filter(args[2], List.of("spawn", "boss", "clear", "remove", "inspect", "set", "flag", "status", "attack", "phase", "pattern"));
                 case "world" -> filter(args[2], List.of("day", "time", "weather"));
                 case "party" -> filter(args[2], List.of("size", "contribute", "boss-channel", "dummy"));
                 case "inspect" -> filter(args[2], List.of("run", "player", "target", "dummies"));
@@ -101,12 +111,17 @@ public final class TestLabCommand {
                 case "item:equipment" -> filter(args[3], List.of("give", "equip", "remove", "clear"));
                 case "item:quick" -> filter(args[3], List.of("set"));
                 case "item:vanilla" -> filter(args[3], List.of("give"));
+                case "ledger:personal", "ledger:shared" -> filter(args[3], List.of("set", "add", "fill", "clear"));
+                case "research:state" -> filter(args[3], lab.researchIds());
+                case "facility:place" -> filter(args[3], lab.facilityIds());
+                case "fault:transaction" -> filter(args[3], List.of("RESERVED", "PROCESSING"));
                 case "augment:personal" -> filter(args[3], List.of("give", "remove", "clear"));
                 case "augment:party" -> filter(args[3], List.of("set", "clear"));
                 case "mob:spawn" -> filter(args[3], lab.enemyIds());
                 case "mob:set" -> filter(args[3], List.of("health", "max-health", "defence", "break", "break-max", "attack"));
                 case "mob:flag" -> filter(args[3], List.of("ai", "invulnerable", "glowing"));
                 case "mob:status" -> filter(args[3], List.of("add", "clear"));
+                case "mob:attack" -> filter(args[3], List.of("parry", "guard", "hit"));
                 case "world:day" -> filter(args[3], List.of("set", "advance"));
                 case "world:time" -> filter(args[3], List.of("freeze", "resume", "scale", "step"));
                 case "world:weather" -> filter(args[3], List.of("clear", "rain", "thunder"));
@@ -123,6 +138,13 @@ public final class TestLabCommand {
             return switch (lower(args[1]) + ":" + lower(args[2]) + ":" + lower(args[3])) {
                 case "item:resource:set", "item:resource:add" -> filter(args[4], lab.resourceIds());
                 case "item:equipment:give", "item:equipment:equip", "item:equipment:remove" -> filter(args[4], lab.weaponIds());
+                case "ledger:personal:set", "ledger:personal:add", "ledger:shared:set", "ledger:shared:add" ->
+                        filter(args[4], lab.materialResourceIds());
+                case "research:state" -> filter(args[4], List.of("HIDDEN", "OBSERVABLE", "HYPOTHESIZED", "READY",
+                        "QUEUED", "PROCESSING", "PAUSED", "ANALYZED", "UNLOCKED", "MASTERED"));
+                case "facility:place" -> filter(args[4], List.of("1", "2", "3", "4", "5"));
+                case "world:day:set" -> filter(args[4], java.util.stream.IntStream.rangeClosed(1, 50)
+                        .mapToObj(Integer::toString).toList());
                 case "augment:personal:give", "augment:personal:remove" -> filter(args[4], lab.personalAugmentIds());
                 case "augment:party:set" -> filter(args[4], lab.partyAugmentIds());
                 case "player:stat:set", "player:stat:reset" -> filter(args[4], TestValuePolicy.PLAYER_STATS.keySet());
@@ -334,6 +356,75 @@ public final class TestLabCommand {
         }
     }
 
+    private void ledger(CommandSender sender, String[] args) throws IOException {
+        requirePermission(sender, "wildsurvival.test.mutate");
+        requireArgs(args, 4, "/ws test ledger <personal|shared> <set|add|fill|clear> ...");
+        Player player = requirePlayer(sender);
+        String scope = args[2];
+        switch (lower(args[3])) {
+            case "set" -> {
+                requireArgs(args, 6, "/ws test ledger <personal|shared> set <resourceId> <amount>");
+                lab.setLedgerResource(player, scope, args[4], parseInt(args[5], "amount"));
+            }
+            case "add" -> {
+                requireArgs(args, 6, "/ws test ledger <personal|shared> add <resourceId> <amount>");
+                String id = args[4].toUpperCase(Locale.ROOT);
+                int current = lab.ledgerView(player, scope).getOrDefault(id, 0);
+                lab.setLedgerResource(player, scope, id, Math.max(0, current + parseInt(args[5], "amount")));
+            }
+            case "fill" -> {
+                requireArgs(args, 5, "/ws test ledger <personal|shared> fill <amount>");
+                lab.fillLedgerResources(player, scope, parseInt(args[4], "amount"));
+            }
+            case "clear" -> lab.fillLedgerResources(player, scope, 0);
+            default -> throw new IllegalArgumentException("Unknown ledger operation " + args[3]);
+        }
+        sender.sendMessage(ChatColor.AQUA + scope.toUpperCase(Locale.ROOT) + " ledger "
+                + lab.ledgerView(player, scope));
+    }
+
+    private void research(CommandSender sender, String[] args) throws IOException {
+        requirePermission(sender, "wildsurvival.test.mutate");
+        requireArgs(args, 5, "/ws test research state <researchId> <state>");
+        if (!"state".equalsIgnoreCase(args[2])) {
+            throw new IllegalArgumentException("Unknown research operation " + args[2]);
+        }
+        lab.setResearchState(requirePlayer(sender), args[3], args[4]);
+        sender.sendMessage(ChatColor.GREEN + args[3].toUpperCase(Locale.ROOT) + "="
+                + args[4].toUpperCase(Locale.ROOT));
+    }
+
+    private void facility(CommandSender sender, String[] args) throws IOException {
+        requirePermission(sender, "wildsurvival.test.mutate");
+        requireArgs(args, 4, "/ws test facility place <facilityId> [level]");
+        if (!"place".equalsIgnoreCase(args[2])) {
+            throw new IllegalArgumentException("Unknown facility operation " + args[2]);
+        }
+        int level = args.length >= 5 ? parseInt(args[4], "level") : 1;
+        sender.sendMessage(ChatColor.GREEN + "Placed "
+                + lab.placeFacility(requirePlayer(sender), args[3], level));
+    }
+
+    private void fault(CommandSender sender, String[] args) throws IOException {
+        requirePermission(sender, "wildsurvival.test.mutate");
+        requireArgs(args, 3, "/ws test fault <transaction|status|clear> ...");
+        Player player = requirePlayer(sender);
+        switch (lower(args[2])) {
+            case "transaction" -> {
+                requireArgs(args, 4, "/ws test fault transaction <RESERVED|PROCESSING>");
+                lab.armTransactionPause(player, args[3]);
+                sender.sendMessage(ChatColor.YELLOW + "Next transaction pauses after durable "
+                        + args[3].toUpperCase(Locale.ROOT) + " checkpoint.");
+            }
+            case "status" -> sendObject(sender, lab.transactionPauseStatus(player));
+            case "clear" -> {
+                lab.clearTransactionPause(player);
+                sender.sendMessage(ChatColor.GREEN + "Transaction pause cleared.");
+            }
+            default -> throw new IllegalArgumentException("Unknown fault operation " + args[2]);
+        }
+    }
+
     private void augment(CommandSender sender, String[] args) throws IOException {
         requirePermission(sender, "wildsurvival.test.mutate");
         requireArgs(args, 4, "/ws test augment <personal|party|redraw> ...");
@@ -368,7 +459,7 @@ public final class TestLabCommand {
 
     private void mob(CommandSender sender, String[] args) throws IOException {
         requirePermission(sender, "wildsurvival.test.mutate");
-        requireArgs(args, 3, "/ws test mob <spawn|boss|clear|remove|inspect|set|flag|status|phase|pattern>");
+        requireArgs(args, 3, "/ws test mob <spawn|boss|clear|remove|inspect|set|flag|status|attack|phase|pattern>");
         Player player = requirePlayer(sender);
         switch (lower(args[2])) {
             case "spawn" -> {
@@ -397,6 +488,13 @@ public final class TestLabCommand {
                             args.length >= 7 ? parseInt(args[6], "amplifier") : 0);
                 }
             }
+            case "attack" -> {
+                requireArgs(args, 4, "/ws test mob attack <parry|guard|hit>");
+                CombatService.TestProductionActionView view = lab.armTargetAttack(player, args[3]);
+                sender.sendMessage(ChatColor.YELLOW + "Test attack " + view.mode() + ": "
+                        + view.enemyId() + "/" + view.actionId() + (view.waitsForGuardInput()
+                        ? " (tap F in slot 0)" : " (executes in " + view.offsetTicks() + " ticks)"));
+            }
             case "phase" -> {
                 requireArgs(args, 4, "/ws test mob phase 2");
                 if (parseInt(args[3], "phase") != 2) {
@@ -418,7 +516,7 @@ public final class TestLabCommand {
                 if ("advance".equalsIgnoreCase(args[3])) {
                     lab.advanceDay(player);
                 } else {
-                    requireArgs(args, 5, "/ws test world day set <1|3|6|10>");
+                    requireArgs(args, 5, "/ws test world day set <1..50>");
                     lab.setDay(player, parseInt(args[4], "day"));
                 }
             }
@@ -496,7 +594,8 @@ public final class TestLabCommand {
     private void help(CommandSender sender) {
         sender.sendMessage(ChatColor.AQUA + "WildSurvival Test Lab");
         sender.sendMessage(ChatColor.WHITE + "/ws test enter [seed] [partySize] | gui | status");
-        sender.sendMessage(ChatColor.WHITE + "/ws test player|item|augment|mob|world|party|damage|inspect ...");
+        sender.sendMessage(ChatColor.WHITE + "/ws test player|item|ledger|research|facility|fault ...");
+        sender.sendMessage(ChatColor.WHITE + "/ws test augment|mob|world|party|damage|inspect ...");
         sender.sendMessage(ChatColor.WHITE + "/ws test preset|scenario|snapshot|undo|export");
         sender.sendMessage(ChatColor.RED + "/ws test reset --confirm | exit <reason> --confirm");
     }

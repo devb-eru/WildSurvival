@@ -190,12 +190,7 @@ public final class TestLabGui implements Listener {
             case 34 -> sendTarget(player, lab.inspectTarget(player));
             case 37 -> virtualParty.spawn(player, "ALLY-" + (virtualParty.list().size() + 1), "DOWNED");
             case 38 -> lab.simulateBossContributors(player, backwards ? 1 : 2);
-            case 39 -> {
-                List<Integer> days = List.of(1, 3, 6, 10);
-                int index = days.indexOf(run.day);
-                int next = Math.floorMod(index + (backwards ? -1 : 1), days.size());
-                lab.setDay(player, days.get(next));
-            }
+            case 39 -> lab.setDay(player, wrap(run.day + (backwards ? -1 : 1), 1, 50));
             case 40 -> {
                 List<Double> scales = List.of(0.25, 1.0, 5.0, 20.0);
                 lab.setTimeScale(player, scales.get(Math.floorMod(indexOfNearest(scales, run.test.timeScale) + 1, scales.size())));

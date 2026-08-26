@@ -105,7 +105,7 @@ public final class Main extends JavaPlugin {
 
             TestLabRepository testLabRepository = new TestLabRepository(getDataFolder().toPath());
             TestLabService testLab = new TestLabService(this, runService, testLabRepository, content.content(),
-                    content.productionCatalog(), equipment, growth, combat, boss, loop, telemetry);
+                    content.productionCatalog(), facility, equipment, growth, combat, boss, loop, telemetry);
             VirtualPartyService virtualParty = new VirtualPartyService(this, runService);
             TestScenarioService scenarios = new TestScenarioService(testLab, runService, growth, combat, boss, virtualParty, economy);
             TestLabGui testLabGui = new TestLabGui(this, testLab, scenarios, virtualParty, runService);

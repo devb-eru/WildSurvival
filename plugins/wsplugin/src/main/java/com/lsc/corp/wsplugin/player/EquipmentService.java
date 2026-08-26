@@ -277,7 +277,7 @@ public final class EquipmentService implements Listener {
             grantEquipment(player, weaponId);
             slot = findInventoryWeapon(player, weaponId);
         }
-        equipFromInventory(player, slot, false);
+        equipFromInventory(player, slot, "OFF_WEAPON".equals(equipmentSlot(weaponId)));
     }
 
     public void clearTestLoadout(Player player) {
@@ -340,9 +340,12 @@ public final class EquipmentService implements Listener {
     }
 
     public boolean consumeQuickItem(Player player, String id) {
-        if (!codex.takeItem(player, id, 1)) return false;
-        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).quickItems.put(id, codex.countItem(player, id)));
-        return true;
+        return codex.takeItem(player, id, 1);
+    }
+
+    public boolean consumeQuickItem(Player player, String id,
+                                    java.util.function.Consumer<RunSnapshot.PlayerState> stateMutation) {
+        return codex.takeQuickItemWithStateMutation(player, id, 1, stateMutation);
     }
 
     public boolean hasRegisteredItem(Player player, String id) {

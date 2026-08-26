@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -101,6 +102,36 @@ class RunRepositoryTest {
 
         assertTrue(repository.load().isEmpty());
         assertTrue(java.nio.file.Files.list(temporary.resolve("test-lab/runs/history")).findAny().isPresent());
+    }
+
+    @Test
+    void rollsBackVersionAndCleansUniqueTemporaryFileWhenReplacementFails(@TempDir Path temporary) {
+        RunRepository repository = new RunRepository(temporary,
+                (source, destination) -> { throw new AccessDeniedException(destination.toString()); });
+        RunSnapshot snapshot = snapshot();
+        snapshot.version = 7;
+
+        assertThrows(AccessDeniedException.class, () -> repository.save(snapshot));
+
+        assertEquals(7, snapshot.version);
+        assertTrue(Files.notExists(repository.currentFile()));
+        assertTrue(listCurrentTemporaryFiles(temporary.resolve("runs")).isEmpty());
+    }
+
+    @Test
+    void archiveRemovesLegacyAndUniqueTemporarySnapshots(@TempDir Path temporary) throws Exception {
+        RunRepository repository = new RunRepository(temporary);
+        RunSnapshot snapshot = snapshot();
+        repository.save(snapshot);
+        Path runs = temporary.resolve("runs");
+        Files.writeString(runs.resolve("current.json.tmp"), "legacy", StandardCharsets.UTF_8);
+        Files.writeString(runs.resolve("current.json.123.tmp"), "unique", StandardCharsets.UTF_8);
+        Files.writeString(runs.resolve("unrelated.tmp"), "keep", StandardCharsets.UTF_8);
+
+        repository.archiveAndClear(snapshot);
+
+        assertTrue(listCurrentTemporaryFiles(runs).isEmpty());
+        assertTrue(Files.exists(runs.resolve("unrelated.tmp")));
     }
 
     @Test
@@ -218,6 +249,7 @@ class RunRepositoryTest {
         player.ap = pulse.ap();
         player.apStimPulsesRemaining = pulse.pulsesRemaining();
         player.apStimTicksUntilNextPulse = pulse.ticksUntilNextPulse();
+        player.quickItems.put("WSI-CONS-AP_STIM", 0);
         snapshot.players.put(player.uuid, player);
         repository.save(snapshot);
 
@@ -225,6 +257,7 @@ class RunRepositoryTest {
         assertEquals(36.0, restored.ap);
         assertEquals(3, restored.apStimPulsesRemaining);
         assertEquals(20, restored.apStimTicksUntilNextPulse);
+        assertEquals(0, restored.quickItems.get("WSI-CONS-AP_STIM"));
 
         ApStimPulsePolicy.State resumed = new ApStimPulsePolicy.State(restored.ap, restored.maxAp,
                 restored.apStimPulsesRemaining, restored.apStimTicksUntilNextPulse, false);
@@ -243,5 +276,16 @@ class RunRepositoryTest {
         snapshot.runType = "PROTOTYPE";
         snapshot.state = "RUNNING";
         return snapshot;
+    }
+
+    private static java.util.List<Path> listCurrentTemporaryFiles(Path runs) {
+        try (java.util.stream.Stream<Path> paths = Files.list(runs)) {
+            return paths.filter(path -> {
+                String name = path.getFileName().toString();
+                return name.equals("current.json.tmp") || name.startsWith("current.json.") && name.endsWith(".tmp");
+            }).toList();
+        } catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
     }
 }

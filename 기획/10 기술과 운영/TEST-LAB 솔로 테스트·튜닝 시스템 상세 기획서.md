@@ -177,6 +177,7 @@ GUI를 연 뒤 권한이 회수되면 다음 클릭에서 GUI를 닫고 변경�
 /ws test mob flag <ai|invulnerable|glowing> <true|false>
 /ws test mob status add <id> <durationTicks> [amplifier]
 /ws test mob status clear
+/ws test mob attack <parry|guard|hit>
 /ws test mob phase 2
 /ws test mob pattern
 /ws test mob remove
@@ -188,11 +189,12 @@ GUI를 연 뒤 권한이 회수되면 다음 클릭에서 GUI를 닫고 변경�
 - 피해 미리보기는 원 피해→방어 계수→증강→Test Lab 배율→최종 피해와 브레이크를 분리해 출력한다.
 - 테스트 상태 정화는 상태 PDC, 포션, 발광, 그로기 AI 정지를 해제한다.
 - `attack` 오버라이드는 해당 테스트 개체의 플레이어 대상 공격 피해에만 적용한다.
+- `mob attack parry|guard`는 바라보는 운영 적을 일시 정지하고 다음 실제 slot 0 F 입력 뒤 각각 2틱·8틱에 그 적의 첫 운영 패턴을 실행한다. `hit`은 F를 합성하지 않고 20틱 뒤 같은 경로를 실행한다. 이 검증 지연은 Test Lab 논리 시간 정지와 독립된 Bukkit 서버 틱을 사용하고 실행 ID도 해당 서버 틱으로 고유화한다. 세 모드 모두 직접 피해를 주입하지 않으며 `ENEMY_HIT_RESOLVED`·`ENEMY_ACTION_COMMITTED`를 남긴 뒤 기존 AI 상태를 복원한다.
 
 ## 10. Day·시간·환경 조절
 
 ```text
-/ws test world day set <1|3|6|10>
+/ws test world day set <1..50>
 /ws test world day advance
 /ws test world time freeze|resume
 /ws test world time scale <0.05..100>
@@ -200,7 +202,7 @@ GUI를 연 뒤 권한이 회수되면 다음 클릭에서 GUI를 닫고 변경�
 /ws test world weather <clear|rain|thunder>
 ```
 
-Test Lab은 실제 벽시계 대신 저장 가능한 논리 시계를 사용한다. 시간 정지 중에도 `step`으로 이벤트·보스 타이머를 정확한 틱만큼 진행할 수 있다. 일반 프로토타입은 기존 벽시계와 서버 틱을 유지한다.
+Test Lab은 실제 벽시계 대신 저장 가능한 논리 시계를 사용한다. 시간 정지 중에도 `step`으로 이벤트·보스 타이머를 정확한 틱만큼 진행할 수 있다. Day 직접 지정과 Test Lab GUI의 Day 좌·우클릭은 Season 1 전체 `1~50`을 순환하며, 변경 시 `run.day`와 `seasonDay`를 같은 운영 데이터로 다시 잠가 서로 다른 Day의 예산·사건이 섞이지 않게 한다. 일반 프로토타입은 기존 벽시계와 서버 틱을 유지한다.
 
 ## 11. 솔로 협동 시뮬레이션
 
@@ -252,10 +254,12 @@ JSON 내보내기는 다음을 포함한다.
 
 - 일반 저장소가 TEST runType 저장을 거부하고 Test Lab 저장소가 PROTOTYPE을 거부한다.
 - Test Lab 백업·스냅샷·프리셋이 원자 파일 교체를 사용한다.
+- Test Lab 회차 `current.json`은 저장마다 고유 임시 파일을 사용한다. Windows의 일시적 `AccessDenied`만 5회까지 제한 재시도하고, 원자 이동 미지원 시 교체 이동으로 폴백한다. 최종 실패 시 메모리 version을 저장 전 값으로 되돌리고 실패 임시 파일을 정리한다.
 - 경로 문자가 포함된 프리셋 ID와 범위를 벗어난 수치를 거부한다.
 - 방어·피해 감소·테스트 배율·쿨다운 수식 단위 테스트가 통과한다.
 - Paper에서 플러그인 활성화, `/ws test status`, 도움말·권한 등록, 정상 종료가 통과한다.
 - `ABORTED + restorePending` 복구 정책을 포함한 자동 테스트 19건이 실패·오류·건너뜀 없이 통과한다.
+- `ABORTED/ENDED + restorePending`에서는 동일 세션 소유자만 `undo` 또는 `exit` 복구를 수행할 수 있다. 일반 mutate는 `RUNNING` 소유자에게만 허용하고, 복구 성공 시 snapshot ID를 표시한다.
 - 실제 플레이어가 입장→조절→시나리오→undo→exit 후 인벤토리·위치·속성이 복원된다.
 
 마지막 항목은 폐쇄 인게임 플레이테스트 증거가 있어야 `VERIFIED`로 승격한다. 자동·Paper 콘솔 스모크만 통과한 상태에서는 `IMPLEMENTED_PROTOTYPE`을 유지한다.

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -49,6 +50,8 @@ public final class ItemCodexService implements Listener {
     private final TelemetryService telemetry;
     private final NamespacedKey itemIdKey;
     private final List<CodexEntry> entries;
+    private final Set<String> fixedCodexIds;
+    private final Set<String> prototypeRuntimeItemIds;
     private final Map<UUID, Long> pendingNoticeAt = new ConcurrentHashMap<>();
 
     private static final Map<String, String> PROTOTYPE_ALIASES = Map.ofEntries(
@@ -70,6 +73,10 @@ public final class ItemCodexService implements Listener {
         this.telemetry = telemetry;
         this.itemIdKey = new NamespacedKey(plugin, "item_id");
         this.entries = buildEntries(production);
+        this.fixedCodexIds = entries.stream().map(CodexEntry::id)
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
+        this.prototypeRuntimeItemIds = content.items().stream().map(PrototypeContent.ItemDefinition::id)
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
     }
 
     public ItemStack resourceItem(String rawId, int amount) {
@@ -144,6 +151,7 @@ public final class ItemCodexService implements Listener {
             if (overflow > 0) queueRegisteredItem(player, id, overflow);
             remaining -= stack;
         }
+        recordQuickItemCount(player, id);
         discover(player, id, "ACQUIRE_ITEM");
     }
 
@@ -212,6 +220,50 @@ public final class ItemCodexService implements Listener {
     public boolean takeItem(Player player, String rawId, int amount) {
         String id = rawId.toUpperCase(java.util.Locale.ROOT);
         if (amount < 0 || countItem(player, id) < amount) return false;
+        boolean removed = takeItemFromInventory(player, id, amount);
+        if (removed) recordQuickItemCount(player, id);
+        return removed;
+    }
+
+    /**
+     * Commits a quick-item decrement and its durable run effect in one snapshot write. If player
+     * data lags behind that checkpoint after a JVM kill, join reconciliation removes the excess
+     * physical item instead of granting the effect twice.
+     */
+    public boolean takeQuickItemWithStateMutation(Player player, String rawId, int amount,
+                                                   Consumer<RunSnapshot.PlayerState> stateMutation) {
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        if (!isQuickConsumable(id) || amount <= 0 || countItem(player, id) < amount) return false;
+        RunSnapshot.PlayerState current = runs.playerState(player.getUniqueId()).orElse(null);
+        if (current == null) return false;
+        int inventoryBefore = countItem(player, id);
+        int durableBefore = current.quickItems == null ? inventoryBefore
+                : current.quickItems.getOrDefault(id, inventoryBefore);
+        if (durableBefore < amount) {
+            reconcileQuickItems(player);
+            return false;
+        }
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            if (state.quickItems == null) state.quickItems = new LinkedHashMap<>();
+            state.quickItems.put(id, durableBefore - amount);
+            stateMutation.accept(state);
+        });
+        boolean removed = takeItemFromInventory(player, id, amount);
+        if (!removed) {
+            // The durable checkpoint already won. Enforce it immediately; join recovery repeats
+            // the same idempotent repair if the process dies during this branch.
+            reconcileQuickItems(player);
+        }
+        player.saveData();
+        telemetry.event(runs.current().orElseThrow().runId, "QUICK_ITEM_TRANSACTION_COMMITTED",
+                "{\"player\":\"" + player.getUniqueId() + "\",\"itemId\":\"" + id
+                        + "\",\"before\":" + durableBefore + ",\"after\":"
+                        + (durableBefore - amount) + "}");
+        return true;
+    }
+
+    private boolean takeItemFromInventory(Player player, String id, int amount) {
         int remaining = amount;
         ItemStack[] contents = player.getInventory().getStorageContents();
         for (int slot = 1; slot < contents.length && remaining > 0; slot++) {
@@ -251,8 +303,10 @@ public final class ItemCodexService implements Listener {
             return;
         }
         String id = normalizeCodexId(rawId);
-        if (!hasEntry(id)) {
-            throw new IllegalArgumentException("Unknown codex item " + rawId);
+        CodexDiscoveryPolicy.Scope scope = CodexDiscoveryPolicy.scope(
+                id, fixedCodexIds, prototypeRuntimeItemIds);
+        if (scope == CodexDiscoveryPolicy.Scope.RUNTIME_ONLY) {
+            return;
         }
         boolean added = runs.commitOnce("codex:" + player.getUniqueId() + ":" + id, "ITEM_CODEX_UNLOCKED",
                 "{\"player\":\"" + player.getUniqueId() + "\",\"itemId\":\"" + id + "\",\"source\":\"" + source + "\"}",
@@ -263,6 +317,7 @@ public final class ItemCodexService implements Listener {
     }
 
     public void reconcile(Player player) {
+        reconcileQuickItems(player);
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null) {
             return;
@@ -290,13 +345,16 @@ public final class ItemCodexService implements Listener {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null || state.pendingRegisteredItems == null || state.pendingRegisteredItems.isEmpty()) return;
         Map<String, Integer> remainingById = new LinkedHashMap<>();
+        Set<String> quickItemsMoved = new LinkedHashSet<>();
         for (Map.Entry<String, Integer> entry : new LinkedHashMap<>(state.pendingRegisteredItems).entrySet()) {
             int remaining = Math.max(0, entry.getValue());
             while (remaining > 0) {
                 ItemStack item = registeredItem(entry.getKey(), remaining);
                 int attempted = item.getAmount();
                 int overflow = addWithoutReservedSlot(player, item);
-                remaining -= attempted - overflow;
+                int moved = attempted - overflow;
+                remaining -= moved;
+                if (moved > 0 && isQuickConsumable(entry.getKey())) quickItemsMoved.add(entry.getKey());
                 if (overflow == attempted) break;
             }
             if (remaining > 0) remainingById.put(entry.getKey(), remaining);
@@ -304,6 +362,7 @@ public final class ItemCodexService implements Listener {
         if (!state.pendingRegisteredItems.equals(remainingById)) {
             runs.mutate(run -> run.players.get(player.getUniqueId().toString()).pendingRegisteredItems = remainingById);
         }
+        quickItemsMoved.forEach(id -> recordQuickItemCount(player, id));
         if (!remainingById.isEmpty()) {
             long now = System.currentTimeMillis();
             if (now - pendingNoticeAt.getOrDefault(player.getUniqueId(), 0L) >= 5_000L) {
@@ -313,6 +372,79 @@ public final class ItemCodexService implements Listener {
         } else {
             pendingNoticeAt.remove(player.getUniqueId());
         }
+    }
+
+    public void reconcileQuickItems(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
+        Map<String, Integer> durable = state.quickItems == null
+                ? Map.of() : new LinkedHashMap<>(state.quickItems);
+        Map<String, Integer> repaired = new LinkedHashMap<>();
+        boolean inventoryChanged = false;
+        int correctionCount = 0;
+        for (String id : quickConsumableIds()) {
+            int inventoryCount = countItem(player, id);
+            if (!durable.containsKey(id) && inventoryCount == 0) continue;
+            QuickItemRecoveryPolicy.Decision decision = QuickItemRecoveryPolicy.reconcile(
+                    durable.containsKey(id) ? durable.get(id) : null, inventoryCount);
+            if (decision.removeCount() > 0) {
+                takeItemFromInventory(player, id, decision.removeCount());
+                inventoryChanged = true;
+                correctionCount += decision.removeCount();
+            } else if (decision.grantCount() > 0) {
+                grantItem(player, id, decision.grantCount());
+                inventoryChanged = true;
+                correctionCount += decision.grantCount();
+            }
+            repaired.put(id, countItem(player, id));
+        }
+        boolean ledgerChanged = durable.entrySet().stream().anyMatch(entry ->
+                isQuickConsumable(entry.getKey())
+                        && repaired.getOrDefault(entry.getKey(), 0) != entry.getValue())
+                || repaired.entrySet().stream().anyMatch(entry ->
+                !durable.containsKey(entry.getKey()) || !durable.get(entry.getKey()).equals(entry.getValue()));
+        if (ledgerChanged) {
+            runs.mutate(run -> {
+                RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
+                if (mutable.quickItems == null) mutable.quickItems = new LinkedHashMap<>();
+                mutable.quickItems.putAll(repaired);
+            });
+        }
+        if (inventoryChanged) player.saveData();
+        if (correctionCount > 0) {
+            telemetry.event(runs.current().orElseThrow().runId, "QUICK_ITEM_RECOVERED",
+                    "{\"player\":\"" + player.getUniqueId() + "\",\"corrected\":"
+                            + correctionCount + "}");
+        }
+    }
+
+    private Set<String> quickConsumableIds() {
+        Set<String> ids = new LinkedHashSet<>();
+        content.items().stream().filter(item -> "QUICK_ITEM".equals(item.category()))
+                .map(PrototypeContent.ItemDefinition::id).forEach(ids::add);
+        production.nonEquipmentItemsById().values().stream()
+                .filter(ProductionContentCatalog.ItemEntry::quickConsumable)
+                .map(ProductionContentCatalog.ItemEntry::id).forEach(ids::add);
+        return ids;
+    }
+
+    private boolean isQuickConsumable(String id) {
+        ProductionContentCatalog.ItemEntry productionItem = production.nonEquipmentItemsById().get(id);
+        if (productionItem != null) return productionItem.quickConsumable();
+        return content.items().stream().anyMatch(item -> item.id().equals(id)
+                && "QUICK_ITEM".equals(item.category()));
+    }
+
+    private void recordQuickItemCount(Player player, String id) {
+        if (!isQuickConsumable(id)) return;
+        int count = countItem(player, id);
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || state.quickItems != null && state.quickItems.getOrDefault(id, -1) == count) return;
+        runs.mutate(run -> {
+            RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
+            if (mutable.quickItems == null) mutable.quickItems = new LinkedHashMap<>();
+            mutable.quickItems.put(id, count);
+        });
     }
 
     public void open(Player player) {
@@ -365,7 +497,10 @@ public final class ItemCodexService implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        Bukkit.getScheduler().runTask(plugin, () -> flushPending(event.getPlayer()));
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            reconcileQuickItems(event.getPlayer());
+            flushPending(event.getPlayer());
+        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -489,7 +624,7 @@ public final class ItemCodexService implements Listener {
 
     private boolean hasEntry(String rawId) {
         String id = normalizeCodexId(rawId);
-        return entries.stream().anyMatch(entry -> entry.id.equals(id));
+        return fixedCodexIds.contains(id);
     }
 
     private static Material resourceMaterial(String id) {

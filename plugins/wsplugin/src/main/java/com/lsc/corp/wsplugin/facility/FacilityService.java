@@ -146,6 +146,58 @@ public final class FacilityService implements Listener {
         recoverFacilityCostTransactions();
     }
 
+    public String placeForTest(Player player, String rawFacilityId, int level) {
+        if (!runs.isTestRun() || !runs.isRunningMember(player)) {
+            throw new IllegalStateException("Test facilities require an active owned Test Lab run");
+        }
+        String facilityId = rawFacilityId.toUpperCase(java.util.Locale.ROOT);
+        ProductionContentCatalog.FacilityEntry profile = production.facilitiesById().get(facilityId);
+        if (profile == null || profile.portableDevice() || profile.reconstruction()) {
+            throw new IllegalArgumentException("Test placement requires a non-portable normal facility: " + rawFacilityId);
+        }
+        if (level < 1 || level > profile.maxLevel()) {
+            throw new IllegalArgumentException("Facility level must be 1 to " + profile.maxLevel());
+        }
+        Location target = testPlacement(player);
+        String instanceId = "facility:" + runs.current().orElseThrow().runId + ":test:" + UUID.randomUUID();
+        markRepresentation(target.getBlock(), material(profile), instanceId);
+        RunSnapshot.FacilityInstanceState instance = createInstance(player, profile, instanceId, target, 0L);
+        instance.level = level;
+        instance.maxHp = profile.baseHp() * FacilityPolicy.hpMultiplier(level);
+        instance.hp = instance.maxHp;
+        runs.mutate(snapshot -> {
+            FacilityStateAccess.instances(snapshot).put(instanceId, instance);
+            if (snapshot.facilityTypesEverActivated == null) {
+                snapshot.facilityTypesEverActivated = new java.util.LinkedHashSet<>();
+            }
+            snapshot.facilityTypesEverActivated.add(facilityId);
+            if ("FAC-S16".equals(facilityId)) snapshot.sharedLedgerUnlocked = true;
+        });
+        recomputeNetworks();
+        telemetry.event(runs.current().orElseThrow().runId, "TEST_FACILITY_PLACED", "{\"instanceId\":\""
+                + instanceId + "\",\"facilityType\":\"" + facilityId + "\",\"level\":" + level + "}");
+        player.sendMessage(ChatColor.GREEN + "[Test Lab] " + profile.name() + " Lv " + level
+                + " 배치 · 우클릭으로 실제 시설 GUI를 여세요.");
+        return instanceId;
+    }
+
+    private static Location testPlacement(Player player) {
+        Block origin = player.getLocation().getBlock();
+        for (int radius = 2; radius <= 6; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dz)) != radius) continue;
+                    Block target = origin.getRelative(dx, 0, dz);
+                    if (target.getType().isAir()
+                            && target.getRelative(org.bukkit.block.BlockFace.DOWN).getType().isSolid()) {
+                        return target.getLocation();
+                    }
+                }
+            }
+        }
+        throw new IllegalStateException("주변 6블록 안에 시설 테스트용 바닥 위 빈 공간이 없습니다.");
+    }
+
     private void recoverFacilityCostTransactions() {
         RunSnapshot snapshot = runs.current().orElse(null);
         if (snapshot == null || !"RUNNING".equals(snapshot.state)) return;
@@ -828,9 +880,14 @@ public final class FacilityService implements Listener {
                     : ChatColor.RED + "시설 비용 예약 실패: " + reserved);
             return;
         }
-        runs.beginResourceTransaction(transactionId, snapshot -> facilityWork(snapshot, instance.instanceId,
-                transactionId).state = "PROCESSING");
-        runs.commitResourceTransaction(transactionId, "FACILITY_UPGRADED", "{\"instanceId\":\""
+        boolean processingStarted = runs.beginResourceTransaction(transactionId,
+                snapshot -> facilityWork(snapshot, instance.instanceId, transactionId).state = "PROCESSING");
+        if (!processingStarted) {
+            player.sendMessage(ChatColor.YELLOW + profile.name()
+                    + " 업그레이드 비용이 예약되었습니다. 처리 재개를 기다리는 중입니다.");
+            return;
+        }
+        boolean committed = runs.commitResourceTransaction(transactionId, "FACILITY_UPGRADED", "{\"instanceId\":\""
                 + instance.instanceId + "\",\"costId\":\"" + cost.id() + "\",\"level\":" + target + "}", snapshot -> {
                     RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(snapshot).get(instance.instanceId);
                     double ratio = current.hp / Math.max(1.0, current.maxHp);
@@ -840,6 +897,11 @@ public final class FacilityService implements Listener {
                     current.state = FacilityPolicy.healthState(current.hp, current.maxHp);
                     facilityWork(snapshot, instance.instanceId, transactionId).state = "COMPLETED";
                 });
+        if (!committed) {
+            player.sendMessage(ChatColor.YELLOW + profile.name()
+                    + " 업그레이드가 처리 중 상태로 저장되었습니다. 복구 완료 전에는 적용되지 않습니다.");
+            return;
+        }
         player.sendMessage(ChatColor.GREEN + profile.name() + " Lv " + target + " 업그레이드 완료");
     }
 
