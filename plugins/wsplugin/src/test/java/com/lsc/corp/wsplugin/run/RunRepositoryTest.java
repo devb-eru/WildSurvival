@@ -151,6 +151,27 @@ class RunRepositoryTest {
     }
 
     @Test
+    void archiveRetainsCurrentAndCleansHistoryTempWhenReplacementFails(@TempDir Path temporary) throws Exception {
+        RunRepository repository = new RunRepository(temporary, (source, destination) -> {
+            if ("history".equals(destination.getParent().getFileName().toString())) {
+                throw new AccessDeniedException(destination.toString());
+            }
+            AtomicFileStore.replace(source, destination);
+        });
+        RunSnapshot snapshot = snapshot();
+        repository.save(snapshot);
+        snapshot.state = "ABORTED";
+
+        assertThrows(AccessDeniedException.class, () -> repository.archiveAndClear(snapshot));
+
+        assertTrue(Files.exists(repository.currentFile()));
+        Path history = temporary.resolve("runs/history");
+        try (var paths = Files.list(history)) {
+            assertTrue(paths.noneMatch(path -> path.getFileName().toString().endsWith(".tmp")));
+        }
+    }
+
+    @Test
     void migratesLegacyPrototypeIntoRecoverableSeasonState(@TempDir Path temporary) throws Exception {
         Path current = temporary.resolve("runs/current.json");
         Files.createDirectories(current.getParent());

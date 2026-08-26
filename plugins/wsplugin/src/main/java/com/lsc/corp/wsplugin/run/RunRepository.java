@@ -70,17 +70,37 @@ public final class RunRepository {
             throw new IOException("Cannot save unsupported run schema version " + snapshot.schemaVersion);
         }
         validateIdentity(snapshot);
-        Files.createDirectories(runsDirectory);
         long previousVersion = snapshot.version;
+        try {
+            snapshot.version = previousVersion + 1;
+            atomicWrite(currentFile, "current.json.", gson.toJson(snapshot));
+        } catch (IOException | RuntimeException exception) {
+            snapshot.version = previousVersion;
+            throw exception;
+        }
+    }
+
+    public synchronized void archiveAndClear(RunSnapshot snapshot) throws IOException {
+        validateIdentity(snapshot);
+        Files.createDirectories(runsDirectory.resolve("history"));
+        String safeId = snapshot.runId == null ? "unknown" : snapshot.runId.replaceAll("[^A-Za-z0-9._-]", "_");
+        Path archived = runsDirectory.resolve("history").resolve(safeId + "-" + Instant.now().toEpochMilli() + ".json");
+        atomicWrite(archived, archived.getFileName() + ".", gson.toJson(snapshot));
+        // Cleanup can fail on Windows while a stale temporary file is still locked. Keep the
+        // authoritative current snapshot until every fallible pre-clear step has succeeded.
+        deleteTemporarySnapshots();
+        Files.deleteIfExists(currentFile);
+    }
+
+    private void atomicWrite(Path target, String temporaryPrefix, String json) throws IOException {
+        Files.createDirectories(target.getParent());
         Path temporary = null;
         Throwable failure = null;
         try {
-            snapshot.version = previousVersion + 1;
-            temporary = Files.createTempFile(runsDirectory, "current.json.", ".tmp");
-            Files.writeString(temporary, gson.toJson(snapshot) + System.lineSeparator(), StandardCharsets.UTF_8);
-            fileReplacer.replace(temporary, currentFile);
+            temporary = Files.createTempFile(target.getParent(), temporaryPrefix, ".tmp");
+            Files.writeString(temporary, json + System.lineSeparator(), StandardCharsets.UTF_8);
+            fileReplacer.replace(temporary, target);
         } catch (IOException | RuntimeException exception) {
-            snapshot.version = previousVersion;
             failure = exception;
             throw exception;
         } finally {
@@ -94,18 +114,6 @@ public final class RunRepository {
                 }
             }
         }
-    }
-
-    public synchronized void archiveAndClear(RunSnapshot snapshot) throws IOException {
-        validateIdentity(snapshot);
-        Files.createDirectories(runsDirectory.resolve("history"));
-        String safeId = snapshot.runId == null ? "unknown" : snapshot.runId.replaceAll("[^A-Za-z0-9._-]", "_");
-        Path archived = runsDirectory.resolve("history").resolve(safeId + "-" + Instant.now().toEpochMilli() + ".json");
-        Files.writeString(archived, gson.toJson(snapshot) + System.lineSeparator(), StandardCharsets.UTF_8);
-        // Cleanup can fail on Windows while a stale temporary file is still locked. Keep the
-        // authoritative current snapshot until every fallible pre-clear step has succeeded.
-        deleteTemporarySnapshots();
-        Files.deleteIfExists(currentFile);
     }
 
     private void deleteTemporarySnapshots() throws IOException {
