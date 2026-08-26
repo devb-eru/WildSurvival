@@ -8,12 +8,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
-final class AtomicFileStore {
+public final class AtomicFileStore {
     private static final long[] DEFAULT_RETRY_DELAYS_MILLIS = {5L, 10L, 20L, 40L};
 
     private AtomicFileStore() { }
 
-    static void replace(Path source, Path destination) throws IOException {
+    public static void replace(Path source, Path destination) throws IOException {
         replace(source, destination, AtomicFileStore::move, Thread::sleep, DEFAULT_RETRY_DELAYS_MILLIS);
     }
 

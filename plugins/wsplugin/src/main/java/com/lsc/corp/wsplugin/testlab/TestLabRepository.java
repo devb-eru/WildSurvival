@@ -2,13 +2,12 @@ package com.lsc.corp.wsplugin.testlab;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lsc.corp.wsplugin.run.AtomicFileStore;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -68,15 +67,21 @@ public final class TestLabRepository {
         return value;
     }
 
-    public synchronized Optional<TestLabSnapshot> popLatestSnapshot(String runId) throws IOException {
+    public synchronized Optional<TestLabSnapshot> latestSnapshot(String runId) throws IOException {
         List<Path> matching = snapshotPaths(runId);
         if (matching.isEmpty()) {
             return Optional.empty();
         }
         Path latest = matching.get(matching.size() - 1);
         TestLabSnapshot value = read(latest, TestLabSnapshot.class).orElseThrow();
-        Files.deleteIfExists(latest);
+        if (!runId.equals(value.runId) || !latest.getFileName().toString().equals(value.snapshotId + ".json")) {
+            throw new IOException("Test Lab snapshot identity mismatch " + latest.getFileName());
+        }
         return Optional.of(value);
+    }
+
+    public synchronized void deleteSnapshot(String runId, String snapshotId) throws IOException {
+        Files.deleteIfExists(snapshotPath(runId, snapshotId));
     }
 
     public synchronized List<String> listSnapshots(String runId) throws IOException {
@@ -151,13 +156,34 @@ public final class TestLabRepository {
 
     private void atomicWrite(Path target, String json) throws IOException {
         Files.createDirectories(target.getParent());
-        Path temporary = target.resolveSibling(target.getFileName() + ".tmp");
-        Files.writeString(temporary, json + System.lineSeparator(), StandardCharsets.UTF_8);
+        Path temporary = null;
+        Throwable failure = null;
         try {
-            Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-        } catch (AtomicMoveNotSupportedException ignored) {
-            Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING);
+            temporary = Files.createTempFile(target.getParent(), target.getFileName() + ".", ".tmp");
+            Files.writeString(temporary, json + System.lineSeparator(), StandardCharsets.UTF_8);
+            AtomicFileStore.replace(temporary, target);
+        } catch (IOException | RuntimeException exception) {
+            failure = exception;
+            throw exception;
+        } finally {
+            if (temporary != null) {
+                try {
+                    Files.deleteIfExists(temporary);
+                } catch (IOException cleanupFailure) {
+                    if (failure != null) {
+                        failure.addSuppressed(cleanupFailure);
+                    }
+                }
+            }
         }
+    }
+
+    private Path snapshotPath(String runId, String snapshotId) {
+        if (runId == null || snapshotId == null || !snapshotId.startsWith(runId + "-")
+                || !snapshotId.matches("[A-Za-z0-9._-]+")) {
+            throw new IllegalArgumentException("Snapshot does not belong to run " + runId);
+        }
+        return snapshots.resolve(snapshotId + ".json");
     }
 
     private List<Path> snapshotPaths(String runId) throws IOException {

@@ -140,7 +140,7 @@ public final class TestLabService implements Listener {
     public TestLabSnapshot undo(Player actor) throws IOException {
         requireSessionOwner(actor);
         RunSnapshot current = runs.current().orElseThrow();
-        TestLabSnapshot snapshot = repository.popLatestSnapshot(current.runId)
+        TestLabSnapshot snapshot = repository.latestSnapshot(current.runId)
                 .orElseThrow(() -> new IllegalStateException("No Test Lab snapshot is available"));
         String before = summary();
         loop.cleanupWorldObjects();
@@ -150,6 +150,7 @@ public final class TestLabService implements Listener {
         }
         applyRuntimePlayerState(actor);
         repository.audit(current.runId, actor.getUniqueId().toString(), "snapshot.undo", before, snapshot.snapshotId);
+        repository.deleteSnapshot(current.runId, snapshot.snapshotId);
         return snapshot;
     }
 
