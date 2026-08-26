@@ -480,8 +480,17 @@ public final class RunService {
             if (!List.of("ENDED", "ABORTED").contains(current.state)) {
                 throw new IllegalStateException("Test run must be stopped before it is cleared");
             }
-            testRepository.archiveAndClear(current);
-            current = null;
+            boolean restorePending = current.test.restorePending;
+            current.test.restorePending = false;
+            try {
+                testRepository.archiveAndClear(current);
+                current = null;
+            } catch (IOException | RuntimeException exception) {
+                // The on-disk current snapshot was never rewritten with restorePending=false.
+                // Roll memory back as well so the owner can retry recovery in this process.
+                current.test.restorePending = restorePending;
+                throw exception;
+            }
         }
     }
 

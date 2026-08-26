@@ -135,6 +135,22 @@ class RunRepositoryTest {
     }
 
     @Test
+    void archiveRetainsCurrentWhenTemporaryCleanupFails(@TempDir Path temporary) throws Exception {
+        RunRepository repository = new RunRepository(temporary);
+        RunSnapshot snapshot = snapshot();
+        repository.save(snapshot);
+        Path runs = temporary.resolve("runs");
+        Path lockedTemporary = runs.resolve("current.json.locked.tmp");
+        Files.createDirectories(lockedTemporary);
+        Files.writeString(lockedTemporary.resolve("held"), "locked", StandardCharsets.UTF_8);
+
+        assertThrows(IOException.class, () -> repository.archiveAndClear(snapshot));
+
+        assertTrue(Files.exists(repository.currentFile()));
+        assertTrue(repository.load().isPresent());
+    }
+
+    @Test
     void migratesLegacyPrototypeIntoRecoverableSeasonState(@TempDir Path temporary) throws Exception {
         Path current = temporary.resolve("runs/current.json");
         Files.createDirectories(current.getParent());

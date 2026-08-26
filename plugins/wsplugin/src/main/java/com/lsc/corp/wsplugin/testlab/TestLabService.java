@@ -119,11 +119,9 @@ public final class TestLabService implements Listener {
         }
         loop.cleanupWorldObjects();
         backup.restore(player);
-        runs.mutate(current -> current.test.restorePending = false);
-        runs.clearCurrentTest();
-        repository.deleteBackup(player.getUniqueId().toString());
-        repository.clearSnapshots(runId);
         repository.audit(runId, player.getUniqueId().toString(), "session.exit", before, reason);
+        runs.clearCurrentTest();
+        cleanupExitedSessionArtifacts(runId, player.getUniqueId().toString());
         player.sendMessage(ChatColor.GREEN + "[Test Lab] 테스트 상태를 폐기하고 입장 전 상태를 복원했습니다.");
     }
 
@@ -1206,7 +1204,6 @@ public final class TestLabService implements Listener {
                     backup.restore(player);
                 }
                 if (runs.current().isPresent() && backup != null) {
-                    runs.mutate(current -> current.test.restorePending = false);
                     runs.clearCurrentTest();
                 }
             } else if (backup != null) {
@@ -1217,6 +1214,28 @@ public final class TestLabService implements Listener {
             }
         } catch (Exception restoreFailure) {
             plugin.getLogger().log(java.util.logging.Level.SEVERE, "Cannot restore failed Test Lab entry", restoreFailure);
+        }
+    }
+
+    private void cleanupExitedSessionArtifacts(String runId, String playerUuid) {
+        IOException failure = null;
+        try {
+            repository.clearSnapshots(runId);
+        } catch (IOException exception) {
+            failure = exception;
+        }
+        try {
+            repository.deleteBackup(playerUuid);
+        } catch (IOException exception) {
+            if (failure == null) {
+                failure = exception;
+            } else {
+                failure.addSuppressed(exception);
+            }
+        }
+        if (failure != null) {
+            plugin.getLogger().log(java.util.logging.Level.WARNING,
+                    "Test Lab exit completed but stale recovery artifacts remain for " + runId, failure);
         }
     }
 }

@@ -102,8 +102,10 @@ public final class RunRepository {
         String safeId = snapshot.runId == null ? "unknown" : snapshot.runId.replaceAll("[^A-Za-z0-9._-]", "_");
         Path archived = runsDirectory.resolve("history").resolve(safeId + "-" + Instant.now().toEpochMilli() + ".json");
         Files.writeString(archived, gson.toJson(snapshot) + System.lineSeparator(), StandardCharsets.UTF_8);
-        Files.deleteIfExists(currentFile);
+        // Cleanup can fail on Windows while a stale temporary file is still locked. Keep the
+        // authoritative current snapshot until every fallible pre-clear step has succeeded.
         deleteTemporarySnapshots();
+        Files.deleteIfExists(currentFile);
     }
 
     private void deleteTemporarySnapshots() throws IOException {
