@@ -157,6 +157,8 @@ P1은 코드 완료와 자동 증거까지만 통과했다. 다음 증거가 닫
 
 `PARTY_WIPED` 뒤 회차는 `ABORTED + restorePending`이었으나 기존 `undo`가 `RUNNING` 소유자만 허용해 최신 스냅샷 복구도 거부하는 사각지대가 확인됐다. 일반 Test Lab 변경 권한은 계속 `RUNNING` 소유자에게만 허용하고, `undo/exit` 복구 경로만 동일 UUID의 복구 대기 세션 소유자에게 허용하도록 분리했다. 다른 플레이어와 `restorePending=false` 종료 회차는 계속 거부하며, 성공 시 복원한 snapshot ID를 채팅에 표시한다. 현재 플레이 테스트 불가로 실배포 재검증은 보류하고 스냅샷·입장 전 백업은 유지한다.
 
+플레이어 없는 Paper 콘솔 스모크에서 최종 P1 JAR `SHA-256 416315818D7F0015A90EB10231675695DEC182F4982780E80691CC1732849260`이 활성화되고 `ABORTED + restorePending` 회차를 인식했다. 기동 로그는 `/ws test undo` 최신 스냅샷 복원과 `/ws test exit RECOVERED --confirm` 입장 백업 복원을 함께 안내한다. 정상 종료 뒤 회차는 version `543`, 최신 snapshot `000019`는 `RUNNING/ACTIVE`, 백업은 유지됐고 저장 오류·임시 파일 잔류는 없었다.
+
 ### P2 — Day 1~3 첫 생산 수직 구간
 
 1. 아무 원목 4개로 craft GUI를 해금한다.

@@ -928,7 +928,8 @@ public final class TestLabService implements Listener {
             Bukkit.getScheduler().runTask(plugin, () -> applyRuntimePlayerState(event.getPlayer()));
         } else if (sessionOwner(event.getPlayer())) {
             event.getPlayer().sendMessage(ChatColor.RED
-                    + "[Test Lab] 중단된 종료 복구가 대기 중입니다. /ws test exit RECOVERED --confirm");
+                    + "[Test Lab] 중단된 세션 복구가 대기 중입니다. 최신 스냅샷은 /ws test undo, "
+                    + "입장 전 상태 복원·폐기는 /ws test exit RECOVERED --confirm");
         }
     }
 
@@ -948,8 +949,9 @@ public final class TestLabService implements Listener {
             plugin.getLogger().warning("Restored active Test Lab run " + run.runId
                     + "; exit it with /ws test exit <reason> --confirm to restore the player backup.");
         } else if (run.test.restorePending) {
-            plugin.getLogger().warning("Restored interrupted Test Lab exit " + run.runId
-                    + "; the owner must run /ws test exit RECOVERED --confirm to finish backup restoration.");
+            plugin.getLogger().warning("Restored Test Lab session awaiting recovery " + run.runId
+                    + "; the owner may run /ws test undo for the latest snapshot or "
+                    + "/ws test exit RECOVERED --confirm to restore the entry backup.");
         }
     }
 
