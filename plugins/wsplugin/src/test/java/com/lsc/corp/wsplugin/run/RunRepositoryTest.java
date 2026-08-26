@@ -257,6 +257,14 @@ class RunRepositoryTest {
         purifier.portableInstanceId = "device-1";
         purifier.facilityType = "FAC-P05";
         snapshot.facilities.put(purifier.instanceId, purifier);
+        RunSnapshot.ResourceTransactionState retriedCost = new RunSnapshot.ResourceTransactionState();
+        retriedCost.transactionId = "cost:facility:retry";
+        retriedCost.costId = "FCOST-RETRY";
+        retriedCost.targetId = purifier.instanceId;
+        retriedCost.state = "RESERVED";
+        retriedCost.reservationAttempt = 2;
+        retriedCost.cancellationReasons.add("RECOVERY_WORK_MISSING");
+        snapshot.resourceTransactions.put(retriedCost.transactionId, retriedCost);
         repository.save(snapshot);
 
         RunSnapshot restored = repository.load().orElseThrow();
@@ -269,6 +277,9 @@ class RunRepositoryTest {
         assertTrue(restored.story.playedSceneIds.contains("ST5-FINAL-READY"));
         assertEquals("AVAILABLE", restored.finalObjective.state);
         assertEquals("device-1", restored.facilities.get("portable:proto-test:device-1").portableInstanceId);
+        RunSnapshot.ResourceTransactionState restoredCost = restored.resourceTransactions.get("cost:facility:retry");
+        assertEquals(2, restoredCost.reservationAttempt);
+        assertEquals(java.util.List.of("RECOVERY_WORK_MISSING"), restoredCost.cancellationReasons);
     }
 
     @Test

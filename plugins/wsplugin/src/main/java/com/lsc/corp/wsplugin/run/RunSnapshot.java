@@ -304,6 +304,8 @@ public final class RunSnapshot {
         public long processingStartedAtEpochMs;
         public long committedAtEpochMs;
         public String failureReason;
+        public int reservationAttempt = 1;
+        public List<String> cancellationReasons = new ArrayList<>();
     }
 
     public static final class LootTransactionState {

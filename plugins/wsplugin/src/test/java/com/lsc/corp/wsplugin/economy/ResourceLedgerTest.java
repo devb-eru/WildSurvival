@@ -72,6 +72,30 @@ class ResourceLedgerTest {
         assertEquals("CANCELLED", snapshot.resourceTransactions.get("facility:one").state);
     }
 
+    @Test
+    void cancelledReservationCanBeRevalidatedWithoutDuplicateDebit() {
+        RunSnapshot snapshot = runningSnapshot();
+        snapshot.resources.put("FRAME", 3);
+
+        assertEquals(ResourceLedger.ReserveResult.RESERVED, ResourceLedger.reserve(snapshot,
+                "facility:retry", "FCOST-ONE", "FAC-ONE", ResourceLedger.Scope.SHARED,
+                null, Map.of("FRAME", 2), 10L));
+        assertTrue(ResourceLedger.cancelReservation(snapshot, "facility:retry", "RECOVERY_WORK_MISSING"));
+        assertEquals(3, snapshot.resources.get("FRAME"));
+
+        assertEquals(ResourceLedger.ReserveResult.RESERVED, ResourceLedger.reserve(snapshot,
+                "facility:retry", "FCOST-ONE", "FAC-ONE", ResourceLedger.Scope.SHARED,
+                null, Map.of("FRAME", 2), 20L));
+        RunSnapshot.ResourceTransactionState retried = snapshot.resourceTransactions.get("facility:retry");
+        assertEquals(1, snapshot.resources.get("FRAME"));
+        assertEquals(2, retried.reservationAttempt);
+        assertEquals(java.util.List.of("RECOVERY_WORK_MISSING"), retried.cancellationReasons);
+        assertEquals(ResourceLedger.ReserveResult.ALREADY_RESERVED, ResourceLedger.reserve(snapshot,
+                "facility:retry", "FCOST-ONE", "FAC-ONE", ResourceLedger.Scope.SHARED,
+                null, Map.of("FRAME", 2), 30L));
+        assertEquals(1, snapshot.resources.get("FRAME"));
+    }
+
     private static RunSnapshot runningSnapshot() {
         RunSnapshot snapshot = new RunSnapshot();
         snapshot.runId = "test";

@@ -1,7 +1,9 @@
 package com.lsc.corp.wsplugin.economy;
 
 import com.lsc.corp.wsplugin.run.RunSnapshot;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -28,9 +30,19 @@ public final class ResourceLedger {
         if (snapshot.resourceTransactions == null) snapshot.resourceTransactions = new LinkedHashMap<>();
         if (snapshot.committedKeys.contains(transactionId)) return ReserveResult.ALREADY_COMMITTED;
         RunSnapshot.ResourceTransactionState existing = snapshot.resourceTransactions.get(transactionId);
+        int reservationAttempt = 1;
+        List<String> cancellationReasons = new ArrayList<>();
         if (existing != null) {
-            return "COMMITTED".equals(existing.state)
-                    ? ReserveResult.ALREADY_COMMITTED : ReserveResult.ALREADY_RESERVED;
+            if ("COMMITTED".equals(existing.state)) return ReserveResult.ALREADY_COMMITTED;
+            if (!"CANCELLED".equals(existing.state)) return ReserveResult.ALREADY_RESERVED;
+            reservationAttempt = Math.max(1, existing.reservationAttempt) + 1;
+            if (existing.cancellationReasons != null) {
+                cancellationReasons.addAll(existing.cancellationReasons);
+            }
+            if (cancellationReasons.isEmpty() && existing.failureReason != null
+                    && !existing.failureReason.isBlank()) {
+                cancellationReasons.add(existing.failureReason);
+            }
         }
         Map<String, Integer> normalized = normalizedCosts(costs);
         if (normalized == null) return ReserveResult.INVALID;
@@ -45,6 +57,8 @@ public final class ResourceLedger {
         transaction.ledgerScope = scope.name();
         transaction.ownerUuid = ownerUuid;
         transaction.state = "VALIDATED";
+        transaction.reservationAttempt = reservationAttempt;
+        transaction.cancellationReasons.addAll(cancellationReasons);
         transaction.validatedAtEpochMs = nowEpochMs;
         transaction.reservedResources.putAll(normalized);
         snapshot.resourceTransactions.put(transactionId, transaction);
@@ -91,7 +105,9 @@ public final class ResourceLedger {
         Map<String, Integer> balance = balance(snapshot, scope, transaction.ownerUuid);
         transaction.reservedResources.forEach((id, amount) -> balance.merge(id, amount, Integer::sum));
         transaction.state = "CANCELLED";
-        transaction.failureReason = reason;
+        transaction.failureReason = reason == null || reason.isBlank() ? "UNSPECIFIED" : reason;
+        if (transaction.cancellationReasons == null) transaction.cancellationReasons = new ArrayList<>();
+        transaction.cancellationReasons.add(transaction.failureReason);
         return true;
     }
 

@@ -234,6 +234,8 @@ public final class RunRepository {
         }
         for (RunSnapshot.ResourceTransactionState transaction : snapshot.resourceTransactions.values()) {
             if (transaction.reservedResources == null) transaction.reservedResources = new LinkedHashMap<>();
+            if (transaction.cancellationReasons == null) transaction.cancellationReasons = new ArrayList<>();
+            transaction.reservationAttempt = Math.max(1, transaction.reservationAttempt);
             if (transaction.state == null || transaction.state.isBlank()) transaction.state = "VALIDATED";
         }
         for (RunSnapshot.FacilityInstanceState facility : snapshot.facilities.values()) {
