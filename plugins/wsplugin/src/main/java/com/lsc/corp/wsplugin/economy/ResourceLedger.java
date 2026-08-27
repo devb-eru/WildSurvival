@@ -98,8 +98,9 @@ public final class ResourceLedger {
     public static boolean cancelReservation(RunSnapshot snapshot, String transactionId, String reason) {
         RunSnapshot.ResourceTransactionState transaction = transaction(snapshot, transactionId);
         if ("CANCELLED".equals(transaction.state)) return false;
-        if (!"RESERVED".equals(transaction.state)) {
-            throw new IllegalStateException("Only a reserved transaction can be fully refunded: " + transactionId);
+        if (!"RESERVED".equals(transaction.state) && !"PROCESSING".equals(transaction.state)) {
+            throw new IllegalStateException("Only an uncommitted reservation can be fully refunded: "
+                    + transactionId + " state=" + transaction.state);
         }
         Scope scope = Scope.valueOf(transaction.ledgerScope);
         Map<String, Integer> balance = balance(snapshot, scope, transaction.ownerUuid);

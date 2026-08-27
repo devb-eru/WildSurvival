@@ -1,5 +1,6 @@
 package com.lsc.corp.wsplugin.facility;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,6 +27,23 @@ class FacilityStateAccessTest {
         assertFalse(FacilityStateAccess.corruptionProtected(run, "world", 4, 64, 0));
         run.facilities.put("power", facility("FAC-S13", "ACTIVE", "network-a", 30, 64, 0, 1));
         assertTrue(FacilityStateAccess.corruptionProtected(run, "world", 4, 64, 0));
+    }
+
+    @Test
+    void removesEveryStaleWorkRecordForARetriedCostTransaction() {
+        RunSnapshot run = new RunSnapshot();
+        RunSnapshot.FacilityInstanceState instance = facility("FAC-S01", "ACTIVE", "network-a", 0, 64, 0, 1);
+        instance.instanceId = "facility:one";
+        RunSnapshot.FacilityWorkState first = new RunSnapshot.FacilityWorkState();
+        first.workId = "cost:facility:one";
+        RunSnapshot.FacilityWorkState duplicate = new RunSnapshot.FacilityWorkState();
+        duplicate.workId = "cost:facility:one";
+        instance.queue.add(first);
+        instance.queue.add(duplicate);
+        run.facilities.put(instance.instanceId, instance);
+
+        assertEquals(2, FacilityStateAccess.removeWork(run, instance.instanceId, "cost:facility:one"));
+        assertTrue(instance.queue.isEmpty());
     }
 
     private static RunSnapshot.FacilityInstanceState facility(String type, String state, String network,

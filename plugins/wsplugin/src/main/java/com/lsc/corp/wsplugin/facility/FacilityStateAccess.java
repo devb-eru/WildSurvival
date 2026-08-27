@@ -40,6 +40,14 @@ public final class FacilityStateAccess {
         return run.facilityTypesEverActivated.contains(facilityType);
     }
 
+    public static int removeWork(RunSnapshot run, String instanceId, String workId) {
+        RunSnapshot.FacilityInstanceState instance = instances(run).get(instanceId);
+        if (instance == null || instance.queue == null || workId == null) return 0;
+        int before = instance.queue.size();
+        instance.queue.removeIf(work -> work != null && workId.equals(work.workId));
+        return before - instance.queue.size();
+    }
+
     public static boolean corruptionProtected(RunSnapshot run, String world, double x, double y, double z) {
         long now = System.currentTimeMillis();
         for (RunSnapshot.FacilityInstanceState instance : instances(run).values()) {

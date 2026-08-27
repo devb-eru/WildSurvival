@@ -96,6 +96,27 @@ class ResourceLedgerTest {
         assertEquals(1, snapshot.resources.get("FRAME"));
     }
 
+    @Test
+    void processingReservationCanBeRefundedAndRetriedExactlyOnce() {
+        RunSnapshot snapshot = runningSnapshot();
+        snapshot.resources.put("FRAME", 4);
+
+        assertEquals(ResourceLedger.ReserveResult.RESERVED, ResourceLedger.reserve(snapshot,
+                "facility:processing", "FCOST-TWO", "FAC-TWO", ResourceLedger.Scope.SHARED,
+                null, Map.of("FRAME", 3), 10L));
+        assertTrue(ResourceLedger.beginProcessing(snapshot, "facility:processing", 20L));
+        assertEquals(1, snapshot.resources.get("FRAME"));
+
+        assertTrue(ResourceLedger.cancelReservation(snapshot, "facility:processing", "WORK_MISSING"));
+        assertEquals(4, snapshot.resources.get("FRAME"));
+        assertEquals("CANCELLED", snapshot.resourceTransactions.get("facility:processing").state);
+        assertEquals(ResourceLedger.ReserveResult.RESERVED, ResourceLedger.reserve(snapshot,
+                "facility:processing", "FCOST-TWO", "FAC-TWO", ResourceLedger.Scope.SHARED,
+                null, Map.of("FRAME", 3), 30L));
+        assertEquals(1, snapshot.resources.get("FRAME"));
+        assertEquals(2, snapshot.resourceTransactions.get("facility:processing").reservationAttempt);
+    }
+
     private static RunSnapshot runningSnapshot() {
         RunSnapshot snapshot = new RunSnapshot();
         snapshot.runId = "test";

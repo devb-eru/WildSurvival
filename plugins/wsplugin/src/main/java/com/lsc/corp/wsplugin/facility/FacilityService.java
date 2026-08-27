@@ -251,12 +251,10 @@ public final class FacilityService implements Listener {
     }
 
     private void failOrRefundFacilityCost(RunSnapshot.ResourceTransactionState transaction, String reason) {
-        if ("RESERVED".equals(transaction.state)) {
-            runs.cancelResourceReservation(transaction.transactionId, reason);
-            return;
-        }
-        runs.mutate(run -> run.resourceTransactions.get(transaction.transactionId).failureReason = reason);
-        telemetry.event(runs.current().orElseThrow().runId, "FACILITY_COST_RECOVERY_FAILED",
+        boolean refunded = runs.cancelResourceReservation(transaction.transactionId, reason,
+                run -> FacilityStateAccess.removeWork(run, transaction.targetId, transaction.transactionId));
+        telemetry.event(runs.current().orElseThrow().runId,
+                refunded ? "FACILITY_COST_RECOVERY_REFUNDED" : "FACILITY_COST_RECOVERY_FAILED",
                 "{\"transactionId\":\"" + transaction.transactionId + "\",\"reason\":\"" + reason + "\"}");
     }
 
@@ -872,6 +870,7 @@ public final class FacilityService implements Listener {
                     work.state = "QUEUED";
                     work.queuedAtEpochMs = runs.clockNowMillis();
                     work.reservedInputs.putAll(spend);
+                    FacilityStateAccess.removeWork(snapshot, instance.instanceId, transactionId);
                     current.queue.add(work);
         });
         if (reserved != ResourceLedger.ReserveResult.RESERVED) {

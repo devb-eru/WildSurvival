@@ -29,12 +29,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 /** Party research journal with persisted RCOST reservation and active-time processing. */
 public final class ResearchService implements Listener {
     private final RunService runs;
+    private final Map<String, ProductionContentCatalog.ResearchEntry> researchById;
     private final List<ProductionContentCatalog.ResearchEntry> ordered;
     private long lastWorkTick;
 
     public ResearchService(RunService runs, ProductionContentCatalog production) {
         this.runs = runs;
-        this.ordered = production.researchById().values().stream()
+        this.researchById = Map.copyOf(production.researchById());
+        this.ordered = researchById.values().stream()
                 .sorted(Comparator.comparingInt(ProductionContentCatalog.ResearchEntry::minimumDay)
                         .thenComparing(ProductionContentCatalog.ResearchEntry::id))
                 .toList();
@@ -50,10 +52,14 @@ public final class ResearchService implements Listener {
                     return state;
                 });
             }
-            reconcileTransactions(run);
+            ResearchTransactionRecovery.reconcile(run, researchById);
             refreshAvailability(run);
         });
         if (!"RUNNING".equals(runs.current().orElseThrow().state)) return;
+        for (String transactionId : ResearchTransactionRecovery.refundableOrphanIds(
+                runs.current().orElseThrow(), researchById)) {
+            runs.cancelResourceReservation(transactionId, "RESEARCH_TARGET_MISSING_DURING_RECOVERY");
+        }
         List<String> reserved = runs.current().orElseThrow().resourceTransactions.values().stream()
                 .filter(transaction -> transaction.costId != null && transaction.costId.startsWith("RCOST-")
                         && "RESERVED".equals(transaction.state))
@@ -228,22 +234,6 @@ public final class ResearchService implements Listener {
                         state.unlockCommitted = true;
                     });
             if (committed) runs.broadcast(ChatColor.GREEN + "연구 완료: " + researchId);
-        }
-    }
-
-    private void reconcileTransactions(RunSnapshot run) {
-        for (RunSnapshot.ResourceTransactionState transaction : run.resourceTransactions.values()) {
-            if (transaction.costId == null || !transaction.costId.startsWith("RCOST-")) continue;
-            RunSnapshot.ResearchNodeState state = run.researchNodes.get(transaction.targetId);
-            if (state == null) continue;
-            if ("COMMITTED".equals(transaction.state)) {
-                state.state = "UNLOCKED";
-                state.unlockCommitted = true;
-            } else if ("PROCESSING".equals(transaction.state)) {
-                state.state = "PROCESSING";
-            } else if ("RESERVED".equals(transaction.state)) {
-                state.state = "QUEUED";
-            }
         }
     }
 

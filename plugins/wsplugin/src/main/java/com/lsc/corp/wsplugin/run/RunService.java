@@ -351,11 +351,20 @@ public final class RunService {
     }
 
     public boolean cancelResourceReservation(String transactionId, String reason) {
+        return cancelResourceReservation(transactionId, reason, run -> { });
+    }
+
+    public boolean cancelResourceReservation(String transactionId, String reason,
+                                             Consumer<RunSnapshot> cancellationMutation) {
         synchronized (serialQueue) {
             requireRunning();
-            DurableRunMutation.Outcome<Boolean> outcome = persistCandidateLocked(
-                    candidate -> ResourceLedger.cancelReservation(candidate, transactionId, reason),
-                    Boolean.TRUE::equals);
+            DurableRunMutation.Outcome<Boolean> outcome = persistCandidateLocked(candidate -> {
+                boolean cancelled = ResourceLedger.cancelReservation(candidate, transactionId, reason);
+                if (cancelled) {
+                    cancellationMutation.accept(candidate);
+                }
+                return cancelled;
+            }, Boolean.TRUE::equals);
             if (outcome.persisted()) {
                 current = outcome.snapshot();
             }
