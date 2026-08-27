@@ -241,6 +241,18 @@ public final class RunService {
         }
     }
 
+    /** Applies a persisted mutation on a detached snapshot and adopts it only after a successful save. */
+    public void mutateAtomically(Consumer<RunSnapshot> mutation) {
+        synchronized (serialQueue) {
+            requireCurrent();
+            DurableRunMutation.Outcome<Boolean> outcome = persistCandidateLocked(candidate -> {
+                mutation.accept(candidate);
+                return true;
+            }, Boolean.TRUE::equals);
+            current = outcome.snapshot();
+        }
+    }
+
     public boolean spendResources(String key, java.util.Map<String, Integer> costs) {
         synchronized (serialQueue) {
             requireRunning();
@@ -434,12 +446,26 @@ public final class RunService {
     public boolean consumeAp(Player player, double amount) {
         synchronized (serialQueue) {
             RunSnapshot.PlayerState state = playerState(player.getUniqueId()).orElse(null);
-            double adjusted = state != null && isTestRun() ? amount * clamp(state.testApCostMultiplier, 0.0, 10.0) : amount;
+            double adjusted = effectiveApCostLocked(state, amount);
             if (state == null || state.ap + 1.0e-6 < adjusted || !"ACTIVE".equals(state.lifeState)) {
                 return false;
             }
             state.ap = Math.max(0.0, state.ap - adjusted);
             return true;
+        }
+    }
+
+    public double effectiveApCost(Player player, double amount) {
+        synchronized (serialQueue) {
+            return effectiveApCostLocked(playerState(player.getUniqueId()).orElse(null), amount);
+        }
+    }
+
+    public boolean canConsumeAp(Player player, double amount) {
+        synchronized (serialQueue) {
+            RunSnapshot.PlayerState state = playerState(player.getUniqueId()).orElse(null);
+            double adjusted = effectiveApCostLocked(state, amount);
+            return state != null && "ACTIVE".equals(state.lifeState) && state.ap + 1.0e-6 >= adjusted;
         }
     }
 
@@ -797,6 +823,14 @@ public final class RunService {
             return current.test.logicalNowEpochMs;
         }
         return Instant.now().toEpochMilli();
+    }
+
+    private double effectiveApCostLocked(RunSnapshot.PlayerState state, double amount) {
+        if (!Double.isFinite(amount) || amount < 0.0) {
+            throw new IllegalArgumentException("AP cost must be finite and non-negative");
+        }
+        return state != null && current != null && "TEST".equals(current.runType)
+                ? amount * clamp(state.testApCostMultiplier, 0.0, 10.0) : amount;
     }
 
     private void advanceTestClockLocked() {

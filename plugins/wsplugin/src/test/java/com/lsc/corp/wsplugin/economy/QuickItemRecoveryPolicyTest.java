@@ -31,4 +31,22 @@ class QuickItemRecoveryPolicyTest {
         assertEquals(2, decision.grantCount());
         assertEquals(0, decision.removeCount());
     }
+
+    @Test
+    void legitimateDropOrStorageTransferLowersTheDurableBaseline() {
+        QuickItemRecoveryPolicy.Observation observation =
+                QuickItemRecoveryPolicy.observeLegitimateInventory(3, 1);
+
+        assertEquals(1, observation.durableCount());
+        assertTrue(observation.changed());
+    }
+
+    @Test
+    void legitimatePickupRaisesTheDurableBaselineWithoutRecoveryGrant() {
+        QuickItemRecoveryPolicy.Observation observation =
+                QuickItemRecoveryPolicy.observeLegitimateInventory(0, 2);
+
+        assertEquals(2, observation.durableCount());
+        assertTrue(observation.changed());
+    }
 }

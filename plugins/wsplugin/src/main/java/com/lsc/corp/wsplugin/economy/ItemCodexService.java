@@ -25,6 +25,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -243,7 +244,7 @@ public final class ItemCodexService implements Listener {
             reconcileQuickItems(player);
             return false;
         }
-        runs.mutate(run -> {
+        runs.mutateAtomically(run -> {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
             if (state.quickItems == null) state.quickItems = new LinkedHashMap<>();
             state.quickItems.put(id, durableBefore - amount);
@@ -318,6 +319,11 @@ public final class ItemCodexService implements Listener {
 
     public void reconcile(Player player) {
         reconcileQuickItems(player);
+        reconcileDiscoveries(player);
+        flushPending(player);
+    }
+
+    private void reconcileDiscoveries(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null) {
             return;
@@ -338,7 +344,6 @@ public final class ItemCodexService implements Listener {
                 discover(player, id, "QUICK_ITEM_RECONCILE");
             }
         });
-        flushPending(player);
     }
 
     public void flushPending(Player player) {
@@ -440,11 +445,39 @@ public final class ItemCodexService implements Listener {
         int count = countItem(player, id);
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null || state.quickItems != null && state.quickItems.getOrDefault(id, -1) == count) return;
-        runs.mutate(run -> {
+        runs.mutateAtomically(run -> {
             RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
             if (mutable.quickItems == null) mutable.quickItems = new LinkedHashMap<>();
             mutable.quickItems.put(id, count);
         });
+    }
+
+    private void observeLegitimateQuickItemInventory(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
+        Map<String, Integer> durable = state.quickItems == null
+                ? Map.of() : new LinkedHashMap<>(state.quickItems);
+        Map<String, Integer> updates = new LinkedHashMap<>();
+        for (String id : quickConsumableIds()) {
+            int inventoryCount = countItem(player, id);
+            if (!durable.containsKey(id) && inventoryCount == 0) continue;
+            QuickItemRecoveryPolicy.Observation observation =
+                    QuickItemRecoveryPolicy.observeLegitimateInventory(durable.get(id), inventoryCount);
+            if (observation.changed()) updates.put(id, observation.durableCount());
+        }
+        if (updates.isEmpty()) return;
+        runs.mutateAtomically(run -> {
+            RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
+            if (mutable.quickItems == null) mutable.quickItems = new LinkedHashMap<>();
+            mutable.quickItems.putAll(updates);
+        });
+    }
+
+    private void observeInventoryAndRefresh(Player player) {
+        if (!player.isOnline() || !runs.isMember(player)) return;
+        observeLegitimateQuickItemInventory(player);
+        reconcileDiscoveries(player);
+        flushPending(player);
     }
 
     public void open(Player player) {
@@ -491,7 +524,7 @@ public final class ItemCodexService implements Listener {
         if (id != null && hasEntry(id)) {
             // The event fires before the inventory mutation. Reconcile on the next tick so a full
             // inventory or another pickup mutation cannot unlock an item the player never received.
-            Bukkit.getScheduler().runTask(plugin, () -> reconcile(player));
+            Bukkit.getScheduler().runTask(plugin, () -> observeInventoryAndRefresh(player));
         }
     }
 
@@ -506,14 +539,28 @@ public final class ItemCodexService implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDrop(PlayerDropItemEvent event) {
         if (runs.isMember(event.getPlayer())) {
-            Bukkit.getScheduler().runTask(plugin, () -> flushPending(event.getPlayer()));
+            Bukkit.getScheduler().runTask(plugin, () -> observeInventoryAndRefresh(event.getPlayer()));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onAnyInventoryClick(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player player && runs.isMember(player)) {
+            Bukkit.getScheduler().runTask(plugin, () -> observeInventoryAndRefresh(player));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onAnyInventoryDrag(InventoryDragEvent event) {
+        if (event.getWhoClicked() instanceof Player player && runs.isMember(player)) {
+            Bukkit.getScheduler().runTask(plugin, () -> observeInventoryAndRefresh(player));
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onAnyInventoryClick(InventoryClickEvent event) {
-        if (event.getWhoClicked() instanceof Player player && runs.isMember(player)) {
-            Bukkit.getScheduler().runTask(plugin, () -> flushPending(player));
+    public void onAnyInventoryClose(InventoryCloseEvent event) {
+        if (event.getPlayer() instanceof Player player && runs.isMember(player)) {
+            Bukkit.getScheduler().runTask(plugin, () -> observeInventoryAndRefresh(player));
         }
     }
 

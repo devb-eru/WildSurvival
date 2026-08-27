@@ -1324,23 +1324,29 @@ public final class CombatService implements Listener {
         if (!consumableId.isBlank() && !canApplyQuickItem(player, consumableId)) return;
         if (!consumableId.isBlank() && !canUseLimitedConsumable(player, consumableId)) return;
         double apCost = growth.skillApCost(player, skill.id(), skill.apCost());
-        if (!runs.consumeAp(player, apCost)) {
+        double effectiveApCost = runs.effectiveApCost(player, apCost);
+        boolean apStimTransaction = "AP_STIM".equals(skill.effect())
+                && "WSI-CONS-AP_STIM".equals(consumableId);
+        if (apStimTransaction ? !runs.canConsumeAp(player, apCost) : !runs.consumeAp(player, apCost)) {
             apFailure(player, apCost);
             return;
         }
-        boolean apStimTransaction = "AP_STIM".equals(skill.effect())
-                && "WSI-CONS-AP_STIM".equals(consumableId);
-        boolean consumed = consumableId.isBlank() || (apStimTransaction
-                ? equipment.consumeQuickItem(player, consumableId, CombatService::applyApStimState)
-                : equipment.consumeQuickItem(player, consumableId));
+        String apStimUseScope = apStimTransaction ? combatUseScope(player, true) : null;
+        boolean consumed = consumableId.isBlank() || (apStimTransaction ? equipment.consumeQuickItem(player,
+                consumableId, state -> {
+                    state.ap = Math.max(0.0, state.ap - effectiveApCost);
+                    applyApStimState(state);
+                    if (state.quickItemUsesByCombat == null) state.quickItemUsesByCombat = new HashMap<>();
+                    state.quickItemUsesByCombat.merge(apStimUseScope + ":" + consumableId, 1, Integer::sum);
+                }) : equipment.consumeQuickItem(player, consumableId));
         if (!consumed) {
-            runs.mutate(run -> {
+            if (!apStimTransaction) runs.mutate(run -> {
                 RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-                state.ap = Math.min(state.maxAp, state.ap + apCost);
+                state.ap = Math.min(state.maxAp, state.ap + effectiveApCost);
             });
             return;
         }
-        if (!consumableId.isBlank()) recordConsumableUse(player, consumableId);
+        if (!consumableId.isBlank() && !apStimTransaction) recordConsumableUse(player, consumableId);
         markCombatAction(player);
         startSkillCooldown(player, skill);
         if (!apStimTransaction) executeCommonEffect(player, skill, target);
@@ -3111,7 +3117,7 @@ public final class CombatService implements Listener {
     }
 
     private void startApStim(Player player) {
-        runs.mutate(run -> applyApStimState(run.players.get(player.getUniqueId().toString())));
+        runs.mutateAtomically(run -> applyApStimState(run.players.get(player.getUniqueId().toString())));
     }
 
     private static void applyApStimState(RunSnapshot.PlayerState state) {
@@ -3135,7 +3141,7 @@ public final class CombatService implements Listener {
             }
         });
         for (String playerId : due) {
-            runs.mutate(run -> {
+            runs.mutateAtomically(run -> {
                 RunSnapshot.PlayerState state = run.players.get(playerId);
                 if (state == null || state.apStimPulsesRemaining <= 0
                         || state.apStimTicksUntilNextPulse > 1) return;
