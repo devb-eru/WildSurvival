@@ -59,4 +59,10 @@ class FacilityPolicyTest {
         assertEquals(60_000L, FacilityPolicy.reconstructionDurationMillis("FAC-R02"));
         assertEquals(0L, FacilityPolicy.reconstructionDurationMillis("FAC-R03"));
     }
+
+    @Test
+    void portableChargeExtendsFromTheLaterOfNowOrCurrentExpiry() {
+        assertEquals(160_000L, FacilityPolicy.extendTimedExpiry(100_000L, 90_000L, 60_000L));
+        assertEquals(170_000L, FacilityPolicy.extendTimedExpiry(80_000L, 110_000L, 60_000L));
+    }
 }

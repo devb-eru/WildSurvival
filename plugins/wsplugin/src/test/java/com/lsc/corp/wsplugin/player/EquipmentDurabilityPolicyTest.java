@@ -34,6 +34,20 @@ class EquipmentDurabilityPolicyTest {
     }
 
     @Test
+    void quickKitRepairsFortyPercentAndReactivatesBrokenEquipment() {
+        var broken = EquipmentDurabilityPolicy.repairByFraction(0, 250,
+                EquipmentDurabilityPolicy.Condition.BROKEN, 0.40);
+        assertEquals(100, broken.current());
+        assertEquals(EquipmentDurabilityPolicy.Condition.ACTIVE, broken.condition());
+
+        var damaged = EquipmentDurabilityPolicy.repairByFraction(180, 250,
+                EquipmentDurabilityPolicy.Condition.ACTIVE, 0.40);
+        assertEquals(250, damaged.current());
+        assertThrows(IllegalArgumentException.class, () -> EquipmentDurabilityPolicy.repairByFraction(
+                0, 250, EquipmentDurabilityPolicy.Condition.BROKEN, 0.0));
+    }
+
+    @Test
     void nativeDamageEventRemainsObservableButCannotDeleteManagedItem() {
         var decision = EquipmentDurabilityPolicy.interceptNativeDamage(3);
         assertEquals(3, decision.ledgerCost());

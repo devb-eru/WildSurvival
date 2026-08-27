@@ -87,6 +87,13 @@ public final class FacilityPolicy {
         };
     }
 
+    public static long extendTimedExpiry(long currentExpiryEpochMs, long nowEpochMs, long extensionMillis) {
+        if (currentExpiryEpochMs < 0L || nowEpochMs < 0L || extensionMillis <= 0L) {
+            throw new IllegalArgumentException("Invalid timed facility extension");
+        }
+        return Math.addExact(Math.max(currentExpiryEpochMs, nowEpochMs), extensionMillis);
+    }
+
     private static int scale(int value, double multiplier) {
         return (int) Math.ceil(value * multiplier);
     }

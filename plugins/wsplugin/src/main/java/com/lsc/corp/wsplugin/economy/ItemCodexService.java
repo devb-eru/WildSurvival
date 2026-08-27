@@ -233,6 +233,13 @@ public final class ItemCodexService implements Listener {
      */
     public boolean takeQuickItemWithStateMutation(Player player, String rawId, int amount,
                                                    Consumer<RunSnapshot.PlayerState> stateMutation) {
+        String playerId = player.getUniqueId().toString();
+        return takeQuickItemWithRunMutation(player, rawId, amount,
+                run -> stateMutation.accept(run.players.get(playerId)));
+    }
+
+    public boolean takeQuickItemWithRunMutation(Player player, String rawId, int amount,
+                                                Consumer<RunSnapshot> runMutation) {
         String id = rawId.toUpperCase(java.util.Locale.ROOT);
         if (!isQuickConsumable(id) || amount <= 0 || countItem(player, id) < amount) return false;
         RunSnapshot.PlayerState current = runs.playerState(player.getUniqueId()).orElse(null);
@@ -248,7 +255,7 @@ public final class ItemCodexService implements Listener {
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
             if (state.quickItems == null) state.quickItems = new LinkedHashMap<>();
             state.quickItems.put(id, durableBefore - amount);
-            stateMutation.accept(state);
+            runMutation.accept(run);
         });
         boolean removed = takeItemFromInventory(player, id, amount);
         if (!removed) {

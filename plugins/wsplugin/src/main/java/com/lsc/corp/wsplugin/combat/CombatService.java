@@ -1327,26 +1327,22 @@ public final class CombatService implements Listener {
         double effectiveApCost = runs.effectiveApCost(player, apCost);
         boolean apStimTransaction = "AP_STIM".equals(skill.effect())
                 && "WSI-CONS-AP_STIM".equals(consumableId);
-        if (apStimTransaction ? !runs.canConsumeAp(player, apCost) : !runs.consumeAp(player, apCost)) {
+        if (!runs.canConsumeAp(player, apCost)) {
             apFailure(player, apCost);
             return;
         }
-        String apStimUseScope = apStimTransaction ? combatUseScope(player, true) : null;
-        boolean consumed = consumableId.isBlank() || (apStimTransaction ? equipment.consumeQuickItem(player,
-                consumableId, state -> {
-                    state.ap = Math.max(0.0, state.ap - effectiveApCost);
-                    applyApStimState(state);
-                    if (state.quickItemUsesByCombat == null) state.quickItemUsesByCombat = new HashMap<>();
-                    state.quickItemUsesByCombat.merge(apStimUseScope + ":" + consumableId, 1, Integer::sum);
-                }) : equipment.consumeQuickItem(player, consumableId));
-        if (!consumed) {
-            if (!apStimTransaction) runs.mutate(run -> {
-                RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-                state.ap = Math.min(state.maxAp, state.ap + effectiveApCost);
-            });
-            return;
+        if (consumableId.isBlank()) {
+            if (!runs.consumeAp(player, apCost)) {
+                apFailure(player, apCost);
+                return;
+            }
+        } else {
+            String useScope = combatUseScope(player, true);
+            if (!equipment.consumeQuickItem(player, consumableId, state -> {
+                QuickConsumableMutation.commitUseCost(state, consumableId, useScope, effectiveApCost);
+                if (apStimTransaction) QuickConsumableMutation.applyDirectDurableEffect(state, consumableId);
+            })) return;
         }
-        if (!consumableId.isBlank() && !apStimTransaction) recordConsumableUse(player, consumableId);
         markCombatAction(player);
         startSkillCooldown(player, skill);
         if (!apStimTransaction) executeCommonEffect(player, skill, target);
@@ -1367,12 +1363,15 @@ public final class CombatService implements Listener {
             ActionBarService.notice(player, Component.text("아직 직접 사용할 수 없는 소모품입니다: " + bound, NamedTextColor.RED), 40);
             return;
         }
-        if ("WSI-CONS-REPAIR_KIT".equals(bound) && !equipment.canRepairEquipped(player)) {
+        String repairInstanceId = "WSI-CONS-REPAIR_KIT".equals(bound)
+                ? equipment.mostDamagedEquippedInstanceId(player) : null;
+        if ("WSI-CONS-REPAIR_KIT".equals(bound) && repairInstanceId == null) {
             ActionBarService.notice(player, Component.text("수리가 필요한 장착 장비가 없습니다", NamedTextColor.GRAY), 35);
             return;
         }
-        if ("WSI-CONS-PORTABLE_PURIFIER_CHARGE".equals(bound)
-                && (facilityService == null || !facilityService.hasActivePortablePurifier(player))) {
+        String purifierInstanceId = "WSI-CONS-PORTABLE_PURIFIER_CHARGE".equals(bound) && facilityService != null
+                ? facilityService.activePortablePurifierInstanceId(player) : null;
+        if ("WSI-CONS-PORTABLE_PURIFIER_CHARGE".equals(bound) && purifierInstanceId == null) {
             ActionBarService.notice(player, Component.text("가동할 FAC-P05 휴대 정화기가 없습니다", NamedTextColor.RED), 40);
             return;
         }
@@ -1382,17 +1381,23 @@ public final class CombatService implements Listener {
             return;
         }
         if (!canUseLimitedConsumable(player, bound)) return;
-        boolean apStimTransaction = "WSI-CONS-AP_STIM".equals(bound);
-        if (apStimTransaction) {
-            String useScope = combatUseScope(player, true);
-            if (!equipment.consumeQuickItem(player, bound, state -> {
-                applyApStimState(state);
-                if (state.quickItemUsesByCombat == null) state.quickItemUsesByCombat = new HashMap<>();
-                state.quickItemUsesByCombat.merge(useScope + ":" + bound, 1, Integer::sum);
-            })) return;
-        } else if (!equipment.consumeQuickItem(player, bound)) {
-            return;
-        }
+        boolean productionConsumable = bound.startsWith("WSI-CONS-");
+        String useScope = productionConsumable ? combatUseScope(player, true) : null;
+        long transactionNow = runs.clockNowMillis();
+        boolean consumed = productionConsumable
+                ? equipment.consumeQuickItemWithRunMutation(player, bound, run -> {
+                    RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                    QuickConsumableMutation.commitUseCost(state, bound, useScope, 0.0);
+                    QuickConsumableMutation.applyDirectDurableEffect(state, bound);
+                    if (repairInstanceId != null && !equipment.applyQuickRepair(state, repairInstanceId)) {
+                        throw new IllegalStateException("Repair target disappeared: " + repairInstanceId);
+                    }
+                    if (purifierInstanceId != null) {
+                        facilityService.extendPortablePurifier(run, purifierInstanceId, 60_000L, transactionNow);
+                    }
+                }) : equipment.consumeQuickItem(player, bound);
+        if (!consumed) return;
+        if (repairInstanceId != null) equipment.finishQuickRepair(player, repairInstanceId);
         double maxHealth = player.getAttribute(Attribute.MAX_HEALTH) == null ? 20.0
                 : player.getAttribute(Attribute.MAX_HEALTH).getValue();
         String result;
@@ -1423,7 +1428,7 @@ public final class CombatService implements Listener {
             }
             case "WSI-CONS-BANDAGE" -> { removePlayerStatus(player, "bleed", 1); result = "BLEED 1중첩 제거"; }
             case "WSI-CONS-REPAIR_KIT" -> {
-                equipment.repairMostDamagedWithConsumedKit(player); result = "가장 손상된 장착 장비 40% 수리";
+                result = "가장 손상된 장착 장비 40% 수리";
             }
             case "WSI-CONS-PURIFY_AMPOULE" -> {
                 cleanseWeakEffects(player); result = "개인 오염 감소 / 약한 상태 정화";
@@ -1432,18 +1437,9 @@ public final class CombatService implements Listener {
                 result = "AP +10 / 5초간 초당 +3";
             }
             case "WSI-CONS-RESCUE_BRACE" -> {
-                runs.mutate(run -> {
-                    RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-                    RescueBracePolicy.Pending pending = RescueBracePolicy.reserve(
-                            state.rescueInterruptThresholdBonus,
-                            ConsumableRuntimePolicy.BASE_RESCUE_BRACE_THRESHOLD_BONUS);
-                    state.rescueBraceCharges = pending.charges();
-                    state.rescueInterruptThresholdBonus = pending.bonus();
-                });
                 result = "다음 구조 중단 임계 +10%";
             }
             case "WSI-CONS-PORTABLE_PURIFIER_CHARGE" -> {
-                facilityService.extendPortablePurifier(player, 60_000L);
                 result = "FAC-P05 가동시간 +60초";
             }
             case "WSI-CONS-ANTIDOTE_INJECTION" -> {
@@ -1468,14 +1464,6 @@ public final class CombatService implements Listener {
                 result = removed + " 1개 제거";
             }
             case "WSI-CONS-REINFORCED_RESCUE_BRACE" -> {
-                runs.mutate(run -> {
-                    RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-                    RescueBracePolicy.Pending pending = RescueBracePolicy.reserve(
-                            state.rescueInterruptThresholdBonus,
-                            ConsumableRuntimePolicy.REINFORCED_RESCUE_BRACE_THRESHOLD_BONUS);
-                    state.rescueBraceCharges = pending.charges();
-                    state.rescueInterruptThresholdBonus = pending.bonus();
-                });
                 result = "다음 구조 중단 임계 +25%";
             }
             case "WSI-CONS-BIO_SHIELD_AMPOULE" -> {
@@ -1491,7 +1479,6 @@ public final class CombatService implements Listener {
             }
             default -> { ActionBarService.notice(player, Component.text("지원하지 않는 Q 아이템 " + bound, NamedTextColor.RED), 40); return; }
         }
-        if (!apStimTransaction) recordConsumableUse(player, bound);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GENERIC_EAT, 0.8f, 1.0f);
         ProductionContentCatalog.ItemEntry definition = production.nonEquipmentItemsById().get(bound);
         String name = definition == null ? content.item(bound).name() : definition.name();
@@ -1512,7 +1499,6 @@ public final class CombatService implements Listener {
             ActionBarService.notice(player, Component.text("이미 소모품을 사용 중입니다", NamedTextColor.RED), 30);
             return;
         }
-        if (!equipment.consumeQuickItem(player, itemId)) return;
         boolean inCombat = CombatUseScopePolicy.sharedScope(runs.current().orElseThrow()).isPresent()
                 || runs.playerState(player.getUniqueId()).map(state ->
                 state.personalCombatScopeExpiresAtEpochMs >= runs.clockNowMillis()).orElse(false);
@@ -1521,7 +1507,7 @@ public final class CombatService implements Listener {
         quickUseChannels.put(player.getUniqueId(), new QuickUseChannel(itemId, slot, startedTick,
                 startedTick + durationTicks));
         ActionBarService.critical(player, Component.text("Q" + slot + " 야전 배급팩 섭취 시작 · "
-                + durationTicks / 20 + "초 · 좌클릭 취소", NamedTextColor.YELLOW), 40);
+                + durationTicks / 20 + "초 · 완료 시 1개 소비 · 좌클릭 취소", NamedTextColor.YELLOW), 40);
     }
 
     private void processQuickUseChannels() {
@@ -1542,7 +1528,13 @@ public final class CombatService implements Listener {
             if (tick >= channel.completesAtTick) {
                 quickUseChannels.remove(player.getUniqueId());
                 if (!canApplyQuickItem(player, channel.itemId)) {
-                    equipment.grantQuickItem(player, channel.itemId, 1);
+                    continue;
+                }
+                String useScope = combatUseScope(player, true);
+                if (!equipment.consumeQuickItem(player, channel.itemId, mutable ->
+                        QuickConsumableMutation.commitUseCost(mutable, channel.itemId, useScope, 0.0))) {
+                    ActionBarService.critical(player, Component.text("야전 배급팩이 없어 섭취가 취소되었습니다",
+                            NamedTextColor.RED), 35);
                     continue;
                 }
                 player.setFoodLevel(Math.min(20, player.getFoodLevel() + 8));
@@ -1565,8 +1557,7 @@ public final class CombatService implements Listener {
     private boolean cancelQuickUse(Player player, String reason) {
         QuickUseChannel cancelled = quickUseChannels.remove(player.getUniqueId());
         if (cancelled == null) return false;
-        equipment.grantQuickItem(player, cancelled.itemId, 1);
-        ActionBarService.critical(player, Component.text(reason + " · 예약 수량 반환", NamedTextColor.RED), 35);
+        ActionBarService.critical(player, Component.text(reason + " · 아이템 미소비", NamedTextColor.RED), 35);
         return true;
     }
 
@@ -1590,16 +1581,6 @@ public final class CombatService implements Listener {
         ActionBarService.notice(player, Component.text("현재 전투 사용 한도에 도달했습니다: " + id,
                 NamedTextColor.RED), 40);
         return false;
-    }
-
-    private void recordConsumableUse(Player player, String id) {
-        if (!id.startsWith("WSI-CONS-")) return;
-        String scope = combatUseScope(player, true);
-        runs.mutate(run -> {
-            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-            if (state.quickItemUsesByCombat == null) state.quickItemUsesByCombat = new HashMap<>();
-            state.quickItemUsesByCombat.merge(scope + ":" + id, 1, Integer::sum);
-        });
     }
 
     private boolean canApplyQuickItem(Player player, String id) {
@@ -3091,6 +3072,9 @@ public final class CombatService implements Listener {
                 }
             }
             case "CLEANSE" -> cleanseWeakEffects(player);
+            case "CONTROL_CLEANSE" -> ConsumableRuntimePolicy.neuralCleansePriority().stream()
+                    .filter(status -> statuses.active(player, status)).findFirst()
+                    .ifPresent(status -> statuses.remove(player, status, 1));
             case "AP_STIM" -> startApStim(player);
             case "MARK" -> {
                 if (target != null) applyStatus(player, target, "MARK", skill.id(), 1.0,

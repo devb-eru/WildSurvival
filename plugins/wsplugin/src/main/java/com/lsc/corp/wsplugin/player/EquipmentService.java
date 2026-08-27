@@ -340,12 +340,17 @@ public final class EquipmentService implements Listener {
     }
 
     public boolean consumeQuickItem(Player player, String id) {
-        return codex.takeItem(player, id, 1);
+        return codex.takeQuickItemWithStateMutation(player, id, 1, ignored -> { });
     }
 
     public boolean consumeQuickItem(Player player, String id,
                                     java.util.function.Consumer<RunSnapshot.PlayerState> stateMutation) {
         return codex.takeQuickItemWithStateMutation(player, id, 1, stateMutation);
+    }
+
+    public boolean consumeQuickItemWithRunMutation(Player player, String id,
+                                                   java.util.function.Consumer<RunSnapshot> runMutation) {
+        return codex.takeQuickItemWithRunMutation(player, id, 1, runMutation);
     }
 
     public boolean hasRegisteredItem(Player player, String id) {
@@ -356,21 +361,37 @@ public final class EquipmentService implements Listener {
         return mostDamagedEquipped(player) != null;
     }
 
+    public String mostDamagedEquippedInstanceId(Player player) {
+        return mostDamagedEquipped(player);
+    }
+
+    public boolean applyQuickRepair(RunSnapshot.PlayerState state, String instanceId) {
+        RunSnapshot.EquipmentInstanceState target = equipmentInstances(state).get(instanceId);
+        if (target == null) return false;
+        EquipmentDurabilityPolicy.Condition condition = "BROKEN".equals(target.condition)
+                ? EquipmentDurabilityPolicy.Condition.BROKEN : EquipmentDurabilityPolicy.Condition.ACTIVE;
+        EquipmentDurabilityPolicy.RepairResult repaired = EquipmentDurabilityPolicy.repairByFraction(
+                target.currentDurability, target.maxDurability, condition, 0.40);
+        target.currentDurability = repaired.current();
+        target.condition = repaired.condition().name();
+        return true;
+    }
+
+    public void finishQuickRepair(Player player, String instanceId) {
+        syncAuthoritativeEquipment(player);
+        telemetry.event(runs.current().orElseThrow().runId, "EQUIPMENT_REPAIRED",
+                "{\"instanceId\":\"" + instanceId + "\",\"method\":\"QUICK_KIT\"}");
+    }
+
     public boolean repairMostDamagedWithConsumedKit(Player player) {
         String instanceId = mostDamagedEquipped(player);
         if (instanceId == null) return false;
         runs.mutate(run -> {
-            RunSnapshot.EquipmentInstanceState target = equipmentInstances(
-                    run.players.get(player.getUniqueId().toString())).get(instanceId);
-            if (target == null) return;
-            int recovery = Math.max(1, (int) Math.ceil(target.maxDurability * 0.40));
-            target.currentDurability = "BROKEN".equals(target.condition)
-                    ? recovery : Math.min(target.maxDurability, target.currentDurability + recovery);
-            target.condition = "ACTIVE";
+            if (!applyQuickRepair(run.players.get(player.getUniqueId().toString()), instanceId)) {
+                throw new IllegalStateException("Repair target disappeared: " + instanceId);
+            }
         });
-        syncAuthoritativeEquipment(player);
-        telemetry.event(runs.current().orElseThrow().runId, "EQUIPMENT_REPAIRED",
-                "{\"instanceId\":\"" + instanceId + "\",\"method\":\"QUICK_KIT\"}");
+        finishQuickRepair(player, instanceId);
         return true;
     }
 

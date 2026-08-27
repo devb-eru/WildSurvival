@@ -425,6 +425,13 @@ public final class FacilityService implements Listener {
     }
 
     public void extendPortablePurifier(Player player, long extensionMillis) {
+        String instanceId = activePortablePurifierInstanceId(player);
+        if (instanceId == null) throw new IllegalStateException("가동 중인 FAC-P05가 없습니다.");
+        long now = runs.clockNowMillis();
+        runs.mutate(snapshot -> extendPortablePurifier(snapshot, instanceId, extensionMillis, now));
+    }
+
+    public String activePortablePurifierInstanceId(Player player) {
         RunSnapshot run = runs.current().orElseThrow();
         RunSnapshot.FacilityInstanceState purifier = FacilityStateAccess.instances(run).values().stream()
                 .filter(value -> "FAC-P05".equals(value.facilityType) && player.getUniqueId().toString().equals(value.installedBy)
@@ -432,21 +439,21 @@ public final class FacilityService implements Listener {
                 .min(Comparator.comparingDouble((RunSnapshot.FacilityInstanceState value) ->
                                 distanceSquared(player.getLocation(), value))
                         .thenComparing(value -> value.instanceId)).orElse(null);
-        if (purifier == null) throw new IllegalStateException("가동 중인 FAC-P05가 없습니다.");
-        runs.mutate(snapshot -> {
-            RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(snapshot).get(purifier.instanceId);
-            current.expiresAtEpochMs = Math.max(current.expiresAtEpochMs, runs.clockNowMillis()) + extensionMillis;
-        });
+        return purifier == null ? null : purifier.instanceId;
+    }
+
+    public void extendPortablePurifier(RunSnapshot snapshot, String instanceId,
+                                       long extensionMillis, long nowEpochMs) {
+        RunSnapshot.FacilityInstanceState current = FacilityStateAccess.instances(snapshot).get(instanceId);
+        if (current == null || !"FAC-P05".equals(current.facilityType) || !"ACTIVE".equals(current.state)) {
+            throw new IllegalStateException("가동 중인 FAC-P05가 없습니다: " + instanceId);
+        }
+        current.expiresAtEpochMs = FacilityPolicy.extendTimedExpiry(
+                current.expiresAtEpochMs, nowEpochMs, extensionMillis);
     }
 
     public boolean hasActivePortablePurifier(Player player) {
-        RunSnapshot run = runs.current().orElse(null);
-        if (run == null) return false;
-        String owner = player.getUniqueId().toString();
-        long now = runs.clockNowMillis();
-        return FacilityStateAccess.instances(run).values().stream().anyMatch(value -> "FAC-P05".equals(value.facilityType)
-                && owner.equals(value.installedBy) && "ACTIVE".equals(value.state)
-                && !FacilityStateAccess.expired(value, now));
+        return runs.current().isPresent() && activePortablePurifierInstanceId(player) != null;
     }
 
     public boolean canAssembleVirtual(Player player, String outputId) {

@@ -23,6 +23,16 @@ public final class EquipmentDurabilityPolicy {
         return Math.min(nativeMaximum - 1, Math.max(0, (int) Math.round(spentRatio * nativeMaximum)));
     }
 
+    public static RepairResult repairByFraction(int current, int maximum, Condition condition, double fraction) {
+        if (maximum < 1 || current < 0 || current > maximum || condition == null
+                || !Double.isFinite(fraction) || fraction <= 0.0 || fraction > 1.0) {
+            throw new IllegalArgumentException("Invalid durability repair state");
+        }
+        int recovery = Math.max(1, (int) Math.ceil(maximum * fraction));
+        int repaired = condition == Condition.BROKEN ? recovery : Math.min(maximum, current + recovery);
+        return new RepairResult(repaired, Condition.ACTIVE);
+    }
+
     /** Keeps the Bukkit damage event observable while preventing native deletion of a managed item. */
     public static NativeDamageDecision interceptNativeDamage(int requestedDamage) {
         if (requestedDamage < 0) {
@@ -69,6 +79,9 @@ public final class EquipmentDurabilityPolicy {
     public enum BreakSlot { MAIN_HAND, OFF_HAND, HEAD, CHEST, LEGS, FEET, OTHER }
 
     public record SpendResult(int current, Condition condition, boolean changed) {
+    }
+
+    public record RepairResult(int current, Condition condition) {
     }
 
     public record NativeDamageDecision(int ledgerCost, int nativeDamage) {
