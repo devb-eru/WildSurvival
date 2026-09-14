@@ -261,6 +261,8 @@ NMS 직접 접근은 금지하지 않지만 Paper API로 불가능한 경우에�
 
 `P1-CLIENT-COST-002`는 실제 클라이언트에서 통과했다. 개인 연구는 목재 3의 단일 예약과 `PROCESSING/0%`, 공용 FAC-S16 Lv2는 목재 7·철 9·레드스톤 9·마력 결정 1의 단일 커밋과 `COMPLETED` 작업을 각각 일반 재접속 전후 동일하게 복구했다. 개인/공용 클릭 오선택 실패에는 차감·거래가 없었고, 공용 GUI는 재접속 뒤 `Lv 2/5 · ACTIVE`와 HP `5060/5060`을 표시했다. P1 전체 승격은 실제 JVM 종료 경계인 `P1-PROCESS-KILL-003` 통과 전까지 금지한다.
 
+`P1-PROCESS-KILL-003`도 2026-09-15 격리 Paper 서버와 `non2error` 클라이언트에서 통과했다. AP 자극제 K0~K5를 각각 `AP/잔여 펄스=30/5, 33/4, 36/3, 39/2, 42/1, 45/0`의 내구 저장 직후 실제 JVM 강제 종료했으며, 매 재시작은 AP 45·잔여 0·퀵 수량 0·범위별 사용 1회로 수렴하고 재접속 실제 인벤토리에 복제나 잔존을 만들지 않았다. 비용 `PROCESSING`은 `RS-D01-SAMPLE`의 목재 3 예약을, 비용 `RESERVED`는 `RS-D03-SEPARATION`의 개인 목재 5·철 2 예약을 종료 훅 없이 복구했다. 후자는 `QUEUED/RESERVED/PERSONAL/attempt 1`에서 재시작 뒤 `PROCESSING/PROCESSING`, 같은 예약 수량·잔액 0·시도 1회로 전이해 이중 차감이 없었고, 재접속 GUI도 `진행 0% · PROCESSING`을 표시했다. 따라서 P1 인계 상태는 `P1_PASSED`, 다음 실행 게이트는 `P2_READY`다. Season 1 전체 인계 상태 `IMPLEMENTATION_IN_PROGRESS`와 Story `DEFERRED_BY_USER`는 유지한다.
+
 휴대 장치는 최초 사용 또는 배치 시 `portableInstanceId`를 얻는다. P05는 아이템별 런타임 인스턴스로 동시에 가동할 수 있고 충전은 보유자가 가동한 최근접 인스턴스에 적용한다. P06은 스택을 유지하되 배치할 때마다 새 ID를 발급하므로 한 플레이어도 말뚝 3개 이상을 설치할 수 있다. 실제 블록 입력·재시작 복원은 `E2E-55` 전까지 완료로 간주하지 않는다.
 
 `ArenaManifestPolicy`는 활성 P06의 모든 3개 조합을 ID 순서로 검사하고 같은 월드·유한 좌표·Day별 거리 계약을 통과하는 첫 조합과 무게중심을 고른다. 이 결과는 아직 지형 안전 통과 전 `ArenaCandidate`이므로 호출품을 소비하거나 정식 Manifest를 저장하지 않는다.
