@@ -487,6 +487,31 @@ public final class EquipmentService implements Listener {
         return consumeDurability(player, state.mainWeaponInstanceId, amount, reason);
     }
 
+    /**
+     * Persists an action mutation and the managed main-weapon durability cost in the same
+     * detached run candidate. Unarmed actions still persist the supplied mutation atomically.
+     */
+    public boolean commitMainWeaponAction(Player player, int durabilityCost, String reason,
+                                          java.util.function.Consumer<RunSnapshot> actionMutation) {
+        Objects.requireNonNull(actionMutation, "actionMutation");
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return false;
+        if (state.mainWeaponId == null || state.mainWeaponInstanceId == null) {
+            runs.mutateAtomically(actionMutation);
+            return true;
+        }
+        return consumeDurability(player, state.mainWeaponInstanceId, durabilityCost, reason, actionMutation);
+    }
+
+    /** Persists a guard mutation and its managed offhand durability cost as one candidate. */
+    public boolean commitOffhandAction(Player player, int durabilityCost, String reason,
+                                       java.util.function.Consumer<RunSnapshot> actionMutation) {
+        Objects.requireNonNull(actionMutation, "actionMutation");
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || state.offhandInstanceId == null) return false;
+        return consumeDurability(player, state.offhandInstanceId, durabilityCost, reason, actionMutation);
+    }
+
     public void syncAuthoritativeEquipment(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null) return;
@@ -996,6 +1021,11 @@ public final class EquipmentService implements Listener {
     }
 
     private boolean consumeDurability(Player player, String instanceId, int amount, String reason) {
+        return consumeDurability(player, instanceId, amount, reason, ignored -> { });
+    }
+
+    private boolean consumeDurability(Player player, String instanceId, int amount, String reason,
+                                      java.util.function.Consumer<RunSnapshot> actionMutation) {
         if (amount < 0) throw new IllegalArgumentException("Durability amount cannot be negative");
         RunSnapshot.PlayerState beforeState = runs.playerState(player.getUniqueId()).orElse(null);
         RunSnapshot.EquipmentInstanceState before = beforeState == null
@@ -1019,9 +1049,10 @@ public final class EquipmentService implements Listener {
         boolean[] broke = {false};
         String[] templateId = {before.templateId};
         java.util.function.Consumer<RunSnapshot> mutation = run -> {
+            actionMutation.accept(run);
             RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
             RunSnapshot.EquipmentInstanceState instance = equipmentInstances(state).get(instanceId);
-            if (instance == null) return;
+            if (instance == null) throw new IllegalStateException("Durability target disappeared: " + instanceId);
             templateId[0] = instance.templateId;
             boolean wasBroken = "BROKEN".equals(instance.condition);
             EquipmentDurabilityPolicy.SpendResult result = EquipmentDurabilityPolicy.spend(
@@ -1034,9 +1065,9 @@ public final class EquipmentService implements Listener {
         };
         if (expectedBreak) {
             String key = EquipmentDurabilityPolicy.breakCommitKey(instanceId, before.breakCount + 1);
-            if (!runs.commitOnce(key, "EQUIPMENT_BROKEN", payload, mutation)) return false;
+            if (!runs.commitOnceAtomically(key, "EQUIPMENT_BROKEN", payload, mutation)) return false;
         } else {
-            runs.mutate(mutation);
+            runs.mutateAtomically(mutation);
         }
         syncAuthoritativeEquipment(player);
         if (broke[0]) {

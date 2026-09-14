@@ -78,6 +78,11 @@ public final class RunSnapshot {
         public Map<String, Integer> quickItemUsesByDay = new LinkedHashMap<>();
         public Map<String, Integer> quickItemUsesByCombat = new LinkedHashMap<>();
         public Map<String, Integer> ammoLedger = new LinkedHashMap<>();
+        /**
+         * Short-lived absolute inventory checkpoints for durable-first physical item changes.
+         * Keys are owned by the subsystem that created them (for example MATERIAL:ARROW).
+         */
+        public Map<String, Integer> pendingPhysicalItemCounts = new LinkedHashMap<>();
         /** Server-authoritative custom resource balance. Vanilla items remain in the Bukkit inventory. */
         public Map<String, Integer> personalResources = new LinkedHashMap<>();
         public long personalCombatSequence;

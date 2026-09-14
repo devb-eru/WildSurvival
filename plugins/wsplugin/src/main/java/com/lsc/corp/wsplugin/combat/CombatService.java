@@ -1157,15 +1157,12 @@ public final class CombatService implements Listener {
         if (attackReadyAtNanos.getOrDefault(player.getUniqueId(), 0L) > now) {
             return false;
         }
-        if (usesArrowAmmo(weaponId) && !hasArrowAmmo(player, weaponId)) {
-            ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
-            return false;
-        }
         double apCost = growth.basicAttackApCost(player, weaponId, basic == null ? 0.0 : basic.apCost());
-        if (!runs.consumeAp(player, apCost)) {
-            apFailure(player, apCost);
-            return false;
-        }
+        boolean ranged = usesArrowAmmo(weaponId);
+        boolean conserveAmmo = ranged
+                && java.util.concurrent.ThreadLocalRandom.current().nextDouble() < growth.ammoConserveChance(player);
+        if (!commitWeaponCost(player, weaponId, apCost, ranged ? 1 : 0,
+                "CROSSBOW".equals(weaponId), conserveAmmo, 0, false, 1, "BASIC_ATTACK")) return false;
         double cooldownMultiplier = runs.isTestRun()
                 ? clamp(state.testCooldownMultiplier, 0.05, 10.0) : 1.0;
         int intervalTicks = basic == null ? weapon.intervalTicks() : skills.cooldownTicks(basic.id());
@@ -1180,17 +1177,7 @@ public final class CombatService implements Listener {
         combo.stage = (stage + 1) % weapon.attackCoefficients().size();
         combo.lastAttackAtEpochMs = Instant.now().toEpochMilli();
         String executionId = UUID.randomUUID().toString();
-        if (usesArrowAmmo(weaponId)) {
-            if (!consumeArrowAmmo(player, weaponId)) {
-                attackReadyAtNanos.remove(player.getUniqueId());
-                runs.mutate(run -> {
-                    RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
-                    mutable.ap = Math.min(mutable.maxAp, mutable.ap + apCost);
-                });
-                ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
-                return false;
-            }
-            markCombatAction(player);
+        if (ranged) {
             float velocity = "CROSSBOW".equals(weaponId) ? 3.4f : 2.8f;
             Arrow arrow = player.getWorld().spawnArrow(player.getEyeLocation(), player.getEyeLocation().getDirection(), velocity, 0.0f);
             arrow.setShooter(player);
@@ -1198,13 +1185,10 @@ public final class CombatService implements Listener {
             arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
             arrow.getPersistentDataContainer().set(projectileOwnerKey, PersistentDataType.STRING, player.getUniqueId().toString());
             arrow.getPersistentDataContainer().set(projectileWeaponKey, PersistentDataType.STRING, weaponId);
-            equipment.consumeMainWeaponDurability(player, 1, "BASIC_ATTACK");
             player.getWorld().playSound(player.getLocation(), "CROSSBOW".equals(weaponId)
                     ? Sound.ITEM_CROSSBOW_SHOOT : Sound.ENTITY_ARROW_SHOOT, 0.7f, 1.1f);
             return true;
         }
-        markCombatAction(player);
-        equipment.consumeMainWeaponDurability(player, 1, "BASIC_ATTACK");
         List<LivingEntity> targets = coneTargets(player, weapon.range(), weapon.arcDegrees(), "UNARMED".equals(weaponId) ? 2 : 3);
         for (LivingEntity target : targets) {
             double raw = 100.0 * weapon.attackCoefficients().get(stage);
@@ -1234,50 +1218,28 @@ public final class CombatService implements Listener {
         if ("TRIDENT_TOGGLE".equals(skill.effect())) {
             RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
             boolean success = "HELD".equals(state.tridentState)
-                    ? throwTrident(player, apCost)
-                    : recallTrident(player, growth.skillApCost(player, skill.id(), Math.min(20.0, skill.apCost())));
+                    ? throwTrident(player, apCost, skill.id())
+                    : recallTrident(player, growth.skillApCost(player, skill.id(), Math.min(20.0, skill.apCost())), skill.id());
             if (success) {
-                markCombatAction(player);
                 startSkillCooldown(player, skill);
-                equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
                 showSkillEffect(player, skill, List.of());
             }
             return success;
         }
         if ("RELOAD".equals(skill.effect())) {
-            boolean ledgerAmmo = ammoService != null && ammoService.generalArrowBalance(player) >= 2;
-            if (!ledgerAmmo && !hasMaterial(player, Material.ARROW, 2)) {
-                ActionBarService.notice(player, Component.text("순간 장전에는 화살 2개가 필요합니다", NamedTextColor.RED), 30);
-                return false;
-            }
-            if (!runs.consumeAp(player, apCost)) {
-                apFailure(player, apCost);
-                return false;
-            }
-            if (ledgerAmmo) ammoService.consumeGeneralArrows(player, 2);
-            else takeMaterial(player, Material.ARROW, 2);
-            markCombatAction(player);
-            runs.mutate(run -> {
-                RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-                state.crossbowLoadedAmmo = Math.min(6, state.crossbowLoadedAmmo + 2);
-            });
+            if (!commitWeaponCost(player, weaponId, apCost, 2,
+                    false, false, 2, false, 0, "SKILL:" + skill.id())) return false;
             startSkillCooldown(player, skill);
             showSkillEffect(player, skill, List.of());
             ActionBarService.notice(player, Component.text("순간 장전 · 탄창 +2", NamedTextColor.AQUA), 30);
             return true;
         }
-        if (usesArrowAmmo(weaponId) && !hasArrowAmmo(player, weaponId)) {
-            ActionBarService.notice(player, Component.text("화살이 필요합니다", NamedTextColor.RED), 30);
-            return false;
-        }
-        if (!runs.consumeAp(player, apCost)) {
-            apFailure(player, apCost);
-            return false;
-        }
-        if (usesArrowAmmo(weaponId)) consumeArrowAmmo(player, weaponId);
-        markCombatAction(player);
+        boolean ranged = usesArrowAmmo(weaponId);
+        boolean conserveAmmo = ranged
+                && java.util.concurrent.ThreadLocalRandom.current().nextDouble() < growth.ammoConserveChance(player);
+        if (!commitWeaponCost(player, weaponId, apCost, ranged ? 1 : 0,
+                "CROSSBOW".equals(weaponId), conserveAmmo, 0, true, 1, "SKILL:" + skill.id())) return false;
         startSkillCooldown(player, skill);
-        equipment.consumeMainWeaponDurability(player, 1, "SKILL:" + skill.id());
         List<LivingEntity> targets = coneTargets(player, skill.range(), skill.arcDegrees(), skill.maxTargets());
         String executionId = "skill:" + skill.id() + ":" + UUID.randomUUID();
         for (LivingEntity target : targets) {
@@ -1287,7 +1249,6 @@ public final class CombatService implements Listener {
         }
         applyCasterSkillEffect(player, skill, targets);
         showSkillEffect(player, skill, targets);
-        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tutorialSignals.add("USED_SKILL"));
         ActionBarService.notice(player, Component.text("W" + slot + " " + skill.name() + " / AP -" + Math.round(apCost), NamedTextColor.AQUA), 30);
         return true;
     }
@@ -1639,13 +1600,17 @@ public final class CombatService implements Listener {
         if (run == null || CombatUseScopePolicy.sharedScope(run).isPresent()) return;
         RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
         if (state == null) return;
+        long now = runs.clockNowMillis();
+        runs.mutate(snapshot -> applyCombatActionScope(snapshot,
+                snapshot.players.get(player.getUniqueId().toString()), now));
+    }
+
+    private static void applyCombatActionScope(RunSnapshot run, RunSnapshot.PlayerState state, long nowEpochMs) {
+        if (state == null || CombatUseScopePolicy.sharedScope(run).isPresent()) return;
         CombatUseScopePolicy.PersonalScope scope = CombatUseScopePolicy.onCombatAction(
-                state.personalCombatSequence, state.personalCombatScopeExpiresAtEpochMs, runs.clockNowMillis());
-        runs.mutate(snapshot -> {
-            RunSnapshot.PlayerState mutable = snapshot.players.get(player.getUniqueId().toString());
-            mutable.personalCombatSequence = scope.sequence();
-            mutable.personalCombatScopeExpiresAtEpochMs = scope.expiresAtEpochMs();
-        });
+                state.personalCombatSequence, state.personalCombatScopeExpiresAtEpochMs, nowEpochMs);
+        state.personalCombatSequence = scope.sequence();
+        state.personalCombatScopeExpiresAtEpochMs = scope.expiresAtEpochMs();
     }
 
     private void removePlayerStatus(Player player, String id, int maximumStacks) {
@@ -1714,7 +1679,13 @@ public final class CombatService implements Listener {
             return;
         }
         if (start.apAfter() != state.ap) {
-            runs.mutate(run -> run.players.get(player.getUniqueId().toString()).ap = start.apAfter());
+            runs.mutateAtomically(run -> {
+                RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
+                if (!"ACTIVE".equals(mutable.lifeState) || Math.abs(mutable.ap - apBefore) > 1.0e-6) {
+                    throw new IllegalStateException("Guard AP changed before start commit");
+                }
+                mutable.ap = start.apAfter();
+            });
         }
         shortGuards.put(player.getUniqueId(), start.state());
         player.setSprinting(false);
@@ -1775,16 +1746,17 @@ public final class CombatService implements Listener {
                 parryReadyAtTicks.put(player.getUniqueId(), failed.parryReadyAtTick());
                 return false;
             }
-            event.setCancelled(true);
-            context.outcome = HitOutcome.PARRIED;
             ShortGuardPolicy.State succeeded = ShortGuardPolicy.parrySuccess(state, tick);
-            shortGuards.put(player.getUniqueId(), succeeded);
-            parryReadyAtTicks.put(player.getUniqueId(), succeeded.parryReadyAtTick());
-            runs.mutate(run -> {
+            boolean committed = equipment.commitOffhandAction(player, 1,
+                    "PARRY:" + context.executionId, run -> {
                 RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
                 mutable.ap = Math.min(mutable.maxAp, mutable.ap + ShortGuardPolicy.PARRY_REFUND);
             });
-            equipment.consumeOffhandDurability(player, 1, "PARRY:" + context.executionId);
+            if (!committed) throw new IllegalStateException("Parry durability transaction was rejected");
+            event.setCancelled(true);
+            context.outcome = HitOutcome.PARRIED;
+            shortGuards.put(player.getUniqueId(), succeeded);
+            parryReadyAtTicks.put(player.getUniqueId(), succeeded.parryReadyAtTick());
             applyBreak(attacker, ShortGuardPolicy.normalizedGuardImpact(context.guardImpact, context.tags));
             player.getWorld().spawnParticle(Particle.CRIT, player.getEyeLocation(), 18, 0.45, 0.45, 0.45, 0.08);
             player.getWorld().playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1.0f, 1.8f);
@@ -1796,16 +1768,17 @@ public final class CombatService implements Listener {
         if (state.phase() != ShortGuardPolicy.Phase.SHORT_GUARD
                 || !facesSource(player, attacker, 120.0)
                 || !ShortGuardPolicy.guardable(context.responseTags, context.tags)) return false;
-        event.setDamage(event.getDamage() * ShortGuardPolicy.guardedDamageMultiplier(context.tags));
-        context.outcome = HitOutcome.GUARDED;
         double impact = ShortGuardPolicy.normalizedGuardImpact(context.guardImpact, context.tags);
         RunSnapshot.PlayerState before = runs.playerState(player.getUniqueId()).orElseThrow();
         boolean broken = before.ap <= impact + 1.0e-9;
-        runs.mutate(run -> {
+        boolean committed = equipment.commitOffhandAction(player, 1,
+                "GUARD:" + context.executionId, run -> {
             RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
             mutable.ap = Math.max(0.0, mutable.ap - impact);
         });
-        equipment.consumeOffhandDurability(player, 1, "GUARD:" + context.executionId);
+        if (!committed) throw new IllegalStateException("Guard durability transaction was rejected");
+        event.setDamage(event.getDamage() * ShortGuardPolicy.guardedDamageMultiplier(context.tags));
+        context.outcome = HitOutcome.GUARDED;
         if (broken) {
             ShortGuardPolicy.State brokenState = ShortGuardPolicy.guardBroken(state, tick);
             shortGuards.put(player.getUniqueId(), brokenState);
@@ -1843,13 +1816,13 @@ public final class CombatService implements Listener {
         if (removed != null) parryReadyAtTicks.put(playerId, removed.parryReadyAtTick());
     }
 
-    private boolean throwTrident(Player player, double cost) {
+    private boolean throwTrident(Player player, double cost, String skillId) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         if (!"HELD".equals(state.tridentState)) {
             ActionBarService.notice(player, Component.text("이미 투척 상태입니다", NamedTextColor.RED), 30);
             return false;
         }
-        if (!runs.consumeAp(player, cost)) {
+        if (!runs.canConsumeAp(player, cost)) {
             apFailure(player, cost);
             return false;
         }
@@ -1861,29 +1834,57 @@ public final class CombatService implements Listener {
             entity.getPersistentDataContainer().set(projectileOwnerKey, PersistentDataType.STRING, player.getUniqueId().toString());
             entity.getPersistentDataContainer().set(projectileWeaponKey, PersistentDataType.STRING, "TRIDENT");
         });
-        runs.mutate(run -> {
-            RunSnapshot.PlayerState value = run.players.get(player.getUniqueId().toString());
-            value.tridentState = "THROWN";
-            value.tridentEntityUuid = trident.getUniqueId().toString();
-            value.tridentThrownAtEpochMs = Instant.now().toEpochMilli();
-        });
-        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tutorialSignals.add("USED_SKILL"));
+        double effectiveApCost = runs.effectiveApCost(player, cost);
+        long combatActionAtEpochMs = runs.clockNowMillis();
+        try {
+            boolean committed = equipment.commitMainWeaponAction(player, 1, "SKILL:" + skillId, run -> {
+                RunSnapshot.PlayerState value = run.players.get(player.getUniqueId().toString());
+                if (!"HELD".equals(value.tridentState)) {
+                    throw new IllegalStateException("Trident state changed before throw commit");
+                }
+                CombatCostMutation.apply(value, new CombatCostMutation.Request(effectiveApCost,
+                        CombatCostMutation.AmmoSource.NONE, 0, false, 0, 0, true));
+                value.tridentState = "THROWN";
+                value.tridentEntityUuid = trident.getUniqueId().toString();
+                value.tridentThrownAtEpochMs = Instant.now().toEpochMilli();
+                applyCombatActionScope(run, value, combatActionAtEpochMs);
+            });
+            if (!committed) {
+                trident.remove();
+                return false;
+            }
+        } catch (RuntimeException exception) {
+            trident.remove();
+            throw exception;
+        }
         ActionBarService.notice(player, Component.text("공명 투창 / AP -" + Math.round(cost), NamedTextColor.AQUA), 30);
         return true;
     }
 
-    private boolean recallTrident(Player player, double cost) {
+    private boolean recallTrident(Player player, double cost, String skillId) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElseThrow();
         if ("HELD".equals(state.tridentState)) {
             ActionBarService.notice(player, Component.text("삼지창이 손에 있습니다", NamedTextColor.GRAY), 24);
             return false;
         }
-        if (!"RETURNING".equals(state.tridentState) && !runs.consumeAp(player, cost)) {
+        double chargedCost = "RETURNING".equals(state.tridentState) ? 0.0 : cost;
+        if (!runs.canConsumeAp(player, chargedCost)) {
             apFailure(player, cost);
             return false;
         }
-        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tridentState = "RETURNING");
-        runs.mutate(run -> run.players.get(player.getUniqueId().toString()).tutorialSignals.add("USED_SKILL"));
+        double effectiveApCost = runs.effectiveApCost(player, chargedCost);
+        long combatActionAtEpochMs = runs.clockNowMillis();
+        boolean committed = equipment.commitMainWeaponAction(player, 1, "SKILL:" + skillId, run -> {
+            RunSnapshot.PlayerState value = run.players.get(player.getUniqueId().toString());
+            if ("HELD".equals(value.tridentState)) {
+                throw new IllegalStateException("Trident was recovered before recall commit");
+            }
+            CombatCostMutation.apply(value, new CombatCostMutation.Request(effectiveApCost,
+                    CombatCostMutation.AmmoSource.NONE, 0, false, 0, 0, true));
+            value.tridentState = "RETURNING";
+            applyCombatActionScope(run, value, combatActionAtEpochMs);
+        });
+        if (!committed) return false;
         ActionBarService.notice(player, Component.text("공명 회수 / AP -" + Math.round(cost), NamedTextColor.AQUA), 30);
         return true;
     }
@@ -3253,63 +3254,68 @@ public final class CombatService implements Listener {
         player.getWorld().playSound(player.getLocation(), sound, 0.85f, 1.1f);
     }
 
-    private boolean hasMaterial(Player player, Material material) {
-        return hasMaterial(player, material, 1);
-    }
-
-    private boolean hasMaterial(Player player, Material material, int amount) {
-        int found = 0;
-        for (int slot = 1; slot <= 35; slot++) {
-            ItemStack item = player.getInventory().getItem(slot);
-            if (item != null && item.getType() == material) found += item.getAmount();
-            if (found >= amount) return true;
-        }
-        return false;
-    }
-
     private static boolean usesArrowAmmo(String weaponId) {
         return "BOW".equals(weaponId) || "CROSSBOW".equals(weaponId);
     }
 
-    private boolean takeOneMaterial(Player player, Material material) {
-        return takeMaterial(player, material, 1);
-    }
-
-    private boolean takeMaterial(Player player, Material material, int amount) {
-        if (!hasMaterial(player, material, amount)) return false;
-        int remaining = amount;
-        for (int slot = 1; slot <= 35; slot++) {
-            ItemStack item = player.getInventory().getItem(slot);
-            if (item == null || item.getType() != material || item.getAmount() <= 0) continue;
-            int consumed = Math.min(remaining, item.getAmount());
-            item.setAmount(item.getAmount() - consumed);
-            if (item.getAmount() <= 0) player.getInventory().setItem(slot, null);
-            remaining -= consumed;
-            if (remaining == 0) return true;
+    private boolean commitWeaponCost(Player player, String weaponId, double rawApCost,
+                                     int ammoCost, boolean includeMagazine, boolean conserveAmmo,
+                                     int magazineGain, boolean markSkillTutorial,
+                                     int durabilityCost, String durabilityReason) {
+        if (ammoCost > 0 && ammoService == null) {
+            ActionBarService.notice(player, Component.text("탄약 서비스를 사용할 수 없습니다", NamedTextColor.RED), 35);
+            return false;
+        }
+        if (ammoService != null && !ammoService.reconcilePendingInventory(player)) {
+            ActionBarService.notice(player, Component.text("이전 탄약 거래 복구가 끝나지 않았습니다", NamedTextColor.RED), 40);
+            return false;
+        }
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return false;
+        if (magazineGain > 0 && !"CROSSBOW".equals(weaponId)) {
+            ActionBarService.notice(player, Component.text("석궁만 탄창을 장전할 수 있습니다", NamedTextColor.RED), 35);
+            return false;
+        }
+        if (state.crossbowLoadedAmmo + magazineGain > 6) {
+            ActionBarService.notice(player, Component.text("탄창에 2발을 넣을 공간이 없습니다", NamedTextColor.RED), 35);
+            return false;
+        }
+        int vanillaArrowCount = ammoService == null ? 0 : ammoService.vanillaArrowCount(player);
+        CombatCostMutation.AmmoSource source = ammoCost == 0
+                ? CombatCostMutation.AmmoSource.NONE
+                : CombatCostMutation.selectArrowSource(state, vanillaArrowCount, ammoCost, includeMagazine);
+        if (ammoCost > 0 && source == CombatCostMutation.AmmoSource.NONE) {
+            String message = magazineGain > 0 ? "순간 장전에는 화살 2개가 필요합니다" : "화살이 필요합니다";
+            ActionBarService.notice(player, Component.text(message, NamedTextColor.RED), 30);
+            return false;
+        }
+        if (!runs.canConsumeAp(player, rawApCost)) {
+            apFailure(player, rawApCost);
+            return false;
+        }
+        double effectiveApCost = runs.effectiveApCost(player, rawApCost);
+        CombatCostMutation.Request request = new CombatCostMutation.Request(effectiveApCost, source,
+                ammoCost, conserveAmmo, vanillaArrowCount, magazineGain, markSkillTutorial);
+        CombatCostMutation.Result[] result = {null};
+        long combatActionAtEpochMs = runs.clockNowMillis();
+        Consumer<RunSnapshot> mutation = run -> {
+            RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
+            result[0] = CombatCostMutation.apply(mutable, request);
+            applyCombatActionScope(run, mutable, combatActionAtEpochMs);
+        };
+        boolean committed;
+        if (durabilityCost > 0) {
+            committed = equipment.commitMainWeaponAction(player, durabilityCost, durabilityReason, mutation);
+        } else {
+            runs.mutateAtomically(mutation);
+            committed = true;
+        }
+        if (!committed || result[0] == null) return false;
+        if (result[0].physicalArrowExpected() != null && !ammoService.reconcilePendingInventory(player)) {
+            ActionBarService.notice(player,
+                    Component.text("화살 비용은 저장됐으며 물리 수량 복구를 재시도합니다", NamedTextColor.YELLOW), 45);
         }
         return true;
-    }
-
-    private boolean hasArrowAmmo(Player player, String weaponId) {
-        if ("CROSSBOW".equals(weaponId)) {
-            RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
-            if (state != null && state.crossbowLoadedAmmo > 0) return true;
-        }
-        if (ammoService != null && ammoService.generalArrowBalance(player) > 0) return true;
-        return hasMaterial(player, Material.ARROW);
-    }
-
-    private boolean consumeArrowAmmo(Player player, String weaponId) {
-        if (java.util.concurrent.ThreadLocalRandom.current().nextDouble() < growth.ammoConserveChance(player)) return true;
-        if ("CROSSBOW".equals(weaponId)) {
-            RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
-            if (state != null && state.crossbowLoadedAmmo > 0) {
-                runs.mutate(run -> run.players.get(player.getUniqueId().toString()).crossbowLoadedAmmo--);
-                return true;
-            }
-        }
-        if (ammoService != null && ammoService.consumeGeneralArrows(player, 1)) return true;
-        return takeOneMaterial(player, Material.ARROW);
     }
 
     private boolean inCombatStance(Player player) {

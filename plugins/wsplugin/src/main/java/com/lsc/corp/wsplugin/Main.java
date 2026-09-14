@@ -76,7 +76,7 @@ public final class Main extends JavaPlugin {
             PlayerStatService stats = new PlayerStatService(this, runService, growth, equipment);
             equipment.setStatRefresher(stats::apply);
             FacilityService facility = new FacilityService(this, runService, content.productionCatalog(), codex, equipment, telemetry);
-            AmmoService ammo = new AmmoService(runService, content.productionCatalog(), codex, telemetry);
+            AmmoService ammo = new AmmoService(this, runService, content.productionCatalog(), codex, telemetry);
             ResearchService research = new ResearchService(runService, content.productionCatalog());
             facility.setOpeners(economy::openCraft, economy::openLedger, codex::open, stats::open,
                     research::open, growth::openAugments);
@@ -132,6 +132,7 @@ public final class Main extends JavaPlugin {
             getServer().getScheduler().runTaskTimer(this, statuses::tick, 1L, 1L);
             tutorial.start();
             for (org.bukkit.entity.Player player : runService.onlineMembers()) {
+                ammo.reconcilePendingInventory(player);
                 codex.reconcile(player);
                 loot.deliverPending(player);
                 stats.apply(player);

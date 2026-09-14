@@ -9,7 +9,7 @@
 | 범위 | 탄약 5, 휴대 장치 7, 시설 키트 32, 보스 호출품 4 |
 | 상위 기준 | `ITEM-LIST-001`, `FACILITY-LIST-001`, `RECIPE-LIST-001`, `PRODUCTION-COMPLETION-PLAN-001` |
 | 데이터 리비전 | `item-s1-r2` / `ws-content-r2` |
-| 최종 수정일 | 2026-08-24 |
+| 최종 수정일 | 2026-09-15 |
 
 소모품 13개는 `CONSUMABLE-RUNTIME-STATUS-001`이 따로 소유한다. 이 문서의 `VERIFIED`는 데이터가 존재한다는 뜻이 아니라 정상 사용, 거부, 소비, 저장·복구, 자동 테스트와 필요한 실제 클라이언트 E2E가 모두 통과했다는 뜻이다.
 
@@ -35,13 +35,15 @@
 
 | ID | DATA | 현재 RUNTIME | 남은 완료 조건 | 판정 |
 |---|---|---|---|---|
-| `WSI-AMMO-ARROW_BUNDLE` | 통과 | slot1~8 우클릭 전량 입금·저장, 활/석궁·순간 장전 우선 소비, HUD 잔량, 바닐라 화살 폴백 | 실제 우클릭·재접속·동시 소비 E2E | `PARTIAL_RUNTIME` |
+| `WSI-AMMO-ARROW_BUNDLE` | 통과 | slot1~8 우클릭 전량 입금·저장, 활/석궁·순간 장전 우선 소비, HUD 잔량, PDC 없는 바닐라 화살 폴백. 입금·폴백은 변경 후 절대 수량 체크포인트를 먼저 저장하고 AP·탄약 원장/탄창·무기 내구·개인 교전 범위를 한 후보 회차로 커밋 | 실제 우클릭·재접속·동시 소비·체크포인트 중 JVM 종료 E2E | `PARTIAL_RUNTIME` |
 | `WSI-AMMO-PIERCING_BOLT_BUNDLE` | 통과; PEN +12 잠금 | 실행기 없음 | 석궁 선택·첫 유효 적중 1체·소비·복구 | `RUNTIME_MISSING` |
 | `WSI-AMMO-PURIFY_ARROW_BUNDLE` | 통과; 활/석궁·표식 6초 잠금 | 실행기 없음 | 정화 취약 판정·다음 정화 1단·자원 생성 0 검증 | `RUNTIME_MISSING` |
 | `WSI-AMMO-RESONANCE_BOLT_BUNDLE` | 통과; INTERRUPTIBLE Break ×1.50 잠금 | 실행기 없음 | 석궁 선택·지연 적중 경계·소비 복구 | `RUNTIME_MISSING` |
 | `WSI-AMMO-STABILIZER_DART_BUNDLE` | 통과; 석궁 32m 잠금 | 실행기 없음 | 아군·시설 선검증, 비피해, 완화 1단·대상별 20초 | `RUNTIME_MISSING` |
 
 탄약 아이템 1개는 1발이다. 제작식 출력 16/8/8/8/4가 원장 충전량이며 아이템 한 개를 다시 16발 또는 8발로 곱하지 않는다. 이 해석은 `RECIPE-LIST-001`의 실제 출력 수량과 소프트락 예산을 우선한다.
+
+`pendingPhysicalItemCounts`는 지속 보유량 원장이 아니라 아직 Bukkit playerdata와 맞추지 못한 짧은 물리 변경 체크포인트다. 회차 후보가 먼저 `MATERIAL:ARROW` 또는 등록 아이템 키의 변경 후 총량을 저장하고 실제 인벤토리를 그 수량에 맞춘 뒤 `Player#saveData`가 성공해야 체크포인트를 지운다. 재접속·재기동은 남은 체크포인트를 같은 절대 수량으로 반복 적용하므로 차감 전·후 어느 시점에서 JVM이 종료되어도 이중 차감하지 않는다. `ws_item_id`가 있는 화살 묶음은 바닐라 폴백 수량에 포함하지 않는다.
 
 ## 4. 휴대 장치 7개
 
@@ -109,7 +111,7 @@
 
 ## 7. 다음 구현 순서
 
-1. 일반 탄약 원장 입금·활/석궁 소비·저장은 구현됐으며 실제 클라이언트 우클릭·재접속 E2E로 닫는다.
+1. 일반 탄약 원장 입금·활/석궁 소비·저장·물리 체크포인트는 구현됐으며 실제 클라이언트 우클릭·재접속·JVM 종료 E2E로 닫는다.
 2. 휴대 장치 `portableInstanceId`, P05 다중 장치, P06 동일 플레이어 다중 말뚝은 구현됐으며 재시작·실제 설치 E2E로 닫는다.
 3. P06 말뚝 3개의 결정적 `ArenaCandidate` 선택은 구현됐으며, Bukkit 지형 스캔과 통과한 `ArenaManifest` 저장을 연결한다.
 4. 호출품의 `callInstanceId/runId/recipeTransactionId`와 `validate→manifest→reserve→spawn→commit`, 실패 시 반환을 구현한다.

@@ -233,6 +233,25 @@ public final class RunService {
         }
     }
 
+    /** Commits an idempotent event on a detached candidate and adopts it only after the save wins. */
+    public boolean commitOnceAtomically(String idempotencyKey, String eventType, String payload,
+                                        Consumer<RunSnapshot> mutation) {
+        synchronized (serialQueue) {
+            requireCurrent();
+            DurableRunMutation.Outcome<Boolean> outcome = persistCandidateLocked(candidate -> {
+                if (candidate.committedKeys.contains(idempotencyKey)) return false;
+                mutation.accept(candidate);
+                appendEvent(candidate, idempotencyKey, eventType, payload);
+                return true;
+            }, Boolean.TRUE::equals);
+            if (outcome.persisted()) {
+                current = outcome.snapshot();
+                telemetry.event(current.runId, eventType, payload);
+            }
+            return outcome.result();
+        }
+    }
+
     public void mutate(Consumer<RunSnapshot> mutation) {
         synchronized (serialQueue) {
             requireCurrent();
@@ -755,6 +774,11 @@ public final class RunService {
     }
 
     private void commitEvent(RunSnapshot snapshot, String idempotencyKey, String type, String payload) {
+        appendEvent(snapshot, idempotencyKey, type, payload);
+        telemetry.event(snapshot.runId, type, payload);
+    }
+
+    private static void appendEvent(RunSnapshot snapshot, String idempotencyKey, String type, String payload) {
         snapshot.committedKeys.add(idempotencyKey);
         RunSnapshot.OutboxEvent event = new RunSnapshot.OutboxEvent();
         event.eventId = UUID.nameUUIDFromBytes((snapshot.runId + ":" + idempotencyKey)
@@ -763,7 +787,6 @@ public final class RunService {
         event.payload = payload;
         event.createdAtEpochMs = Instant.now().toEpochMilli();
         snapshot.outbox.add(event);
-        telemetry.event(snapshot.runId, type, payload);
         event.delivered = true;
     }
 

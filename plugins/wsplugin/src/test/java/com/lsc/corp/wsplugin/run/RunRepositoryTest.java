@@ -227,6 +227,7 @@ class RunRepositoryTest {
         assertEquals(3, restored.schemaVersion);
         assertTrue(restored.resourceTransactions.isEmpty());
         assertTrue(player.personalResources.isEmpty());
+        assertTrue(player.pendingPhysicalItemCounts.isEmpty());
         assertEquals(5, player.apStimPulsesRemaining);
         assertEquals(1, player.apStimTicksUntilNextPulse);
         assertEquals(1, player.rescueBraceCharges);

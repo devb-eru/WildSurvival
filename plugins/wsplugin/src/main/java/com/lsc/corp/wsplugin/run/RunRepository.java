@@ -213,6 +213,7 @@ public final class RunRepository {
             if (player.pendingRemainsDeliveries == null) player.pendingRemainsDeliveries = new LinkedHashMap<>();
             if (player.reviveContributions == null) player.reviveContributions = new LinkedHashMap<>();
             if (player.ammoLedger == null) player.ammoLedger = new LinkedHashMap<>();
+            if (player.pendingPhysicalItemCounts == null) player.pendingPhysicalItemCounts = new LinkedHashMap<>();
             if (player.personalResources == null) player.personalResources = new LinkedHashMap<>();
             if (player.weaponSkillLoadouts == null) player.weaponSkillLoadouts = new LinkedHashMap<>();
             if (player.commonSkillLoadout == null) player.commonSkillLoadout = new LinkedHashMap<>();
