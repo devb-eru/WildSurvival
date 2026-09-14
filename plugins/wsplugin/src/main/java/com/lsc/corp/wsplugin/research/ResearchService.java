@@ -153,8 +153,7 @@ public final class ResearchService implements Listener {
                 .forEach(value -> discoveries.add(value.discoveryId));
         for (ProductionContentCatalog.ResearchEntry entry : ordered) {
             RunSnapshot.ResearchNodeState state = run.researchNodes.get(entry.id());
-            if (state == null || Set.of("QUEUED", "PROCESSING", "PAUSED", "ANALYZED", "UNLOCKED", "MASTERED")
-                    .contains(state.state)) continue;
+            if (state == null || !ResearchPolicy.refreshableState(state.state)) continue;
             state.state = ResearchPolicy.availability(run.day, entry.minimumDay(), entry.prerequisiteText(),
                     discoveries, completed, false);
         }
@@ -254,8 +253,7 @@ public final class ResearchService implements Listener {
         for (ProductionContentCatalog.ResearchEntry entry : ordered) {
             RunSnapshot.ResearchNodeState state = run.researchNodes.get(entry.id());
             if (state == null) return true;
-            if (Set.of("QUEUED", "PROCESSING", "PAUSED", "ANALYZED", "UNLOCKED", "MASTERED")
-                    .contains(state.state)) continue;
+            if (!ResearchPolicy.refreshableState(state.state)) continue;
             String expected = ResearchPolicy.availability(run.day, entry.minimumDay(), entry.prerequisiteText(),
                     discoveries, completed, false);
             if (!expected.equals(state.state)) return true;

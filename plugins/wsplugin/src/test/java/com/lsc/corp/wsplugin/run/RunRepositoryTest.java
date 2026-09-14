@@ -10,10 +10,31 @@ import java.nio.file.AccessDeniedException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class RunRepositoryTest {
+    @Test
+    void autosaveSkipsUnchangedSnapshotWithoutAdvancingVersion(@TempDir Path temporary) throws Exception {
+        AtomicInteger replacements = new AtomicInteger();
+        RunRepository repository = new RunRepository(temporary, (source, destination) -> {
+            replacements.incrementAndGet();
+            AtomicFileStore.replace(source, destination);
+        });
+        RunSnapshot snapshot = snapshot();
+
+        repository.save(snapshot);
+        assertEquals(false, repository.saveIfChanged(snapshot));
+        assertEquals(1, snapshot.version);
+        assertEquals(1, replacements.get());
+
+        snapshot.day = 2;
+        assertEquals(true, repository.saveIfChanged(snapshot));
+        assertEquals(2, snapshot.version);
+        assertEquals(2, replacements.get());
+    }
+
     @Test
     void restoresPrototypeLockAndLedger(@TempDir Path temporary) throws Exception {
         RunRepository repository = new RunRepository(temporary);

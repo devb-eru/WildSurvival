@@ -714,7 +714,7 @@ public final class RunService {
                     equipment.tick();
                     growth.tick();
                     if (--ticksUntilSave <= 0) {
-                        saveUnchecked();
+                        autosaveUnchecked();
                         ticksUntilSave = autosaveTicks();
                     }
                 }
@@ -828,6 +828,14 @@ public final class RunService {
             activeRepositoryLocked().save(current);
         } catch (IOException exception) {
             throw new IllegalStateException("Cannot persist run", exception);
+        }
+    }
+
+    private void autosaveUnchecked() {
+        try {
+            activeRepositoryLocked().saveIfChanged(current);
+        } catch (IOException exception) {
+            throw new IllegalStateException("Cannot persist run autosave", exception);
         }
     }
 

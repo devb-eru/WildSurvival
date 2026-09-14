@@ -21,6 +21,7 @@ public final class RunRepository {
     private final Set<RunIdentity> allowedIdentities;
     private final String repositoryLabel;
     private final AtomicFileStore.Replacer fileReplacer;
+    private String lastPersistedJson;
 
     public RunRepository(Path dataDirectory) {
         this(dataDirectory.resolve("runs"), Set.of(new RunIdentity("PROTOTYPE", "ws-prototype-r1")),
@@ -62,6 +63,7 @@ public final class RunRepository {
             throw new IOException("Run snapshot is empty");
         }
         migrate(snapshot);
+        lastPersistedJson = gson.toJson(snapshot);
         return Optional.of(snapshot);
     }
 
@@ -73,11 +75,31 @@ public final class RunRepository {
         long previousVersion = snapshot.version;
         try {
             snapshot.version = previousVersion + 1;
-            atomicWrite(currentFile, "current.json.", gson.toJson(snapshot));
+            String json = gson.toJson(snapshot);
+            atomicWrite(currentFile, "current.json.", json);
+            lastPersistedJson = json;
         } catch (IOException | RuntimeException exception) {
             snapshot.version = previousVersion;
             throw exception;
         }
+    }
+
+    /**
+     * Persists an autosave only when the in-memory snapshot differs from the last successful write.
+     * Explicit transactional saves still use {@link #save(RunSnapshot)} so their durability contract
+     * and monotonically increasing version remain unchanged.
+     */
+    public synchronized boolean saveIfChanged(RunSnapshot snapshot) throws IOException {
+        if (snapshot.schemaVersion != 3) {
+            throw new IOException("Cannot save unsupported run schema version " + snapshot.schemaVersion);
+        }
+        validateIdentity(snapshot);
+        String json = gson.toJson(snapshot);
+        if (json.equals(lastPersistedJson)) {
+            return false;
+        }
+        save(snapshot);
+        return true;
     }
 
     public synchronized void archiveAndClear(RunSnapshot snapshot) throws IOException {
@@ -90,6 +112,7 @@ public final class RunRepository {
         // authoritative current snapshot until every fallible pre-clear step has succeeded.
         deleteTemporarySnapshots();
         Files.deleteIfExists(currentFile);
+        lastPersistedJson = null;
     }
 
     private void atomicWrite(Path target, String temporaryPrefix, String json) throws IOException {

@@ -19,6 +19,15 @@ public final class ResearchPolicy {
         return executableInputContract ? "READY" : "HYPOTHESIZED";
     }
 
+    /**
+     * Availability discovery is monotonic in a live run. READY and every work/completion state
+     * are owned by evidence or transaction execution and must never be downgraded by a later
+     * catalogue refresh (including when Test Lab opens the research GUI).
+     */
+    static boolean refreshableState(String state) {
+        return Set.of("HIDDEN", "OBSERVABLE", "HYPOTHESIZED").contains(state);
+    }
+
     static boolean referencesSatisfied(String text, Set<String> discoveries, Set<String> completedResearch) {
         Matcher discoveriesInText = DISCOVERY_ID.matcher(text);
         while (discoveriesInText.find()) {
