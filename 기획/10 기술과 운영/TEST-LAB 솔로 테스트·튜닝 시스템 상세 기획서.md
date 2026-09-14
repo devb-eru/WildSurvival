@@ -276,5 +276,8 @@ JSON 내보내기는 다음을 포함한다.
 - `ABORTED/ENDED + restorePending`에서는 동일 세션 소유자만 `undo` 또는 `exit` 복구를 수행할 수 있다. 일반 mutate는 `RUNNING` 소유자에게만 허용하고, 복구 성공 시 snapshot ID를 표시한다.
 - 플레이 테스트가 불가능한 기간의 콘솔 스모크는 보존 중인 복구 회차를 변경 명령 없이 기동·정상 종료하고, 동일 run ID·`restorePending=true`·스냅샷·입장 백업·임시 파일 0·닫힌 포트를 대조한다. 이는 복구 로딩 증거일 뿐 아래 실클라이언트 완료 항목을 대체하지 않는다.
 - 실제 플레이어가 입장→조절→시나리오→undo→exit 후 인벤토리·위치·속성이 복원된다.
+- P2 Craft 해금은 `craft-unlock:<runId>`와 `VANILLA:ANY_LOG` 목표 수량을 대조한다. 저장 성공 전 원목을 제거하지 않고, 저장 뒤 중단은 재접속 때 목표 수량으로 수렴해야 한다.
+- P2 3×3 제작은 `CRAFT` 거래의 입력 fingerprint·출력 서명·output instanceId를 검사한다. `RESERVED`, `PROCESSING`, `COMMITTED` 각 체크포인트에서 실제 JVM을 종료한 뒤 재접속해 개인 자원·GUI 입력 소비·등록 아이템 수량 또는 장비 instanceId가 각각 정확히 한 번만 반영되는지 확인한다.
+- P2 공용 물류고는 설치 전 개인 원장 획득·소비, 설치 커밋 뒤 명시적 개인↔공용 입출금, 시설 비활성 거부를 검증한다. 각 입출금은 개인/공용 잔액 합계를 보존하고 `RESOURCE:<id>` 체크포인트가 실물 PDC 수량과 일치한 뒤 제거되어야 한다.
 
 마지막 항목은 폐쇄 인게임 플레이테스트 증거가 있어야 `VERIFIED`로 승격한다. 자동·Paper 콘솔 스모크만 통과한 상태에서는 `IMPLEMENTED_PROTOTYPE`을 유지한다.

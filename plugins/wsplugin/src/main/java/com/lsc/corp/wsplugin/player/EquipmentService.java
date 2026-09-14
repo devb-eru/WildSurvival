@@ -157,6 +157,32 @@ public final class EquipmentService implements Listener {
     public void reconcilePendingRewards(Player player) {
         RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
         if (state == null) return;
+        if (state.pendingEquipmentInstanceIds != null && !state.pendingEquipmentInstanceIds.isEmpty()) {
+            java.util.Set<String> delivered = new java.util.LinkedHashSet<>();
+            for (String instanceId : new java.util.LinkedHashSet<>(state.pendingEquipmentInstanceIds)) {
+                RunSnapshot.EquipmentInstanceState instance = equipmentInstances(state).get(instanceId);
+                if (instance == null) {
+                    delivered.add(instanceId);
+                    continue;
+                }
+                int copies = countInventoryInstance(player, instanceId);
+                if (copies == 0 && canGrantEquipment(player)) {
+                    if (storeInventory(player, weaponItem(instance))) copies = 1;
+                }
+                if (copies > 1) {
+                    removeInventoryInstanceCopies(player, instanceId, copies - 1);
+                    copies = 1;
+                }
+                if (copies == 1) delivered.add(instanceId);
+            }
+            if (!delivered.isEmpty()) {
+                player.saveData();
+                runs.mutateAtomically(run -> run.players.get(player.getUniqueId().toString())
+                        .pendingEquipmentInstanceIds.removeAll(delivered));
+            }
+        }
+        state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
         if (state.pendingBlueprintUnlocks != null && !state.pendingBlueprintUnlocks.isEmpty()) {
             for (String templateId : new java.util.LinkedHashSet<>(state.pendingBlueprintUnlocks)) {
                 codex.discover(player, templateId, "LOOT_BLUEPRINT");
@@ -595,6 +621,26 @@ public final class EquipmentService implements Listener {
         return weaponItem(copyInstance(instance));
     }
 
+    public RunSnapshot.EquipmentInstanceState prepareCraftedInstance(String rawOutputId,
+                                                                      String instanceId,
+                                                                      double durabilityRatio) {
+        String outputId = rawOutputId.toUpperCase(java.util.Locale.ROOT);
+        requireEquipmentTemplate(outputId);
+        ProductionContentCatalog.EquipmentEntry profile = production.equipmentById().get(outputId);
+        Material material = templateMaterial(outputId);
+        int maximum = profile == null
+                ? (material == null || material.getMaxDurability() < 1 ? 100 : material.getMaxDurability())
+                : profile.maxDurability();
+        RunSnapshot.EquipmentInstanceState state = new RunSnapshot.EquipmentInstanceState();
+        state.instanceId = instanceId;
+        state.templateId = outputId;
+        state.maxDurability = maximum;
+        state.currentDurability = Math.max(1, (int) Math.round(maximum
+                * Math.max(0.0, Math.min(1.0, durabilityRatio))));
+        state.condition = "ACTIVE";
+        return state;
+    }
+
     private static RunSnapshot.EquipmentInstanceState copyInstance(RunSnapshot.EquipmentInstanceState source) {
         RunSnapshot.EquipmentInstanceState copy = new RunSnapshot.EquipmentInstanceState();
         copy.instanceId = source.instanceId;
@@ -981,6 +1027,27 @@ public final class EquipmentService implements Listener {
             remaining.setAmount(remaining.getAmount() - moved);
         }
         return remaining.getAmount() == 0;
+    }
+
+    private int countInventoryInstance(Player player, String instanceId) {
+        int count = 0;
+        for (int slot = 1; slot <= 35; slot++) {
+            ItemStack item = player.getInventory().getItem(slot);
+            if (instanceId.equals(equipmentInstanceId(item))) count += item.getAmount();
+        }
+        return count;
+    }
+
+    private void removeInventoryInstanceCopies(Player player, String instanceId, int amount) {
+        int remaining = amount;
+        for (int slot = 35; slot >= 1 && remaining > 0; slot--) {
+            ItemStack item = player.getInventory().getItem(slot);
+            if (!instanceId.equals(equipmentInstanceId(item))) continue;
+            int removed = Math.min(remaining, item.getAmount());
+            item.setAmount(item.getAmount() - removed);
+            if (item.getAmount() <= 0) player.getInventory().setItem(slot, null);
+            remaining -= removed;
+        }
     }
 
     private boolean sameAuthoritativeItem(ItemStack actual, ItemStack expected) {

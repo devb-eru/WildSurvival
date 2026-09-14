@@ -141,19 +141,21 @@ public final class ItemCodexService implements Listener {
 
     public void grantItem(Player player, String itemId, int amount) {
         String id = itemId.toUpperCase(java.util.Locale.ROOT);
-        ItemStack example = contentItem(id, 1);
-        Material material = example.getType();
-        ProductionContentCatalog.ItemEntry definition = production.nonEquipmentItemsById().get(id);
-        int stackLimit = definition == null ? (material == null ? 64 : material.getMaxStackSize()) : definition.stackLimit();
-        int remaining = amount;
-        while (remaining > 0) {
-            int stack = Math.min(stackLimit, remaining);
-            int overflow = addWithoutReservedSlot(player, contentItem(id, stack));
-            if (overflow > 0) queueRegisteredItem(player, id, overflow);
-            remaining -= stack;
-        }
+        if (amount <= 0) return;
+        int physicalBefore = countItem(player, id);
+        RunSnapshot.PlayerState before = runs.playerState(player.getUniqueId()).orElseThrow();
+        int targetBefore = before.pendingPhysicalItemCounts.getOrDefault(
+                registeredCheckpoint(id), physicalBefore);
+        runs.mutateAtomically(run -> CraftTransactionPolicy.queueRegisteredDelivery(
+                run.players.get(player.getUniqueId().toString()), id, amount, targetBefore + amount));
+        flushPending(player);
         recordQuickItemCount(player, id);
         discover(player, id, "ACQUIRE_ITEM");
+    }
+
+    public static void queueRegisteredDelivery(RunSnapshot.PlayerState state, String rawId,
+                                               int amount, int expectedPhysicalCount) {
+        CraftTransactionPolicy.queueRegisteredDelivery(state, rawId, amount, expectedPhysicalCount);
     }
 
     public int grantResource(Player player, String resourceId, int amount) {
@@ -161,21 +163,40 @@ public final class ItemCodexService implements Listener {
             return 0;
         }
         String normalized = production.item(resourceId.toUpperCase(java.util.Locale.ROOT)).id();
+        int physicalBefore = countPhysicalResource(player, normalized);
+        Map<String, Integer> observed = physicalResourceCounts(player);
+        int[] durableAfter = {0};
+        runs.mutateAtomically(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            durableAfter[0] = PersonalResourcePolicy.credit(state, normalized, amount,
+                    physicalBefore + amount, observed);
+        });
         int remaining = amount;
         while (remaining > 0) {
             int stackAmount = Math.min(64, remaining);
             int overflow = addWithoutReservedSlot(player, resourceItem(normalized, stackAmount));
-            if (overflow > 0) queueRegisteredItem(player, normalized, overflow);
-            remaining -= stackAmount;
+            remaining -= stackAmount - overflow;
+            if (overflow > 0) break;
         }
+        player.saveData();
+        clearReachedResourceCheckpoint(player, normalized, physicalBefore + amount);
         discover(player, normalized, "ACQUIRE_RESOURCE");
-        return countResource(player, normalized);
+        return durableAfter[0];
     }
 
     public int countResource(Player player, String resourceId) {
         String normalized = resourceId.toUpperCase(java.util.Locale.ROOT);
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state != null && state.personalResourcesInitialized) {
+            return state.personalResources.getOrDefault(normalized, 0);
+        }
+        return countPhysicalResource(player, normalized);
+    }
+
+    private int countPhysicalResource(Player player, String normalized) {
         int count = 0;
-        for (ItemStack item : player.getInventory().getStorageContents()) {
+        for (int slot = 1; slot <= 35; slot++) {
+            ItemStack item = player.getInventory().getItem(slot);
             if (normalized.equals(itemId(item))) {
                 count += item.getAmount();
             }
@@ -188,25 +209,160 @@ public final class ItemCodexService implements Listener {
             throw new IllegalArgumentException("Resource amount cannot be negative");
         }
         String normalized = production.item(resourceId.toUpperCase(java.util.Locale.ROOT)).id();
-        if (countResource(player, normalized) < amount) {
+        int physicalBefore = countPhysicalResource(player, normalized);
+        if (countResource(player, normalized) < amount || physicalBefore < amount) {
             return false;
         }
-        int remaining = amount;
-        ItemStack[] contents = player.getInventory().getStorageContents();
-        for (int slot = 0; slot < contents.length && remaining > 0; slot++) {
-            ItemStack item = contents[slot];
-            if (!normalized.equals(itemId(item))) {
-                continue;
+        Map<String, Integer> observed = physicalResourceCounts(player);
+        runs.mutateAtomically(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            PersonalResourcePolicy.debit(state, normalized, amount, physicalBefore - amount, observed);
+        });
+        boolean removed = takePhysicalResource(player, normalized, amount);
+        player.saveData();
+        if (removed) clearReachedResourceCheckpoint(player, normalized, physicalBefore - amount);
+        else reconcilePersonalResources(player);
+        return removed;
+    }
+
+    public void reconcilePersonalResources(String ownerUuid, Map<String, Integer> authoritative) {
+        Player player;
+        try {
+            player = Bukkit.getPlayer(UUID.fromString(ownerUuid));
+        } catch (IllegalArgumentException ignored) {
+            return;
+        }
+        if (player == null || !player.isOnline()) return;
+        reconcilePhysicalResources(player, authoritative);
+    }
+
+    public void reconcilePersonalResources(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
+        if (!state.personalResourcesInitialized) {
+            Map<String, Integer> adopted = physicalResourceCounts(player);
+            runs.mutateAtomically(run -> {
+                RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
+                mutable.personalResources.clear();
+                mutable.personalResources.putAll(adopted);
+                mutable.personalResourcesInitialized = true;
+            });
+            return;
+        }
+        reconcilePhysicalResources(player, Map.copyOf(state.personalResources));
+    }
+
+    public void materializeCommittedResource(Player player, String rawId) {
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
+        Integer expected = state.pendingPhysicalItemCounts.get(resourceCheckpoint(id));
+        if (expected == null) return;
+        int physical = countPhysicalResource(player, id);
+        if (physical > expected) takePhysicalResource(player, id, physical - expected);
+        int remaining = Math.max(0, expected - countPhysicalResource(player, id));
+        while (remaining > 0) {
+            int attempt = Math.min(64, remaining);
+            int overflow = addWithoutReservedSlot(player, resourceItem(id, attempt));
+            int moved = attempt - overflow;
+            remaining -= moved;
+            if (moved == 0) break;
+        }
+        player.saveData();
+        clearReachedResourceCheckpoint(player, id, expected);
+    }
+
+    private void reconcilePhysicalResources(Player player, Map<String, Integer> authoritative) {
+        if (player.getOpenInventory().getTopInventory().getHolder() instanceof EconomyService.CraftHolder) return;
+        boolean changed = false;
+        Set<String> reached = new LinkedHashSet<>();
+        RunSnapshot.PlayerState currentState = runs.playerState(player.getUniqueId()).orElse(null);
+        Map<String, Integer> checkpoints = currentState == null || currentState.pendingPhysicalItemCounts == null
+                ? Map.of() : currentState.pendingPhysicalItemCounts;
+        for (String id : production.materialsById().keySet()) {
+            int target = Math.max(0, authoritative.getOrDefault(id, 0));
+            int physical = countPhysicalResource(player, id);
+            if (physical > target) {
+                changed |= takePhysicalResource(player, id, physical - target);
+            } else if (physical < target) {
+                int remaining = target - physical;
+                while (remaining > 0) {
+                    int attempt = Math.min(64, remaining);
+                    int overflow = addWithoutReservedSlot(player, resourceItem(id, attempt));
+                    int moved = attempt - overflow;
+                    remaining -= moved;
+                    changed |= moved > 0;
+                    if (moved == 0) break;
+                }
             }
+            String checkpoint = resourceCheckpoint(id);
+            if (checkpoints.containsKey(checkpoint) && countPhysicalResource(player, id) == target) {
+                reached.add(checkpoint);
+            }
+        }
+        if (changed) player.saveData();
+        if (!reached.isEmpty()) runs.mutateAtomically(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            reached.forEach(state.pendingPhysicalItemCounts::remove);
+        });
+    }
+
+    private void observeLegitimateResourceInventory(Player player) {
+        if (player.getOpenInventory().getTopInventory().getHolder() instanceof EconomyService.CraftHolder) return;
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null) return;
+        Map<String, Integer> observed = physicalResourceCounts(player);
+        Map<String, Integer> pending = state.pendingPhysicalItemCounts == null
+                ? Map.of() : state.pendingPhysicalItemCounts;
+        Map<String, Integer> updates = new LinkedHashMap<>();
+        for (String id : production.materialsById().keySet()) {
+            if (pending.containsKey(resourceCheckpoint(id))) continue;
+            int value = observed.getOrDefault(id, 0);
+            if (!state.personalResourcesInitialized || state.personalResources.getOrDefault(id, 0) != value) {
+                updates.put(id, value);
+            }
+        }
+        if (updates.isEmpty() && state.personalResourcesInitialized) return;
+        runs.mutateAtomically(run -> {
+            RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
+            mutable.personalResourcesInitialized = true;
+            updates.forEach((id, value) -> {
+                if (value == 0) mutable.personalResources.remove(id);
+                else mutable.personalResources.put(id, value);
+            });
+        });
+    }
+
+    private Map<String, Integer> physicalResourceCounts(Player player) {
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        for (String id : production.materialsById().keySet()) {
+            int amount = countPhysicalResource(player, id);
+            if (amount > 0) counts.put(id, amount);
+        }
+        return counts;
+    }
+
+    private boolean takePhysicalResource(Player player, String normalized, int amount) {
+        int remaining = amount;
+        for (int slot = 1; slot <= 35 && remaining > 0; slot++) {
+            ItemStack item = player.getInventory().getItem(slot);
+            if (!normalized.equals(itemId(item))) continue;
             int removed = Math.min(remaining, item.getAmount());
             item.setAmount(item.getAmount() - removed);
-            if (item.getAmount() <= 0) {
-                contents[slot] = null;
-            }
+            if (item.getAmount() <= 0) player.getInventory().setItem(slot, null);
             remaining -= removed;
         }
-        player.getInventory().setStorageContents(contents);
-        return true;
+        return remaining == 0;
+    }
+
+    private void clearReachedResourceCheckpoint(Player player, String id, int expectedPhysical) {
+        if (countPhysicalResource(player, id) != expectedPhysical) return;
+        runs.mutateAtomically(run -> run.players.get(player.getUniqueId().toString())
+                .pendingPhysicalItemCounts.remove(resourceCheckpoint(id)));
+    }
+
+    public static String resourceCheckpoint(String id) {
+        return CraftTransactionPolicy.resourceCheckpoint(id);
     }
 
     public int countItem(Player player, String rawId) {
@@ -224,6 +380,22 @@ public final class ItemCodexService implements Listener {
         boolean removed = takeItemFromInventory(player, id, amount);
         if (removed) recordQuickItemCount(player, id);
         return removed;
+    }
+
+    public boolean takeRegisteredItemWithRunMutation(Player player, String rawId, int amount,
+                                                     Consumer<RunSnapshot> runMutation) {
+        String id = rawId.toUpperCase(java.util.Locale.ROOT);
+        if (amount <= 0 || countItem(player, id) < amount) return false;
+        int expected = countItem(player, id) - amount;
+        runs.mutateAtomically(run -> {
+            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+            state.pendingPhysicalItemCounts.put(registeredCheckpoint(id), expected);
+            runMutation.accept(run);
+        });
+        takeItemFromInventory(player, id, amount);
+        player.saveData();
+        clearReachedRegisteredCheckpoint(player, id, expected);
+        return true;
     }
 
     /**
@@ -325,6 +497,8 @@ public final class ItemCodexService implements Listener {
     }
 
     public void reconcile(Player player) {
+        reconcilePersonalResources(player);
+        reconcileRegisteredCheckpoints(player);
         reconcileQuickItems(player);
         reconcileDiscoveries(player);
         flushPending(player);
@@ -359,21 +533,41 @@ public final class ItemCodexService implements Listener {
         Map<String, Integer> remainingById = new LinkedHashMap<>();
         Set<String> quickItemsMoved = new LinkedHashSet<>();
         for (Map.Entry<String, Integer> entry : new LinkedHashMap<>(state.pendingRegisteredItems).entrySet()) {
-            int remaining = Math.max(0, entry.getValue());
+            String id = entry.getKey();
+            String checkpoint = registeredCheckpoint(id);
+            int physicalBefore = countItem(player, id);
+            int target = state.pendingPhysicalItemCounts.getOrDefault(
+                    checkpoint, physicalBefore + Math.max(0, entry.getValue()));
+            if (!state.pendingPhysicalItemCounts.containsKey(checkpoint)) {
+                int persistedTarget = target;
+                runs.mutateAtomically(run -> run.players.get(player.getUniqueId().toString())
+                        .pendingPhysicalItemCounts.put(checkpoint, persistedTarget));
+            }
+            if (physicalBefore > target) {
+                takeItemFromInventory(player, id, physicalBefore - target);
+            }
+            int remaining = Math.max(0, target - countItem(player, id));
             while (remaining > 0) {
-                ItemStack item = registeredItem(entry.getKey(), remaining);
+                ItemStack item = registeredItem(id, remaining);
                 int attempted = item.getAmount();
                 int overflow = addWithoutReservedSlot(player, item);
                 int moved = attempted - overflow;
                 remaining -= moved;
-                if (moved > 0 && isQuickConsumable(entry.getKey())) quickItemsMoved.add(entry.getKey());
+                if (moved > 0 && isQuickConsumable(id)) quickItemsMoved.add(id);
                 if (overflow == attempted) break;
             }
-            if (remaining > 0) remainingById.put(entry.getKey(), remaining);
+            if (remaining > 0) remainingById.put(id, remaining);
         }
-        if (!state.pendingRegisteredItems.equals(remainingById)) {
-            runs.mutate(run -> run.players.get(player.getUniqueId().toString()).pendingRegisteredItems = remainingById);
-        }
+        player.saveData();
+        runs.mutateAtomically(run -> {
+            RunSnapshot.PlayerState mutable = run.players.get(player.getUniqueId().toString());
+            mutable.pendingRegisteredItems = remainingById;
+            for (String id : state.pendingRegisteredItems.keySet()) {
+                if (!remainingById.containsKey(id)) {
+                    mutable.pendingPhysicalItemCounts.remove(registeredCheckpoint(id));
+                }
+            }
+        });
         quickItemsMoved.forEach(id -> recordQuickItemCount(player, id));
         if (!remainingById.isEmpty()) {
             long now = System.currentTimeMillis();
@@ -384,6 +578,47 @@ public final class ItemCodexService implements Listener {
         } else {
             pendingNoticeAt.remove(player.getUniqueId());
         }
+    }
+
+    private void reconcileRegisteredCheckpoints(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || state.pendingPhysicalItemCounts == null
+                || state.pendingPhysicalItemCounts.isEmpty()) return;
+        Map<String, Integer> pendingDeliveries = state.pendingRegisteredItems == null
+                ? Map.of() : state.pendingRegisteredItems;
+        Set<String> reached = new LinkedHashSet<>();
+        boolean changed = false;
+        for (Map.Entry<String, Integer> checkpoint : new LinkedHashMap<>(state.pendingPhysicalItemCounts).entrySet()) {
+            if (!checkpoint.getKey().startsWith(CraftTransactionPolicy.registeredCheckpoint(""))) continue;
+            String id = checkpoint.getKey().substring(CraftTransactionPolicy.registeredCheckpoint("").length());
+            if (pendingDeliveries.getOrDefault(id, 0) > 0) continue;
+            int target = Math.max(0, checkpoint.getValue());
+            int physical = countItem(player, id);
+            if (physical > target) {
+                changed |= takeItemFromInventory(player, id, physical - target);
+            } else if (physical < target) {
+                int remaining = target - physical;
+                while (remaining > 0) {
+                    ItemStack item = registeredItem(id, remaining);
+                    int attempted = item.getAmount();
+                    int overflow = addWithoutReservedSlot(player, item);
+                    int moved = attempted - overflow;
+                    remaining -= moved;
+                    changed |= moved > 0;
+                    if (moved == 0) break;
+                }
+            }
+            if (countItem(player, id) == target) reached.add(checkpoint.getKey());
+        }
+        if (changed) player.saveData();
+        if (!reached.isEmpty()) runs.mutateAtomically(run -> reached.forEach(run.players
+                .get(player.getUniqueId().toString()).pendingPhysicalItemCounts::remove));
+    }
+
+    private void clearReachedRegisteredCheckpoint(Player player, String id, int expectedPhysical) {
+        if (countItem(player, id) != expectedPhysical) return;
+        runs.mutateAtomically(run -> run.players.get(player.getUniqueId().toString())
+                .pendingPhysicalItemCounts.remove(registeredCheckpoint(id)));
     }
 
     public void reconcileQuickItems(Player player) {
@@ -482,6 +717,7 @@ public final class ItemCodexService implements Listener {
 
     private void observeInventoryAndRefresh(Player player) {
         if (!player.isOnline() || !runs.isMember(player)) return;
+        observeLegitimateResourceInventory(player);
         observeLegitimateQuickItemInventory(player);
         reconcileDiscoveries(player);
         flushPending(player);
@@ -538,6 +774,8 @@ public final class ItemCodexService implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Bukkit.getScheduler().runTask(plugin, () -> {
+            reconcilePersonalResources(event.getPlayer());
+            reconcileRegisteredCheckpoints(event.getPlayer());
             reconcileQuickItems(event.getPlayer());
             flushPending(event.getPlayer());
         });
@@ -693,14 +931,6 @@ public final class ItemCodexService implements Listener {
         };
     }
 
-    private void queueRegisteredItem(Player player, String id, int amount) {
-        runs.mutate(run -> {
-            RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
-            if (state.pendingRegisteredItems == null) state.pendingRegisteredItems = new LinkedHashMap<>();
-            state.pendingRegisteredItems.merge(id, amount, Integer::sum);
-        });
-    }
-
     private int addWithoutReservedSlot(Player player, ItemStack offered) {
         ItemStack remaining = offered.clone();
         for (int slot = 1; slot <= 35 && remaining.getAmount() > 0; slot++) {
@@ -720,6 +950,10 @@ public final class ItemCodexService implements Listener {
             remaining.setAmount(remaining.getAmount() - moved);
         }
         return remaining.getAmount();
+    }
+
+    public static String registeredCheckpoint(String id) {
+        return CraftTransactionPolicy.registeredCheckpoint(id);
     }
 
     private static ItemStack named(Material material, String name, List<String> lore) {

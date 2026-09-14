@@ -42,6 +42,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -53,6 +54,7 @@ public final class EconomyService implements Listener {
     private static final int[] INPUTS = {11, 12, 13, 20, 21, 22, 29, 30, 31};
     private static final Set<Integer> INPUT_SET = Set.of(11, 12, 13, 20, 21, 22, 29, 30, 31);
     private static final int RESULT = 24;
+    private static final String CRAFT_UNLOCK_LOG_CHECKPOINT = "VANILLA:ANY_LOG";
     private static final int[] LEDGER_SLOTS = {
             0, 1, 2, 3, 4, 5, 6, 7, 8,
             9, 10, 11, 12, 13, 14, 15, 16, 17,
@@ -100,6 +102,7 @@ public final class EconomyService implements Listener {
             player.sendMessage(ChatColor.RED + "진행 중인 회차에서만 제작할 수 있습니다.");
             return;
         }
+        codex.reconcilePersonalResources(player);
         if (!runs.current().orElseThrow().craftUnlocked) {
             Inventory inventory = Bukkit.createInventory(new UnlockHolder(player.getUniqueId()), 27,
                     ChatColor.DARK_AQUA + "Craft 잠금 해제");
@@ -127,6 +130,7 @@ public final class EconomyService implements Listener {
     }
 
     private void openLedger(Player player, int requestedPage) {
+        codex.reconcilePersonalResources(player);
         RunSnapshot run = runs.current().orElse(null);
         boolean prototypeDepot = run != null && run.facility != null && run.facility.active;
         boolean productionDepot = run != null && FacilityStateAccess.active(run, "FAC-S16");
@@ -196,6 +200,10 @@ public final class EconomyService implements Listener {
         if (world != null) markFacility(world.getBlockAt(snapshot.facility.x, snapshot.facility.y, snapshot.facility.z));
     }
 
+    public void restore() {
+        for (Player player : runs.onlineMembers()) recoverCraftTransactions(player);
+    }
+
     public void removeFacility() {
         RunSnapshot snapshot = runs.current().orElse(null);
         if (snapshot == null || snapshot.facility == null || !snapshot.facility.active) return;
@@ -217,8 +225,7 @@ public final class EconomyService implements Listener {
             player.sendMessage(ChatColor.RED + "선택한 위치에 저장소를 설치할 수 없습니다.");
             return;
         }
-        markFacility(target);
-        runs.mutate(run -> {
+        boolean consumed = codex.takeRegisteredItemWithRunMutation(player, "COMMON_RESOURCE_DEPOT", 1, run -> {
             RunSnapshot.FacilityState facility = new RunSnapshot.FacilityState();
             facility.id = "COMMON_RESOURCE_DEPOT";
             facility.world = target.getWorld().getName();
@@ -226,6 +233,11 @@ public final class EconomyService implements Listener {
             run.facility = facility;
             run.sharedLedgerUnlocked = true;
         });
+        if (!consumed) {
+            player.sendMessage(ChatColor.RED + "공용 보급 저장소 아이템이 필요합니다.");
+            return;
+        }
+        markFacility(target);
         codex.discover(player, "COMMON_RESOURCE_DEPOT", "PLACE");
         runs.broadcast(ChatColor.GREEN + "공용 보급 저장소 설치: " + target.getX() + ", " + target.getY() + ", " + target.getZ());
     }
@@ -312,7 +324,6 @@ public final class EconomyService implements Listener {
             event.getPlayer().sendMessage(ChatColor.RED + "선택한 면에 저장소를 설치할 빈 공간이 없습니다.");
             return;
         }
-        if (!codex.takeItem(event.getPlayer(), "COMMON_RESOURCE_DEPOT", 1)) return;
         placeFacility(event.getPlayer(), target);
     }
 
@@ -399,11 +410,92 @@ public final class EconomyService implements Listener {
         }
     }
 
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            reconcileCraftUnlockLogs(event.getPlayer());
+            recoverCraftTransactions(event.getPlayer());
+        });
+    }
+
+    private void recoverCraftTransactions(Player player) {
+        RunSnapshot snapshot = runs.current().orElse(null);
+        if (snapshot == null || !runs.isMember(player)) return;
+        List<String> transactionIds = snapshot.resourceTransactions.values().stream()
+                .filter(transaction -> CraftTransactionPolicy.KIND.equals(transaction.transactionKind))
+                .filter(transaction -> player.getUniqueId().toString().equals(transaction.ownerUuid))
+                .filter(transaction -> Set.of("RESERVED", "PROCESSING", "COMMITTED").contains(transaction.state))
+                .map(transaction -> transaction.transactionId).toList();
+        for (String transactionId : transactionIds) {
+            RunSnapshot.ResourceTransactionState transaction = runs.current().orElseThrow()
+                    .resourceTransactions.get(transactionId);
+            if (transaction == null) continue;
+            if ("RESERVED".equals(transaction.state)) {
+                if (!runs.beginResourceTransaction(transactionId)) continue;
+                transaction = runs.current().orElseThrow().resourceTransactions.get(transactionId);
+            }
+            if ("PROCESSING".equals(transaction.state)) commitCraftOutput(player, transaction);
+            else if ("COMMITTED".equals(transaction.state)) {
+                materializeCommittedCraftOutput(player, transaction);
+                codex.discover(player, transaction.outputId, "CRAFT_RECOVERY");
+            }
+        }
+    }
+
+    private void reconcileCraftUnlockLogs(Player player) {
+        RunSnapshot.PlayerState state = runs.playerState(player.getUniqueId()).orElse(null);
+        if (state == null || state.pendingPhysicalItemCounts == null
+                || !state.pendingPhysicalItemCounts.containsKey(CRAFT_UNLOCK_LOG_CHECKPOINT)) return;
+        int target = Math.max(0, state.pendingPhysicalItemCounts.get(CRAFT_UNLOCK_LOG_CHECKPOINT));
+        int physical = countLogs(player);
+        if (physical > target) {
+            takeLogs(player, physical - target);
+        } else if (physical < target) {
+            addRecoveryLogs(player, target - physical);
+        }
+        player.saveData();
+        if (countLogs(player) == target) {
+            runs.mutateAtomically(run -> run.players.get(player.getUniqueId().toString())
+                    .pendingPhysicalItemCounts.remove(CRAFT_UNLOCK_LOG_CHECKPOINT));
+        }
+    }
+
+    private void addRecoveryLogs(Player player, int amount) {
+        int remaining = amount;
+        for (int slot = 1; slot <= 35 && remaining > 0; slot++) {
+            ItemStack item = player.getInventory().getItem(slot);
+            if (item == null || item.getType().isAir() || item.getType() != Material.OAK_LOG) continue;
+            int moved = Math.min(item.getMaxStackSize() - item.getAmount(), remaining);
+            item.setAmount(item.getAmount() + moved);
+            remaining -= moved;
+        }
+        for (int slot = 1; slot <= 35 && remaining > 0; slot++) {
+            ItemStack item = player.getInventory().getItem(slot);
+            if (item != null && !item.getType().isAir()) continue;
+            int moved = Math.min(64, remaining);
+            player.getInventory().setItem(slot, new ItemStack(Material.OAK_LOG, moved));
+            remaining -= moved;
+        }
+    }
+
     private void unlockCraft(Player player) {
         if (runs.current().orElseThrow().craftUnlocked) { openCraft(player); return; }
-        if (countLogs(player) < 4) { player.sendMessage(ChatColor.RED + "원목이 4개 필요합니다."); return; }
+        int before = countLogs(player);
+        if (before < 4) { player.sendMessage(ChatColor.RED + "원목이 4개 필요합니다."); return; }
+        RunSnapshot snapshot = runs.current().orElseThrow();
+        boolean committed = runs.commitOnceAtomically("craft-unlock:" + snapshot.runId,
+                "CRAFT_UNLOCKED", "{\"cost\":\"ANY_LOG:4\"}", run -> {
+                    run.craftUnlocked = true;
+                    RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                    state.pendingPhysicalItemCounts.put(CRAFT_UNLOCK_LOG_CHECKPOINT, before - 4);
+                });
+        if (!committed && !runs.current().orElseThrow().craftUnlocked) {
+            player.sendMessage(ChatColor.RED + "Craft 해금 저장에 실패했습니다.");
+            return;
+        }
         takeLogs(player, 4);
-        runs.mutate(run -> run.craftUnlocked = true);
+        player.saveData();
+        reconcileCraftUnlockLogs(player);
         runs.broadcast(ChatColor.GREEN + player.getName() + "이(가) Craft를 해금했습니다.");
         telemetry.event(runs.current().orElseThrow().runId, "CRAFT_UNLOCKED", "{\"cost\":\"ANY_LOG:4\"}");
         openCraft(player);
@@ -420,21 +512,14 @@ public final class EconomyService implements Listener {
             player.sendMessage(ChatColor.RED + "장비를 받을 인벤토리 공간이 없습니다.");
             return;
         }
-        for (int slot : INPUTS) {
-            ItemStack item = inventory.getItem(slot);
-            if (item == null || item.getType().isAir()) continue;
-            item.setAmount(item.getAmount() - 1);
-            if (item.getAmount() <= 0) inventory.setItem(slot, null);
+        Map<Integer, Integer> consumed = new java.util.LinkedHashMap<>();
+        for (int index = 0; index < INPUTS.length; index++) {
+            ItemStack item = inventory.getItem(INPUTS[index]);
+            if (item != null && !item.getType().isAir()) consumed.put(index, 1);
         }
-        switch (recipe.rewardType()) {
-            case "EQUIPMENT" -> equipment.grantEquipment(player, recipe.rewardId());
-            case "ITEM" -> codex.grantItem(player, recipe.rewardId(), recipe.rewardAmount());
-            case "QUICK_ITEM" -> equipment.grantQuickItem(player, recipe.rewardId(), recipe.rewardAmount());
-            case "FACILITY" -> codex.grantItem(player, recipe.rewardId(), recipe.rewardAmount());
-            default -> throw new IllegalStateException("Unknown reward type " + recipe.rewardType());
-        }
-        telemetry.event(snapshot.runId, "CRAFT_COMMITTED", "{\"recipeId\":\"" + recipe.id() + "\"}");
-        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 0.5f, 1.4f);
+        String outputType = "EQUIPMENT".equals(recipe.rewardType()) ? "EQUIPMENT" : "ITEM";
+        executeCraftTransaction(player, inventory, recipe.id(), outputType,
+                recipe.rewardId(), recipe.rewardAmount(), consumed, null);
     }
 
     private void renderCraft(Player player, Inventory inventory) {
@@ -487,29 +572,137 @@ public final class EconomyService implements Listener {
                 break;
             }
         }
-        for (Map.Entry<Integer, Integer> consumed : match.consumedBySlot().entrySet()) {
+        String outputType = output == null ? "VIRTUAL" : output.equipment() ? "EQUIPMENT"
+                : "MATERIAL".equals(output.domain()) ? "MATERIAL" : "ITEM";
+        executeCraftTransaction(player, inventory, recipe.id(), outputType, recipe.outputId(),
+                recipe.outputAmount(), match.consumedBySlot(), baseEquipment);
+    }
+
+    private void executeCraftTransaction(Player player, Inventory inventory, String recipeId,
+                                         String outputType, String outputId, int outputAmount,
+                                         Map<Integer, Integer> consumedByGridSlot,
+                                         ItemStack baseEquipment) {
+        Map<String, Integer> resourceCosts = new java.util.LinkedHashMap<>();
+        for (Map.Entry<Integer, Integer> consumed : consumedByGridSlot.entrySet()) {
+            ItemStack item = inventory.getItem(INPUTS[consumed.getKey()]);
+            if (item == null || item.getAmount() < consumed.getValue()) {
+                throw new IllegalStateException("검증 이후 조합 입력이 변경되었습니다.");
+            }
+            String itemId = codex.itemId(item);
+            if (itemId != null && production.materialsById().containsKey(itemId)) {
+                resourceCosts.merge(itemId, consumed.getValue(), Math::addExact);
+            }
+        }
+        String owner = player.getUniqueId().toString();
+        RunSnapshot.PlayerState playerState = runs.playerState(player.getUniqueId()).orElseThrow();
+        for (Map.Entry<String, Integer> cost : resourceCosts.entrySet()) {
+            if (playerState.personalResources.getOrDefault(cost.getKey(), 0) < cost.getValue()) {
+                player.sendMessage(ChatColor.RED + "개인 자원 원장과 제작 입력이 일치하지 않습니다: " + cost.getKey());
+                codex.reconcilePersonalResources(player);
+                return;
+            }
+        }
+        String transactionId = "craft:" + player.getUniqueId() + ":" + UUID.randomUUID();
+        String inputSignature = ProductionRecipePolicy.fingerprint(productionGrid(inventory));
+        String baseInstanceId = equipment.equipmentInstanceId(baseEquipment);
+        String outputInstanceId = "EQUIPMENT".equals(outputType)
+                ? (baseInstanceId == null ? UUID.randomUUID().toString() : baseInstanceId) : null;
+        double durabilityRatio = 1.0;
+        if (baseInstanceId != null) {
+            RunSnapshot.EquipmentInstanceState base = playerState.equipmentInstances.get(baseInstanceId);
+            if (base != null && base.maxDurability > 0) {
+                durabilityRatio = Math.max(0.0, Math.min(1.0,
+                        base.currentDurability / (double) base.maxDurability));
+            }
+        }
+        String outputSignature = CraftTransactionPolicy.outputSignature(recipeId, outputType, outputId,
+                outputAmount, outputInstanceId);
+        double savedDurabilityRatio = durabilityRatio;
+        ResourceLedger.ReserveResult reserved = runs.reserveResourceTransaction(transactionId,
+                recipeId, outputId, ResourceLedger.Scope.PERSONAL, owner, resourceCosts, run -> {
+                    RunSnapshot.ResourceTransactionState transaction = run.resourceTransactions.get(transactionId);
+                    CraftTransactionPolicy.stamp(transaction, inputSignature, outputType, outputId,
+                            outputAmount, outputInstanceId, baseInstanceId, savedDurabilityRatio);
+                });
+        if (reserved != ResourceLedger.ReserveResult.RESERVED) {
+            player.sendMessage(ChatColor.RED + "제작 재료 예약 실패: " + reserved);
+            return;
+        }
+        removeCraftInputs(inventory, consumedByGridSlot);
+        player.saveData();
+        if (!runs.beginResourceTransaction(transactionId)) {
+            player.sendMessage(ChatColor.YELLOW + "제작 재료가 예약되었습니다. 재접속 시 같은 출력으로 재개됩니다.");
+            return;
+        }
+        RunSnapshot.ResourceTransactionState transaction = runs.current().orElseThrow()
+                .resourceTransactions.get(transactionId);
+        if (!commitCraftOutput(player, transaction)) return;
+        telemetry.event(runs.current().orElseThrow().runId, "CRAFT_COMMITTED",
+                "{\"recipeId\":\"" + recipeId + "\",\"transactionId\":\"" + transactionId
+                        + "\",\"outputSignature\":\"" + outputSignature + "\"}");
+        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 0.5f, 1.4f);
+    }
+
+    private boolean commitCraftOutput(Player player, RunSnapshot.ResourceTransactionState transaction) {
+        if (transaction == null || !CraftTransactionPolicy.KIND.equals(transaction.transactionKind)) return false;
+        if ("COMMITTED".equals(transaction.state)) {
+            materializeCommittedCraftOutput(player, transaction);
+            return true;
+        }
+        if (!"PROCESSING".equals(transaction.state)) return false;
+        if ("VIRTUAL".equals(transaction.outputType)) {
+            RunSnapshot run = runs.current().orElseThrow();
+            if (!run.committedKeys.contains("proof:" + transaction.outputId)) {
+                if (!virtualPreflight.test(player, transaction.outputId)) return false;
+                virtualCommit.accept(player, transaction.outputId);
+            }
+        }
+        int physicalBefore = codex.countItem(player, transaction.outputId);
+        RunSnapshot.EquipmentInstanceState prepared = null;
+        if ("EQUIPMENT".equals(transaction.outputType)) {
+            prepared = equipment.prepareCraftedInstance(transaction.outputId,
+                    transaction.outputInstanceId, transaction.outputDurabilityRatio);
+        }
+        RunSnapshot.EquipmentInstanceState equipmentOutput = prepared;
+        boolean committed = runs.commitResourceTransaction(transaction.transactionId,
+                "CRAFT_COMMITTED", "{\"recipeId\":\"" + transaction.costId
+                        + "\",\"outputSignature\":\"" + transaction.outputSignature + "\"}", run -> {
+                    RunSnapshot.ResourceTransactionState candidateTransaction = run.resourceTransactions
+                            .get(transaction.transactionId);
+                    CraftTransactionPolicy.applyOutput(run.players.get(candidateTransaction.ownerUuid),
+                            candidateTransaction, physicalBefore, equipmentOutput);
+                });
+        if (!committed) {
+            player.sendMessage(ChatColor.YELLOW + "제작 출력이 처리 중입니다. 재접속 시 자동 복구됩니다.");
+            return false;
+        }
+        RunSnapshot.ResourceTransactionState saved = runs.current().orElseThrow()
+                .resourceTransactions.get(transaction.transactionId);
+        materializeCommittedCraftOutput(player, saved);
+        codex.discover(player, transaction.outputId, "CRAFT");
+        return true;
+    }
+
+    private void materializeCommittedCraftOutput(Player player, RunSnapshot.ResourceTransactionState transaction) {
+        switch (transaction.outputType) {
+            case "MATERIAL" -> codex.materializeCommittedResource(player, transaction.outputId);
+            case "ITEM" -> codex.flushPending(player);
+            case "EQUIPMENT" -> equipment.reconcilePendingRewards(player);
+            case "VIRTUAL" -> { }
+            default -> throw new IllegalStateException("Unknown committed craft output " + transaction.outputType);
+        }
+    }
+
+    private void removeCraftInputs(Inventory inventory, Map<Integer, Integer> consumedByGridSlot) {
+        for (Map.Entry<Integer, Integer> consumed : consumedByGridSlot.entrySet()) {
             int inventorySlot = INPUTS[consumed.getKey()];
             ItemStack item = inventory.getItem(inventorySlot);
             if (item == null || item.getAmount() < consumed.getValue()) {
-                throw new IllegalStateException("검증 이후 조합 입력이 변경되었습니다.");
+                throw new IllegalStateException("예약된 제작 입력이 사라졌습니다.");
             }
             item.setAmount(item.getAmount() - consumed.getValue());
             if (item.getAmount() <= 0) inventory.setItem(inventorySlot, null);
         }
-        if (output == null) {
-            virtualCommit.accept(player, recipe.outputId());
-            player.sendMessage(ChatColor.GREEN + "시설/재건 단계 등록: " + recipe.outputId());
-        } else if (output.equipment()) {
-            if (baseEquipment == null) equipment.grantEquipment(player, output.id());
-            else equipment.forgeEquipment(player, output.id(), baseEquipment);
-        } else if ("MATERIAL".equals(output.domain())) {
-            codex.grantResource(player, output.id(), recipe.outputAmount());
-        } else {
-            codex.grantItem(player, output.id(), recipe.outputAmount());
-        }
-        telemetry.event(snapshot.runId, "CRAFT_COMMITTED", "{\"recipeId\":\"" + recipe.id()
-                + "\",\"revision\":\"ws-content-r2\"}");
-        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 0.5f, 1.4f);
     }
 
     private java.util.Optional<ProductionRecipePolicy.Match> productionMatch(Player player, Inventory inventory) {
@@ -642,29 +835,57 @@ public final class EconomyService implements Listener {
         if (!deposit && !withdraw) return;
         if (deposit) {
             int amount = click.isShiftClick() ? codex.countResource(player, id) : 1;
-            if (amount <= 0 || !codex.takeResource(player, id, amount)) { player.sendMessage(ChatColor.RED + "개인 자원이 부족합니다."); return; }
-            runs.addResource("ledger-deposit:" + UUID.randomUUID(), id, amount);
+            RunSnapshot.PlayerState owner = runs.playerState(player.getUniqueId()).orElseThrow();
+            if (amount <= 0 || owner.personalResources.getOrDefault(id, 0) < amount) {
+                player.sendMessage(ChatColor.RED + "개인 자원이 부족합니다."); return;
+            }
+            String key = "ledger-deposit:" + UUID.randomUUID();
+            boolean committed = runs.commitOnceAtomically(key, "LEDGER_COMMITTED",
+                    "{\"resource\":\"" + id + "\",\"direction\":\"PERSONAL_TO_SHARED\",\"amount\":" + amount + "}", run -> {
+                        RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                        int personalAfter = state.personalResources.getOrDefault(id, 0) - amount;
+                        if (personalAfter < 0) throw new IllegalStateException("Personal resource changed during deposit");
+                        PersonalResourcePolicy.debit(state, id, amount, personalAfter, Map.of());
+                        run.resources.merge(id, amount, Math::addExact);
+                    });
+            if (!committed) { player.sendMessage(ChatColor.RED + "공용 원장 입금이 커밋되지 않았습니다."); return; }
+            codex.reconcilePersonalResources(player);
         } else {
             int balance = runs.current().orElseThrow().resources.getOrDefault(id, 0);
             int amount = click.isShiftClick() ? Math.min(64, balance) : 1;
-            if (amount <= 0 || !runs.withdrawResource("ledger-withdraw:" + UUID.randomUUID(), id, amount)) {
+            if (amount <= 0 || balance < amount) {
                 player.sendMessage(ChatColor.RED + "공용 자원이 부족합니다."); return;
             }
-            codex.grantResource(player, id, amount);
+            String key = "ledger-withdraw:" + UUID.randomUUID();
+            boolean committed = runs.commitOnceAtomically(key, "LEDGER_COMMITTED",
+                    "{\"resource\":\"" + id + "\",\"direction\":\"SHARED_TO_PERSONAL\",\"amount\":" + amount + "}", run -> {
+                        int sharedAfter = run.resources.getOrDefault(id, 0) - amount;
+                        if (sharedAfter < 0) throw new IllegalStateException("Shared resource changed during withdrawal");
+                        run.resources.put(id, sharedAfter);
+                        RunSnapshot.PlayerState state = run.players.get(player.getUniqueId().toString());
+                        int personalAfter = Math.addExact(state.personalResources.getOrDefault(id, 0), amount);
+                        PersonalResourcePolicy.credit(state, id, amount, personalAfter, Map.of());
+                    });
+            if (!committed) { player.sendMessage(ChatColor.RED + "공용 원장 출금이 커밋되지 않았습니다."); return; }
+            codex.reconcilePersonalResources(player);
+            codex.discover(player, id, "LEDGER_WITHDRAW");
         }
         openLedger(player, page);
     }
 
     private int countLogs(Player player) {
         int count = 0;
-        for (ItemStack item : player.getInventory().getStorageContents()) if (item != null && Tag.LOGS.isTagged(item.getType())) count += item.getAmount();
+        for (int slot = 1; slot <= 35; slot++) {
+            ItemStack item = player.getInventory().getItem(slot);
+            if (item != null && Tag.LOGS.isTagged(item.getType())) count += item.getAmount();
+        }
         return count;
     }
 
     private void takeLogs(Player player, int amount) {
         ItemStack[] contents = player.getInventory().getStorageContents();
         int remaining = amount;
-        for (int i = 0; i < contents.length && remaining > 0; i++) {
+        for (int i = 1; i < contents.length && remaining > 0; i++) {
             ItemStack item = contents[i];
             if (item == null || !Tag.LOGS.isTagged(item.getType())) continue;
             int take = Math.min(remaining, item.getAmount()); item.setAmount(item.getAmount() - take); remaining -= take;
@@ -778,7 +999,7 @@ public final class EconomyService implements Listener {
         ItemMeta meta = item.getItemMeta(); meta.setDisplayName(name); meta.setLore(lore); item.setItemMeta(meta); return item;
     }
 
-    private static final class CraftHolder implements InventoryHolder {
+    static final class CraftHolder implements InventoryHolder {
         private final UUID owner;
         private int selectedRecipeIndex;
         private String selectedRecipeId;

@@ -11,11 +11,13 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.bukkit.Bukkit;
@@ -43,6 +45,7 @@ public final class RunService {
     private PrototypeLoopService loop;
     private EquipmentService equipment;
     private GrowthService growth;
+    private BiConsumer<String, Map<String, Integer>> personalResourceReconciler = (owner, balance) -> { };
     private int ticksUntilSave;
 
     public RunService(JavaPlugin plugin, RunRepository seasonRepository, RunRepository legacyPrototypeRepository,
@@ -63,6 +66,11 @@ public final class RunService {
         this.loop = loop;
         this.equipment = equipment;
         this.growth = growth;
+    }
+
+    public void setPersonalResourceReconciler(
+            BiConsumer<String, Map<String, Integer>> personalResourceReconciler) {
+        this.personalResourceReconciler = java.util.Objects.requireNonNull(personalResourceReconciler);
     }
 
     public void restore() throws IOException {
@@ -144,6 +152,7 @@ public final class RunService {
             RunSnapshot.PlayerState state = new RunSnapshot.PlayerState();
             state.uuid = uuid;
             state.lastKnownName = player.getName();
+            state.personalResourcesInitialized = true;
             snapshot.players.put(uuid, state);
             captureLocation(state, player.getLocation());
         }
@@ -332,6 +341,8 @@ public final class RunService {
             if (outcome.persisted()) {
                 current = outcome.snapshot();
                 testTransactionPause.checkpoint(transactionId, TestTransactionPauseGate.Phase.RESERVED);
+                RunSnapshot.ResourceTransactionState transaction = current.resourceTransactions.get(transactionId);
+                reconcilePersonalResources(transaction);
             }
             return outcome.result();
         }
@@ -376,8 +387,20 @@ public final class RunService {
             }, Boolean.TRUE::equals);
             if (outcome.persisted()) {
                 current = outcome.snapshot();
+                RunSnapshot.ResourceTransactionState transaction = current.resourceTransactions.get(transactionId);
+                reconcilePersonalResources(transaction);
             }
             return outcome.result();
+        }
+    }
+
+    private void reconcilePersonalResources(RunSnapshot.ResourceTransactionState transaction) {
+        if (transaction == null || !ResourceLedger.Scope.PERSONAL.name().equals(transaction.ledgerScope)
+                || transaction.ownerUuid == null) return;
+        RunSnapshot.PlayerState owner = current.players.get(transaction.ownerUuid);
+        if (owner != null) {
+            personalResourceReconciler.accept(transaction.ownerUuid,
+                    java.util.Map.copyOf(owner.personalResources));
         }
     }
 
@@ -398,6 +421,8 @@ public final class RunService {
             }, Boolean.TRUE::equals);
             if (outcome.persisted()) {
                 current = outcome.snapshot();
+                RunSnapshot.ResourceTransactionState transaction = current.resourceTransactions.get(transactionId);
+                reconcilePersonalResources(transaction);
             }
             return outcome.result();
         }

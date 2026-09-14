@@ -263,6 +263,8 @@ NMS 직접 접근은 금지하지 않지만 Paper API로 불가능한 경우에�
 
 `P1-PROCESS-KILL-003`도 2026-09-15 격리 Paper 서버와 `non2error` 클라이언트에서 통과했다. AP 자극제 K0~K5를 각각 `AP/잔여 펄스=30/5, 33/4, 36/3, 39/2, 42/1, 45/0`의 내구 저장 직후 실제 JVM 강제 종료했으며, 매 재시작은 AP 45·잔여 0·퀵 수량 0·범위별 사용 1회로 수렴하고 재접속 실제 인벤토리에 복제나 잔존을 만들지 않았다. 비용 `PROCESSING`은 `RS-D01-SAMPLE`의 목재 3 예약을, 비용 `RESERVED`는 `RS-D03-SEPARATION`의 개인 목재 5·철 2 예약을 종료 훅 없이 복구했다. 후자는 `QUEUED/RESERVED/PERSONAL/attempt 1`에서 재시작 뒤 `PROCESSING/PROCESSING`, 같은 예약 수량·잔액 0·시도 1회로 전이해 이중 차감이 없었고, 재접속 GUI도 `진행 0% · PROCESSING`을 표시했다. 따라서 P1 인계 상태는 `P1_PASSED`, 다음 실행 게이트는 `P2_READY`다. Season 1 전체 인계 상태 `IMPLEMENTATION_IN_PROGRESS`와 Story `DEFERRED_BY_USER`는 유지한다.
 
+P2 구현 후보는 개인 PDC 자원과 회차 개인 원장을 단일 권위로 통합하고, 연구·시설 비용 예약/취소와 FAC-S16 입출금을 물리 수량 체크포인트까지 연결했다. Craft 해금의 원목 4개, 3×3 제작 입력 예약, 고정 출력 서명, 일반 아이템 목표 수량, 자원 원장 출력, 장비 고정 instanceId 지급, 저장소 아이템 소비·시설 상태를 각각 내구 우선·물리 후반영 순서로 전환했다. 미완료 `CRAFT` 거래는 소유자 접속 시 같은 출력 서명으로 재개한다. 자동 검증은 51 suite·184 test와 세 콘텐츠 번들 검증을 통과했지만 `E2E-14~20` 및 실제 JVM 중단 증거가 없으므로 P2는 `IMPLEMENTED_AWAITING_CLIENT_EVIDENCE`, 전체 인계는 계속 `IMPLEMENTATION_IN_PROGRESS`다.
+
 휴대 장치는 최초 사용 또는 배치 시 `portableInstanceId`를 얻는다. P05는 아이템별 런타임 인스턴스로 동시에 가동할 수 있고 충전은 보유자가 가동한 최근접 인스턴스에 적용한다. P06은 스택을 유지하되 배치할 때마다 새 ID를 발급하므로 한 플레이어도 말뚝 3개 이상을 설치할 수 있다. 실제 블록 입력·재시작 복원은 `E2E-55` 전까지 완료로 간주하지 않는다.
 
 `ArenaManifestPolicy`는 활성 P06의 모든 3개 조합을 ID 순서로 검사하고 같은 월드·유한 좌표·Day별 거리 계약을 통과하는 첫 조합과 무게중심을 고른다. 이 결과는 아직 지형 안전 통과 전 `ArenaCandidate`이므로 호출품을 소비하거나 정식 Manifest를 저장하지 않는다.

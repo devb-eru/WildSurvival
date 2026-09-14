@@ -60,6 +60,7 @@ public final class Main extends JavaPlugin {
             tutorial = new TutorialService(this, runService);
 
             ItemCodexService codex = new ItemCodexService(this, runService, content.content(), content.productionCatalog(), telemetry);
+            runService.setPersonalResourceReconciler(codex::reconcilePersonalResources);
             GrowthService growth = new GrowthService(this, runService, content.content(), content.productionCatalog(), telemetry);
             EquipmentService equipment = new EquipmentService(this, runService, content.content(),
                     content.productionCatalog(), telemetry, codex);
@@ -120,6 +121,7 @@ public final class Main extends JavaPlugin {
             Objects.requireNonNull(getCommand("wildsurvival"), "wildsurvival command").setTabCompleter(command);
 
             runService.restore();
+            economy.restore();
             facility.restore();
             graves.restore();
             research.restore();

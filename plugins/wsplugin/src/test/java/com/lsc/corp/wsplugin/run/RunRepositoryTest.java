@@ -2,6 +2,7 @@ package com.lsc.corp.wsplugin.run;
 
 import com.lsc.corp.wsplugin.combat.ApStimPulsePolicy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -248,11 +249,49 @@ class RunRepositoryTest {
         assertEquals(3, restored.schemaVersion);
         assertTrue(restored.resourceTransactions.isEmpty());
         assertTrue(player.personalResources.isEmpty());
+        assertFalse(player.personalResourcesInitialized);
         assertTrue(player.pendingPhysicalItemCounts.isEmpty());
         assertEquals(5, player.apStimPulsesRemaining);
         assertEquals(1, player.apStimTicksUntilNextPulse);
         assertEquals(1, player.rescueBraceCharges);
         assertEquals(0.10, player.rescueInterruptThresholdBonus);
+    }
+
+    @Test
+    void persistsCraftRecoveryEnvelopeAndExactEquipmentDelivery(@TempDir Path temporary) throws Exception {
+        RunRepository repository = new RunRepository(temporary);
+        RunSnapshot snapshot = snapshot();
+        RunSnapshot.PlayerState player = new RunSnapshot.PlayerState();
+        player.uuid = "player-1";
+        player.personalResourcesInitialized = true;
+        player.pendingEquipmentInstanceIds.add("instance-1");
+        snapshot.players.put(player.uuid, player);
+        RunSnapshot.ResourceTransactionState craft = new RunSnapshot.ResourceTransactionState();
+        craft.transactionId = "craft:player-1:one";
+        craft.costId = "WSRCP-W01";
+        craft.targetId = "EQL-W01";
+        craft.ledgerScope = "PERSONAL";
+        craft.ownerUuid = player.uuid;
+        craft.state = "PROCESSING";
+        craft.transactionKind = "CRAFT";
+        craft.inputSignature = "grid-signature";
+        craft.outputSignature = "WSRCP-W01|EQUIPMENT|EQL-W01|1|instance-1";
+        craft.outputType = "EQUIPMENT";
+        craft.outputId = "EQL-W01";
+        craft.outputAmount = 1;
+        craft.outputInstanceId = "instance-1";
+        craft.outputDurabilityRatio = 0.75;
+        snapshot.resourceTransactions.put(craft.transactionId, craft);
+
+        repository.save(snapshot);
+        RunSnapshot restored = repository.load().orElseThrow();
+
+        RunSnapshot.ResourceTransactionState restoredCraft = restored.resourceTransactions.get(craft.transactionId);
+        assertEquals("CRAFT", restoredCraft.transactionKind);
+        assertEquals(craft.outputSignature, restoredCraft.outputSignature);
+        assertEquals(0.75, restoredCraft.outputDurabilityRatio);
+        assertTrue(restored.players.get(player.uuid).personalResourcesInitialized);
+        assertTrue(restored.players.get(player.uuid).pendingEquipmentInstanceIds.contains("instance-1"));
     }
 
     @Test

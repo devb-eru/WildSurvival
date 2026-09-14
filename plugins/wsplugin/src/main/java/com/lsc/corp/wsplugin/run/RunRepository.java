@@ -238,11 +238,15 @@ public final class RunRepository {
             if (player.ammoLedger == null) player.ammoLedger = new LinkedHashMap<>();
             if (player.pendingPhysicalItemCounts == null) player.pendingPhysicalItemCounts = new LinkedHashMap<>();
             if (player.personalResources == null) player.personalResources = new LinkedHashMap<>();
+            if (!player.personalResourcesInitialized && !player.personalResources.isEmpty()) {
+                player.personalResourcesInitialized = true;
+            }
             if (player.weaponSkillLoadouts == null) player.weaponSkillLoadouts = new LinkedHashMap<>();
             if (player.commonSkillLoadout == null) player.commonSkillLoadout = new LinkedHashMap<>();
             if (player.discoveredItemIds == null) player.discoveredItemIds = new LinkedHashSet<>();
             if (player.pendingRegisteredItems == null) player.pendingRegisteredItems = new LinkedHashMap<>();
             if (player.pendingEquipmentRewards == null) player.pendingEquipmentRewards = new ArrayList<>();
+            if (player.pendingEquipmentInstanceIds == null) player.pendingEquipmentInstanceIds = new LinkedHashSet<>();
             if (player.pendingBlueprintUnlocks == null) player.pendingBlueprintUnlocks = new LinkedHashSet<>();
             if (player.completedTutorialQuests == null) player.completedTutorialQuests = new LinkedHashSet<>();
             if (player.tutorialSignals == null) player.tutorialSignals = new LinkedHashSet<>();

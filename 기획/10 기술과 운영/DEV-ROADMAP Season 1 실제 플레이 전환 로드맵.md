@@ -10,7 +10,7 @@
 | 선행 | `DEV-ROADMAP-001`, `PRODUCTION-COMPLETION-PLAN-001`, `IMPLEMENTATION-HANDOFF-001` |
 | 통합 브랜치 | `S1_dev` |
 | 재개 기준일 | 2026-08-24 |
-| 실행 상태 | `P1_PASSED_P2_READY` — P1 자동·실클라이언트·실프로세스 복구 증거 통과, P2 착수 가능 |
+| 실행 상태 | `P2_IMPLEMENTED_AWAITING_CLIENT_EVIDENCE` — P1 통과, P2 개인 자원·Craft 거래 구현 및 자동 검증 통과, 실클라이언트·프로세스 증거 대기 |
 | 재개 기준 커밋 | `8eaa421` |
 | 활성 목표 | `GOAL-S1-PRODUCTION-PLAYABLE-001` |
 | P0 기획 입력 잠금 | `s1-plan-20260824-r1` |
@@ -199,6 +199,10 @@ AP·퀵 아이템 감사에서는 AP 자극제의 비용·물리 수량·효과�
 4. Shift+F 메뉴에서 craft·도감·스탯·장비·설정을 연다.
 5. slot 0/-106 장착, slot 1~8 바닐라, slot 0 전투 입력, 빈손 권투를 함께 E2E한다.
 6. 최소 적·자원·장비·레시피·연구가 Day 3까지 하나의 루프로 이어지는지 2~4인으로 확인한다.
+
+2026-09-15 P2 기반 구현에서 채집·보상 자원과 `PlayerState.personalResources`의 이중 권위를 제거했다. 신규 회차는 개인 자원 원장을 빈 권위값으로 시작하고, 구버전 회차만 최초 접속 때 실제 PDC 자원을 한 번 채택한다. 이후 획득·소비·연구/시설 개인 예약·취소·FAC-S16 입출금은 개인 원장을 먼저 원자 저장하고 `RESOURCE:<id>` 절대 수량 체크포인트로 Bukkit 인벤토리를 멱등 복구한다. 입출금은 개인 증감과 공용 증감을 한 후보 스냅샷에서 함께 커밋한다.
+
+Craft 해금은 `craft-unlock:<runId>` 단일 커밋과 `VANILLA:ANY_LOG` 체크포인트로 원목 4개 소비를 묶었다. 3×3 결과 클릭은 `CRAFT` 거래에 입력 fingerprint, recipe/output ID·종류·수량, 출력 서명, 장비 instanceId와 내구 비율을 저장하고 `RESERVED→PROCESSING→COMMITTED`로 전이한다. 일반 아이템은 `REGISTERED:<id>` 목표 수량과 pending delivery, 자원 출력은 개인 원장과 `RESOURCE:<id>`, 장비는 고정 instanceId pending delivery로 물리 결과를 한 번만 만든다. GUI 정상 종료는 기존처럼 미소비 입력을 전부 반환하며, 저장소 아이템 설치도 시설 위치·원장 해금과 실물 소비를 같은 내구 경계로 묶었다. 순수 정책·저장 round-trip 회귀를 포함한 Gradle `check`는 51 suite·184 test, failure/error/skip 0과 prototype 5파일·r2/r2.1 각 70파일 L0 검증을 통과했다. 후보 JAR SHA-256은 `1930B2098D780E3DDCFAEB0FD0E072A3C7633A1CD4EE58C29BF35E7DF0F4F34C`다. 실제 클라이언트의 해금·배치·후보 순환·닫기 반환과 Craft `RESERVED/PROCESSING/COMMITTED` JVM 종료 증거, 관리자 지급 없는 Day 1~3 루프는 아직 통과 처리하지 않는다.
 
 ### P3~P7 — 데이터 묶음 확장 규칙
 

@@ -85,6 +85,8 @@ public final class RunSnapshot {
         public Map<String, Integer> pendingPhysicalItemCounts = new LinkedHashMap<>();
         /** Server-authoritative custom resource balance. Vanilla items remain in the Bukkit inventory. */
         public Map<String, Integer> personalResources = new LinkedHashMap<>();
+        /** False only for legacy snapshots whose physical custom resources have not been adopted yet. */
+        public boolean personalResourcesInitialized;
         public long personalCombatSequence;
         public long personalCombatScopeExpiresAtEpochMs;
         public int apStimPulsesRemaining;
@@ -99,6 +101,8 @@ public final class RunSnapshot {
         public Set<String> discoveredItemIds = new LinkedHashSet<>();
         public Map<String, Integer> pendingRegisteredItems = new LinkedHashMap<>();
         public List<String> pendingEquipmentRewards = new ArrayList<>();
+        /** Exact equipment instances awaiting idempotent physical materialization. */
+        public Set<String> pendingEquipmentInstanceIds = new LinkedHashSet<>();
         public Set<String> pendingBlueprintUnlocks = new LinkedHashSet<>();
         public int lootValueReceived;
         public Set<String> completedTutorialQuests = new LinkedHashSet<>();
@@ -311,6 +315,16 @@ public final class RunSnapshot {
         public String failureReason;
         public int reservationAttempt = 1;
         public List<String> cancellationReasons = new ArrayList<>();
+        /** Optional craft recovery envelope. Blank for research/facility resource costs. */
+        public String transactionKind;
+        public String inputSignature;
+        public String outputSignature;
+        public String outputType;
+        public String outputId;
+        public int outputAmount;
+        public String outputInstanceId;
+        public String baseInstanceId;
+        public double outputDurabilityRatio = 1.0;
     }
 
     public static final class LootTransactionState {
