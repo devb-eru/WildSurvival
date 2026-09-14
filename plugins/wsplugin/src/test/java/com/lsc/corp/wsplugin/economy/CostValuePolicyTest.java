@@ -43,4 +43,24 @@ class CostValuePolicyTest {
                 CostValuePolicy.plan(Map.of("general", 8, "construction", 8), 3,
                         Map.of("WSR-STABILIZED_FRAME", 2)));
     }
+
+    @Test
+    void plansExactSoloFacilityS16LevelTwoCost() {
+        Map<String, Integer> cost = new java.util.LinkedHashMap<>();
+        cost.put("construction", 10);
+        cost.put("survival", 0);
+        cost.put("metal", 12);
+        cost.put("signal", 12);
+        cost.put("specialist", 2);
+
+        assertEquals(Map.of(
+                "WSR-WOOD", 7,
+                "WSR-IRON", 9,
+                "WSR-REDSTONE", 9,
+                "WSR-MAGIC_CRYSTAL", 1), CostValuePolicy.plan(cost, 1, Map.of(
+                "WSR-WOOD", 7,
+                "WSR-IRON", 9,
+                "WSR-REDSTONE", 9,
+                "WSR-MAGIC_CRYSTAL", 1)));
+    }
 }
