@@ -710,19 +710,8 @@ public final class TestLabService implements Listener {
             run.checkpointStartedAtEpochMs = now;
             run.boss = null;
             RunSnapshot.DayState previous = run.seasonDay;
-            RunSnapshot.DayState state = new RunSnapshot.DayState();
-            state.day = day;
-            state.dayId = definition.id();
-            state.state = "PREPARING";
-            state.lockedBudgetProfileId = "STD-BALANCED";
-            state.lockedThreatBudget3 = definition.threatBudget3();
-            state.lockedResourceBudgets.addAll(definition.resourceBudgetTotals());
-            state.eventQueue.addAll(definition.eventIds());
-            state.activeEventId = definition.eventIds().isEmpty() ? null : definition.eventIds().getFirst();
-            state.startedAtEpochMs = now;
-            state.pressureStartedAtEpochMs = now + 30_000L;
-            state.sequence = previous == null ? 1L : previous.sequence + 1L;
-            run.seasonDay = state;
+            run.seasonDay = TestDayResetPolicy.prepare(definition, production.eventsById(),
+                    run.test.virtualPartySize, now, previous == null ? 1L : previous.sequence + 1L);
         });
         loop.restoreWorldObjects();
         afterMutation(actor, "world.day", Integer.toString(day));
@@ -982,6 +971,7 @@ public final class TestLabService implements Listener {
 
     private void resetState(Player actor, boolean preserveClock) {
         RunSnapshot previous = runs.current().orElseThrow();
+        long now = runs.clockNowMillis();
         RunSnapshot replacement = new RunSnapshot();
         replacement.runId = previous.runId;
         replacement.runType = "TEST";
@@ -989,11 +979,15 @@ public final class TestLabService implements Listener {
         replacement.state = "RUNNING";
         replacement.createdAtEpochMs = previous.createdAtEpochMs;
         replacement.startedAtEpochMs = preserveClock ? previous.startedAtEpochMs : previous.createdAtEpochMs;
-        replacement.checkpointStartedAtEpochMs = runs.clockNowMillis();
+        replacement.checkpointStartedAtEpochMs = now;
         replacement.seed = previous.seed;
         replacement.test = repository.deepCopy(previous).test;
         replacement.test.activePreset = "DEFAULT";
         replacement.test.activeScenario = "SANDBOX";
+        replacement.day = 1;
+        replacement.seasonDay = TestDayResetPolicy.prepare(production.daysByNumber().get(1),
+                production.eventsById(), replacement.test.virtualPartySize, now,
+                previous.seasonDay == null ? 1L : previous.seasonDay.sequence + 1L);
         replacement.registeredPlayers.add(actor.getUniqueId().toString());
         RunSnapshot.PlayerState state = new RunSnapshot.PlayerState();
         state.uuid = actor.getUniqueId().toString();

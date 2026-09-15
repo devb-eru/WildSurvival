@@ -204,6 +204,8 @@ AP·퀵 아이템 감사에서는 AP 자극제의 비용·물리 수량·효과�
 
 Craft 해금은 `craft-unlock:<runId>` 단일 커밋과 `VANILLA:ANY_LOG` 체크포인트로 원목 4개 소비를 묶었다. 3×3 결과 클릭은 `CRAFT` 거래에 입력 fingerprint, recipe/output ID·종류·수량, 출력 서명, 장비 instanceId와 내구 비율을 저장하고 `RESERVED→PROCESSING→COMMITTED`로 전이한다. 일반 아이템은 `REGISTERED:<id>` 목표 수량과 pending delivery, 자원 출력은 개인 원장과 `RESOURCE:<id>`, 장비는 고정 instanceId pending delivery로 물리 결과를 한 번만 만든다. GUI 정상 종료는 기존처럼 미소비 입력을 전부 반환하며, 저장소 아이템 설치도 시설 위치·원장 해금과 실물 소비를 같은 내구 경계로 묶었다. `CRAFT-UNLOCK` 시나리오는 잠금 상태와 slot 0을 침범하지 않는 원목 4개만, `CRAFT`는 거래 장애 주입용 해금·개인 자원을 준비한다. Test Lab은 이제 `RESERVED/PROCESSING/COMMITTED` 세 내구 경계를 각각 한 번 멈출 수 있고, 최신 제작 거래의 예약 자원·입력/출력 서명·instanceId를 인게임에서 검사한다. 순수 정책·저장 round-trip 회귀를 포함한 Gradle 자동 테스트는 51 suite·185 test, failure/error/skip 0이며 세 콘텐츠 번들도 통과했다. 배포 후보 JAR은 1,598,436 byte, SHA-256 `2C13E408A44C7217011F821276F16FF02DD77859AD373ACF54602643752020FE`다. 실제 클라이언트의 해금·배치·후보 순환·닫기 반환과 Craft 세 경계 JVM 종료 증거, 관리자 지급 없는 Day 1~3 루프는 아직 통과 처리하지 않는다.
 
+P2 실클라이언트 진입에서 `non2error`의 새 Test Lab은 `timeFrozen=true`인데 `resetState`가 Day 시작·공세 시각과 위협 예산을 기본 0으로 두어, 빈 공세가 즉시 해결되고 Day 2로 넘어가는 결함을 확인했다. 실서버에서는 `/ws test world day set 1`로 Day 1·준비 30초·적 정리를 일시 보정해 Craft 해금 입력을 이어간다. 로컬 수정은 Test Lab 회차 교체 자체에서 Day 1 잠금 예산·사건·현재 논리 시각·준비 시각을 한 번에 구성하고, 수동 Day 선택도 실제 가상 파티 크기의 위협 예산으로 통일한다. 52 suite·188 test 및 세 콘텐츠 번들 검증이 통과했고 신규 로컬 JAR은 1,599,746 byte, SHA-256 `FB77726FA7316D66D8B42A05AF80FD59702A0B7AA1F7D869CF863434BCF7689F`다. 새 JAR 재배포 전까지 이 결함을 닫힌 실서버 증거로 표시하지 않는다.
+
 ### P3~P7 — 데이터 묶음 확장 규칙
 
 - 새 Day 묶음을 열 때마다 그 구간의 재료, 비장비 아이템, 장비, 레시피, 스킬, 증강, 상태, 적 행동, 엔티티, 시설, 연구, loot를 함께 연다.
