@@ -190,7 +190,8 @@ public final class EconomyService implements Listener {
         if (runs.current().orElseThrow().craftUnlocked) {
             throw new IllegalStateException("Reset the Test Lab run before preparing Craft unlock");
         }
-        player.getInventory().addItem(new ItemStack(Material.OAK_LOG, 4));
+        // Reuse the production recovery path: slot 0 is authoritative combat state and never pays Craft costs.
+        addRecoveryLogs(player, 4);
         player.saveData();
     }
 
