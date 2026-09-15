@@ -387,6 +387,7 @@ public final class RunService {
             }, Boolean.TRUE::equals);
             if (outcome.persisted()) {
                 current = outcome.snapshot();
+                testTransactionPause.checkpoint(transactionId, TestTransactionPauseGate.Phase.COMMITTED);
                 RunSnapshot.ResourceTransactionState transaction = current.resourceTransactions.get(transactionId);
                 reconcilePersonalResources(transaction);
             }
@@ -446,6 +447,13 @@ public final class RunService {
         synchronized (serialQueue) {
             requireTestRun();
             return testTransactionPause.status();
+        }
+    }
+
+    public boolean isTestTransactionPaused(String transactionId) {
+        synchronized (serialQueue) {
+            return current != null && "TEST".equals(current.runType)
+                    && testTransactionPause.blocks(transactionId);
         }
     }
 

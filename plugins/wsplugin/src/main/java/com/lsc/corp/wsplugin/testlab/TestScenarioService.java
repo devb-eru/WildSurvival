@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 public final class TestScenarioService {
     public static final List<String> IDS = List.of(
-            "SANDBOX", "GATHER", "CRAFT", "COMBAT", "STATUS-BREAK", "AUGMENT",
+            "SANDBOX", "GATHER", "CRAFT-UNLOCK", "CRAFT", "COMBAT", "STATUS-BREAK", "AUGMENT",
             "BOSS-PHASE-1", "BOSS-PHASE-2", "DOWNED-REVIVE");
     private final TestLabService lab;
     private final RunService runs;
@@ -50,6 +50,11 @@ public final class TestScenarioService {
                 lab.setEquipment(player, "PICKAXE", true);
                 lab.setDay(player, 1);
                 player.sendMessage(ChatColor.YELLOW + "자연 자원을 채집해 개인 아이템 획득과 곡괭이 전투 우선 판정을 확인하세요.");
+            }
+            case "CRAFT-UNLOCK" -> {
+                economy.prepareCraftUnlockTest(player);
+                player.sendMessage(ChatColor.YELLOW
+                        + "Craft는 잠겨 있고 참나무 원목 4개만 지급됐습니다. 플레이어 메뉴에서 해금을 확인하세요.");
             }
             case "CRAFT" -> {
                 economy.prepareCraftTest(player, 50);

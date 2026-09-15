@@ -45,6 +45,17 @@ final class TestTransactionPauseGateTest {
     @Test
     void rejectsUnknownPhase() {
         TestTransactionPauseGate gate = new TestTransactionPauseGate();
-        assertThrows(IllegalArgumentException.class, () -> gate.arm("COMMITTED"));
+        assertThrows(IllegalArgumentException.class, () -> gate.arm("DELIVERED"));
+    }
+
+    @Test
+    void pausesAfterDurableCommitBeforePhysicalDelivery() {
+        TestTransactionPauseGate gate = new TestTransactionPauseGate();
+        gate.arm("committed");
+
+        assertFalse(gate.checkpoint("craft:one", TestTransactionPauseGate.Phase.PROCESSING));
+        assertTrue(gate.checkpoint("craft:one", TestTransactionPauseGate.Phase.COMMITTED));
+        assertTrue(gate.blocks("craft:one"));
+        assertEquals("COMMITTED", gate.status().pausedPhase());
     }
 }

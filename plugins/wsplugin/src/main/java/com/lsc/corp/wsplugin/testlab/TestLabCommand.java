@@ -99,7 +99,7 @@ public final class TestLabCommand {
                 case "mob" -> filter(args[2], List.of("spawn", "boss", "clear", "remove", "inspect", "set", "flag", "status", "attack", "phase", "pattern"));
                 case "world" -> filter(args[2], List.of("day", "time", "weather"));
                 case "party" -> filter(args[2], List.of("size", "contribute", "boss-channel", "dummy"));
-                case "inspect" -> filter(args[2], List.of("run", "player", "target", "dummies"));
+                case "inspect" -> filter(args[2], List.of("run", "player", "target", "dummies", "transaction"));
                 default -> List.of();
             };
         }
@@ -114,7 +114,7 @@ public final class TestLabCommand {
                 case "ledger:personal", "ledger:shared" -> filter(args[3], List.of("set", "add", "fill", "clear"));
                 case "research:state" -> filter(args[3], lab.researchIds());
                 case "facility:place" -> filter(args[3], lab.facilityIds());
-                case "fault:transaction" -> filter(args[3], List.of("RESERVED", "PROCESSING"));
+                case "fault:transaction" -> filter(args[3], List.of("RESERVED", "PROCESSING", "COMMITTED"));
                 case "augment:personal" -> filter(args[3], List.of("give", "remove", "clear"));
                 case "augment:party" -> filter(args[3], List.of("set", "clear"));
                 case "mob:spawn" -> filter(args[3], lab.enemyIds());
@@ -411,7 +411,7 @@ public final class TestLabCommand {
         Player player = requirePlayer(sender);
         switch (lower(args[2])) {
             case "transaction" -> {
-                requireArgs(args, 4, "/ws test fault transaction <RESERVED|PROCESSING>");
+                requireArgs(args, 4, "/ws test fault transaction <RESERVED|PROCESSING|COMMITTED>");
                 lab.armTransactionPause(player, args[3]);
                 sender.sendMessage(ChatColor.YELLOW + "Next transaction pauses after durable "
                         + args[3].toUpperCase(Locale.ROOT) + " checkpoint.");
@@ -587,7 +587,9 @@ public final class TestLabCommand {
             case "player" -> sendMap(sender, lab.playerView(requirePlayer(sender)));
             case "target" -> sendObject(sender, lab.inspectTarget(requirePlayer(sender)));
             case "dummies" -> sender.sendMessage(ChatColor.AQUA + virtualParty.list().toString());
-            default -> throw new IllegalArgumentException("Inspect scope must be run, player, target, or dummies");
+            case "transaction" -> sendMap(sender, lab.latestCraftTransaction(requirePlayer(sender)));
+            default -> throw new IllegalArgumentException(
+                    "Inspect scope must be run, player, target, dummies, or transaction");
         }
     }
 

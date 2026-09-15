@@ -4,7 +4,7 @@ import java.util.Locale;
 
 /** One-shot, memory-only checkpoint gate used by isolated Test Lab crash recovery evidence. */
 public final class TestTransactionPauseGate {
-    public enum Phase { RESERVED, PROCESSING }
+    public enum Phase { RESERVED, PROCESSING, COMMITTED }
 
     private Phase armedPhase;
     private String pausedTransactionId;
@@ -15,7 +15,8 @@ public final class TestTransactionPauseGate {
         try {
             requested = Phase.valueOf(rawPhase.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException | NullPointerException exception) {
-            throw new IllegalArgumentException("Transaction pause phase must be RESERVED or PROCESSING");
+            throw new IllegalArgumentException(
+                    "Transaction pause phase must be RESERVED, PROCESSING, or COMMITTED");
         }
         armedPhase = requested;
         pausedTransactionId = null;

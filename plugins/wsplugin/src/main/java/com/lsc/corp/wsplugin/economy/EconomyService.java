@@ -185,6 +185,15 @@ public final class EconomyService implements Listener {
         }
     }
 
+    public void prepareCraftUnlockTest(Player player) {
+        if (!runs.isTestRun()) throw new IllegalStateException("Test Lab run required");
+        if (runs.current().orElseThrow().craftUnlocked) {
+            throw new IllegalStateException("Reset the Test Lab run before preparing Craft unlock");
+        }
+        player.getInventory().addItem(new ItemStack(Material.OAK_LOG, 4));
+        player.saveData();
+    }
+
     public void restoreFacility() {
         RunSnapshot snapshot = runs.current().orElse(null);
         if (snapshot == null || snapshot.facility == null || !snapshot.facility.active) return;
@@ -678,6 +687,11 @@ public final class EconomyService implements Listener {
         }
         RunSnapshot.ResourceTransactionState saved = runs.current().orElseThrow()
                 .resourceTransactions.get(transaction.transactionId);
+        if (runs.isTestTransactionPaused(transaction.transactionId)) {
+            player.sendMessage(ChatColor.YELLOW
+                    + "제작 출력이 내구 COMMITTED 상태에서 일시 정지됐습니다. 실물 지급 전 JVM 종료 검증 지점입니다.");
+            return false;
+        }
         materializeCommittedCraftOutput(player, saved);
         codex.discover(player, transaction.outputId, "CRAFT");
         return true;

@@ -226,6 +226,7 @@ Test Lab은 실제 벽시계 대신 저장 가능한 논리 시계를 사용한�
 |---|---|
 | `SANDBOX` | 빈 테스트 회차 |
 | `GATHER` | 전투 곡괭이·Day 1 채집 판정 |
+| `CRAFT-UNLOCK` | Craft 잠금·참나무 원목 4개·메뉴 경유 해금 준비 |
 | `CRAFT` | 개인 PDC 자원 각 50·Craft 해금·3×3 제작 GUI 준비 |
 | `COMBAT` | 검·AP 재생·근접 2·원거리 1 |
 | `STATUS-BREAK` | 곡괭이·장갑 적·브레이크 75%·둔화 |
@@ -239,10 +240,14 @@ Test Lab은 실제 벽시계 대신 저장 가능한 논리 시계를 사용한�
 ## 13. 검사·내보내기
 
 ```text
-/ws test inspect run|player|target|dummies
+/ws test inspect run|player|target|dummies|transaction
+/ws test fault transaction RESERVED|PROCESSING|COMMITTED
+/ws test fault status|clear
 /ws test status
 /ws test export
 ```
+
+`inspect transaction`은 소유자의 최신 `CRAFT` 거래 ID·상태·recipe ID·예약 자원·입력/출력 서명·출력 instanceId를 표시한다. `fault transaction`은 다음 자원 거래의 지정 내구 체크포인트에서 한 번만 멈춘다. `COMMITTED`는 출력 원장 저장 뒤 실제 Bukkit 인벤토리 지급 직전에 멈추므로, 이 지점의 증거는 채팅 표시와 거래 검사를 확인한 뒤 종료 훅 없는 실제 JVM 중단으로만 취득한다.
 
 JSON 내보내기는 다음을 포함한다.
 
@@ -278,6 +283,7 @@ JSON 내보내기는 다음을 포함한다.
 - 실제 플레이어가 입장→조절→시나리오→undo→exit 후 인벤토리·위치·속성이 복원된다.
 - P2 Craft 해금은 `craft-unlock:<runId>`와 `VANILLA:ANY_LOG` 목표 수량을 대조한다. 저장 성공 전 원목을 제거하지 않고, 저장 뒤 중단은 재접속 때 목표 수량으로 수렴해야 한다.
 - P2 3×3 제작은 `CRAFT` 거래의 입력 fingerprint·출력 서명·output instanceId를 검사한다. `RESERVED`, `PROCESSING`, `COMMITTED` 각 체크포인트에서 실제 JVM을 종료한 뒤 재접속해 개인 자원·GUI 입력 소비·등록 아이템 수량 또는 장비 instanceId가 각각 정확히 한 번만 반영되는지 확인한다.
+- `CRAFT-UNLOCK`은 리셋된 잠금 회차와 원목 4개만 준비하며 해금 자체는 플레이어 메뉴의 Craft 버튼과 해금 GUI를 통해 수행한다. `CRAFT`는 거래 장애 주입 전용으로 해금 상태와 개인 자원을 준비하고, 두 시나리오의 관리자 준비 행위는 관리자 지급 없는 Day 1~3 완주 증거를 대체하지 않는다.
 - P2 공용 물류고는 설치 전 개인 원장 획득·소비, 설치 커밋 뒤 명시적 개인↔공용 입출금, 시설 비활성 거부를 검증한다. 각 입출금은 개인/공용 잔액 합계를 보존하고 `RESOURCE:<id>` 체크포인트가 실물 PDC 수량과 일치한 뒤 제거되어야 한다.
 
 마지막 항목은 폐쇄 인게임 플레이테스트 증거가 있어야 `VERIFIED`로 승격한다. 자동·Paper 콘솔 스모크만 통과한 상태에서는 `IMPLEMENTED_PROTOTYPE`을 유지한다.

@@ -418,6 +418,32 @@ public final class TestLabService implements Listener {
         return runs.testTransactionPauseStatus();
     }
 
+    public Map<String, Object> latestCraftTransaction(Player actor) {
+        requireOwner(actor);
+        RunSnapshot.ResourceTransactionState transaction = runs.current().orElseThrow()
+                .resourceTransactions.values().stream()
+                .filter(candidate -> "CRAFT".equals(candidate.transactionKind))
+                .filter(candidate -> actor.getUniqueId().toString().equals(candidate.ownerUuid))
+                .max(java.util.Comparator.comparingLong(candidate -> candidate.validatedAtEpochMs))
+                .orElse(null);
+        Map<String, Object> view = new LinkedHashMap<>();
+        if (transaction == null) {
+            view.put("craftTransaction", "NONE");
+            return view;
+        }
+        view.put("transactionId", transaction.transactionId);
+        view.put("state", transaction.state);
+        view.put("recipeId", transaction.costId);
+        view.put("reservedResources", transaction.reservedResources);
+        view.put("inputSignature", transaction.inputSignature);
+        view.put("outputSignature", transaction.outputSignature);
+        view.put("output", transaction.outputType + ":" + transaction.outputId
+                + " x" + transaction.outputAmount);
+        view.put("outputInstanceId", transaction.outputInstanceId == null
+                ? "-" : transaction.outputInstanceId);
+        return view;
+    }
+
     private static ResourceLedger.Scope ledgerScope(String rawScope) {
         try {
             return ResourceLedger.Scope.valueOf(rawScope.toUpperCase(Locale.ROOT));
