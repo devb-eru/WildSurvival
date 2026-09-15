@@ -420,12 +420,8 @@ public final class TestLabService implements Listener {
 
     public Map<String, Object> latestCraftTransaction(Player actor) {
         requireOwner(actor);
-        RunSnapshot.ResourceTransactionState transaction = runs.current().orElseThrow()
-                .resourceTransactions.values().stream()
-                .filter(candidate -> "CRAFT".equals(candidate.transactionKind))
-                .filter(candidate -> actor.getUniqueId().toString().equals(candidate.ownerUuid))
-                .max(java.util.Comparator.comparingLong(candidate -> candidate.validatedAtEpochMs))
-                .orElse(null);
+        RunSnapshot.ResourceTransactionState transaction = TestCraftTransactionPolicy.latest(
+                runs.current().orElseThrow().resourceTransactions, actor.getUniqueId().toString());
         Map<String, Object> view = new LinkedHashMap<>();
         if (transaction == null) {
             view.put("craftTransaction", "NONE");
