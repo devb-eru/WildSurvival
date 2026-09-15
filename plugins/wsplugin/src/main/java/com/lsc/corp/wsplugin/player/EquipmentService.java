@@ -165,6 +165,8 @@ public final class EquipmentService implements Listener {
                     delivered.add(instanceId);
                     continue;
                 }
+                if (runs.isTestCraftOutputPaused(player.getUniqueId().toString(), "EQUIPMENT",
+                        instance.templateId, instanceId)) continue;
                 int copies = countInventoryInstance(player, instanceId);
                 if (copies == 0 && canGrantEquipment(player)) {
                     if (storeInventory(player, weaponItem(instance))) copies = 1;

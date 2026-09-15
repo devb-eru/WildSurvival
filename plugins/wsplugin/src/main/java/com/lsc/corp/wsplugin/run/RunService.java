@@ -457,6 +457,15 @@ public final class RunService {
         }
     }
 
+    public boolean isTestCraftOutputPaused(String ownerUuid, String outputType,
+                                           String outputId, String outputInstanceId) {
+        synchronized (serialQueue) {
+            return current != null && "TEST".equals(current.runType)
+                    && CraftOutputPausePolicy.held(current.resourceTransactions, ownerUuid,
+                            outputType, outputId, outputInstanceId, testTransactionPause::blocks);
+        }
+    }
+
     public int addResource(String key, String resourceId, int amount) {
         synchronized (serialQueue) {
             requireRunning();

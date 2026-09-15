@@ -280,6 +280,7 @@ public final class ItemCodexService implements Listener {
         Map<String, Integer> checkpoints = currentState == null || currentState.pendingPhysicalItemCounts == null
                 ? Map.of() : currentState.pendingPhysicalItemCounts;
         for (String id : production.materialsById().keySet()) {
+            if (runs.isTestCraftOutputPaused(player.getUniqueId().toString(), "MATERIAL", id, null)) continue;
             int target = Math.max(0, authoritative.getOrDefault(id, 0));
             int physical = countPhysicalResource(player, id);
             if (physical > target) {
@@ -532,8 +533,13 @@ public final class ItemCodexService implements Listener {
         if (state == null || state.pendingRegisteredItems == null || state.pendingRegisteredItems.isEmpty()) return;
         Map<String, Integer> remainingById = new LinkedHashMap<>();
         Set<String> quickItemsMoved = new LinkedHashSet<>();
+        boolean capacityBacklog = false;
         for (Map.Entry<String, Integer> entry : new LinkedHashMap<>(state.pendingRegisteredItems).entrySet()) {
             String id = entry.getKey();
+            if (runs.isTestCraftOutputPaused(player.getUniqueId().toString(), "ITEM", id, null)) {
+                remainingById.put(id, entry.getValue());
+                continue;
+            }
             String checkpoint = registeredCheckpoint(id);
             int physicalBefore = countItem(player, id);
             int target = state.pendingPhysicalItemCounts.getOrDefault(
@@ -556,7 +562,10 @@ public final class ItemCodexService implements Listener {
                 if (moved > 0 && isQuickConsumable(id)) quickItemsMoved.add(id);
                 if (overflow == attempted) break;
             }
-            if (remaining > 0) remainingById.put(id, remaining);
+            if (remaining > 0) {
+                remainingById.put(id, remaining);
+                capacityBacklog = true;
+            }
         }
         player.saveData();
         runs.mutateAtomically(run -> {
@@ -569,7 +578,7 @@ public final class ItemCodexService implements Listener {
             }
         });
         quickItemsMoved.forEach(id -> recordQuickItemCount(player, id));
-        if (!remainingById.isEmpty()) {
+        if (capacityBacklog) {
             long now = System.currentTimeMillis();
             if (now - pendingNoticeAt.getOrDefault(player.getUniqueId(), 0L) >= 5_000L) {
                 pendingNoticeAt.put(player.getUniqueId(), now);
@@ -591,6 +600,7 @@ public final class ItemCodexService implements Listener {
         for (Map.Entry<String, Integer> checkpoint : new LinkedHashMap<>(state.pendingPhysicalItemCounts).entrySet()) {
             if (!checkpoint.getKey().startsWith(CraftTransactionPolicy.registeredCheckpoint(""))) continue;
             String id = checkpoint.getKey().substring(CraftTransactionPolicy.registeredCheckpoint("").length());
+            if (runs.isTestCraftOutputPaused(player.getUniqueId().toString(), "ITEM", id, null)) continue;
             if (pendingDeliveries.getOrDefault(id, 0) > 0) continue;
             int target = Math.max(0, checkpoint.getValue());
             int physical = countItem(player, id);
