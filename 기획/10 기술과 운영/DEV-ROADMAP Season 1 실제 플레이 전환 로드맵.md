@@ -216,6 +216,8 @@ P2의 관리자 보급 없는 새 회차는 사용자가 정한 오버월드 월
 
 `P2-CRAFT-COMMITTED-PAUSE-DEFECT-003`에서 네 번째 급조 곡괭이 거래 `craft:30a399cb-324b-4f7f-9e96-f0e10de33b4c:70412593-ff63-41fe-9639-f3e4cd200c6e`는 `pausedPhase=COMMITTED`, 개인 목재 38·섬유 42로 저장됐으나, 다음 틱의 `ItemCodexService` 인벤토리 관찰이 `flushPending`을 호출해 등록 출력 대기와 실물 체크포인트를 모두 비웠다. `non2error`가 JVM 중단 전 실제 곡괭이 총 4개를 확인했으므로 “실물 지급 전 COMMITTED” 증거는 실패이며 서버를 종료하지 않았다. `/ws test fault clear`로 게이트를 해제했다. 로컬 커밋 `2af4a3a`는 일시 정지된 제작 거래의 등록 아이템·등록 자원·장비 인스턴스를 모든 별도 물리 복구 경로에서 보류하고, 동시 출력 ID/인스턴스 정책 회귀를 추가했다. 54 suite·191 test 및 콘텐츠 검증이 통과했고 새 후보 JAR SHA-256은 `80CDD6EF44E1E275BAB0BD393326B1F15632419877EB2F2934D0D96281FA31C6`다. 구 JAR의 미통과 `COMMITTED`는 자료 export와 사용자 로그아웃 뒤 새 후보를 배포해 다시 검증한다.
 
+`P2-CRAFT-COMMITTED-REDEPLOY-004`: 구 빌드의 Test Lab 자료를 `test-lab-1789449833233.json`으로 export하고 `non2error`의 로그아웃 로그를 확인했다. 격리 서버를 정상 `stop`한 뒤 기존 JAR SHA-256 `2C13E408A44C7217011F821276F16FF02DD77859AD373ACF54602643752020FE`를 `wsplugin-old-2C13E408.jar`로 백업했다. 정지된 격리 서버의 플러그인 한 파일을 후보 SHA-256 `80CDD6EF44E1E275BAB0BD393326B1F15632419877EB2F2934D0D96281FA31C6`로 교체·대조하고 Paper 26.1.2-74를 재기동했다. 플러그인 1개 로드, 기존 활성 Test Lab 회차 복원, 70개 콘텐츠 파일·334개 도감·21개 상태 로드와 정상 기동을 확인했다. 새 빌드의 `COMMITTED` 실물 보류와 JVM 중단 후 재접속 수량은 아직 실클라이언트 검증 전이다.
+
 ### P3~P7 — 데이터 묶음 확장 규칙
 
 - 새 Day 묶음을 열 때마다 그 구간의 재료, 비장비 아이템, 장비, 레시피, 스킬, 증강, 상태, 적 행동, 엔티티, 시설, 연구, loot를 함께 연다.
