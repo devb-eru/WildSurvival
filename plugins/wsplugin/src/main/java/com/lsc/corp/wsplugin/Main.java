@@ -72,7 +72,7 @@ public final class Main extends JavaPlugin {
                     content.productionCatalog(), codex, equipment, telemetry);
             combat.setDeathHandler(graves::prepareDeath);
             EconomyService economy = new EconomyService(this, runService, content.content(),
-                    content.productionCatalog(), equipment, growth, telemetry, codex);
+                    content.productionCatalog(), equipment, growth, codex);
             LootService loot = new LootService(runService, content.productionCatalog(), codex, equipment, growth, telemetry);
             PlayerStatService stats = new PlayerStatService(this, runService, growth, equipment);
             equipment.setStatRefresher(stats::apply);

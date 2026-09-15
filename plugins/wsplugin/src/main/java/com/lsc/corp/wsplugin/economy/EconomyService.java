@@ -5,7 +5,6 @@ import com.lsc.corp.wsplugin.content.ProductionContentCatalog;
 import com.lsc.corp.wsplugin.content.RecipeTagCatalog;
 import com.lsc.corp.wsplugin.facility.FacilityStateAccess;
 import com.lsc.corp.wsplugin.growth.GrowthService;
-import com.lsc.corp.wsplugin.ops.TelemetryService;
 import com.lsc.corp.wsplugin.player.EquipmentService;
 import com.lsc.corp.wsplugin.run.RunService;
 import com.lsc.corp.wsplugin.run.RunSnapshot;
@@ -68,7 +67,6 @@ public final class EconomyService implements Listener {
     private final ProductionContentCatalog production;
     private final EquipmentService equipment;
     private final GrowthService growth;
-    private final TelemetryService telemetry;
     private final ItemCodexService codex;
     private final NamespacedKey facilityKey;
     private BiPredicate<Player, String> virtualPreflight = (player, outputId) -> true;
@@ -76,14 +74,13 @@ public final class EconomyService implements Listener {
 
     public EconomyService(JavaPlugin plugin, RunService runs, PrototypeContent content,
                           ProductionContentCatalog production, EquipmentService equipment,
-                          GrowthService growth, TelemetryService telemetry, ItemCodexService codex) {
+                          GrowthService growth, ItemCodexService codex) {
         this.plugin = plugin;
         this.runs = runs;
         this.content = content;
         this.production = production;
         this.equipment = equipment;
         this.growth = growth;
-        this.telemetry = telemetry;
         this.codex = codex;
         this.facilityKey = new NamespacedKey(plugin, "facility_id");
         this.virtualCommit = (player, outputId) -> runs.commitOnce("virtual-output:" + outputId,
@@ -507,7 +504,6 @@ public final class EconomyService implements Listener {
         player.saveData();
         reconcileCraftUnlockLogs(player);
         runs.broadcast(ChatColor.GREEN + player.getName() + "이(가) Craft를 해금했습니다.");
-        telemetry.event(runs.current().orElseThrow().runId, "CRAFT_UNLOCKED", "{\"cost\":\"ANY_LOG:4\"}");
         openCraft(player);
     }
 
@@ -647,9 +643,6 @@ public final class EconomyService implements Listener {
         RunSnapshot.ResourceTransactionState transaction = runs.current().orElseThrow()
                 .resourceTransactions.get(transactionId);
         if (!commitCraftOutput(player, transaction)) return;
-        telemetry.event(runs.current().orElseThrow().runId, "CRAFT_COMMITTED",
-                "{\"recipeId\":\"" + recipeId + "\",\"transactionId\":\"" + transactionId
-                        + "\",\"outputSignature\":\"" + outputSignature + "\"}");
         player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 0.5f, 1.4f);
     }
 
@@ -676,6 +669,7 @@ public final class EconomyService implements Listener {
         RunSnapshot.EquipmentInstanceState equipmentOutput = prepared;
         boolean committed = runs.commitResourceTransaction(transaction.transactionId,
                 "CRAFT_COMMITTED", "{\"recipeId\":\"" + transaction.costId
+                        + "\",\"transactionId\":\"" + transaction.transactionId
                         + "\",\"outputSignature\":\"" + transaction.outputSignature + "\"}", run -> {
                     RunSnapshot.ResourceTransactionState candidateTransaction = run.resourceTransactions
                             .get(transaction.transactionId);
